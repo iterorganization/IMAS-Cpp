@@ -1,0 +1,869 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?modxslt-stylesheet type="text/xsl" media="fuffa, screen and $GET[stylesheet]" href="./%24GET%5Bstylesheet%5D" alternate="no" title="Translation using provided stylesheet" charset="ISO-8859-1" ?>
+<?modxslt-stylesheet type="text/xsl" media="screen" alternate="no" title="Show raw source of the XML file" charset="ISO-8859-1" ?>
+<!-- Generating  code to test the C++ UAL (from CPODef.xml) -->
+<!-- Y. Frauel 2010-->
+
+<xsl:stylesheet xmlns:yaslt="http://www.mod-xslt2.com/ns/1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+xmlns:xs="http://www.w3.org/2001/XMLSchema" version="1.0" extension-element-prefixes="yaslt"
+xmlns:fn="http://www.w3.org/2005/02/xpath-functions">
+<!-- -->
+<xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
+
+<!--================================================-->
+<!--         Template for the whole document        -->
+<!--================================================-->
+<xsl:template match = "CPOs">
+
+<!--============ Arrays to fill in fields ===========-->
+#include &lt;stdlib.h>
+#include &lt;time.h>
+#include "UALClasses.h"
+
+#define dim 3
+#define PEMPTY .15    // probability that a field is empty
+
+int fd_stdout;	// keep file descriptor for stdout
+Array&lt;int,1&gt; vect1DInt(dim);
+Array&lt;double,1&gt; vect1DDouble(dim);
+Array&lt;string,1&gt; vect1DString(dim);
+Array&lt;int,2&gt; vect2DInt(dim,dim);
+Array&lt;double,2&gt; vect2DDouble(dim,dim);
+Array&lt;int,3&gt; vect3DInt(dim,dim,dim);
+Array&lt;double,3&gt; vect3DDouble(dim,dim,dim);
+Array&lt;int,4&gt; vect4DInt(dim,dim,dim,dim);
+Array&lt;double,4&gt; vect4DDouble(dim,dim,dim,dim);
+Array&lt;int,5&gt; vect5DInt(dim,dim,dim,dim,dim);
+Array&lt;double,5&gt; vect5DDouble(dim,dim,dim,dim,dim);
+Array&lt;int,6&gt; vect6DInt(dim,dim,dim,dim,dim,dim);
+Array&lt;double,6&gt; vect6DDouble(dim,dim,dim,dim,dim,dim);
+Array&lt;int,7&gt; vect7DInt(dim,dim,dim,dim,dim,dim,dim);
+Array&lt;double,7&gt; vect7DDouble(dim,dim,dim,dim,dim,dim,dim);
+
+void initArrays()
+// initialize the arrays used to fill the fields
+{
+vect1DInt = 1;
+vect1DDouble = 1.1;
+vect1DString = "33";
+vect2DInt = 1;
+vect2DDouble = 1.1;
+vect3DInt = 1;
+vect3DDouble = 1.1;
+vect4DInt = 1;
+vect4DDouble = 1.1;
+vect5DInt = 1;
+vect5DDouble = 1.1;
+vect6DInt = 1;
+vect6DDouble = 1.1;
+vect7DInt = 1;
+vect7DDouble = 1.1;
+}
+
+using namespace ItmNs;
+<!--========= Test functions for each CPO ==========-->
+<xsl:apply-templates select = "CPO" mode = "individual_test"/>
+
+<!--========== Global test function ===========-->
+int main(int argc, char** argv)
+// Test the whole C++ UAL interface
+{
+	initArrays();
+	bool success = true;
+<xsl:apply-templates select = "CPO" mode = "global_test"/>
+
+	if (success) {
+		printf("\n---> TEST SUCCEEDED!\n\n");
+		return 0;
+	} else {
+		printf("\n---> TEST FAILED\n\n");
+		return 1;
+	}
+}
+
+</xsl:template>
+
+<!--================================================-->
+<!--        Call the test function of each CPO      -->
+<!--================================================-->
+<xsl:template match = "CPO" mode = "global_test">
+	if (!test_<xsl:value-of select = "@type"/>()) success = false;
+</xsl:template>
+
+<!--================================================-->
+<!--      Generate a test function for each CPO     -->
+<!--================================================-->
+<xsl:template match = "CPO" mode = "individual_test">	
+
+<!--========== Timed CPOs ===========-->
+
+<xsl:if test = "@timed = 'yes'">
+int test_<xsl:value-of select = "@type"/>()
+// <xsl:value-of select = "@documentation"/>
+// test '<xsl:value-of select = "@type"/>' CPO
+{
+	int i;
+	int status;
+	bool success = true;
+	int randseed = (int)time(NULL);
+	
+	//----------- put/get whole CPO ----------
+	printf("\n<xsl:value-of select = "@type"/>: put/get:\n");
+	Itm *itmwrite = new Itm(97,1,0,0);
+#ifdef HDF5
+	itmwrite->createHdf5();
+#else
+	itmwrite->create();
+#endif
+	int nbslices = 3;
+	itmwrite->_<xsl:value-of select = "@type"/>Array.array.resize(nbslices);
+	for (i=0; i&lt;nbslices; i++) {
+		srand(randseed);
+	<xsl:apply-templates select = "field" mode = "fill_cpo">
+		<xsl:with-param name = "level" select="1"/>
+		<xsl:with-param name = "idxpath" select="concat('_',@type,'Array(i)')"/>
+	</xsl:apply-templates>
+	}
+
+	status = itmwrite->_<xsl:value-of select = "@type"/>Array.put();	// write default occurrence
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+	status = itmwrite->_<xsl:value-of select = "@type"/>Array.put(<xsl:value-of select = "@maxoccur"/>);	// write alternate occurrence
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+
+	itmwrite->close();
+	delete itmwrite;
+
+	Itm *itmread = new Itm(97,1,0,0);
+#ifdef HDF5
+	itmread->openHdf5();
+#else
+	itmread->open();
+#endif
+
+	// test default occurrence
+	printf("  Default occurrence\n");
+	status = itmread->_<xsl:value-of select = "@type"/>Array.get();
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+	for (i=0; i&lt;nbslices; i++) {
+		srand(randseed);
+		<xsl:apply-templates select = "field" mode = "read_cpo">
+		<xsl:with-param name = "level" select="1"/>
+		<xsl:with-param name = "idxpath" select="concat('_',@type,'Array(i)')"/>
+		</xsl:apply-templates>
+	}
+	
+	// test alternate occurrence
+	printf("  Alternate occurrence\n");
+	status = itmread->_<xsl:value-of select = "@type"/>Array.get(<xsl:value-of select = "@maxoccur"/>);
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+	for (i=0; i&lt;nbslices; i++) {
+		srand(randseed);
+		<xsl:apply-templates select = "field" mode = "read_cpo">
+		<xsl:with-param name = "level" select="1"/>
+		<xsl:with-param name = "idxpath" select="concat('_',@type,'Array(i)')"/>
+		</xsl:apply-templates>
+	}
+	
+	itmread->close();
+	delete itmread;
+
+	//----------- put/get single slices ----------
+	printf("<xsl:value-of select = "@type"/>: putslice/getslice:\n");
+	itmwrite = new Itm(97,2,0,0);
+#ifdef HDF5
+	itmwrite->createHdf5();
+#else
+	itmwrite->create();
+#endif
+
+	for (i=0; i&lt;nbslices; i++) {
+	srand(randseed);
+	<xsl:apply-templates select = "field" mode = "fill_cpo">
+	<xsl:with-param name = "level" select="1"/>
+	<xsl:with-param name = "idxpath" select="concat('_',@type)"/>
+	</xsl:apply-templates>
+	if (i==0) {
+	status= itmwrite->_<xsl:value-of select = "@type"/>.putNonTimed();    // write default occurrence
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+      
+	status = itmwrite->_<xsl:value-of select = "@type"/>.putNonTimed(<xsl:value-of select = "@maxoccur"/>); // write alternate occurrence
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+}
+		status = itmwrite->_<xsl:value-of select = "@type"/>.putSlice();		// write default occurrence
+		if (status) {
+			cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+		}
+		
+		status = itmwrite->_<xsl:value-of select = "@type"/>.putSlice(<xsl:value-of select = "@maxoccur"/>);	// write alternate occurrence
+		if (status) {
+			cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+		}
+	}
+	
+	itmwrite->close();
+	delete itmwrite;
+
+	itmread = new Itm(97,2,0,0);
+#ifdef HDF5
+	itmread->openHdf5();
+#else
+	itmread->open();
+#endif
+
+	// test default occurrence
+	printf("  Default occurrence\n");
+	
+	for (i=0; i&lt;nbslices; i++) {
+		srand(randseed);
+		status = itmread->_<xsl:value-of select = "@type"/>.getSlice(1.1*(i+1),1);
+		if (status) {
+			cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+		}
+		<xsl:apply-templates select = "field" mode = "read_cpo">
+			<xsl:with-param name = "level" select="1"/>
+			<xsl:with-param name = "idxpath" select="concat('_',@type)"/>
+		</xsl:apply-templates>	
+	}
+	
+	// test alternate occurrence
+	printf("  Alternate occurrence\n");
+	
+	for (i=0; i&lt;nbslices; i++) {
+		srand(randseed);
+		status = itmread->_<xsl:value-of select = "@type"/>.getSlice(<xsl:value-of select = "@maxoccur"/>,1.1*(i+1),1);
+		if (status) {
+			cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+		}
+		<xsl:apply-templates select = "field" mode = "read_cpo">
+			<xsl:with-param name = "level" select="1"/>
+			<xsl:with-param name = "idxpath" select="concat('_',@type)"/>
+		</xsl:apply-templates>	
+	}
+	
+	itmread->close();
+	delete itmread;
+
+	//------------- check global success -------------
+	if (success)
+		printf("<xsl:value-of select = "@type"/> PASSED\n");
+	else
+		printf("<xsl:value-of select = "@type"/> FAILED\n");
+	return success;
+}
+</xsl:if>
+
+<!--========== Non timed CPOs ===========-->
+
+<xsl:if test = "@timed = 'no'">
+bool test_<xsl:value-of select = "@type"/>()
+// <xsl:value-of select = "@documentation"/>
+// test '<xsl:value-of select = "@type"/>' CPO
+{
+	int i = 0;
+	int status;
+	bool success = true;
+	int randseed = (int)time(NULL);
+
+	//----------- put/get whole CPO ----------
+	printf("\n<xsl:value-of select = "@type"/>: put/get:\n");
+	Itm *itmwrite =new Itm(97,1,0,0);
+#ifdef HDF5
+	itmwrite->createHdf5();
+#else
+	itmwrite->create();
+#endif
+
+	srand(randseed);
+	<xsl:apply-templates select = "field" mode = "fill_cpo">
+		<xsl:with-param name = "level" select="1"/>
+		<xsl:with-param name = "idxpath" select="concat('_',@type)"/>
+	</xsl:apply-templates>
+	status = itmwrite->_<xsl:value-of select = "@type"/>.put();	// write default occurrence
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+	status = itmwrite->_<xsl:value-of select = "@type"/>.put(<xsl:value-of select = "@maxoccur"/>);	// write alternate occurrence
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+
+	itmwrite->close();
+	delete itmwrite;
+
+	Itm *itmread = new Itm(97,1,0,0);
+#ifdef HDF5
+	itmread->openHdf5();
+#else
+	itmread->open();
+#endif
+
+	// test default occurrence
+	printf("  Default occurrence\n");
+	status = itmread->_<xsl:value-of select = "@type"/>.get();
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+	srand(randseed);
+	<xsl:apply-templates select = "field" mode = "read_cpo">
+		<xsl:with-param name = "level" select="1"/>
+		<xsl:with-param name = "idxpath" select="concat('_',@type)"/>
+	</xsl:apply-templates>	
+	
+	// test alternate occurrence
+	printf("  Alternate occurrence\n");
+	status = itmread->_<xsl:value-of select = "@type"/>.get(<xsl:value-of select = "@maxoccur"/>);
+	if (status) {
+		cout &lt;&lt; "Error: " &lt;&lt; euitm_last_errmsg() &lt;&lt; endl;
+	}
+	srand(randseed);
+	<xsl:apply-templates select = "field" mode = "read_cpo">
+		<xsl:with-param name = "level" select="1"/>
+		<xsl:with-param name = "idxpath" select="concat('_',@type)"/>
+	</xsl:apply-templates>	
+	
+	itmread->close();
+	delete itmread;
+
+	//------------- check global success -------------
+	if (success)
+		printf("<xsl:value-of select = "@type"/> PASSED\n");
+	else
+		printf("<xsl:value-of select = "@type"/> FAILED\n");
+	return success;
+}
+</xsl:if>
+</xsl:template>
+
+<!--================================================-->
+<!--                 Fill a CPO                     -->
+<!--================================================-->
+<xsl:template match = "field" mode = "fill_cpo">
+	<xsl:param name = "level"/>
+	<xsl:param name = "idxpath"/>
+
+<!-- build the path of the current field -->
+<xsl:param name="currentidxpath" select="concat($idxpath,'.',@name)"/>
+
+<xsl:if test="@name!='time'">
+if (rand() > RAND_MAX * PEMPTY) {
+</xsl:if>
+
+<xsl:choose>
+
+  <!--========== Array of structure ===========-->
+  <xsl:when test = "@type = 'struct_array'">
+    itmwrite-><xsl:value-of select = "$currentidxpath"/>.resize(3);
+    for (int i<xsl:value-of select = "$level"/> = 0; i<xsl:value-of select = "$level"/> &lt; 3; i<xsl:value-of select = "$level"/>++) {
+    <xsl:apply-templates select = "field" mode = "fill_cpo">
+      <xsl:with-param name = "level" select = "$level + 1"/>
+      <xsl:with-param name = "idxpath" select="concat($currentidxpath,'(i',$level,')')"/>
+    </xsl:apply-templates>
+    }
+  </xsl:when>
+
+	<!--========== Regular structure ===========-->
+	<xsl:when test = "@type = 'structure'">
+		<xsl:apply-templates select = "field" mode = "fill_cpo">
+      <xsl:with-param name = "level" select = "$level"/>
+      <xsl:with-param name = "idxpath" select = "$currentidxpath"/>
+		</xsl:apply-templates>
+	</xsl:when>
+
+	<!--============ Integer =============-->
+	<xsl:when test = "@type = 'xs:integer'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = i+1;
+	</xsl:when>
+
+	<!--============ Float ==============-->
+	<xsl:when test = "@type = 'xs:float'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = 1.1*(i+1);
+	</xsl:when>
+
+	<!--============ String =============-->
+	<xsl:when test = "@type = 'xs:string'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = "33";
+	</xsl:when>
+
+	<!--========== Vectors ===========-->
+	<xsl:when test = "@type = 'vecint_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect1DInt*(i+1);
+	</xsl:when>
+
+	<xsl:when test = "@type = 'vecflt_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect1DDouble*(i+1);
+	</xsl:when>
+
+	<xsl:when test = "@type = 'vecstring_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect1DString;
+	</xsl:when>
+
+	<!--========== Matrices ===========-->
+	<xsl:when test = "@type = 'matint_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect2DInt*(i+1);
+	</xsl:when>
+
+	<xsl:when test = "@type = 'matflt_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect2DDouble*(i+1);
+	</xsl:when>
+
+	<!--========== 3D arrays ===========-->
+	<xsl:when test = "@type = 'array3dint_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect3DInt*(i+1);
+	</xsl:when>
+
+	<xsl:when test = "@type = 'array3dflt_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect3DDouble*(i+1);
+	</xsl:when>
+
+	<!--========== 4D arrays ===========-->
+	<xsl:when test = "@type = 'array4dint_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect4DInt*(i+1);
+	</xsl:when>
+
+	<xsl:when test = "@type = 'array4dflt_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect4DDouble*(i+1);
+	</xsl:when>
+
+	<!--========== 5D arrays ===========-->
+	<xsl:when test = "@type = 'array5dint_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect5DInt*(i+1);
+	</xsl:when>
+
+	<xsl:when test = "@type = 'array5dflt_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect5DDouble*(i+1);
+	</xsl:when>
+
+	<!--========== 6D arrays ===========-->
+	<xsl:when test = "@type = 'array6dint_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim,dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect6DInt*(i+1);
+	</xsl:when>
+
+	<xsl:when test = "@type = 'array6dflt_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim,dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect6DDouble*(i+1);
+	</xsl:when>
+
+	<!--========== 7D arrays ===========-->
+	<xsl:when test = "@type = 'array7dint_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim,dim,dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect7DInt*(i+1);
+	</xsl:when>
+
+	<xsl:when test = "@type = 'array7dflt_type'">
+	itmwrite-><xsl:value-of select="$currentidxpath"/>.resize(dim,dim,dim,dim,dim,dim,dim);
+	itmwrite-><xsl:value-of select="$currentidxpath"/> = vect7DDouble*(i+1);
+	</xsl:when>
+
+	<!--========== Unknown type ===========-->
+	<xsl:otherwise>
+		<xsl:message terminate="yes">
+ERROR in <xsl:value-of select = "translate(@path,'/','.')"/>: unknown type "<xsl:value-of select = "@type"/>"
+		</xsl:message>
+	</xsl:otherwise>
+
+</xsl:choose>
+
+<xsl:if test="@name!='time'">
+}
+</xsl:if>
+
+</xsl:template>
+
+<!--================================================-->
+<!--                   Read CPO                     -->
+<!--================================================-->
+<xsl:template match = "field" mode = "read_cpo">
+  <xsl:param name = "level"/>     <!-- recursion level -->
+  <xsl:param name = "idxpath"/>   <!-- full C++ path including indices -->
+
+<!-- build the path of the current field -->
+<xsl:param name="currentidxpath" select="concat($idxpath,'.',@name)"/>
+
+<xsl:if test="@name!='time'">
+  if (rand() > RAND_MAX * PEMPTY) {
+</xsl:if>
+
+<!--========== Regular structure ===========-->
+<xsl:if test = "@type = 'structure'">
+  <xsl:apply-templates select = "field" mode = "read_cpo">
+    <xsl:with-param name = "level" select = "$level"/>
+    <xsl:with-param name = "idxpath" select = "$currentidxpath"/>
+  </xsl:apply-templates>
+</xsl:if>
+
+<!--========== Array of structure ===========-->
+<xsl:if test = "@type = 'struct_array'">
+  if (itmread-><xsl:value-of select = "$currentidxpath"/>.extent(0) != 3) {
+    cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> size = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/>.extent(0) &lt;&lt; endl;
+    success = false;
+  } else {
+  for (int i<xsl:value-of select = "$level"/> = 0; i<xsl:value-of select = "$level"/> &lt; 3; i<xsl:value-of select = "$level"/>++) {
+    <xsl:apply-templates select = "field" mode = "read_cpo">
+      <xsl:with-param name = "level" select = "$level + 1"/>
+      <xsl:with-param name = "idxpath" select="concat($currentidxpath,'(i',$level,')')"/>
+    </xsl:apply-templates>
+    }
+  }
+</xsl:if>
+
+<xsl:if test="@timed='yes'">
+  <xsl:choose>
+  
+    <!--============ Integer =============-->
+    <xsl:when test = "@type = 'xs:integer'">
+    if (itmread-><xsl:value-of select="$currentidxpath"/> != (i+1)) {
+      cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <!--============ Float ==============-->
+    <xsl:when test = "@type = 'xs:float'">
+      if (itmread-><xsl:value-of select="$currentidxpath"/> != 1.1*(i+1)) {
+      cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <!--============= String ============-->
+    <xsl:when test = "@type = 'xs:string'">
+    if (itmread-><xsl:value-of select="$currentidxpath"/>.compare( "33")) {
+      cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <!--========= Vectors ==========-->
+    <xsl:when test = "@type = 'vecint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect1DInt*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <xsl:when test = "@type = 'vecflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect1DDouble*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <xsl:when test = "@type = 'vecstring_type'">
+    if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect1DString)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <!--!=!=!=!=!= Matrices !=!=!=!=!==-->
+    <xsl:when test = "@type = 'matint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect2DInt*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <xsl:when test = "@type = 'matflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect2DDouble*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <!--!=!=!=!=!= 3D arrays !=!=!=!=!==-->
+    <xsl:when test = "@type = 'array3dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect3DInt*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <xsl:when test = "@type = 'array3dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect3DDouble*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <!--!=!=!=!=!= 4D arrays !=!=!=!=!==-->
+    <xsl:when test = "@type = 'array4dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect4DInt*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <xsl:when test = "@type = 'array4dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect4DDouble*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <!--!=!=!=!=!= 5D arrays !=!=!=!=!==-->
+    <xsl:when test = "@type = 'array5dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect5DInt*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+    }
+    </xsl:when>
+  
+    <xsl:when test = "@type = 'array5dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect5DDouble*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+    }
+    </xsl:when>
+  
+    <!--~=~=~=~=~= 6D arrays ~=~=~=~=~==-->
+    <xsl:when test = "@type = 'array6dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect6DInt*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+    }
+    </xsl:when>
+  
+    <xsl:when test = "@type = 'array6dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect6DDouble*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+    }
+    </xsl:when>
+  
+    <!--~=~=~=~=~= 7D arrays ~=~=~=~=~==-->
+    <xsl:when test = "@type = 'array7dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect7DInt*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+    }
+    </xsl:when>
+  
+    <xsl:when test = "@type = 'array7dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect7DDouble*(i+1))) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+    }
+    </xsl:when>
+  
+  </xsl:choose>
+</xsl:if>
+
+<xsl:if test="@timed='no'">
+  <xsl:choose>
+    
+    <!--============ Integer =============-->
+    <xsl:when test = "@type = 'xs:integer'">
+      if (itmread-><xsl:value-of select="$currentidxpath"/> != 1) {
+      cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <!--============ Float ==============-->
+    <xsl:when test = "@type = 'xs:float'">
+      if (itmread-><xsl:value-of select="$currentidxpath"/> != 1.1) {
+      cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <!--============= String ============-->
+    <xsl:when test = "@type = 'xs:string'">
+      if (itmread-><xsl:value-of select="$currentidxpath"/>.compare( "33")) {
+      cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <!--========= Vectors ==========-->
+    <xsl:when test = "@type = 'vecint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect1DInt)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <xsl:when test = "@type = 'vecflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect1DDouble)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <xsl:when test = "@type = 'vecstring_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect1DString)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <!--!=!=!=!=!= Matrices !=!=!=!=!==-->
+    <xsl:when test = "@type = 'matint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect2DInt)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <xsl:when test = "@type = 'matflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect2DDouble)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <!--!=!=!=!=!= 3D arrays !=!=!=!=!==-->
+    <xsl:when test = "@type = 'array3dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect3DInt)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <xsl:when test = "@type = 'array3dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect3DDouble)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <!--!=!=!=!=!= 4D arrays !=!=!=!=!==-->
+    <xsl:when test = "@type = 'array4dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect4DInt)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <xsl:when test = "@type = 'array4dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect4DDouble)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <!--!=!=!=!=!= 5D arrays !=!=!=!=!==-->
+    <xsl:when test = "@type = 'array5dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect5DInt)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success = false;
+      }
+    </xsl:when>
+    
+    <xsl:when test = "@type = 'array5dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect5DDouble)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+      }
+    </xsl:when>
+    
+    <!--~=~=~=~=~= 6D arrays ~=~=~=~=~==-->
+    <xsl:when test = "@type = 'array6dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect6DInt)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+      }
+    </xsl:when>
+    
+    <xsl:when test = "@type = 'array6dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect6DDouble)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+      }
+    </xsl:when>
+    
+    <!--~=~=~=~=~= 7D arrays ~=~=~=~=~==-->
+    <xsl:when test = "@type = 'array7dint_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect7DInt)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+      }
+    </xsl:when>
+    
+    <xsl:when test = "@type = 'array7dflt_type'">
+      if (any(itmread-><xsl:value-of select="$currentidxpath"/> != vect7DDouble)) {
+      cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+      success=false;
+      }
+    </xsl:when>
+    
+  </xsl:choose>
+</xsl:if>
+<xsl:if test="@name!='time'">
+  } else {
+    <xsl:choose>
+    
+      <!--========== Array of structure ===========-->
+      <xsl:when test = "@type = 'struct_array'">
+        if (itmread-><xsl:value-of select = "$currentidxpath"/>.extent(0) != 0) {
+        cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> size = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/>.extent(0) &lt;&lt; endl;
+        success = false;
+        }
+      </xsl:when>
+      
+      <!--========== Regular structure ===========-->
+      <xsl:when test = "@type = 'structure'">
+      </xsl:when>
+      
+      <!--============ Integer =============-->
+      <xsl:when test = "@type = 'xs:integer'">
+        if (itmread-><xsl:value-of select="$currentidxpath"/> != EMPTY_INT) {
+        cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+        success = false;
+        }
+      </xsl:when>
+      
+      <!--============ Float ==============-->
+      <xsl:when test = "@type = 'xs:float'">
+        if (itmread-><xsl:value-of select="$currentidxpath"/> != EMPTY_DOUBLE) {
+        cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+        success = false;
+        }
+      </xsl:when>
+      
+      <!--============= String ============-->
+      <xsl:when test = "@type = 'xs:string'">
+        if (itmread-><xsl:value-of select="$currentidxpath"/>.compare("")) {
+        cout  &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+        success = false;
+        }
+      </xsl:when>
+      
+      
+      <!--~=~=~=~=~= Array ~=~=~=~=~==-->
+      <xsl:otherwise>
+        if (itmread-><xsl:value-of select="$currentidxpath"/>.extent(0) != 0) {
+        cout &lt;&lt; "Error: (<xsl:value-of select = "@type"/>)<xsl:value-of select = "translate(@path,'/','.')"/> = " &lt;&lt; itmread-><xsl:value-of select="$currentidxpath"/> &lt;&lt; endl;
+        success=false;
+        }
+      </xsl:otherwise>
+    </xsl:choose>
+  }
+</xsl:if>
+</xsl:template>
+
+</xsl:stylesheet>
