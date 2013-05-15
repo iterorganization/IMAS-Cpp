@@ -365,6 +365,7 @@ char *clepath;
 string lepath;
 string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
+deleteAll();
 status = beginIdsPut(expIdx, "<xsl:value-of select="@name"/>");
 checkStatus(status);
 if(status) return status;
@@ -390,6 +391,7 @@ if(idx &lt; 1)
 sprintf(path, "%s", basePath);
 else
 sprintf(path, "%s/%d", basePath, idx);
+deleteAll(idx);
 status = beginIdsPut(expIdx, path);
 checkStatus(status);
 if(status) return status;
