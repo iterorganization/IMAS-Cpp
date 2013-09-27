@@ -419,7 +419,7 @@ sprintf(path, "%s", basePath);
 else
 sprintf(path, "%s/%d", basePath, idx);
 double retTime;
-if (IDS_Properties.Homogeneous_Timebase != 1) {
+if (ids_properties.homogeneous_time != 1) {
 puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
 return (-99);
 }
@@ -446,7 +446,7 @@ char *clepath;
 string lepath;
 string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
-if (IDS_Properties.Homogeneous_Timebase != 1) {
+if (ids_properties.homogeneous_time != 1) {
 puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
 return (-99);
 }
@@ -1966,28 +1966,28 @@ for( i<xsl:value-of select = "@name"/>=0; i<xsl:value-of select = "@name"/> &lt;
 </xsl:choose>
 </xsl:when>
 
-<xsl:when test="@type='SIGNAL'">
+<xsl:when test="@type='dynamic'">
 //Doc Get <xsl:value-of select="@path"/>
 <xsl:choose>
 <xsl:when test="$variable_path">
-if (IDS_Properties.Homogeneous_Timebase == 0) {
+if (ids_properties.homogeneous_time == 0) {
 <xsl:choose>
-<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-timebasepath=<xsl:value-of select="$mds_path"/>+string(&quot;/Timebase&quot;);
+<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+timebasepath=<xsl:value-of select="$mds_path"/>+string(&quot;/time&quot;);
 </xsl:when>
 <xsl:otherwise>
-timebasepath=&quot;<xsl:call-template name="printTimebasepath"/>&quot;;
+timebasepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
 </xsl:otherwise>
 </xsl:choose>
 }  else  {
-timebasepath="Timebase";
+timebasepath="time";
 }
 </xsl:when>
 <xsl:otherwise>
-if (IDS_Properties.Homogeneous_Timebase == 0) {
-timebasepath="<xsl:call-template name="printTimebasepath"/>";
+if (ids_properties.homogeneous_time == 0) {
+timebasepath="<xsl:call-template name="printtimepath"/>";
 } else 
-timebasepath="Timebase";
+timebasepath="time";
 </xsl:otherwise>
 </xsl:choose>
 <xsl:choose>   
@@ -2857,7 +2857,7 @@ YBYB-->
 <xsl:param name="variable_path"/>
 <xsl:param name="mds_path"/>
 <xsl:param name="non_timed"/>
-<xsl:if test="$non_timed !='yes' or @type !='SIGNAL' or not(@type) or @data_type='structure' or @data_type='struct_array'">
+<xsl:if test="$non_timed !='yes' or @type !='dynamic' or not(@type) or @data_type='structure' or @data_type='struct_array'">
 	<xsl:choose>
 		<!--========== Regular structures ==========-->
 		<xsl:when test="@data_type='structure'">
@@ -2962,34 +2962,34 @@ if (status) return status;
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete[]doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									timebasepath="<xsl:call-template name="printtimepath"/>";
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete[]doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							}  else  {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 							delete[]doubleArray;
 							}
@@ -3011,28 +3011,28 @@ if (status) return status;
 					checkStatus(status);
 					if (status) return status;
           }
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 							delete [] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
-							beginIdsPutTimed(expIdx, path, dim1,Timebase);
+							doubleArray[_i] = time(_i);
+							beginIdsPutTimed(expIdx, path, dim1,time);
 							delete [] doubleArray;
 							}
 						</xsl:when>
@@ -3052,7 +3052,7 @@ if (status) return status;
 					checkStatus(status);
 					if (status) return status;
           }
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -3113,37 +3113,37 @@ YBYB-->
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							<!--XSLtest whether this is a Data/Timebase structure, otherwise assume that the Timebasepath attribute from IDSDef is correct-->
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0); 
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0); 
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
+									timebasepath="<xsl:call-template name="printtimepath"/>";
 									<!--  dim1= <xsl:value-of select = "translate($variable_path,'/','.')"/>.extent(0); -->
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0); 
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0); 
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] =<xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] =<xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0); 
+							timebasepath="time";
+							dim1= time.extent(0); 
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete [] doubleArray;
 							}
@@ -3163,27 +3163,27 @@ YBYB-->
 					checkStatus(status);
 					if (status) return status;
 
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0); 
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0); 
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0); 
+							timebasepath="time";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0); 
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -3202,7 +3202,7 @@ YBYB-->
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -3215,34 +3215,34 @@ YBYB-->
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+ string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+ string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete[] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									timebasepath="<xsl:call-template name="printtimepath"/>";
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete[] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -3261,27 +3261,27 @@ YBYB-->
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[]doubleArray;
 							}  else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[]doubleArray;
 							}
@@ -3298,7 +3298,7 @@ YBYB-->
 					intArray[_i] = <xsl:value-of select="translate(@path,'/','.')"/>(_i);
 					status = putVect1DInt(expIdx, path, clepath, (char *) timebasepath.c_str(), intArray, dim1, <xsl:call-template name="printIsTimed"/>);
 					delete[] intArray;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -3323,34 +3323,34 @@ if (status) return status;
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									timebasepath="<xsl:call-template name="printtimepath"/>";
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] =<xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] =<xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete [] doubleArray;
 							}
@@ -3371,27 +3371,27 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+							timebasepath="time";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -3412,7 +3412,7 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -3437,34 +3437,34 @@ if (status) return status;
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							<!--XSLtest whether this is a Data/Timebase structure, otherwise assume that the Timebasepath attribute from IDSDef is correct-->
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									timebasepath="<xsl:call-template name="printtimepath"/>";
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] =<xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] =<xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							dim1= Timebase.extent(0);
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete [] doubleArray;
 							}
@@ -3485,27 +3485,27 @@ if (status) return status;
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+							timebasepath="time";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -3526,7 +3526,7 @@ if (status) return status;
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -3538,36 +3538,36 @@ if (status) return status;
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							<!--XSLtest whether this is a Data/Timebase structure, otherwise assume that the Timebasepath attribute from IDSDef is correct-->
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
+									timebasepath="<xsl:call-template name="printtimepath"/>";
 									<!--  dim1= <xsl:value-of select = "translate($variable_path,'/','.')"/>.extent(0); -->
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] =<xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] =<xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 							delete [] doubleArray;
 							}
@@ -3590,27 +3590,27 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+							timebasepath="time";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -3634,7 +3634,7 @@ if (status) return status;
 					checkStatus(status);
 					if (status) return status;
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -3662,36 +3662,36 @@ if (status) return status;
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							<!--XSLtest whether this is a Data/Timebase structure, otherwise assume that the Timebasepath attribute from IDSDef is correct-->
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
+									timebasepath="<xsl:call-template name="printtimepath"/>";
 									<!--  dim1= <xsl:value-of select = "translate($variable_path,'/','.')"/>.extent(0); -->
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] =<xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] =<xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 							delete [] doubleArray;
 							}
@@ -3714,27 +3714,27 @@ if (status) return status;
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+							timebasepath="time";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -3758,7 +3758,7 @@ if (status) return status;
 					checkStatus(status);
 					if (status) return status;
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -3770,36 +3770,36 @@ if (status) return status;
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							<!--XSLtest whether this is a Data/Timebase structure, otherwise assume that the Timebasepath attribute from IDSDef is correct-->
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
+									timebasepath="<xsl:call-template name="printtimepath"/>";
 									<!--  dim1= <xsl:value-of select = "translate($variable_path,'/','.')"/>.extent(0); -->
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] =<xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] =<xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 							delete [] doubleArray;
 							}
@@ -3824,27 +3824,27 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+							timebasepath="time";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -3869,7 +3869,7 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -3917,36 +3917,36 @@ if (status) return status;
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							<!--XSLtest whether this is a Data/Timebase structure, otherwise assume that the Timebasepath attribute from IDSDef is correct-->
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
+									timebasepath="<xsl:call-template name="printtimepath"/>";
 									<!--  dim1= <xsl:value-of select = "translate($variable_path,'/','.')"/>.extent(0); -->
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] =<xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] =<xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 							delete [] doubleArray;
 							}
@@ -3973,27 +3973,27 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+							timebasepath="time";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -4020,7 +4020,7 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -4075,35 +4075,35 @@ if (status) return status;
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							<!--XSLtest whether this is a Data/Timebase structure, otherwise assume that the Timebasepath attribute from IDSDef is correct-->
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-									timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
-									dim1= <xsl:value-of select="concat($variable_path,'.Timebase')"/>.extent(0);
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
+									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.Timebase')"/>(_i);
+									doubleArray[_i] = <xsl:value-of select="concat($variable_path,'.time')"/>(_i);
 									beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:when>
 								<xsl:otherwise>
-									timebasepath="<xsl:call-template name="printTimebasepath"/>";
-									dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+									timebasepath="<xsl:call-template name="printtimepath"/>";
+									dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 									doubleArray = new double[dim1];
 									for(_i = 0; _i &lt;  dim1; _i++)
-									doubleArray[_i] =<xsl:call-template name="printTimebasevariable"/>(_i);
+									doubleArray[_i] =<xsl:call-template name="printtimevariable"/>(_i);
 									beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 									delete [] doubleArray;
 								</xsl:otherwise>
 							</xsl:choose>
 							} else {
-							timebasepath="Timebase";
-							dim1= Timebase.extent(0);
+							timebasepath="time";
+							dim1= time.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = Timebase(_i);
+							doubleArray[_i] = time(_i);
 							beginIdsPutTimed(expIdx, path,dim1,doubleArray);
 							delete [] doubleArray;
 							}
@@ -4132,27 +4132,27 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:choose>
-						<xsl:when test="@type='SIGNAL'">
-							if (IDS_Properties.Homogeneous_Timebase == 0) {
-							timebasepath="<xsl:call-template name="printTimebasepath"/>";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+						<xsl:when test="@type='dynamic'">
+							if (ids_properties.homogeneous_time == 0) {
+							timebasepath="<xsl:call-template name="printtimepath"/>";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							} else {
-							timebasepath="Timebase";
-							dim1= <xsl:call-template name="printTimebasevariable"/>.extent(0);
+							timebasepath="time";
+							dim1= <xsl:call-template name="printtimevariable"/>.extent(0);
 							doubleArray = new double[dim1];
 							for(_i = 0; _i &lt;  dim1; _i++)
-							doubleArray[_i] = <xsl:call-template name="printTimebasevariable"/>(_i);
+							doubleArray[_i] = <xsl:call-template name="printtimevariable"/>(_i);
 							beginIdsPutTimed(expIdx, path, dim1,doubleArray);
 							delete[] doubleArray;
 							}
@@ -4181,7 +4181,7 @@ if (status) return status;
 					delete[] doubledoubleArrayArray;
 					checkStatus(status);
 					if (status) return status;
-					<xsl:if test="@type='SIGNAL'">
+					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
 				</xsl:otherwise>
@@ -5042,28 +5042,28 @@ if (status) return status;
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:when>
-	<xsl:when test="@type='SIGNAL'">
+	<xsl:when test="@type='dynamic'">
 		//Doc GetSlice2 <xsl:value-of select="@path"/>
 		<xsl:choose>
 			<xsl:when test="$variable_path">
-				if (IDS_Properties.Homogeneous_Timebase == 0) {
+				if (ids_properties.homogeneous_time == 0) {
 				<xsl:choose>
-					<xsl:when test="(@name='Data' and ../field[@name='Timebase']) or (@name='Timebase' and ../field[@name='Data'])">
-						timebasepath=<xsl:value-of select="$mds_path"/>+string("/Timebase");
+					<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+						timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 					</xsl:when>
 					<xsl:otherwise>
-						timebasepath="<xsl:call-template name="printTimebasepath"/>";
+						timebasepath="<xsl:call-template name="printtimepath"/>";
 					</xsl:otherwise>
 				</xsl:choose>
 				}  else  {
-				timebasepath="Timebase";
+				timebasepath="time";
 				}
 			</xsl:when>
 			<xsl:otherwise>
-				if (IDS_Properties.Homogeneous_Timebase == 0) {
-				timebasepath="<xsl:call-template name="printTimebasepath"/>";
+				if (ids_properties.homogeneous_time == 0) {
+				timebasepath="<xsl:call-template name="printtimepath"/>";
 				} else 
-				timebasepath="Timebase";
+				timebasepath="time";
 			</xsl:otherwise>
 		</xsl:choose>
 		<xsl:choose>   
@@ -5398,7 +5398,7 @@ strcpy(clepath, lepath.c_str());-->
 <xsl:template match="field" mode="PUT_SLICE">
 <xsl:param name="variable_path"/>
 <xsl:param name="mds_path"/>
-<xsl:if test="@type ='SIGNAL' or @data_type='structure' or @data_type='struct_array'">
+<xsl:if test="@type ='dynamic' or @data_type='structure' or @data_type='struct_array'">
 	<xsl:choose>
 		<!--========== Regular structures ==========-->
 		<xsl:when test="@data_type='structure'">
@@ -5477,14 +5477,14 @@ if (status) return status;
 				        if(<xsl:value-of select="concat($variable_path,'.',@name)"/>.data()) {
 					lepath =  <xsl:value-of select="$mds_path"/>+string("/<xsl:value-of select="@name"/>");
 					clepath = const_cast&lt;char *&gt; (lepath.c_str());
-					status = putStringSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), (char *)<xsl:value-of select="concat($variable_path,'.',@name)"/>.data(), Timebase(0));
+					status = putStringSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), (char *)<xsl:value-of select="concat($variable_path,'.',@name)"/>.data(), time(0));
 					checkStatus(status);
 					if (status) return status;
 					}
 				</xsl:when>
 				<xsl:otherwise>
 					if()<xsl:value-of select="@name"/>,data()) {
-					status= putStringSlice(expIdx,path, "<xsl:value-of select="@name"/>", (char *)timebasepath.c_str(),(char *)<xsl:value-of select="@name"/>,data(),Timebase(0));
+					status= putStringSlice(expIdx,path, "<xsl:value-of select="@name"/>", (char *)timebasepath.c_str(),(char *)<xsl:value-of select="@name"/>,data(),time(0));
 					checkStatus(status);
 					if (status) return status;
 					}
@@ -5500,14 +5500,14 @@ if (status) return status;
 					lepath =  <xsl:value-of select="$mds_path"/>+string("/<xsl:value-of select="@name"/>");
 					clepath = const_cast&lt;char *&gt; (lepath.c_str());
 					if(<xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0) >0 ){
-					status = putDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), <xsl:value-of select="concat($variable_path,'.',@name)"/>(0), Timebase(0));
+					status = putDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), <xsl:value-of select="concat($variable_path,'.',@name)"/>(0), time(0));
 					checkStatus(status);
 					if (status) return status;
 					}
 				</xsl:when>
 				<xsl:otherwise>
 					if(<xsl:value-of select="translate(@path,'/','.')"/>.extent(0) > 0){
-					status = putDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", (char *)timebasepath.c_str(), <xsl:value-of select="translate(@path,'/','.')"/>(0), Timebase(0));
+					status = putDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", (char *)timebasepath.c_str(), <xsl:value-of select="translate(@path,'/','.')"/>(0), time(0));
 					checkStatus(status);
 					if (status) return status;
 					}
@@ -5523,14 +5523,14 @@ if (status) return status;
 					lepath =  <xsl:value-of select="$mds_path"/>+string("/<xsl:value-of select="@name"/>");
 					clepath = const_cast&lt;char *&gt; (lepath.c_str());
 					if( <xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0) > 0) {
-					status = putIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), <xsl:value-of select="concat($variable_path,'.',@name)"/>(0), Timebase(0));
+					status = putIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), <xsl:value-of select="concat($variable_path,'.',@name)"/>(0), time(0));
 					checkStatus(status);
 					if (status) return status;
 					}
 				</xsl:when>
 				<xsl:otherwise>
 					if( <xsl:value-of select="translate(@path,'/','.')"/>.extent(0) > 0) {
-					status = putIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", (char *)timebasepath.c_str(),<xsl:value-of select="translate(@path,'/','.')"/>(0) , Timebase(0));
+					status = putIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", (char *)timebasepath.c_str(),<xsl:value-of select="translate(@path,'/','.')"/>(0) , time(0));
 					checkStatus(status);
 					if (status) return status;
 					}
@@ -5551,7 +5551,7 @@ if (status) return status;
 					for(_i = 0; _i &lt;  dim1; _i++)
 					for(_j = 0; _j &lt;  dim2; _j++)
 					doubleArray[_i+_j*dim1] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i,_j);
-					status = putVect1DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(),doubleArray, dim1, Timebase(0));
+					status = putVect1DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(),doubleArray, dim1, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5565,7 +5565,7 @@ if (status) return status;
 					for(_i = 0; _i &lt;  dim1; _i++)
 					for(_j = 0; _j &lt;  dim2; _j++)
 					doubleArray[_i+_j*dim1] = <xsl:value-of select="translate(@path,'/','.')"/>(_i,_j);
-					status = putVect1DDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", (char *)timebasepath.c_str(),doubleArray, dim1, Timebase(0));
+					status = putVect1DDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", (char *)timebasepath.c_str(),doubleArray, dim1, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5588,7 +5588,7 @@ if (status) return status;
 					for(_i = 0; _i &lt;  dim1; _i++)
 					for(_j = 0; _j &lt;  dim2; _j++)
 					intArray[_i+_j*dim1] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i,_j);
-					status = putVect1DIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(),intArray, dim1, Timebase(0));
+					status = putVect1DIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(),intArray, dim1, time(0));
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5602,7 +5602,7 @@ if (status) return status;
 					for(_i = 0; _i &lt;  dim1; _i++)
 					for(_j = 0; _j &lt;  dim2; _j++)
 					intArray[_i+_j*dim1] = <xsl:value-of select="translate(@path,'/','.')"/>(_i,_j);
-					status = putVect1DIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", (char *)timebasepath.c_str(),intArray, dim1, Timebase(0));
+					status = putVect1DIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", (char *)timebasepath.c_str(),intArray, dim1, time(0));
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5626,7 +5626,7 @@ if (status) return status;
 					for(_j = 0; _j &lt;  dim2; _j++)
 					for(_k = 0; _k &lt;  dim3; _k++)
 					doubleArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k);
-					status = putVect2DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, Timebase(0));
+					status = putVect2DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5642,7 +5642,7 @@ if (status) return status;
 					for(_j = 0; _j &lt;  dim2; _j++)
 					for(_k = 0; _k &lt;  dim3; _k++)
 					doubleArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select = "translate(@path,'/','.')"/>(_i, _j, _k);
-					status = putVect2DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>",(char *)timebasepath.c_str(), doubleArray, dim1, dim2, Timebase(0));
+					status = putVect2DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>",(char *)timebasepath.c_str(), doubleArray, dim1, dim2, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5666,7 +5666,7 @@ if (status) return status;
 					for(_j = 0; _j &lt;  dim2; _j++)
 					for(_k = 0; _k &lt;  dim3; _k++)
 					intArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k);
-					status = putVect2DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), intArray, dim1, dim2, Timebase(0));
+					status = putVect2DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), intArray, dim1, dim2, time(0));
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5682,7 +5682,7 @@ if (status) return status;
 					for(_j = 0; _j &lt;  dim2; _j++)
 					for(_k = 0; _k &lt;  dim3; _k++)
 					intArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select = "translate(@path,'/','.')"/>(_i, _j, _k);
-					status = putVect2DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>",(char *)timebasepath.c_str(), intArray, dim1, dim2, Timebase(0));
+					status = putVect2DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>",(char *)timebasepath.c_str(), intArray, dim1, dim2, time(0));
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5708,7 +5708,7 @@ if (status) return status;
 					for(_k = 0; _k &lt;  dim3; _k++)
 					for(_h = 0; _h &lt;  dim4; _h++)
 					doubleArray[_i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k, _h);
-					status = putVect3DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, Timebase(0));
+					status = putVect3DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5726,7 +5726,7 @@ if (status) return status;
 					for(_k = 0; _k &lt;  dim3; _k++)
 					for(_h = 0; _h &lt;  dim4; _h++)
 					doubleArray[_i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3] = <xsl:value-of select = "translate(@path,'/','.')"/>(_i, _j, _k, _h);
-					status = putVect3DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>", (char *)timebasepath.c_str(),doubleArray, dim1, dim2, dim3, Timebase(0));
+					status = putVect3DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>", (char *)timebasepath.c_str(),doubleArray, dim1, dim2, dim3, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5754,7 +5754,7 @@ if (status) return status;
 					for(_h = 0; _h &lt;  dim4; _h++)
 					for(_l = 0; _l &lt;  dim5; _l++)
 					doubleArray[i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3+_l*dim1*dim2*dim3*dim4] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k, _h, _l);
-					status = putVect4DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, dim4, Timebase(0));
+					status = putVect4DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, dim4, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5774,7 +5774,7 @@ if (status) return status;
 					for(_h = 0; _h &lt;  dim4; _h++)
 					for(_l = 0; _l &lt;  dim5; _l++)
 					doubleArray[i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3+_l*dim1*dim2*dim3*dim4] = <xsl:value-of select = "translate(@path,'/','.')"/>(_i, _j, _k, _h, _l);
-					status = putVect4DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>", (char *)timebasepath.c_str(),doubleArray, dim1, dim2, dim3, dim4, Timebase(0));
+					status = putVect4DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>", (char *)timebasepath.c_str(),doubleArray, dim1, dim2, dim3, dim4, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5804,7 +5804,7 @@ if (status) return status;
 					for(_l = 0; _l &lt;  dim5; _l++)
 					for(_m = 0; _m &lt;  dim6; _m++)
 					doubleArray[_i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3+_l*dim1*dim2*dim3*dim4+_m*dim1*dim2*dim3*dim4*dim5] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k, _h, _l, _m);
-					status = putVect5DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, dim4, dim5, Timebase(0));
+					status = putVect5DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, dim4, dim5, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5819,7 +5819,7 @@ if (status) return status;
 					dim5 = <xsl:value-of select = "translate(@path,'/','.')"/>.extent(4);
 					dim6 = 1;
 					doubleArray[_i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3+_l*dim1*dim2*dim3*dim4+_m*dim1*dim2*dim3*dim4*dim5] = <xsl:value-of select = "translate(@path,'/','.')"/>(_i, _j, _k, _h, _l, _m);
-					status = putVect5DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>",(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, dim4, dim5, Timebase(0));
+					status = putVect5DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>",(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, dim4, dim5, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
@@ -6857,73 +6857,73 @@ if (status) return status;
 </xsl:choose>
 </xsl:template>
 
-<xsl:template name="printTimebasepath">
-<xsl:if test="@type = 'SIGNAL'">
+<xsl:template name="printtimepath">
+<xsl:if test="@type = 'dynamic'">
 	<xsl:choose>
-		<xsl:when test="contains(@axis7,'Timebase')">
-			<xsl:value-of select="@axis7"/>
+		<xsl:when test="contains(@coordinate7,'time')">
+			<xsl:value-of select="@coordinate7"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis6,'Timebase')">
-			<xsl:value-of select="@axis6"/>
+		<xsl:when test="contains(@coordinate6,'time')">
+			<xsl:value-of select="@coordinate6"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis5,'Timebase')">
-			<xsl:value-of select="@axis5"/>
+		<xsl:when test="contains(@coordinate5,'time')">
+			<xsl:value-of select="@coordinate5"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis4,'Timebase')">
-			<xsl:value-of select="@axis4"/>
+		<xsl:when test="contains(@coordinate4,'time')">
+			<xsl:value-of select="@coordinate4"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis3,'Timebase')">
-			<xsl:value-of select="@axis3"/>
+		<xsl:when test="contains(@coordinate3,'time')">
+			<xsl:value-of select="@coordinate3"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis2,'Timebase')">
-			<xsl:value-of select="@axis2"/>
+		<xsl:when test="contains(@coordinate2,'time')">
+			<xsl:value-of select="@coordinate2"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis1,'Timebase')">
-			<xsl:value-of select="@axis1"/>
+		<xsl:when test="contains(@coordinate1,'time')">
+			<xsl:value-of select="@coordinate1"/>
 		</xsl:when>
 	</xsl:choose>
 </xsl:if>
-<xsl:if test="@name='Timebase'">
+<xsl:if test="@name='time'">
 	<xsl:value-of select="@path"/>
 </xsl:if>
-<!-- If the field itself IS Timebase, then it is its own time axis -->
+<!-- If the field itself IS time, then it is its own time coordinate -->
 </xsl:template>
 
-<xsl:template name="printTimebasevariable">
-<xsl:if test="@type = 'SIGNAL'">
+<xsl:template name="printtimevariable">
+<xsl:if test="@type = 'dynamic'">
 	<xsl:choose>
-		<xsl:when test="contains(@axis7,'Timebase')">
-			<xsl:value-of select="translate(@axis7,'/','.')"/>
+		<xsl:when test="contains(@coordinate7,'time')">
+			<xsl:value-of select="translate(@coordinate7,'/','.')"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis6,'Timebase')">
-			<xsl:value-of select="translate(@axis6,'/','.')"/>
+		<xsl:when test="contains(@coordinate6,'time')">
+			<xsl:value-of select="translate(@coordinate6,'/','.')"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis5,'Timebase')">
-			<xsl:value-of select="translate(@axis5,'/','.')"/>
+		<xsl:when test="contains(@coordinate5,'time')">
+			<xsl:value-of select="translate(@coordinate5,'/','.')"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis4,'Timebase')">
-			<xsl:value-of select="translate(@axis4,'/','.')"/>
+		<xsl:when test="contains(@coordinate4,'time')">
+			<xsl:value-of select="translate(@coordinate4,'/','.')"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis3,'Timebase')">
-			<xsl:value-of select="translate(@axis3,'/','.')"/>
+		<xsl:when test="contains(@coordinate3,'time')">
+			<xsl:value-of select="translate(@coordinate3,'/','.')"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis2,'Timebase')">
-			<xsl:value-of select="translate(@axis2,'/','.')"/>
+		<xsl:when test="contains(@coordinate2,'time')">
+			<xsl:value-of select="translate(@coordinate2,'/','.')"/>
 		</xsl:when>
-		<xsl:when test="contains(@axis1,'Timebase')">
-			<xsl:value-of select="translate(@axis1,'/','.')"/>
+		<xsl:when test="contains(@coordinate1,'time')">
+			<xsl:value-of select="translate(@coordinate1,'/','.')"/>
 		</xsl:when>
 	</xsl:choose>
 </xsl:if>
-<xsl:if test="@name='Timebase'">
+<xsl:if test="@name='time'">
 	<xsl:value-of select="translate(@path,'/','.')"/>
 </xsl:if>
-<!-- If the field itself IS Timebase, then it is its own time axis -->
+<!-- If the field itself IS time, then it is its own time coordinate -->
 </xsl:template>
 
 <xsl:template name="printIsTimed">
 <xsl:choose>
-	<xsl:when test="@type = 'SIGNAL'">
+	<xsl:when test="@type = 'dynamic'">
 		<xsl:value-of select="1"/>
 	</xsl:when>
 	<xsl:otherwise>
