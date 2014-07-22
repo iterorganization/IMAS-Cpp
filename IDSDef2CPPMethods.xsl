@@ -310,7 +310,9 @@ int IDS::<xsl:value-of select="@name"/>::get()
 {
 if(!connected) return -1;
 double *times, double0d;
-int i, _i, numSamples, dim1, dim2, dim3, dim4, dim5, dim6, dim7, status, int0d;
+void * obj_all_times;
+int i, _i, numSamples,dim1, dim2, dim3, dim4, dim5, dim6, dim7, status, int0d;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 char **stringArray;
 double *doubleArray;
@@ -331,7 +333,9 @@ int IDS::<xsl:value-of select="@name"/>::get(int idx)
 {
 if(!connected) return -1;
 double *times, double0d;
+void * obj_all_times;
 int i, _i, numSamples, dim1, dim2, dim3, dim4, dim5, dim6, dim7, status, int0d;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 char **stringArray;
 double *doubleArray;
@@ -357,12 +361,13 @@ int IDS::<xsl:value-of select="@name"/>::put()
 {
 if(!connected) return -1;
 int status, dim1, dim2, dim3, dim4, dim5, dim6, dim7, _i, _j, _k, _h, _l, _m, _n;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 double *doubleArray;
 int *intArray;
 char **stringArray;
 char *path = "<xsl:value-of select="@name"/>";
 char *clepath;
-string lepath;
+string lepath, timepath;
 string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 deleteAll();
@@ -378,13 +383,14 @@ int IDS::<xsl:value-of select="@name"/>::put(int idx)
 {
 if(!connected) return -1;
 int status, dim1, dim2, dim3, dim4, dim5, dim6, dim7, _i, _j, _k, _h, _l, _m, _n, h;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 double *doubleArray;
 int *intArray;
 char **stringArray;
 char *basePath = "<xsl:value-of select="@name"/>";
 char path[strlen(basePath)+4];
 char *clepath;
-string lepath;
+string lepath,  timepath;
 string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 if(idx &lt; 1)
@@ -404,6 +410,7 @@ int IdsNs::IDS::<xsl:value-of select="@name"/>::putSlice(int idx)
 {
 if(!connected) return -1;
 int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray;
 int _i, _j, _k, _h, _l, _m, _n;
@@ -411,7 +418,7 @@ char *str;
 char *basePath = "<xsl:value-of select="@name"/>";
 char path[strlen(basePath)+4];
 char *clepath;
-string lepath;
+string lepath, timepath;
 string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 if(idx &lt; 1)
@@ -423,7 +430,7 @@ if (ids_properties.homogeneous_time != 1) {
 puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
 return (-99);
 }
-timebasepath = "timebase";
+timebasepath = "time";
 int status = beginIdsPutSlice(expIdx,  path);
 checkStatus(status);
 if(status) return status;
@@ -436,6 +443,7 @@ int IdsNs::IDS::<xsl:value-of select="@name"/>::putSlice()
 {
 if(!connected) return -1;
 int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray;
 int _i, _j, _k, _h, _l, _m, _n;
@@ -450,7 +458,7 @@ if (ids_properties.homogeneous_time != 1) {
 puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
 return (-99);
 }
-timebasepath = "timebase";
+timebasepath = "time";
 int status = beginIdsPutSlice(expIdx,  "<xsl:value-of select="@name"/>");
 checkStatus(status);
 if(status) return status;
@@ -516,9 +524,10 @@ return 0;
 int IdsNs::IDS::<xsl:value-of select="@name"/>::putNonTimed()
 {
 if(!connected) return -1;
-string lepath, timebasepath;
+string lepath, timebasepath, timepath;
 char * clepath;
 int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray;
 int _i, _j, _k, _h, _l, _m, numSamples;
@@ -541,9 +550,10 @@ return 0;
 int IdsNs::IDS::<xsl:value-of select="@name"/>::putNonTimed(int idx)
 {
 if(!connected) return -1;
-string lepath, timebasepath;
+string lepath, timebasepath, timepath;
 char * clepath;
 int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray;
 int _i, _j, _k, _h, _l, _m, numSamples;
@@ -572,12 +582,13 @@ int IdsNs::IDS::<xsl:value-of select="@name"/>::getSlice(double inTime, char int
 {
 if(!connected) return -1;
 int dim1, dim2, dim3, dim4, dim5, dim6, dim7, _i, int0d, numDims;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray, double0d;
 char **stringArray;
 char *str;
 char *clepath;
-string timebasepath;
+string timepath,timebasepath;
 string lepath; <xsl:for-each select=".//field[@data_type='struct_array']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 char *path = "<xsl:value-of select="@name"/>";
@@ -594,12 +605,13 @@ int IdsNs::IDS::<xsl:value-of select="@name"/>::getSlice(int idx, double inTime,
 {
 if(!connected) return -1;
 int dim1, dim2, dim3, dim4, dim5, dim6,  dim7, _i, int0d, numDims;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray, double0d;
 char **stringArray;
 char *str;
 char *clepath;
-string timebasepath;
+string timepath,timebasepath;
 string lepath; <xsl:for-each select=".//field[@data_type='struct_array']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 char *basePath = "<xsl:value-of select="@name"/>";
@@ -664,7 +676,7 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
 	</xsl:when>
 	<!--========== Arrays of structures ==========-->
-	<xsl:when test="@data_type='struct_array'">
+  <xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'"> 
 		<xsl:choose>
 			<xsl:when test="$mds_path">
 				for (i<xsl:value-of select="@name"/> = 0;i<xsl:value-of select="@name"/>&lt;<xsl:value-of select="@maxoccur"/>; i<xsl:value-of select="@name"/>++){
@@ -825,7 +837,8 @@ See IDSDef2Classes.xsl  -->
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:when>
-	<xsl:when test="@data_type='struct_array'">
+  <xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded' ">
+    <!-- Type 1 arrays of structure, with potentially multiple time bases -->
 		// Doc  Get <xsl:value-of select="@path"/>
 		<xsl:choose>
 			<xsl:when test="$variable_path">
@@ -875,6 +888,67 @@ releaseObject(expIdx,obj1);
 }
 -->
 	</xsl:when>
+  <xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
+    <!-- Type 3 arrays of structure, with a unique time base -->
+    <xsl:choose>
+      <xsl:when test="$variable_path">
+        // Structure array of type 3 nested below a Type 1 : <xsl:value-of select = "concat($variable_path,'%',@name)"/>
+        lepath = <xsl:value-of select="$mds_path"/>  + string("/<xsl:value-of select="@name"/>");
+        clepath = const_cast&lt;char *&gt; (lepath.c_str());
+        status = getObject(expIdx, path, clepath, &amp;obj_all_times, TIMED); // read the whole non-timed block
+				checkStatus(status);
+        if(!status) {
+          dim1 = getObjectDim(expIdx,obj_all_times);
+          <xsl:value-of select="concat($variable_path,'.',@name)"/>.resize(dim1);
+          //if (ual_debug =='yes') write(*,*) &amp; 'Get ids%<xsl:value-of select = "concat($variable_path,'%',@name)"/>, lentime =', lentime
+          for (int i1 = 0; i1 &lt; dim1; i1++) {  // fill every time slice
+          void *obj1;
+          status = getObjectFromObject(expIdx,obj_all_times, "ALLTIMES", i1, &amp;obj1);  // extract a single time
+          checkStatus(status);
+           if (!status) {
+          <xsl:apply-templates select = "field" mode = "GET_FROM_OBJECT">
+            <xsl:with-param name="level" select="1"/>
+            <xsl:with-param name="objpath" select="@name"/>
+            <xsl:with-param name="idxpath" select="concat($variable_path,'.',@name,'(i1)')"/>
+            <xsl:with-param name="timed" select="'yes'"/>
+          </xsl:apply-templates>
+          }
+          }
+          releaseObject(expIdx,obj_all_times);
+          }
+        </xsl:when>
+      <xsl:otherwise>
+        //Structure array of type 3 : <xsl:value-of select = "@path"/>
+        status = getObject(expIdx, path, "<xsl:value-of select = "@path"/>", &amp;obj_all_times, TIMED); // read the whole non-timed block
+        if(!status) {
+          dim1 = getObjectDim(expIdx,obj_all_times);
+          <xsl:value-of select="translate(@path,'/','.')"/>.resize(dim1);
+
+          //  YBYB14 if (ual_debug =='yes') write(*,*) &amp; 'Get ids%<xsl:value-of select="translate(@path,'/','%')"/>, lentime =', lentime
+          for (int i1 = 0; i1 &lt; dim1; i1++) {  // fill every time slice
+          void *obj1;
+          status = getObjectFromObject(expIdx,obj_all_times, "ALLTIMES", i1, &amp;obj1);  // extract a single time
+          checkStatus(status);
+           if (!status) {
+            <xsl:apply-templates select = "field" mode = "GET_FROM_OBJECT">
+            <xsl:with-param name="level" select="1"/>
+            <xsl:with-param name="objpath" select="@name"/>
+            <xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(i1)')"/>
+            <xsl:with-param name="timed" select="'yes'"/>
+          </xsl:apply-templates>
+          }
+          }
+          releaseObject(expIdx,obj_all_times);
+          }
+
+        </xsl:otherwise>
+        </xsl:choose>
+      </xsl:when>
+
+
+
+
+
 	<xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
 		//Doc Get <xsl:value-of select="@path"/>
 		<xsl:choose>
@@ -1173,7 +1247,7 @@ free(doubleArray);
 </xsl:when>
 -->     
 	<xsl:when test="@data_type='FLT_4D'">
-		//Doc Get <xsl:value-of select="@path"/>
+		//Doc GetICI <xsl:value-of select="@path"/>
 		<xsl:choose>
 			<xsl:when test="$variable_path">
 				lepath =  <xsl:value-of select="$mds_path"/>+string("/<xsl:value-of select="@name"/>");
@@ -1181,7 +1255,9 @@ free(doubleArray);
 				status = getVect4DDouble(expIdx, path, clepath, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4);
 				checkStatus(status);
 				if(!status) {
-				setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4);
+        //1OK
+         setArray(<xsl:value-of select="concat($variable_path,'.',@name)"/>,doubleArray, dim1, dim2, dim3,dim4);
+         //setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4);
 				free(doubleArray);
 				}
 			</xsl:when>
@@ -1191,6 +1267,7 @@ free(doubleArray);
 				status = getVect4DDouble(expIdx, path, clepath, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4);
 				checkStatus(status);
 				if(!status) {
+        //2OK
 				setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4);
 				free(doubleArray);
 				}
@@ -1870,748 +1947,38 @@ YBYB-->
 <!--=================================================-->
 <!--               get field from a slice            -->
 <!--=================================================-->
-<!--YBYBGETSLICE -->
-<xsl:template match="field" mode="GET_SLICE">
-<xsl:choose>
-	<xsl:when test="@data_type='structure'">
-		<xsl:apply-templates select="field" mode="GET_SLICE"/>
-	</xsl:when>
-	<xsl:otherwise>
-		<xsl:choose>
-			<xsl:when test="@timed = 'yes'">
-				<xsl:choose>
-					<xsl:when test="@data_type='struct_array'">
-						// Doc  GetSlice <xsl:value-of select="@path"/>
-						{ /*     Timed array of structure     */
-						/*    Read timed content    */
-						void *obj_single_time;
-						void *obj1;
-						/* timed arrays of structures are included inside a time container, even if there is a single time */
-						status = getObjectSlice(expIdx, path, "<xsl:value-of select="@path"/>", inTime, &amp;obj_single_time); // read the whole timed block
-						checkStatus(status);
-						if (!status) {
-						//status = getObjectFromObject(expIdx,obj_single_time,"ALLTIMES",0,&amp;obj1);
-						status = getObjectFromObject(expIdx,obj_single_time,"ALLTIMES",1,&amp;obj1);
-						checkStatus(status);
-						if (!status) {
-						<xsl:value-of select="translate(@path,'/','.')"/>.resize(getObjectDim(expIdx,obj1));
-						for (int i1 = 0; i1 &lt; getObjectDim(expIdx,obj1); i1++) {     // process array elements
-						<xsl:apply-templates select="field" mode="GET_FROM_OBJECT">
-							<xsl:with-param name="level" select="1"/>
-							<xsl:with-param name="objpath" select="@name"/>
-							<xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(i1)')"/>
-							<xsl:with-param name="timed" select="'yes'"/>
-						</xsl:apply-templates>
-						}
-						}
-						releaseObject(expIdx,obj_single_time);
-						}
-						/*    Read non-timed content    */
-						status = getObject(expIdx, path, "<xsl:value-of select="@path"/>", &amp;obj1,0); // read the whole non-timed block
-						checkStatus(status);
-						if (!status) {
-						// must have same number of non-timed elements and timed elements
-						if (getObjectDim(expIdx,obj1) != 0 &amp;&amp; <xsl:value-of select="translate(@path,'/','.')"/>.extent(0) != getObjectDim(expIdx,obj1)) {
-						printf("Error in getSlice: array of structures has different number of timed and nontimed elements for <xsl:value-of select="@path"/>\n");
-						return -1;
-						}
-						for (int i1 = 0; i1 &lt; getObjectDim(expIdx,obj1); i1++) {  // process array elements
-						<xsl:apply-templates select="field" mode="GET_FROM_OBJECT">
-							<xsl:with-param name="level" select="1"/>
-							<xsl:with-param name="objpath" select="@name"/>
-							<xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(i1)')"/>
-							<xsl:with-param name="timed" select="'no'"/>
-						</xsl:apply-templates>
-						}
-						releaseObject(expIdx,obj1);
-						}
-					</xsl:when>
-					<!--
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath = <xsl:value-of select="$mds_path"/>  + string(&quot;/<xsl:value-of select="@name"/>/Shape_of&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-status = getInt(expIdx,path, clepath,&amp;int0d);
-delete [] clepath;
-if (status == 0) {
-//   allocate(IDS%<xsl:value-of select = "concat($variable_path,'%',@name)"/>(int0d));
-<xsl:value-of select = "concat($variable_path,'.',@name)"/>.resize(int0d);
-for (i<xsl:value-of select = "@name"/>=0; i<xsl:value-of select = "@name"/>&lt;<xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0); i<xsl:value-of select = "@name"/>++) {
-
-<xsl:apply-templates select = "field" mode = "GET_SLICE">
-<xsl:with-param name ="variable_path" select="concat($variable_path,'.',@name,'(i',@name,')')"/>
-<xsl:with-param name="mds_path" select="concat($mds_path,'+','string(&quot;/',@name,'/&quot;) + int2str(i',@name,',1)')"/>
-</xsl:apply-templates>
-}
-}
-</xsl:when>
-<xsl:otherwise>
-status= getInt(expIdx,path, &quot;<xsl:value-of select="@name"/>/Shape_of&quot;,&amp;int0d);
-if (status == 0) {
-//  allocate(IDS%<xsl:value-of select = "@name"/>(int0d));
-<xsl:value-of select = "@name"/>.resize(int0d);
-
-for( i<xsl:value-of select = "@name"/>=0; i<xsl:value-of select = "@name"/> &lt;<xsl:value-of select = "@name"/>.extent(0); i<xsl:value-of select = "@name"/>++) {
-
-<xsl:apply-templates select = "field" mode = "GET_SLICE">
-<xsl:with-param name ="variable_path" select="concat(@name,'(i',@name,')')"/>
-<xsl:with-param name="mds_path" select="concat('&quot;',@name,'/&quot; + int2str(i',@name,',1)')"/>
-
-</xsl:apply-templates>
-}
-
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-<xsl:when test="@type='dynamic'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-if (ids_properties.homogeneous_time == 0) {
-<xsl:choose>
-<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
-timebasepath=<xsl:value-of select="$mds_path"/>+string(&quot;/time&quot;);
-</xsl:when>
-<xsl:otherwise>
-timebasepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
-</xsl:otherwise>
-</xsl:choose>
-}  else  {
-timebasepath="time";
-}
-</xsl:when>
-<xsl:otherwise>
-if (ids_properties.homogeneous_time == 0) {
-timebasepath="<xsl:call-template name="printtimepath"/>";
-} else 
-timebasepath="time";
-</xsl:otherwise>
-</xsl:choose>
-<xsl:choose>   
--->
-					<xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
-						//Get <xsl:value-of select="@path"/>
-						<!-- for comment only -->        
-						//TIME DEPENDENT STRINGS NOT TREATED YET !!!
-					</xsl:when>
-
-					<xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						status = getIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;<xsl:value-of select="translate(@path,'/','.')"/>, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-					</xsl:when>
-
-					<xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
-						status = getDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;<xsl:value-of select="translate(@path,'/','.')"/>, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-					</xsl:when>
-
-					<xsl:when test="@data_type='int_1d_type' or @data_type='INT_1D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect1DIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;intArray, &amp;dim1, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status) {
-						//        time = retTime;
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,intArray, dim1);
-						free(intArray);
-						}
-					</xsl:when>
-
-					<xsl:when test="@data_type='flt_1d_type' or @data_type='FLT_1D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect1DDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;doubleArray, &amp;dim1, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status)  {
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1);
-						//      time = retTime;
-						free(doubleArray);
-						}
-						}
-					</xsl:when>
-					<xsl:when test=" @data_type='FLT_2D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect2DDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;doubleArray, &amp;dim1, &amp;dim2, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status) {
-						//          time = retTime;
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1, dim2);
-						free(doubleArray);
-						}
-						}
-					</xsl:when>
-					<xsl:when test=" @data_type='INT_2D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect2DIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;intArray, &amp;dim1, &amp;dim2, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status) {
-						//         time = retTime;
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,intArray, dim1, dim2);
-						free(intArray);
-						}
-						}
-					</xsl:when>
-					<xsl:when test="@data_type='FLT_3D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect3DDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status) {
-						//          time = retTime;
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3);
-						free(doubleArray);
-						}
-						}
-					</xsl:when>
-					<xsl:when test="@data_type='INT_3D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect3DIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;intArray, &amp;dim1, &amp;dim2, &amp;dim3, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status) {
-						//        time = retTime;
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,intArray, dim1, dim2, dim3);
-						free(intArray);
-						}
-						}
-					</xsl:when>
-					<xsl:when test="@data_type='FLT_4D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect4DDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status) {
-						//     time = retTime;
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4);
-						free(doubleArray);
-						}
-						}
-					</xsl:when>
-					<xsl:when test="@data_type='FLT_5D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect5DDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status) {
-						//         time = retTime;
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4, dim5);
-						free(doubleArray);
-						}
-						}
-					</xsl:when>
-					<xsl:when test="@data_type='FLT_6D'">
-						//Doc GetSlice <xsl:value-of select="@path"/>
-						getDimension(expIdx, path, "<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-						if (dim1 &gt; 0) {
-						status = getVect6DDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, &amp;dim6, inTime, &amp;retTime, interpolMode);
-						checkStatus(status);
-						if(!status) {
-						//      time = retTime;
-						setArray(<xsl:value-of select="translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4, dim5, dim6);
-						free(doubleArray);
-						}
-						}
-					</xsl:when>
-					<xsl:otherwise>
-						//Doc GetSlice <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
-					</xsl:otherwise>
-				</xsl:choose>
-			</xsl:when>
-			<xsl:otherwise>
-				<!-- Get the data from a time-independent field (straightforward) -->
-				<!-- Elementary GET : same procedure as GET_SINGLE -->
-				<xsl:apply-templates select="." mode="GET_SINGLE"/>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:otherwise>
-</xsl:choose>
-</xsl:template>
-<!--   A SUIVRE GET_SLICE
-<xsl:when test="@data_type='str_1d_type' or @data_type='STR_1D'">
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getStringSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), stringArray, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-<xsl:value-of select="concat($variable_path,'.',@name)"/>(1).resize(dim1);
-
-for(_i = 0; _i &lt; dim1; _i++)
-<xsl:value-of select = "translate(@path,'/','.')"/>(_i).assign(stringArray[_i]);
-for(_i = 0; _i &lt; dim1; _i++)
-free(stringArray[_i]);
-free((char *)stringArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getStringSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), stringArray, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-<xsl:value-of select="@name"/>(1).resize(dim1);
-for(_i = 0; _i &lt; dim1; _i++)
-<xsl:value-of select="@name"/>(_i).assign(stringArray[_i]);
-for(_i = 0; _i &lt; dim1; _i++)
-free(stringArray[_i]);
-free((char *)stringArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-<xsl:when test="@data_type='flt_1d_type' or @data_type='FLT_1D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-printf("GetDoubleSlice dim1 %d\n",dim1);
-//  status = getDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), /*doubleArray*/<xsl:value-of select="concat($variable_path,'.',@name)"/> , inTime, &amp;retTime, interpolMode); 
-
-status = getVect1DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), &amp;doubleArray,&amp;dim1, inTime, &amp;retTime, interpolMode);
-printf("GetDoubleSliceafter dim1 %d\n",dim1);
-delete[] clepath;
-checkStatus(status);
-if(!status)  {
-
-string adel = &quot;<xsl:value-of select="concat($variable_path,'.',@name)"/>&quot;;
-printf("NAME %s\n",adel.c_str());
-
-setArray(<xsl:value-of select="concat($variable_path,'.',@name)"/>,doubleArray, dim1);
-//TIME    time = retTime;
-free(doubleArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-printf("GetDoubleSlice2 dim1 %d\n",dim1);
-//status = getDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), doubleArray, inTime, &amp;retTime, interpolMode);
-status = getVect1DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), &amp;doubleArray,&amp;dim1, inTime, &amp;retTime, interpolMode);
-printf("GetDoubleSlice2after dim1 %d\n",dim1);
-delete[] clepath;
-checkStatus(status);
-if(!status)  {
-
-string adel = &quot;<xsl:value-of select = "translate(@path,'/','.')"/>&quot;;
-printf("NAME2 %s\n",adel.c_str());
-
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,doubleArray, dim1);
-//TIME    time = retTime;
-free(doubleArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-
-</xsl:when>
-<xsl:when test="@data_type='int_1d_type' or @data_type='INT_1D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect1DIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;intArray, &amp;dim1, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select="concat($variable_path,'.',@name)"/>,intArray, dim1);
-free(intArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect1DIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;intArray, &amp;dim1, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,intArray, dim1);
-free(intArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-<xsl:when test="@data_type='FLT_2D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect2DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, inTime, &amp;retTime, interpolMode); 
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME          time = retTime;
-setArray(<xsl:value-of select="concat($variable_path,'.',@name)"/>,doubleArray, dim1, dim2);
-free(doubleArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect2DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,doubleArray, dim1, dim2);
-free(doubleArray);
-}
-}      
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-<xsl:when test="@data_type='INT_2D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect2DIntSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), &amp;intArray, &amp;dim1, &amp;dim2, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(,intArray, dim1, dim2);
-free(intArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect2DIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;intArray, &amp;dim1, &amp;dim2, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,intArray, dim1, dim2);
-free(intArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-<xsl:when test="@data_type='FLT_3D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect3DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select="concat($variable_path,'.',@name)"/>,doubleArray, dim1, dim2, dim3);
-free(doubleArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect3DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3);
-free(doubleArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-<xsl:when test="@data_type='INT_3D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect3DIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;intArray, &amp;dim1, &amp;dim2, &amp;dim3, inTime, &amp;retTime, interpolMode);
-delete [] clepath;
-checkStatus(status);
-if(!status) {
-//TIME           time = retTime;
-setArray(<value-of select="concat($variable_path,'.',@name)"/>,intArray, dim1, dim2, dim3);
-free(intArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect3DIntSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;intArray, &amp;dim1, &amp;dim2, &amp;dim3, inTime, &amp;retTime, interpolMode);
-delete [] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,intArray, dim1, dim2, dim3);
-free(intArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-<xsl:when test="@data_type='FLT_4D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect4DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME          time = retTime;
-setArray(<value-of select="concat($variable_path,'.',@name)"/>,doubleArray, dim1, dim2, dim3, dim4);
-free(doubleArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect4DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, inTime, &amp;retTime, interpolMode);
-delete[] clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4);
-free(doubleArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-
-<xsl:when test="@data_type='FLT_5D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect5DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, inTime, &amp;retTime, interpolMode);
-delete[]clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<value-of select="concat($variable_path,'.',@name)"/>,doubleArray, dim1, dim2, dim3, dim4, dim5);
-free(doubleArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect5DDoubleSlice(expIdx, path, clepath, (char *)timebathpath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, inTime, &amp;retTime, interpolMode);
-delete[]clepath;
-checkStatus(status);
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4, dim5);
-free(doubleArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
-<xsl:when test="@data_type='FLT_6D'">
-//Doc Get <xsl:value-of select="@path"/>
-<xsl:choose>
-<xsl:when test="$variable_path">
-lepath =  <xsl:value-of select="$mds_path"/>+string(&quot;/<xsl:value-of select="@name"/>&quot;);
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect6DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, &amp;dim6, inTime, &amp;retTime, interpolMode);
-checkStatus(status);
-delete[] clepath;
-if(!status) {
-//TIME         time = retTime;
-setArray(<value-of select="concat($variable_path,'.',@name)"/>,doubleArray, dim1, dim2, dim3, dim4, dim5, dim6);
-free(doubleArray);
-}
-}
-</xsl:when>
-<xsl:otherwise>
-lepath = &quot;<xsl:value-of select = "@name"/>&quot;;
-clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());
-getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
-if (dim1 > 0) {
-status = getVect6DDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, &amp;dim6, inTime, &amp;retTime, interpolMode);
-checkStatus(status);
-delete[] clepath;
-if(!status) {
-//TIME         time = retTime;
-setArray(<xsl:value-of select = "translate(@path,'/','.')"/>,doubleArray, dim1, dim2, dim3, dim4, dim5, dim6);
-free(doubleArray);
-}
-}
-</xsl:otherwise>
-</xsl:choose>
-</xsl:when>
-
--->
-<!-- GETSLICE
-
-<xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
-status = getIntSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;<xsl:value-of select = "translate(@path,'/','.')"/>, inTime, &amp;retTime, interpolMode);
-checkStatus(status);
-</xsl:when>
-
-
-<xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
-status = getStringSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;str, inTime, &amp;retTime, interpolMode);
-checkStatus(status);
-if(!status) 
-{
-<xsl:value-of select = "translate(@path,'/','.')"/>.assign(str);
-free(str);
-time = retTime;
-}
-</xsl:when>
-
-
-
-<xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
-status = getDoubleSlice(expIdx, path, "<xsl:value-of select="@path"/>", &amp;<xsl:value-of select = "translate(@path,'/','.')"/>, inTime, &amp;retTime, interpolMode);
-checkStatus(status);
-</xsl:when>
-
-
-<xsl:otherwise>
-! Get <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! 
-</xsl:otherwise>
-</xsl:choose>
-
-</xsl:when>
-<xsl:otherwise>
-
-<xsl:apply-templates select="." mode="GET_SINGLE">
-<xsl:with-param name="variable_path" select="$variable_path"/>
-<xsl:with-param name="mds_path" select="$mds_path"/>
-</xsl:apply-templates>
-</xsl:otherwise>
-</xsl:choose>
-
-</xsl:template>
--->
 <!-- YBYBGETSLICE -->
 
 <!--=================================================-->
 <!--            get fields from an object            -->
 <!--=================================================-->
-<!--YBYB
+<!--YBYB 2014 -->
 <xsl:template match = "field" mode = "GET_FROM_OBJECT">
 <xsl:param name="level"/>    
 <xsl:param name="objpath"/>  
 <xsl:param name="idxpath"/>  
 <xsl:param name="timed"/>   
 
-
 <xsl:param name="currentobjpath" select="concat($objpath,'/',@name)"/>
-
 <xsl:param name="currentidxpath" select="concat($idxpath,'.',@name)"/>
-
 <xsl:choose>
-
+<!--========== Arrays of structures ==========-->
 <xsl:when test="@data_type='struct_array'">
-<xsl:if test="@timed='yes' or $timed='no'"> 
-{ /*    Array of structure     */
+  // Get_from_object  <xsl:value-of select="@path"/>
+   <xsl:choose>
+<xsl:when test="$timed='yes' "> 
+   <!-- We are scanning the children of a Type 3 AoS, so we extract the child object at index 0 of the parent object -->
+  { /*    1Array of structure     */
 void *obj<xsl:value-of select="$level + 1"/>;
-status = getObjectFromObject(expIdx, obj<xsl:value-of select="$level"/>, "<xsl:value-of select = "$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;obj<xsl:value-of select="$level + 1"/>);
+status = getObjectFromObject(expIdx, obj<xsl:value-of select="$level"/>, "<xsl:value-of select = "$currentobjpath"/>", 0,&amp;obj<xsl:value-of select="$level + 1"/>);
+</xsl:when>
+<xsl:otherwise>
+<!-- Otherwise we assume it is a Type 2 AoS, so we extract the child object at index iobject -->
+{ /*    2Array of structure     */
+void *obj<xsl:value-of select="$level + 1"/>;
+ status = getObjectFromObject(expIdx, obj<xsl:value-of select="$level"/>, "<xsl:value-of select = "$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;obj<xsl:value-of select="$level + 1"/>);
+ </xsl:otherwise>
+ </xsl:choose>
 checkStatus(status);
 if (!status) {
 if (<xsl:value-of select="$currentidxpath"/>.extent(0)>0) { // does this array already exist? (timed and non timed parts can share the same array)
@@ -2622,20 +1989,21 @@ return -1;
 } else { // else allocate it
 <xsl:value-of select="$currentidxpath"/>.resize(getObjectDim(expIdx,obj<xsl:value-of select="$level + 1"/>));
 }
+//getfromobject  <xsl:value-of select="$currentidxpath"/>)
+dim1In=getObjectDim(expIdx,obj<xsl:value-of select="$level + 1"/>); //YBYB
 for (int i<xsl:value-of select="$level + 1"/> = 0; i<xsl:value-of select="$level + 1"/> &lt; getObjectDim(expIdx,obj<xsl:value-of select="$level + 1"/>); i<xsl:value-of select="$level + 1"/>++) {
 <xsl:apply-templates select = "field" mode = "GET_FROM_OBJECT">
 <xsl:with-param name="level" select="$level + 1"/>
 <xsl:with-param name="objpath" select="@name"/>
 <xsl:with-param name="idxpath" select="concat($currentidxpath,'(i',$level + 1,')')"/>
-<xsl:with-param name="timed" select="$timed"/>
+<xsl:with-param name="timed" select="'no'"/>  <!-- We assume the nested children are necessarily Type 2 -->
 </xsl:apply-templates>
 }
 }
 }
-</xsl:if>
+<!-- </xsl:if> -->
 </xsl:when>
-
-
+ <!--========== Regular structure ==========-->
 <xsl:when test="@data_type='structure'">
 <xsl:apply-templates select = "field" mode = "GET_FROM_OBJECT">
 <xsl:with-param name="level" select="$level"/>
@@ -2646,209 +2014,226 @@ for (int i<xsl:value-of select="$level + 1"/> = 0; i<xsl:value-of select="$level
 </xsl:when>
 
 <xsl:otherwise>
-
-<xsl:if test="@timed=$timed">
+  <!--========== select either timed or non-timed fields ==========-->
+  <!-- <xsl:if test="@timed=$timed"> -->
 <xsl:choose>
 
-
 <xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
-status = getStringFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;str);
+  status = getStringFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;str);
 checkStatus(status);
 if(!status) {<xsl:value-of select="$currentidxpath"/>.assign(str); free(str);
 }
 </xsl:when>
 <xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
-status = getIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;<xsl:value-of select="$currentidxpath"/>);
+  status = getIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;<xsl:value-of select="$currentidxpath"/>);
 checkStatus(status);
 </xsl:when>
 <xsl:when test="@name='xs:boolean'">
-status = getIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;<xsl:value-of select="$currentidxpath"/>);
+  status = getIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;<xsl:value-of select="$currentidxpath"/>);
 checkStatus(status);
 </xsl:when>
 <xsl:when test="@name='xs:double'">
-status = getDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;<xsl:value-of select="$currentidxpath"/>);
+  status = getDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;<xsl:value-of select="$currentidxpath"/>);
 checkStatus(status);
 </xsl:when>
 <xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
-status = getDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;<xsl:value-of select="$currentidxpath"/>);
+  status = getDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;<xsl:value-of select="$currentidxpath"/>);
 checkStatus(status);
 </xsl:when>
 
 
 <xsl:when test="@data_type='str_1d_type' or @data_type='STR_1D'">
-status = getVect1DStringFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;stringArray, &amp;dim1);
+  status = getVect1DStringFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;stringArray, &amp;dim1In);
 checkStatus(status);
 if(!status) {
-<xsl:value-of select="$currentidxpath"/>.resize(dim1);
-for(_i = 0; _i &lt; dim1; _i++)
+<xsl:value-of select="$currentidxpath"/>.resize(dim1In);
+for(_i = 0; _i &lt; dim1In; _i++)
 <xsl:value-of select="$currentidxpath"/>(_i).assign(stringArray[_i]);
-for(_i = 0; _i &lt; dim1; _i++)
+for(_i = 0; _i &lt; dim1In; _i++)
 free(stringArray[_i]);
 free((char *)stringArray);
 }
 </xsl:when>
 <xsl:when test="@data_type='flt_1d_type' or @data_type='FLT_1D'">
-status = getVect1DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1);
+  status = getVect1DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In);
 free(doubleArray);
+}
 }
 </xsl:when>
 <xsl:when test="@data_type='int_1d_type' or @data_type='INT_1D'">
-status = getVect1DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;intArray, &amp;dim1);
+  status = getVect1DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;intArray, &amp;dim1In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1In);
 free(intArray);
+}
 }
 </xsl:when>
 <xsl:when test="@name='vecdbl_type'">
-status = getVect1DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1);
+  status = getVect1DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In);
 free(doubleArray);
+}
 }
 </xsl:when>
 
-
 <xsl:when test="@data_type='FLT_2D'">
-status = getVect2DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2);
+  status = getVect2DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In);
 free(doubleArray);
+}
 }
 </xsl:when>
 <xsl:when test="@name='matdbl_type'">
-status = getVect2DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2);
+  status = getVect2DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2);
+ <xsl:value-of select = "concat($mds_path, ' + &quot;/', @name)"/>"
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In);
 free(doubleArray);
 }
 </xsl:when>
 <xsl:when test="@data_type='INT_2D'">
-status = getVect2DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;intArray, &amp;dim1, &amp;dim2);
+  status = getVect2DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;intArray, &amp;dim1In, &amp;dim2In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1, dim2);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1In, dim2In);
 free(intArray);
+}
 }
 </xsl:when>
 
-
 <xsl:when test="@data_type='FLT_3D'">
-status = getVect3DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3);
+  status = getVect3DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In, &amp;dim3In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2, dim3);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In, dim3In);
 free(doubleArray);
+}
 }
 </xsl:when>
 <xsl:when test="@name='array3ddbl_type'">
-status = getVect3DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3);
+  status = getVect3DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In, &amp;dim3In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2, dim3);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In, dim3In);
 free(doubleArray);
+}
 }
 </xsl:when>
 <xsl:when test="@data_type='INT_3D'">
-status = getVect3DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;intArray, &amp;dim1, &amp;dim2, &amp;dim3);
+  status = getVect3DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;intArray, &amp;dim1In, &amp;dim2In, &amp;dim3In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1, dim2, dim3);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1In, dim2In, dim3In);
 free(intArray);
+}
 }
 </xsl:when>
 
-
 <xsl:when test="@data_type='FLT_4D'">
-status = getVect4DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4);
+  status = getVect4DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2, dim3, dim4);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In, dim3In, dim4In);
 free(doubleArray);
+}
 }
 </xsl:when>
 <xsl:when test="@name='array4ddbl_type'">
-status = getVect4DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4);
+  status = getVect4DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2, dim3, dim4);
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In, dim3In, dim4In);
 free(doubleArray);
 }
 </xsl:when>
 <xsl:when test="@name='array4dint_type'">
-status = getVect4DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;intArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4);
+  status = getVect4DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;intArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1, dim2, dim3, dim4);
+setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1In, dim2In, dim3In, dim4In);
 free(intArray);
 }
 </xsl:when>
 
-
 <xsl:when test="@data_type='FLT_5D'">
-status = getVect5DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5);
+  status = getVect5DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In, &amp;dim5In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2, dim3, dim4, dim5);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In);
 free(doubleArray);
+}
 }
 </xsl:when>
 <xsl:when test="@name='array5ddbl_type'">
-status = getVect5DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5);
+  status = getVect5DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In, &amp;dim5In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2, dim3, dim4, dim5);
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In);
 free(doubleArray);
 }
 </xsl:when>
 <xsl:when test="@name='array5dint_type'">
-status = getVect5DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;intArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5);
+  status = getVect5DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;intArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In, &amp;dim5In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1, dim2, dim3, dim4, dim5);
+setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1In, dim2In, dim3In, dim4In, dim5In);
 free(intArray);
 }
 </xsl:when>
 
-
 <xsl:when test="@data_type='FLT_6D'">
-status = getVect6DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, &amp;dim6);
+  status = getVect6DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In, &amp;dim5In, &amp;dim6In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2, dim3, dim4, dim5, dim6);
+if (dim1In >0) {
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In, dim6In);
 free(doubleArray);
+}
 }
 </xsl:when>
 <xsl:when test="@name='array6ddbl_type'">
-status = getVect6DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;doubleArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, &amp;dim6);
+  status = getVect6DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In, &amp;dim5In, &amp;dim6In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1, dim2, dim3, dim4, dim5, dim6);
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In, dim6In);
 free(doubleArray);
 }
 </xsl:when>
 <xsl:when test="@name='array6dint_type'">
-status = getVect6DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, &amp;intArray, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4, &amp;dim5, &amp;dim6);
+  status = getVect6DIntFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;intArray, &amp;dim1In, &amp;dim2In, &amp;dim3In, &amp;dim4In, &amp;dim5In, &amp;dim6In);
 checkStatus(status);
 if(!status) {
-setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1, dim2, dim3, dim4, dim5, dim6);
+setArray(<xsl:value-of select="$currentidxpath"/>,intArray, dim1In, dim2In, dim3In, dim4In, dim5In, dim6In);
 free(intArray);
 }
 </xsl:when>
 </xsl:choose>
-</xsl:if>
+<!-- 2014</xsl:if> -->
 </xsl:otherwise>
 </xsl:choose>
 
 </xsl:template>
 
-YBYB-->
+<!-- 2014 YBYB-->
 <!--=================================================-->
 <!--       put field of a time-independent IDS       -->
 <!--=================================================-->
@@ -2857,63 +2242,64 @@ YBYB-->
 <xsl:param name="variable_path"/>
 <xsl:param name="mds_path"/>
 <xsl:param name="non_timed"/>
-<xsl:if test="$non_timed !='yes' or @type !='dynamic' or not(@type) or @data_type='structure' or @data_type='struct_array'">
+<xsl:if test="$non_timed !='yes' or @type !='dynamic' or not(@type) or @data_type='structure' or (@data_type='struct_array' and  @type !='dynamic')">
 	<xsl:choose>
 		<!--========== Regular structures ==========-->
+    <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
 			<xsl:choose>
 				<xsl:when test="$variable_path">
 					<xsl:apply-templates select="field" mode="PUT_SINGLE">
 						<xsl:with-param name="variable_path" select="concat($variable_path,'.',@name)"/>
 						<xsl:with-param name="mds_path" select="concat($mds_path,'+string(&quot;/',@name,'&quot;)')"/>
+            <xsl:with-param name="non_timed" select="$non_timed"/>
 					</xsl:apply-templates>
 				</xsl:when>
 				<xsl:otherwise>
 					<xsl:apply-templates select="field" mode="PUT_SINGLE">
 						<xsl:with-param name="variable_path" select="@name"/>
 						<xsl:with-param name="mds_path" select="concat('&quot;',@name,'&quot;')"/>
+             <xsl:with-param name="non_timed" select="$non_timed"/>
 					</xsl:apply-templates>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:when>
 		<!--========== Arrays of structures ==========-->
-		<xsl:when test="@data_type='struct_array'">
-			//Doc Put <xsl:value-of select="@path"/>
+		<xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
+       <!-- Type 1 arrays of structure, with potentially multiple time bases -->
+			//Doc Put Typ1 <xsl:value-of select="@path"/>
 			<xsl:choose>
 				<xsl:when test="$variable_path">
+        if ( <xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0) &gt; 0) {
 					lepath = <xsl:value-of select="$mds_path"/>  + string("/<xsl:value-of select="@name"/>/Shape_of");
-					<!--  clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());-->
 					clepath = const_cast&lt;char *&gt; (lepath.c_str());
-					<!-- status = putInt(expIdx,path,clepath, sizeof(<xsl:value-of select="concat($variable_path,'.',@name)"/>)/sizeof(int));-->
 					status = putInt(expIdx,path,clepath,<xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0));
-					<!--//  delete [] clepath;--> 
 					checkStatus(status);
 					if (status) return status;
 					for (i<xsl:value-of select="@name"/> = 0;i<xsl:value-of select="@name"/>&lt;<xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0); i<xsl:value-of select="@name"/>++){
 					<xsl:apply-templates select="field" mode="PUT_SINGLE">
 						<xsl:with-param name="variable_path" select="concat($variable_path,'.',@name,'(i',@name,')')"/>
 						<xsl:with-param name="mds_path" select="concat($mds_path,' + ','string(&quot;/',@name,'/&quot;) + int2str(i',@name,',1)')"/>
+             <xsl:with-param name="non_timed" select="$non_timed"/>
 					</xsl:apply-templates>
 					}
+        }
 				</xsl:when>
 				<xsl:otherwise>
+         if ( <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0) &gt; 0) {  
 					lepath =  "<xsl:value-of select="@name"/>/Shape_of";
-					<!-- clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());-->
 					clepath = const_cast&lt;char *&gt; (lepath.c_str());
-					<!--status = putInt(expIdx,path, clepath, sizeof(<xsl:value-of select="@name"/>)/sizeof(int));-->
 					status = putInt(expIdx,path, clepath, <xsl:value-of select="@name"/>.extent(0));
-					<!--  delete [] clepath; -->
 					checkStatus(status);
 					if (status) return status;
-					<!--AAAfor ( i<xsl:value-of select = "@name"/> = 1;i<xsl:value-of select = "@name"/>&lt;sizeof(<xsl:value-of select = "@name"/>);i<xsl:value-of select = "@name"/>++){-->
 					for ( i<xsl:value-of select="@name"/> = 0;i<xsl:value-of select="@name"/>&lt;<xsl:value-of select="@name"/>.extent(0);i<xsl:value-of select="@name"/>++){
-					<xsl:apply-templates select="field" mode="PUT_SINGLE">
+					  <xsl:apply-templates select="field" mode="PUT_SINGLE">
 						<xsl:with-param name="variable_path" select="concat(@name,'(i',@name,')')"/>
 						<xsl:with-param name="mds_path" select="concat('&quot;',@name,'/&quot; + int2str(i',@name,',1)')"/>
+            <xsl:with-param name="non_timed" select="$non_timed"/>
 					</xsl:apply-templates>
 					}
+         }  
 				</xsl:otherwise>
 			</xsl:choose>
 			<!--YBYB Avant
@@ -2933,7 +2319,157 @@ checkStatus(status);
 if (status) return status;
 }
 -->
-		</xsl:when>
+    </xsl:when>
+
+ <xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
+   //-- Type 3 arrays of structure, with a unique time base 3OK
+    <xsl:choose>
+      <xsl:when test="$variable_path">
+     // Structure array of type 3 nested below a Type 1 : <xsl:value-of select = "concat($variable_path,'.',@name)"/>
+       if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0) &gt; 0) {
+       // char fullpath[1024];
+       lepath = "path<xsl:value-of select="concat('/',substring($mds_path,2))"/> + string("/<xsl:value-of select="@name"/>");
+       clepath = const_cast&lt;char *&gt; (lepath.c_str()); 
+       void *obj_all_times = beginObject(expIdx,(void *) -1,0,clepath,TIMED_CLEAR);
+       for (int i1 = 0; i1 &lt; <xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0); i1++) {
+       void *obj1 = beginObject(expIdx,obj_all_times,i1,"ALLTIMES",TIMED);
+        <xsl:apply-templates select = "field" mode = "PUT_IN_OBJECT">
+         <xsl:with-param name="level" select="1"/>
+         <xsl:with-param name="objpath" select="@name"/>
+         <xsl:with-param name="idxpath" select="concat($variable_path,'.',@name,'(0)')"/>
+         <xsl:with-param name="child_index" select="0"/>
+       </xsl:apply-templates>
+       void *obj = putObjectInObject(expIdx,obj_all_times, "ALLTIMES", i1, obj1);
+       }
+        // Store time of the array of structure (hidden variable for the user, but used by the UAL for future get_slice operations)
+        // A temporary "time" vector is filled then put as a regular variable (outside of the object) as AoS%time
+        dim1= <xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0);
+        double *timeh = new double[dim1];
+        if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time == EMPTY_DOUBLE) {
+        // Check the presence of a time vector at the root of the  AoS (on the first index only)
+        if (ids_properties.homogeneous_time == 1) {
+        for (int i1 = 0; i1 &lt; dim1; i1++)
+         timeh[i1] = time(i1);
+         }
+          else {
+          puts("ERROR : the time vector of the type 3 array of structure <xsl:value-of select = "translate(@path,'/','.')"/> must be filled");
+          return (-1);
+          }
+          }
+          else {
+          for( int i1 = 0; i1 &lt;<xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0); i1++){// the AoS time vector is there, fill time with it
+          timeh[i1] = <xsl:value-of select = "concat($variable_path,'.',@name)"/>(i1).time;
+          }
+          }
+           // Start to put time1
+           timepath = <xsl:value-of select="$mds_path"/> + string("/<xsl:value-of select="@name"/>/time");
+           clepath = const_cast&lt;char *&gt; (timepath.c_str());
+           beginIdsPutTimed(expIdx, path,dim1, timeh);
+           status = putVect1DDouble(expIdx, path, clepath,(char *)timepath.c_str(), timeh, dim1, 1);
+           checkStatus(status);
+           if (status) return status;
+           endIdsPutTimed(expIdx, path);
+           timepath=<xsl:value-of select = "concat($mds_path,' + &quot;/',@name)"/>";
+           clepath = const_cast&lt;char *&gt; (timepath.c_str());
+           putObject(expIdx,path,clepath, obj_all_times,1);
+          }
+        </xsl:when>
+
+        <xsl:otherwise>
+          // Structure array of type 3 : <xsl:value-of select = "@path"/>
+          if (<xsl:value-of select = "translate(@path,'/','.')"/>.extent(0) &gt; 0) {
+           char fullpath[1024];
+           //sprintf(fullpath,"path/<xsl:value-of select = "@path"/>"); //BYY
+           sprintf(fullpath,"%s/<xsl:value-of select = "@path"/>",path);
+           dim1 = <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0);
+           void *obj_all_times = beginObject(expIdx,(void *) -1,0,fullpath,TIMED_CLEAR);
+           for (int i1 = 0; i1 &lt; dim1; i1++){
+           void *obj1 = beginObject(expIdx,obj_all_times,i1,"ALLTIMES",TIMED);
+            <xsl:apply-templates select = "field" mode="PUT_IN_OBJECT">
+            <xsl:with-param name="level" select="1"/>
+            <xsl:with-param name="objpath" select="@name"/>
+            <xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(i1)')"/>
+            <xsl:with-param name="child_index" select="0"/>
+          </xsl:apply-templates>
+       void *obj = putObjectInObject(expIdx,obj_all_times, "ALLTIMES", i1, obj1);
+       }
+        // Store time of the array of structure (hidden variable for the user, but used by the UAL for future get_slice operations)
+        dim1= <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0);
+        double *timeh = new double[dim1];
+        if (<xsl:value-of select = "translate(@path,'/','.')"/>(0).time == EMPTY_DOUBLE) { 
+        // Check the presence of a time vector at the root of the AoS (on the first index only)
+        if (ids_properties.homogeneous_time == 1) {
+        for (int i1 = 0; i1 &lt; dim1; i1++)
+            timeh[i1] = time(i1); // Use the general time vector of the IDS to fill time
+        }
+        else {
+        puts("ERROR : the time vector of the type 3 array of structure <xsl:value-of select = "translate(@path,'/','.')"/> must be filled");
+        return(-1);
+        }
+        }
+         else {
+         for (int i1 = 0; i1 &lt; dim1; i1++){
+          // the AoS time vector is there, fill time with it
+          timeh[i1]=<xsl:value-of select = "translate(@path,'/','.')"/>(i1).time;
+         }
+         }
+          timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+          clepath = const_cast&lt;char *&gt; (timepath.c_str());
+           beginIdsPutTimed(expIdx, path,dim1, timeh);
+           status = putVect1DDouble(expIdx, path, clepath,(char *)timepath.c_str(), timeh, dim1, 1);
+           checkStatus(status);
+           if (status) return status;
+
+          endIdsPutTimed(expIdx, path);
+          //if (ual_debug.equals("yes")) puts("Put <xsl:call-template name="printtimevariable"/> " + time);
+          //deallocate(time)
+          timepath=&quot;<xsl:value-of select = "@path"/>&quot;;
+           clepath = const_cast&lt;char *&gt; (timepath.c_str());
+           putObject(expIdx,path,clepath, obj_all_times,1);
+           }
+           </xsl:otherwise>
+           </xsl:choose>
+         </xsl:when> 
+          <xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type!='dynamic'">
+            <!-- Type 2 arrays of structure-->
+            <xsl:choose>
+              <xsl:when test="$variable_path">
+            // Structure array of type 2 nested below a Type 1 : ERROR: NOT HANDLED YET <xsl:value-of select = "concat($variable_path,'.',@name)"/>
+            </xsl:when>
+            <xsl:otherwise>
+            // Structure array of type 2 : <xsl:value-of select = "@path"/>
+           <!-- Handle only non-timed descendants of type 2 AoS for the moment -->
+           <!-- Type 2 structure arrays not handled yet, I put here a copy of the ITM treatment for recall -->
+           // Write non-timed fields 
+            char fullpath[1024];
+            sprintf(fullpath,"path/<xsl:value-of select = "@path"/>");
+            void *obj1=beginObject(expIdx,-1,1,fullpath,NON_TIMED);
+            dim1=<xsl:value-of select = "translate(@path,'/','.')"/>.extent(0);
+            if (dim1 &gt; 0) {
+            for (int i1 = 0; i1 &lt; dim1; i1++) {
+            <xsl:apply-templates select = "field" mode = "PUT_IN_OBJECT"> 
+              <!-- Select at this level dynamic fields only ? (how does it behave in time-dependent structures ? -->
+             <xsl:with-param name="level" select="1"/>
+             <xsl:with-param name="objpath" select="@name"/>
+             <xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(i1)')"/>
+             <xsl:with-param name="child_index" select="0"/> <!--Not sure here, maybe i1 is the correct way... -->
+             </xsl:apply-templates>
+             }
+             }
+            timepath=<xsl:value-of select = "@path"/>;
+            clepath = const_cast&lt;char *&gt; (timepath.c_str());
+            putObject(expIdx,path,clepath, obj1,0);
+       </xsl:otherwise>
+       </xsl:choose>
+       </xsl:when>
+       <!--end of  June 2014  -->
+
+
+
+
+
+
+
 		<!--========== Simple types ==========-->
 		<xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
 			//Doc Put <xsl:value-of select="@path"/>
@@ -3633,7 +3169,6 @@ if (status) return status;
 					delete[] doubleArray;
 					checkStatus(status);
 					if (status) return status;
-					if (status) return status;
 					<xsl:if test="@type='dynamic'">
 						endIdsPutTimed(expIdx, path);
 					</xsl:if>
@@ -3709,7 +3244,7 @@ if (status) return status;
 					for(_i = 0; _i &lt;  dim1; _i++)
 					for(_j = 0; _j &lt;  dim2; _j++)
 					for(_k = 0; _k &lt;  dim3; _k++)
-					intArray[_i + _j*dim1 + _k*dim1*dim2] = <xsl:value-of select="concat(@path,'.',@name)"/>(_i, _j, _k);
+           intArray[_i + _j*dim1 + _k*dim1*dim2] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k);
 					status = putVect3DInt(expIdx, path, clepath,(char *) timebasepath.c_str(), intArray, dim1, dim2, dim3, <xsl:call-template name="printIsTimed"/>);
 					delete[] intArray;
 					checkStatus(status);
@@ -3752,7 +3287,8 @@ if (status) return status;
 					for(_i = 0; _i &lt;  dim1; _i++)
 					for(_j = 0; _j &lt;  dim2; _j++)
 					for(_k = 0; _k &lt;  dim3; _k++)
-					intArray[_i + _j*dim1 + _k*dim1*dim2] = <xsl:value-of select="concat(@path,'.',@name)"/>(_i, _j, _k);
+          //old intArray[_i + _j*dim1 + _k*dim1*dim2] = <xsl:value-of select="concat(@path,'.',@name)"/>(_i, _j, _k);
+					intArray[_i + _j*dim1 + _k*dim1*dim2] = <xsl:value-of select="translate(@path,'/','.')"/>(_i, _j, _k);
 					status = putVect3DInt(expIdx, path, clepath,(char *) timebasepath.c_str(), intArray, dim1, dim2, dim3, <xsl:call-template name="printIsTimed"/>);
 					delete[] intArray;
 					checkStatus(status);
@@ -4606,7 +4142,7 @@ if (status) return status;
 			</xsl:when>
 			<!--========== Arrays of structures ==========-->
 			<xsl:when test="@data_type='struct_array'">
-				{ /*     Array of structure     */
+				{ /*     3Array of structure     */
 				/*     Write timed fields    */
 				char fullpath[1024]; sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
 				void *obj_all_times = beginObject(expIdx,NULL,0,fullpath,TIMED_CLEAR);
@@ -4964,7 +4500,7 @@ if (status) return status;
 			</xsl:when>
 			<!--========== Arrays of structures ==========-->
 			<xsl:when test="@data_type='struct_array'">
-				{ /*     Array of structure    */
+				{ /*     4Array of structure    */
 				char fullpath[1024]; sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
 				void *obj1 = beginObject(expIdx,NULL,0,fullpath,NON_TIMED);
 				for (int i1 = 0; i1 &lt; array(0).<xsl:value-of select="translate(@path,'/','.')"/>.extent(0); i1++) {
@@ -4988,7 +4524,9 @@ if (status) return status;
 	</xsl:otherwise>
 </xsl:choose>
 </xsl:template>
-<!-- GET_SLICE ENPLUS ?? -->
+<!--   -->
+<!--!!!!!!!!!!!!!!!!!!!!!!!!!        GET_SLICE for FIELDS       !!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+<!-- GET_SLICE -->
 <xsl:template match="field" mode="GET_SLICE">
 <xsl:param name="variable_path"/>
 <xsl:param name="mds_path"/>
@@ -5010,8 +4548,8 @@ if (status) return status;
 		</xsl:choose>
 	</xsl:when>
 
-	<xsl:when test="@data_type='struct_array'">
-		//Doc GetSlice2 <xsl:value-of select="@path"/>
+	<xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
+    <!-- Type 1 arrays of structure, with potentially multiple time bases -->// Get_slice <xsl:value-of select="@path"/>
 		<xsl:choose>
 			<xsl:when test="$variable_path">
 				lepath = <xsl:value-of select="$mds_path"/>  + string("/<xsl:value-of select="@name"/>/Shape_of");
@@ -5042,6 +4580,59 @@ if (status) return status;
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:when>
+
+
+  <xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
+  <!-- Type 3 arrays of structure, with a unique time base -->
+  <xsl:choose>
+  <xsl:when test="$variable_path">
+  // Structure array of type 3 nested below a Type 1 : <xsl:value-of select = "concat($variable_path,'.%',@name)"/>
+   { /*     11 jul  */
+   void *obj_single_time;
+   void *obj1;
+   lepath=<xsl:value-of select = "concat($mds_path,'+&quot;/',@name,'&quot;')"/>; 
+   clepath = const_cast&lt;char *&gt; (lepath.c_str());
+   status = getObjectSlice(expIdx, path, clepath, inTime, &amp;obj_single_time);
+   checkStatus(status);
+   if (!status) {
+   status = getObjectFromObject(expIdx,obj_single_time,"ALLTIMES",0,&amp;obj1);
+   checkStatus(status);
+   if (!status) {
+     <xsl:value-of select = "concat($variable_path,'.',@name)"/>.resize(1);
+     <xsl:apply-templates select = "field" mode = "GET_FROM_OBJECT">
+     <xsl:with-param name="level" select="1"/>
+     <xsl:with-param name="objpath" select="@name"/>
+     <xsl:with-param name="idxpath" select="concat($variable_path,'.',@name,'(0)')"/>
+     <xsl:with-param name="timed" select="'yes'"/>
+   </xsl:apply-templates>
+   }
+    releaseObject(expIdx,obj_single_time);
+  }
+ } 
+</xsl:when>
+<xsl:otherwise>
+  { /* H2 */
+   void *obj_single_time;
+   void *obj1;
+ // Structure array of type 3 : <xsl:value-of select = "@path"/>
+ status = getObjectSlice(expIdx, path, "<xsl:value-of select = "@path"/>", inTime, &amp;obj_single_time);
+ checkStatus(status);
+ if (!status) {
+ status = getObjectFromObject(expIdx,obj_single_time,"ALLTIMES",0,&amp;obj1);
+ <xsl:value-of select="translate(@path,'/','.')"/>.resize(1);
+ <xsl:apply-templates select = "field" mode = "GET_FROM_OBJECT">
+ <xsl:with-param name="level" select="1"/>
+ <xsl:with-param name="objpath" select="@name"/>
+ <xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(0)')"/>
+ <xsl:with-param name="timed" select="'yes'"/>
+ </xsl:apply-templates>
+ }
+ releaseObject(expIdx,obj_single_time);
+ }
+ </xsl:otherwise>
+ </xsl:choose>
+  </xsl:when>
+
 	<xsl:when test="@type='dynamic'">
 		//Doc GetSlice2 <xsl:value-of select="@path"/>
 		<xsl:choose>
@@ -5066,6 +4657,7 @@ if (status) return status;
 				timebasepath="time";
 			</xsl:otherwise>
 		</xsl:choose>
+
 		<xsl:choose>   
 			<xsl:when test="@data_type='str_1d_type' or @data_type='STR_1D'">
 				//Doc GetSlice2 <xsl:value-of select="@path"/>
@@ -5082,7 +4674,6 @@ if (status) return status;
 						//   setArray(<xsl:value-of select="concat($variable_path,'.',@name)"/>, str,dim1);
 						<xsl:value-of select="concat($variable_path,'.',@name)"/>(0).assign(str);
 						free(str);
-						//    time = retTime;
 						}
 						}
 					</xsl:when>
@@ -5095,7 +4686,6 @@ if (status) return status;
 						{
 						<xsl:value-of select="@name"/>(0).assign(str);
 						free(str);
-						//     time = retTime;
 						}
 						}
 					</xsl:otherwise>
@@ -5107,8 +4697,6 @@ if (status) return status;
 				<xsl:choose>
 					<xsl:when test="$variable_path">
 						lepath =  <xsl:value-of select="$mds_path"/>+string("/<xsl:value-of select="@name"/>");
-						<!-- clepath = new char[lepath.size()+1];
-strcpy(clepath, lepath.c_str());-->
 						clepath = const_cast&lt;char *&gt; (lepath.c_str());
 						getDimension(expIdx, path, clepath, &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
 						if (dim1 &gt; 0) {
@@ -5116,7 +4704,6 @@ strcpy(clepath, lepath.c_str());-->
 						status = getDoubleSlice(expIdx, path, clepath, (char *)timebasepath.c_str(), &amp;<xsl:value-of select="concat($variable_path,'.',@name)"/>(0) , inTime, &amp;retTime, interpolMode);
 						checkStatus(status);
 						}
-						<!--   delete[] clepath;-->
 					</xsl:when>
 					<xsl:otherwise>
 						getDimension(expIdx, path,"<xsl:value-of select="@path"/>", &amp;numDims, &amp;dim1, &amp;dim2, &amp;dim3, &amp;dim4,&amp; dim5, &amp;dim6, &amp;dim7);
@@ -5418,23 +5005,29 @@ strcpy(clepath, lepath.c_str());-->
 			</xsl:choose>
 		</xsl:when>          
 		<!--========== Arrays of structures ==========-->
-		<xsl:when test="@data_type='struct_array'">
+    <xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
+       <!-- Type 1 arrays of structure, with potentially multiple time bases -->
 			//Doc Put <xsl:value-of select="@path"/>
 			<xsl:choose>
 				<xsl:when test="$variable_path">
+          //H4if(<xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0) > 0) 
+
+     if ( <xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0) &gt; 0) {
 					lepath = <xsl:value-of select="$mds_path"/>  + string("/<xsl:value-of select="@name"/>/Shape_of");
 					clepath = const_cast&lt;char *&gt; (lepath.c_str());
 					status = putInt(expIdx,path,clepath,<xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0));
 					checkStatus(status);
 					if (status) return status;
-					for (i<xsl:value-of select="@name"/> = 0;i<xsl:value-of select="@name"/>&lt;<xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0); i<xsl:value-of select="@name"/>++){
+					for (i<xsl:value-of select="@name"/> = 0;i<xsl:value-of select="@name"/>&lt;<xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0); i<xsl:value-of select="@name"/>++){  
 					<xsl:apply-templates select="field" mode="PUT_SLICE">
 						<xsl:with-param name="variable_path" select="concat($variable_path,'.',@name,'(i',@name,')')"/>
 						<xsl:with-param name="mds_path" select="concat($mds_path,' + ','string(&quot;/',@name,'/&quot;) + int2str(i',@name,',1)')"/>
 					</xsl:apply-templates>
 					}
+       }
 				</xsl:when>
 				<xsl:otherwise>
+          if ( <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0) &gt; 0) {
 					lepath =  "<xsl:value-of select="@name"/>/Shape_of";
 					clepath = const_cast&lt;char *&gt; (lepath.c_str());
 					status = putInt(expIdx,path, clepath, <xsl:value-of select="@name"/>.extent(0));
@@ -5446,28 +5039,103 @@ strcpy(clepath, lepath.c_str());-->
 						<xsl:with-param name="mds_path" select="concat('&quot;',@name,'/&quot; + int2str(i',@name,',1)')"/>
 					</xsl:apply-templates>
 					}
+        } 
 				</xsl:otherwise>
 			</xsl:choose>
-			<!--  OLD
-{ /*     Array of structure    */
-char fullpath[1024]; sprintf(fullpath,"%s/<xsl:value-of select = "@path"/>",path);
-/* timed arrays of structures must be put inside a time container, even if there is a single time */
-void *obj_single_time = beginObject(expIdx,NULL,0,fullpath,TIMED);
-void *obj1 = beginObject(expIdx,obj_single_time,0,"ALLTIMES",TIMED);
-for (int i1 = 0; i1 &lt; <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0); i1++) {
-<xsl:apply-templates select = "field" mode = "PUT_IN_OBJECT">
-<xsl:with-param name="level" select="1"/>
-<xsl:with-param name="objpath" select="@name"/>
-<xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(i1)')"/>
-<xsl:with-param name="timed" select="'yes'"/>
-</xsl:apply-templates>
-}
-obj_single_time = putObjectInObject(expIdx, obj_single_time, "ALLTIMES", 0, obj1);
-status = putObjectSlice(expIdx, path, "<xsl:value-of select = "@path"/>", (double)time, obj_single_time);
-checkStatus(status);
-if (status) return status;
-}
--->       
+    </xsl:when>
+    <xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
+    <!-- Type 3 arrays of structure, with a unique time base -->
+    <xsl:choose>
+    <xsl:when test="$variable_path">
+     // Structure array of type 3 nested below a Type 1 : <xsl:value-of select = "concat($variable_path,'1',@name)"/>
+     if ( <xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0) &gt; 0) { 
+      lepath = "path<xsl:value-of select="concat('/',substring($mds_path,2))"/> + string("/<xsl:value-of select="@name"/>");
+      clepath = const_cast&lt;char *&gt; (lepath.c_str());
+      void *obj_single_time = beginObject(expIdx,(void *) -1,0,clepath,TIMED);
+      void *obj1 = beginObject(expIdx,obj_single_time,0,"ALLTIMES",TIMED);
+      <xsl:apply-templates select = "field" mode = "PUT_IN_OBJECT">
+      <xsl:with-param name="level" select="1"/>
+      <xsl:with-param name="objpath" select="@name"/>
+      <xsl:with-param name="idxpath" select="concat($variable_path,'.',@name,'(0)')"/>
+      <xsl:with-param name="child_index" select="0"/>
+      </xsl:apply-templates>
+      obj_single_time = putObjectInObject(expIdx, obj_single_time, "ALLTIMES", 0, obj1);
+      //H7
+      lepath = <xsl:value-of select = "concat($mds_path, ' + &quot;/', @name)"/>";
+      clepath = const_cast&lt;char *&gt; (lepath.c_str());
+      status = putObjectSlice(expIdx, path, clepath, time(0), obj_single_time);
+      checkStatus(status);
+      if (status) return status;
+       // Store time of the array of structure (hidden variable for the user, but used by the UAL for future get_slice operations)
+       // A temporary "time" vector is filled then put as a regular variable (outside of the object) as AoS%time
+       double *timeh = new double[1];
+       if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time == EMPTY_DOUBLE) {
+  // Check the presence of a time vector at the root of the  AoS (on the first index only)
+ if (ids_properties.homogeneous_time == 1) {
+  timeh[0] = time(0);
+  }
+  else {
+  puts("ERROR : the time vector of the type 3 array of structure <xsl:value-of select = "translate(@path,'/','.')"/> must be filled");
+  return (-1);
+  }
+  }
+  else {
+
+  //H5
+   for( int i1 = 0; i1 &lt;<xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0); i1++){// the AoS time vector is there, fill tim     e with it
+   timeh[i1] = <xsl:value-of select = "concat($variable_path,'.',@name)"/>(i1).time;
+  }
+  }
+  timebasepath = <xsl:value-of select="$mds_path"/> + string("/<xsl:value-of select="@name"/>/time"); //Start to put time
+  status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), time(0), time(0));
+  checkStatus(status);
+  if (status) return status;
+  }
+</xsl:when>
+<xsl:otherwise>
+  // Structure array of type 3 : <xsl:value-of select = "@path"/>
+  char fullpath[1024];
+      if (<xsl:value-of select = "translate(@path,'/','.')"/>.extent(0) &gt; 0) {
+       sprintf(fullpath,"%s/<xsl:value-of select = "@path"/>",path);
+      void *obj_single_time = beginObject(expIdx,(void *) -1,0,fullpath,TIMED);
+      void *obj1 = beginObject(expIdx,obj_single_time,0,"ALLTIMES",TIMED);
+      <xsl:apply-templates select = "field" mode = "PUT_IN_OBJECT">
+      <xsl:with-param name="level" select="1"/>
+      <xsl:with-param name="objpath" select="@name"/>
+      <xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(0)')"/>
+      <xsl:with-param name="child_index" select="0"/>
+      </xsl:apply-templates>
+
+      obj_single_time = putObjectInObject(expIdx, obj_single_time, "ALLTIMES", 0, obj1);
+      status = putObjectSlice(expIdx, path, "<xsl:value-of select = "@path"/>", time(0), obj_single_time);
+      checkStatus(status);
+      if (status) return status;
+       // Store time of the array of structure (hidden variable for the user, but used by the UAL for future get_slice operations)
+       double* timeh = new double(1);
+  //H6
+       if (<xsl:value-of select = "translate(@path,'/','.')"/>(0).time == EMPTY_DOUBLE) { 
+      if (ids_properties.homogeneous_time == 1) {
+           timeh[0] = time(0); // Use the general time vector of the IDS to fill time
+      }
+      else {
+      puts("ERROR : the time vector of the type 3 array of structure <xsl:value-of select = "translate(@path,'/','.')"/> must be filled");
+      return(-1);
+      }
+      }
+      else {
+      for (int i1 = 0; i1 &lt; <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0); i1++){ // the AoS time vector is there, fill time with it
+      timeh[i1]=<xsl:value-of select = "translate(@path,'/','.')"/>(i1).time;
+      }
+      }
+      
+     timebasepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+     status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), time(0), time(0));
+     checkStatus(status);
+     if (status) return status;
+     }
+      </xsl:otherwise>
+      </xsl:choose>
+
 		</xsl:when>
 		<!--========== Simple types ==========-->
 		<xsl:when test="@data_type='str_1d_type' or @data_type='STR_1D'">
@@ -5661,12 +5329,12 @@ if (status) return status;
 					dim1 = <xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(0);
 					dim2 = <xsl:value-of select="concat($variable_path,'.',@name)"/>.extent(1);
 					dim3 = 1;
-					intArray = new double[dim1*dim2*dim3];
+					intArray = new int[dim1*dim2*dim3];
 					for(_i = 0; _i &lt;  dim1; _i++)
 					for(_j = 0; _j &lt;  dim2; _j++)
 					for(_k = 0; _k &lt;  dim3; _k++)
 					intArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k);
-					status = putVect2DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), intArray, dim1, dim2, time(0));
+					status = putVect2DIntSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), intArray, dim1, dim2, time(0));
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5677,12 +5345,12 @@ if (status) return status;
 					dim1 = <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0);
 					dim2 = <xsl:value-of select = "translate(@path,'/','.')"/>.extent(1);
 					dim3 = 1;
-					intArray = new double[dim1*dim2*dim3];
+					intArray = new int[dim1*dim2*dim3];
 					for(_i = 0; _i &lt;  dim1; _i++)
 					for(_j = 0; _j &lt;  dim2; _j++)
 					for(_k = 0; _k &lt;  dim3; _k++)
 					intArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select = "translate(@path,'/','.')"/>(_i, _j, _k);
-					status = putVect2DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>",(char *)timebasepath.c_str(), intArray, dim1, dim2, time(0));
+					status = putVect2DIntSlice(expIdx, path, "<xsl:value-of select = "@path"/>",(char *)timebasepath.c_str(), intArray, dim1, dim2, time(0));
 					delete[] intArray;
 					checkStatus(status);
 					if (status) return status;
@@ -5753,7 +5421,7 @@ if (status) return status;
 					for(_k = 0; _k &lt;  dim3; _k++)
 					for(_h = 0; _h &lt;  dim4; _h++)
 					for(_l = 0; _l &lt;  dim5; _l++)
-					doubleArray[i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3+_l*dim1*dim2*dim3*dim4] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k, _h, _l);
+					doubleArray[_i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3+_l*dim1*dim2*dim3*dim4] = <xsl:value-of select="concat($variable_path,'.',@name)"/>(_i, _j, _k, _h, _l);
 					status = putVect4DDoubleSlice(expIdx, path, clepath,(char *)timebasepath.c_str(), doubleArray, dim1, dim2, dim3, dim4, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
@@ -5773,7 +5441,7 @@ if (status) return status;
 					for(_k = 0; _k &lt;  dim3; _k++)
 					for(_h = 0; _h &lt;  dim4; _h++)
 					for(_l = 0; _l &lt;  dim5; _l++)
-					doubleArray[i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3+_l*dim1*dim2*dim3*dim4] = <xsl:value-of select = "translate(@path,'/','.')"/>(_i, _j, _k, _h, _l);
+					doubleArray[_i+_j*dim1+_k*dim1*dim2+_h*dim1*dim2*dim3+_l*dim1*dim2*dim3*dim4] = <xsl:value-of select = "translate(@path,'/','.')"/>(_i, _j, _k, _h, _l);
 					status = putVect4DDoubleSlice(expIdx, path, "<xsl:value-of select = "@path"/>", (char *)timebasepath.c_str(),doubleArray, dim1, dim2, dim3, dim4, time(0));
 					delete[] doubleArray;
 					checkStatus(status);
@@ -6154,7 +5822,7 @@ if (status) return status;
 <xsl:choose>
 	<!--========== Arrays of structures ==========-->
 	<xsl:when test="@data_type='struct_array'">
-		{ /*     Array of structure     */
+		{ /*     5Array of structure     */
 		char fullpath[1024]; sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
 		void *obj1 = beginObject(expIdx,NULL,0,fullpath,NON_TIMED);
 		for (int i1 = 0; i1 &lt; <xsl:value-of select="translate(@path,'/','.')"/>.extent(0); i1++) {
@@ -6319,6 +5987,7 @@ if (status) return status;
 					for(_j = 0; _j &lt; dim2; _j++)
 					for(_k = 0; _k &lt; dim3; _k++)
 					intArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select="translate(@path,'/','.')"/>(_i, _j, _k); 
+          //3D5
 					status = putVect3DInt(expIdx, path, "<xsl:value-of select="@path"/>", intArray, dim1, dim2, dim3, 0);
 					delete[] intArray;
 					checkStatus(status);
@@ -6498,14 +6167,10 @@ if (status) return status;
 <!--            put fields into an object            -->
 <!--=================================================-->
 <xsl:template match="field" mode="PUT_IN_OBJECT">
-<xsl:param name="level"/>
-<!-- recursion level -->
-<xsl:param name="objpath"/>
-<!-- path inside the object -->
-<xsl:param name="idxpath"/>
-<!-- full C++ path including indices -->
-<xsl:param name="timed"/>
-<!-- are we looking for timed or non-timed fields? -->
+<xsl:param name="level"/> <!-- recursion level -->
+<xsl:param name="objpath"/> <!-- path inside the object -->
+<xsl:param name="idxpath"/> <!-- full C++ path including indices -->
+<xsl:param name="child_index"/>     <!-- Index to use to add a child in the current object -->
 
 <!-- build the path of the current field inside the object -->
 <xsl:param name="currentobjpath" select="concat($objpath,'/',@name)"/>
@@ -6515,32 +6180,23 @@ if (status) return status;
 <xsl:choose>
 	<!--========== Array of structures ==========-->
 	<xsl:when test="@data_type='struct_array'">
-		<xsl:if test="@timed='yes' or $timed='no'">
-			<!-- Non-timed struct_array must not appear in the timed section -->
-			{ /*     Array of structure    */
-			<!-- OH fix -->
-			<xsl:choose>
-				<xsl:when test="$timed='yes'">
-					void *obj<xsl:value-of select="$level + 1"/> = beginObject(expIdx,obj<xsl:value-of select="$level"/>,i<xsl:value-of select="$level"/>,"<xsl:value-of select="$currentobjpath"/>",TIMED);
-
-				</xsl:when>
-				<xsl:otherwise>
-					void *obj<xsl:value-of select="$level + 1"/> = beginObject(expIdx,obj<xsl:value-of select="$level"/>,i<xsl:value-of select="$level"/>,"<xsl:value-of select="$currentobjpath"/>",NON_TIMED);
-				</xsl:otherwise>
-			</xsl:choose>
-			for (int i<xsl:value-of select="$level + 1"/> = 0; i<xsl:value-of select="$level + 1"/> &lt; <xsl:value-of select="$currentidxpath"/>.extent(0); i<xsl:value-of select="$level + 1"/>++) {
-			<xsl:apply-templates select="field" mode="PUT_IN_OBJECT">
-				<xsl:with-param name="level" select="$level + 1"/>
-				<xsl:with-param name="objpath" select="@name"/>
-				<xsl:with-param name="idxpath" select="concat($currentidxpath,'(i',$level + 1,')')"/>
-				<xsl:with-param name="timed" select="$timed"/>
-			</xsl:apply-templates>
-			}
-			obj<xsl:value-of select="$level"/> = putObjectInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, obj<xsl:value-of select="$level + 1"/>);
+    // Put <xsl:value-of select="@path"/>
+    <!-- Present implementation assumes that nested AoS are necessarily of level 2, this may need to be upgraded for other cases later (?) -->
+    if (<xsl:value-of select = "$currentidxpath"/>.extent(0) &gt; 0) {
+    void *obj<xsl:value-of select="$level + 1"/> = beginObject(expIdx,obj<xsl:value-of select="$level"/>,0,"<xsl:value-of select="$currentobjpath"/>",NON_TIMED);
+    // Start to declare a nested Type 2 Aos
+     for (int i<xsl:value-of select="$level + 1"/> = 0; i<xsl:value-of select="$level + 1"/> &lt; <xsl:value-of select="$currentidxpath"/>.extent(0); i<xsl:value-of select="$level + 1"/>++) {
+      <xsl:apply-templates select = "field" mode = "PUT_IN_OBJECT">
+      <xsl:with-param name="level" select="$level + 1"/>
+      <xsl:with-param name="objpath" select="@name"/>
+      <xsl:with-param name="idxpath" select="concat($currentidxpath,'(i',$level + 1,')')"/>
+      <xsl:with-param name="child_index" select="concat('i',$level+1)"/>
+      </xsl:apply-templates>
+      }
+      obj<xsl:value-of select="$level"/> = putObjectInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, obj<xsl:value-of select="$level + 1"/>);
 			checkObject(obj<xsl:value-of select="$level"/>);
-			}
-		</xsl:if>
-	</xsl:when>
+        }
+     </xsl:when>
 
 	<!--========== Regular structure ==========-->
 	<xsl:when test="@data_type='structure'">
@@ -6548,311 +6204,349 @@ if (status) return status;
 			<xsl:with-param name="level" select="$level"/>
 			<xsl:with-param name="objpath" select="$currentobjpath"/>
 			<xsl:with-param name="idxpath" select="$currentidxpath"/>
-			<xsl:with-param name="timed" select="$timed"/>
+      <xsl:with-param name="child_index" select="$child_index"/>
 		</xsl:apply-templates>
 	</xsl:when>
 
 	<!--========== select either timed or non-timed fields ==========-->
 	<xsl:otherwise>
-		<xsl:if test="@timed=$timed">
+    <!--2014		<xsl:if test="@timed=$timed"> -->
 			<xsl:choose>
 
 				<!--========== Simple types ==========-->
 				<xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
-					obj<xsl:value-of select="$level"/> = putStringInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, (char *)<xsl:value-of select="$currentidxpath"/>.data());
+					obj<xsl:value-of select="$level"/> = putStringInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, (char *)<xsl:value-of select="$currentidxpath"/>.data());
 					checkObject(obj<xsl:value-of select="$level"/>);
 				</xsl:when>
 				<xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
-					obj<xsl:value-of select="$level"/> = putIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, <xsl:value-of select="$currentidxpath"/>);
+					obj<xsl:value-of select="$level"/> = putIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, <xsl:value-of select="$currentidxpath"/>);
 					checkObject(obj<xsl:value-of select="$level"/>);
 				</xsl:when>
 				<xsl:when test="@name='xs:boolean'">
-					obj<xsl:value-of select="$level"/> = putIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, <xsl:value-of select="$currentidxpath"/>);
+					obj<xsl:value-of select="$level"/> = putIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, <xsl:value-of select="$currentidxpath"/>);
 					checkObject(obj<xsl:value-of select="$level"/>);
 				</xsl:when>
 				<xsl:when test="@name='xs:double'">
-					obj<xsl:value-of select="$level"/> = putDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, <xsl:value-of select="$currentidxpath"/>);
+					obj<xsl:value-of select="$level"/> = putDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, <xsl:value-of select="$currentidxpath"/>);
 					checkObject(obj<xsl:value-of select="$level"/>);
 				</xsl:when>
 				<xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
-					obj<xsl:value-of select="$level"/> = putDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, <xsl:value-of select="$currentidxpath"/>);
+					obj<xsl:value-of select="$level"/> = putDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, <xsl:value-of select="$currentidxpath"/>);
 					checkObject(obj<xsl:value-of select="$level"/>);
 				</xsl:when>
 
 				<!--========== Vectors ==========-->
 				<xsl:when test="@data_type='flt_1d_type' or @data_type='FLT_1D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					doubleArray = new double[dim1];
-					for(_i = 0; _i &lt; dim1; _i++)
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					doubleArray = new double[dim1In];
+					for(_i = 0; _i &lt; dim1In; _i++)
 					doubleArray[_i] = <xsl:value-of select="$currentidxpath"/>(_i);
-					obj<xsl:value-of select="$level"/> = PUTVECT1DDOUBLEInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1);
+					obj<xsl:value-of select="$level"/> = putVect1DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@data_type='str_1d_type' or @data_type='STR_1D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					stringArray = new char *[dim1];
-					for(_i = 0; _i &lt; dim1; _i++)
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+           if ( dim1In > 0) {
+					stringArray = new char *[dim1In];
+					for(_i = 0; _i &lt; dim1In; _i++)
 					stringArray[_i] = (char *)<xsl:value-of select="$currentidxpath"/>(_i).c_str();
-					obj<xsl:value-of select="$level"/> = PUTVECT1DSTRINGInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, stringArray, dim1);
+					obj<xsl:value-of select="$level"/> = putVect1DStringInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, stringArray, dim1In);
 					delete[] stringArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='vecdbl_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					doubleArray = new double[dim1];
-					for(_i = 0; _i &lt; dim1; _i++)
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					doubleArray = new double[dim1In];
+					for(_i = 0; _i &lt; dim1In; _i++)
 					doubleArray[_i] = <xsl:value-of select="$currentidxpath"/>(_i);
-					obj<xsl:value-of select="$level"/> = PUTVECT1DDOUBLEInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1);
+					obj<xsl:value-of select="$level"/> = putVect1DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@data_type='int_1d_type' or @data_type='INT_1D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					intArray = new int[dim1];
-					for(_i = 0; _i &lt; dim1; _i++)
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					intArray = new int[dim1In];
+					for(_i = 0; _i &lt; dim1In; _i++)
 					intArray[_i] = <xsl:value-of select="$currentidxpath"/>(_i);
-					obj<xsl:value-of select="$level"/> = PUTVECT1DINTInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, intArray, dim1);
+					obj<xsl:value-of select="$level"/> = putVect1DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, intArray, dim1In);
 					delete[] intArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 
 				<!--========== Matrices ==========-->
 				<xsl:when test="@data_type='FLT_2D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					doubleArray = new double[dim1*dim2];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					doubleArray[_i+_j*dim1] = <xsl:value-of select="$currentidxpath"/>(_i,_j);
-					obj<xsl:value-of select="$level"/> = putVect2DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					doubleArray = new double[dim1In*dim2In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					doubleArray[_i+_j*dim1In] = <xsl:value-of select="$currentidxpath"/>(_i,_j);
+					obj<xsl:value-of select="$level"/> = putVect2DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='matdbl_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					doubleArray = new double[dim1*dim2];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					doubleArray[_i+_j*dim1] = <xsl:value-of select="$currentidxpath"/>(_i,_j);
-					obj<xsl:value-of select="$level"/> = putVect2DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					doubleArray = new double[dim1In*dim2In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					doubleArray[_i+_j*dim1In] = <xsl:value-of select="$currentidxpath"/>(_i,_j);
+					obj<xsl:value-of select="$level"/> = putVect2DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@data_type='INT_2D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					intArray = new int[dim1*dim2];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					intArray[_i+_j*dim1] = <xsl:value-of select="$currentidxpath"/>(_i,_j);
-					obj<xsl:value-of select="$level"/> = putVect2DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, intArray, dim1, dim2);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					intArray = new int[dim1In*dim2In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					intArray[_i+_j*dim1In] = <xsl:value-of select="$currentidxpath"/>(_i,_j);
+					obj<xsl:value-of select="$level"/> = putVect2DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, intArray, dim1In, dim2In);
 					delete[] intArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 
 				<!--========== 3D arrays ==========-->
 				<xsl:when test="@data_type='FLT_3D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					doubleArray = new double[dim1*dim2*dim3];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					doubleArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k);
-					obj<xsl:value-of select="$level"/> = putVect3DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					doubleArray = new double[dim1In*dim2In*dim3In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					doubleArray[_i+_j*dim1In+_k*dim1In*dim2In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k);
+					obj<xsl:value-of select="$level"/> = putVect3DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='array3ddbl_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					doubleArray = new double[dim1*dim2*dim3];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					doubleArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k);
-					obj<xsl:value-of select="$level"/> = putVect3DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					doubleArray = new double[dim1In*dim2In*dim3In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					doubleArray[_i+_j*dim1In+_k*dim1In*dim2In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k);
+					obj<xsl:value-of select="$level"/> = putVect3DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@data_type='INT_3D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					intArray = new int[dim1*dim2*dim3];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					intArray[_i+_j*dim1+_k*dim1*dim2] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k);
-					obj<xsl:value-of select="$level"/> = putVect3DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, intArray, dim1, dim2, dim3);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					intArray = new int[dim1In*dim2In*dim3In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					intArray[_i+_j*dim1In+_k*dim1In*dim2In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k);
+					obj<xsl:value-of select="$level"/> = putVect3DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, intArray, dim1In, dim2In, dim3In);
 					delete[] intArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 
 				<!--========== 4D arrays ==========-->
 				<xsl:when test="@data_type='FLT_4D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					doubleArray = new double[dim1*dim2*dim3*dim4];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					doubleArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l);
-					obj<xsl:value-of select="$level"/> = putVect4DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3, dim4);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					doubleArray = new double[dim1In*dim2In*dim3In*dim4In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					doubleArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l);
+					obj<xsl:value-of select="$level"/> = putVect4DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In, dim4In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='array4ddbl_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					doubleArray = new double[dim1*dim2*dim3*dim4];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					doubleArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l);
-					obj<xsl:value-of select="$level"/> = putVect4DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3, dim4);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					doubleArray = new double[dim1In*dim2In*dim3In*dim4In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					doubleArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l);
+					obj<xsl:value-of select="$level"/> = putVect4DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In, dim4In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='array4dint_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					intArray = new int[dim1*dim2*dim3*dim4];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					intArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l);
-					obj<xsl:value-of select="$level"/> = putVect4DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, intArray, dim1, dim2, dim3, dim4);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					intArray = new int[dim1In*dim2In*dim3In*dim4In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					intArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l);
+					obj<xsl:value-of select="$level"/> = putVect4DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, intArray, dim1In, dim2In, dim3In, dim4In);
 					delete[] intArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 
 				<!--========== 5D arrays ==========-->
 				<xsl:when test="@data_type='FLT_5D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					dim5 = <xsl:value-of select="$currentidxpath"/>.extent(4);
-					doubleArray = new double[dim1*dim2*dim3*dim4*dim5];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					for(_m = 0; _m &lt; dim5; _m++)
-					doubleArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3+_m*dim1*dim2*dim3*dim4] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m);
-					obj<xsl:value-of select="$level"/> = putVect5DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3, dim4, dim5);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					dim5In = <xsl:value-of select="$currentidxpath"/>.extent(4);
+					doubleArray = new double[dim1In*dim2In*dim3In*dim4In*dim5In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					for(_m = 0; _m &lt; dim5In; _m++)
+					doubleArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In+_m*dim1In*dim2In*dim3In*dim4In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m);
+					obj<xsl:value-of select="$level"/> = putVect5DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='array5ddbl_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					dim5 = <xsl:value-of select="$currentidxpath"/>.extent(4);
-					doubleArray = new double[dim1*dim2*dim3*dim4*dim5];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					for(_m = 0; _m &lt; dim5; _m++)
-					doubleArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3+_m*dim1*dim2*dim3*dim4] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m);
-					obj<xsl:value-of select="$level"/> = putVect5DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3, dim4, dim5);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					dim5In = <xsl:value-of select="$currentidxpath"/>.extent(4);
+					doubleArray = new double[dim1In*dim2In*dim3In*dim4In*dim5In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					for(_m = 0; _m &lt; dim5In; _m++)
+					doubleArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In+_m*dim1In*dim2In*dim3In*dim4In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m);
+					obj<xsl:value-of select="$level"/> = putVect5DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='array5dint_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					dim5 = <xsl:value-of select="$currentidxpath"/>.extent(4);
-					intArray = new int[dim1*dim2*dim3*dim4*dim5];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					for(_m = 0; _m &lt; dim5; _m++)
-					intArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3+_m*dim1*dim2*dim3*dim4] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m);
-					obj<xsl:value-of select="$level"/> = putVect5DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, intArray, dim1, dim2, dim3, dim4, dim5);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					dim5In = <xsl:value-of select="$currentidxpath"/>.extent(4);
+					intArray = new int[dim1In*dim2In*dim3In*dim4In*dim5In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					for(_m = 0; _m &lt; dim5In; _m++)
+					intArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In+_m*dim1In*dim2In*dim3In*dim4In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m);
+					obj<xsl:value-of select="$level"/> = putVect5DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, intArray, dim1In, dim2In, dim3In, dim4In, dim5In);
 					delete[] intArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 
 				<!--========== 6D arrays ==========-->
 				<xsl:when test="@data_type='FLT_6D'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					dim5 = <xsl:value-of select="$currentidxpath"/>.extent(4);
-					dim6 = <xsl:value-of select="$currentidxpath"/>.extent(5);
-					doubleArray = new double[dim1*dim2*dim3*dim4*dim5*dim6];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					for(_m = 0; _m &lt; dim5; _m++)
-					for(_n = 0; _n &lt; dim6; _n++)
-					doubleArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3+_m*dim1*dim2*dim3*dim4+_n*dim1*dim2*dim3*dim4*dim5] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m, _n);
-					obj<xsl:value-of select="$level"/> = putVect6DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3, dim4, dim5, dim6);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					dim5In = <xsl:value-of select="$currentidxpath"/>.extent(4);
+					dim6In = <xsl:value-of select="$currentidxpath"/>.extent(5);
+					doubleArray = new double[dim1In*dim2In*dim3In*dim4In*dim5In*dim6In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					for(_m = 0; _m &lt; dim5In; _m++)
+					for(_n = 0; _n &lt; dim6In; _n++)
+					doubleArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In+_m*dim1In*dim2In*dim3In*dim4In+_n*dim1In*dim2In*dim3In*dim4In*dim5In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m, _n);
+					obj<xsl:value-of select="$level"/> = putVect6DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In, dim6In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='array6ddbl_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					dim5 = <xsl:value-of select="$currentidxpath"/>.extent(4);
-					dim6 = <xsl:value-of select="$currentidxpath"/>.extent(5);
-					doubleArray = new double[dim1*dim2*dim3*dim4*dim5*dim6];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					for(_m = 0; _m &lt; dim5; _m++)
-					for(_n = 0; _n &lt; dim6; _n++)
-					doubleArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3+_m*dim1*dim2*dim3*dim4+_n*dim1*dim2*dim3*dim4*dim5] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m, _n);
-					obj<xsl:value-of select="$level"/> = putVect6DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3, dim4, dim5, dim6);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					dim5In = <xsl:value-of select="$currentidxpath"/>.extent(4);
+					dim6In = <xsl:value-of select="$currentidxpath"/>.extent(5);
+					doubleArray = new double[dim1In*dim2In*dim3In*dim4In*dim5In*dim6In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					for(_m = 0; _m &lt; dim5In; _m++)
+					for(_n = 0; _n &lt; dim6In; _n++)
+					doubleArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In+_m*dim1In*dim2In*dim3In*dim4In+_n*dim1In*dim2In*dim3In*dim4In*dim5In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m, _n);
+					obj<xsl:value-of select="$level"/> = putVect6DDoubleInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In, dim6In);
 					delete[] doubleArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 				<xsl:when test="@name='array6dint_type'">
-					dim1 = <xsl:value-of select="$currentidxpath"/>.extent(0);
-					dim2 = <xsl:value-of select="$currentidxpath"/>.extent(1);
-					dim3 = <xsl:value-of select="$currentidxpath"/>.extent(2);
-					dim4 = <xsl:value-of select="$currentidxpath"/>.extent(3);
-					dim5 = <xsl:value-of select="$currentidxpath"/>.extent(4);
-					dim6 = <xsl:value-of select="$currentidxpath"/>.extent(5);
-					intArray = new int[dim1*dim2*dim3*dim4*dim5*dim6];
-					for(_i = 0; _i &lt; dim1; _i++)
-					for(_j = 0; _j &lt; dim2; _j++)
-					for(_k = 0; _k &lt; dim3; _k++)
-					for(_l = 0; _l &lt; dim4; _l++)
-					for(_m = 0; _m &lt; dim5; _m++)
-					for(_n = 0; _n &lt; dim6; _n++)
-					intArray[_i+_j*dim1+_k*dim1*dim2+_l*dim1*dim2*dim3+_m*dim1*dim2*dim3*dim4+_n*dim1*dim2*dim3*dim4*dim5] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m, _n);
-					obj<xsl:value-of select="$level"/> = putVect6DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", i<xsl:value-of select="$level"/>, doubleArray, dim1, dim2, dim3, dim4, dim5, dim6);
+					dim1In = <xsl:value-of select="$currentidxpath"/>.extent(0);
+          if ( dim1In > 0) {
+					dim2In = <xsl:value-of select="$currentidxpath"/>.extent(1);
+					dim3In = <xsl:value-of select="$currentidxpath"/>.extent(2);
+					dim4In = <xsl:value-of select="$currentidxpath"/>.extent(3);
+					dim5In = <xsl:value-of select="$currentidxpath"/>.extent(4);
+					dim6In = <xsl:value-of select="$currentidxpath"/>.extent(5);
+					intArray = new int[dim1In*dim2In*dim3In*dim4In*dim5In*dim6In];
+					for(_i = 0; _i &lt; dim1In; _i++)
+					for(_j = 0; _j &lt; dim2In; _j++)
+					for(_k = 0; _k &lt; dim3In; _k++)
+					for(_l = 0; _l &lt; dim4In; _l++)
+					for(_m = 0; _m &lt; dim5In; _m++)
+					for(_n = 0; _n &lt; dim6In; _n++)
+					intArray[_i+_j*dim1In+_k*dim1In*dim2In+_l*dim1In*dim2In*dim3In+_m*dim1In*dim2In*dim3In*dim4In+_n*dim1In*dim2In*dim3In*dim4In*dim5In] = <xsl:value-of select="$currentidxpath"/>(_i, _j, _k, _l, _m, _n);
+					obj<xsl:value-of select="$level"/> = putVect6DIntInObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:value-of select="$child_index"/>, doubleArray, dim1In, dim2In, dim3In, dim4In, dim5In, dim6In);
 					delete[] intArray;
 					checkObject(obj<xsl:value-of select="$level"/>);
+          }
 				</xsl:when>
 			</xsl:choose>
-		</xsl:if>
+      <!--    </xsl:if> -->
 	</xsl:otherwise>
 </xsl:choose>
 </xsl:template>
@@ -6860,27 +6554,13 @@ if (status) return status;
 <xsl:template name="printtimepath">
 <xsl:if test="@type = 'dynamic'">
 	<xsl:choose>
-		<xsl:when test="contains(@coordinate7,'time')">
-			<xsl:value-of select="@coordinate7"/>
-		</xsl:when>
-		<xsl:when test="contains(@coordinate6,'time')">
-			<xsl:value-of select="@coordinate6"/>
-		</xsl:when>
-		<xsl:when test="contains(@coordinate5,'time')">
-			<xsl:value-of select="@coordinate5"/>
-		</xsl:when>
-		<xsl:when test="contains(@coordinate4,'time')">
-			<xsl:value-of select="@coordinate4"/>
-		</xsl:when>
-		<xsl:when test="contains(@coordinate3,'time')">
-			<xsl:value-of select="@coordinate3"/>
-		</xsl:when>
-		<xsl:when test="contains(@coordinate2,'time')">
-			<xsl:value-of select="@coordinate2"/>
-		</xsl:when>
-		<xsl:when test="contains(@coordinate1,'time')">
-			<xsl:value-of select="@coordinate1"/>
-		</xsl:when>
+  <xsl:when test="contains(@coordinate7,'time')"> <xsl:value-of select="translate(@coordinate7,'(:)','')"/></xsl:when> 
+  <xsl:when test="contains(@coordinate6,'time')"> <xsl:value-of select="translate(@coordinate6,'(:)','')"/></xsl:when>
+  <xsl:when test="contains(@coordinate5,'time')"> <xsl:value-of select="translate(@coordinate5,'(:)','')"/></xsl:when>
+  <xsl:when test="contains(@coordinate4,'time')"> <xsl:value-of select="translate(@coordinate4,'(:)','')"/></xsl:when>
+  <xsl:when test="contains(@coordinate3,'time')"> <xsl:value-of select="translate(@coordinate3,'(:)','')"/></xsl:when>
+  <xsl:when test="contains(@coordinate2,'time')"> <xsl:value-of select="translate(@coordinate2,'(:)','')"/></xsl:when>
+  <xsl:when test="contains(@coordinate1,'time')"> <xsl:value-of select="translate(@coordinate1,'(:)','')"/></xsl:when>
 	</xsl:choose>
 </xsl:if>
 <xsl:if test="@name='time'">
