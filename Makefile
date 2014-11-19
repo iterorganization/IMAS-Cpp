@@ -57,10 +57,10 @@ libUALCPPInterface.a : UALMethods.o
 UALMethods.o: UALMethods.cpp UALClasses.h
 	$(CXX) $(CXXFLAGS) -c $(INCDIR) UALMethods.cpp
 	
-UALClasses.h: IDSDef2CPPClasses.xsl 
+UALClasses.h: IDSDef2CPPClasses.xsl $(IDSDEF)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) | $(BEAUTIFY) > UALClasses.h
 
-UALMethods.cpp: IDSDef2CPPMethods.xsl
+UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF)
 	xsltproc IDSDef2CPPMethods.xsl $(IDSDEF) | $(BEAUTIFY) > UALMethods.cpp
 
 cpptest: cpptest.cpp
