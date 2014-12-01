@@ -33,6 +33,7 @@ else
 endif
 	
 install: all
+	mkdir -p $(INSTALL)/lib $(INSTALL)/include
 	cp *.so $(INSTALL)/lib
 	cp UALClasses.h $(INSTALL)/include
 	cp UALDef.h $(INSTALL)/include
