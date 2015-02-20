@@ -12,6 +12,9 @@ else
  LDFLAGS= -g -pthread
 endif
 
+# When not using the installer, uncomment the two following lines
+#AFS = /work/imas/projects
+#BLITZ_DIR = $(AFS)/blitz/blitz-0.9_X86_64_GNU
 IDSDEF= ../xml/IDSDef.xml
 INCDIR=-I$(BLITZ_DIR)/include -I$(BLITZ_DIR)  -I../lowlevel
 LIBS=-L../lowlevel $(BLITZ_DIR)/lib/libblitz.a -lUALLowLevel
