@@ -319,7 +319,7 @@ double *doubleArray;
 char *str;
 char *path = "<xsl:value-of select="@name"/>";
 char *clepath;
-string lepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+string lepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 status = beginIdsGet(expIdx, "<xsl:value-of select="@name"/>", NON_TIMED, &amp;numSamples);
 checkStatus(status);
@@ -342,7 +342,7 @@ double *doubleArray;
 char *str;
 char *basePath = "<xsl:value-of select="@name"/>";
 char *clepath;
-string lepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+string lepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 char path[strlen(basePath)+4];
 if(idx &lt; 1)
@@ -368,7 +368,7 @@ char **stringArray;
 char *path = "<xsl:value-of select="@name"/>";
 char *clepath;
 string lepath, timepath;
-string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 deleteAll();
 status = beginIdsPut(expIdx, "<xsl:value-of select="@name"/>");
@@ -391,7 +391,7 @@ char *basePath = "<xsl:value-of select="@name"/>";
 char path[strlen(basePath)+4];
 char *clepath;
 string lepath,  timepath;
-string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 if(idx &lt; 1)
 sprintf(path, "%s", basePath);
@@ -419,7 +419,7 @@ char *basePath = "<xsl:value-of select="@name"/>";
 char path[strlen(basePath)+4];
 char *clepath;
 string lepath, timepath;
-string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 if(idx &lt; 1)
 sprintf(path, "%s", basePath);
@@ -452,7 +452,7 @@ char *path = "<xsl:value-of select="@name"/>";
 double retTime;
 char *clepath;
 string lepath;
-string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 if (ids_properties.homogeneous_time != 1) {
 puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
@@ -470,7 +470,7 @@ return 0;
 int IdsNs::IDS::<xsl:value-of select="@name"/>::remove(int idx)
 {
 string lepath;
-char * clepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int  i<xsl:value-of select="@name"/>; </xsl:for-each>
 if(!connected) return -1;
 char *basePath = "<xsl:value-of select="@name"/>";
@@ -486,7 +486,7 @@ return 0;
 int IdsNs::IDS::<xsl:value-of select="@name"/>::remove()
 {
 string lepath;
-char * clepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 if(!connected) return -1;
 char *path = "<xsl:value-of select="@name"/>";
@@ -497,7 +497,7 @@ return 0;
 int IdsNs::IDS::<xsl:value-of select="@name"/>::deleteAll(int idx)
 {
 string lepath;
-char * clepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 if(!connected) return -1;
 char *basePath = "<xsl:value-of select="@name"/>";
@@ -513,7 +513,7 @@ return 0;
 int IdsNs::IDS::<xsl:value-of select="@name"/>::deleteAll()
 {
 string lepath;
-char * clepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 if(!connected) return -1;
 char *path = "<xsl:value-of select="@name"/>";
@@ -533,7 +533,7 @@ double *doubleArray;
 int _i, _j, _k, _h, _l, _m, numSamples;
 char **stringArray;
 char *path = "<xsl:value-of select="@name"/>";
-char *str; <xsl:for-each select=".//field[@data_type='struct_array']">
+char *str; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 double retTime;
 deleteAll();
@@ -565,7 +565,7 @@ if(idx &lt; 1)
 sprintf(path, "%s", basePath);
 else
 sprintf(path, "%s/%d", basePath, idx);
-double retTime; <xsl:for-each select=".//field[@data_type='struct_array']">
+double retTime; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 deleteAll(idx);
 int status = beginIdsPutNonTimed(expIdx,  path);
@@ -589,7 +589,7 @@ char **stringArray;
 char *str;
 char *clepath;
 string timepath,timebasepath;
-string lepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+string lepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 char *path = "<xsl:value-of select="@name"/>";
 double retTime;
@@ -612,7 +612,7 @@ char **stringArray;
 char *str;
 char *clepath;
 string timepath,timebasepath;
-string lepath; <xsl:for-each select=".//field[@data_type='struct_array']">
+string lepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="@name"/>; </xsl:for-each>
 char *basePath = "<xsl:value-of select="@name"/>";
 char path[strlen(basePath)+4];
