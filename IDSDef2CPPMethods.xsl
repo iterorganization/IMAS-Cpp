@@ -2099,7 +2099,6 @@ free(doubleArray);
   status = getVect2DDoubleFromObject(expIdx,obj<xsl:value-of select="$level"/>, "<xsl:value-of select="$currentobjpath"/>", <xsl:choose><xsl:when test="$timed='yes'">0</xsl:when><xsl:otherwise>i<xsl:value-of select="$level"/></xsl:otherwise></xsl:choose>, &amp;doubleArray, &amp;dim1In, &amp;dim2In);
 checkStatus(status);
 if(!status) {
- <xsl:value-of select = "concat($mds_path, ' + &quot;/', @name)"/>"
 setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In);
 free(doubleArray);
 }

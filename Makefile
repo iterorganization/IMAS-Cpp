@@ -62,7 +62,7 @@ UALClasses.h: IDSDef2CPPClasses.xsl $(IDSDEF)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) | $(BEAUTIFY) > UALClasses.h
 
 UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF)
-	xsltproc IDSDef2CPPMethods.xsl $(IDSDEF) | $(BEAUTIFY) > UALMethods.cpp
+	java -cp /work/imas/projects/saxonica/saxon9he.jar net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   | $(BEAUTIFY) > UALMethods.cpp
 
 cpptest: cpptest.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCDIR) $(LDFLAGS) libUALCPPInterface.so cpptest.cpp $(LIBS) -Wl,-rpath,../itmcatalog/lib
