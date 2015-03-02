@@ -20,11 +20,17 @@ INCDIR=-I$(BLITZ_DIR)/include -I$(BLITZ_DIR)  -I../lowlevel
 LIBS=-L../lowlevel $(BLITZ_DIR)/lib/libblitz.a -lUALLowLevel
 # LIBS_HDF5=   -L../lowlevel /afs/efda-itm.eu/project/switm/blitz/blitz-0.9_X86_64_GNU/lib/libblitz.a -lUALLowLevel_hdf5
 
-# Check existence of the "indent" utiliy to get a clean C format
+# Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
  BEAUTIFY = cat
 else
  BEAUTIFY = indent -kr --no-tabs -l1000
+endif
+
+# Check that "saxon9he.jar" utility is set in CLASSPATH
+SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
+ifeq (,$(SAXONICAJAR))
+$(error Invalid /path/to/saxon9he.jar in CLASSPATH)
 endif
 
 all : libUALCPPInterface.so libUALCPPInterface.a
@@ -64,8 +70,8 @@ UALMethods.o: UALMethods.cpp UALClasses.h
 UALClasses.h: IDSDef2CPPClasses.xsl $(IDSDEF)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) | $(BEAUTIFY) > UALClasses.h
 
-UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF)
-	java -cp /work/imas/projects/saxonica/saxon9he.jar net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   | $(BEAUTIFY) > UALMethods.cpp
+UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF) $(SAXONICAJAR)
+	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   | $(BEAUTIFY) > UALMethods.cpp
 
 cpptest: cpptest.cpp
 	$(CXX) -o $@ $(CXXFLAGS) $(INCDIR) $(LDFLAGS) libUALCPPInterface.so cpptest.cpp $(LIBS) -Wl,-rpath,../itmcatalog/lib
