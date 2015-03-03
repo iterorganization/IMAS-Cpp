@@ -12,12 +12,9 @@ else
  LDFLAGS= -g -pthread
 endif
 
-# When not using the installer, uncomment the two following lines
-#AFS = /work/imas/projects
-#BLITZ_DIR = $(AFS)/blitz/blitz-0.9_X86_64_GNU
 IDSDEF= ../xml/IDSDef.xml
-INCDIR=-I$(BLITZ_DIR)/include -I$(BLITZ_DIR)  -I../lowlevel
-LIBS=-L../lowlevel $(BLITZ_DIR)/lib/libblitz.a -lUALLowLevel
+INCDIR=`pkg-config blitz --cflags`  -I../lowlevel
+LIBS=-L../lowlevel `pkg-config blitz --libs` -lUALLowLevel
 # LIBS_HDF5=   -L../lowlevel /afs/efda-itm.eu/project/switm/blitz/blitz-0.9_X86_64_GNU/lib/libblitz.a -lUALLowLevel_hdf5
 
 # Check existence of the "indent" utility to get a clean C format
