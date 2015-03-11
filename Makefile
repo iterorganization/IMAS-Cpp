@@ -24,13 +24,15 @@ else
  BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
+all : libUALCPPInterface.so libUALCPPInterface.a
+
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
+.PHONY:saxonicajar
+saxonicajar:
 ifeq (,$(SAXONICAJAR))
-$(error Invalid /path/to/saxon9he.jar in CLASSPATH)
+	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
 endif
-
-all : libUALCPPInterface.so libUALCPPInterface.a
 
 ifeq "$(strip $(HDF5))" "yes"
  tests: cpptest cpptest_hdf5
@@ -38,9 +40,14 @@ else
  tests: cpptest
 endif
 	
-install: all
+install:
 	mkdir -p $(INSTALL)/lib $(INSTALL)/include
-	cp *.so $(INSTALL)/lib
+	for OBJECT in *.so ;do \
+		cp -v $$OBJECT $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
+		ln -svf $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR); \
+		ln -svf $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR); \
+		ln -svf $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT; \
+	done
 	cp UALClasses.h $(INSTALL)/include
 	cp UALDef.h $(INSTALL)/include
 	cp IdsDef.h $(INSTALL)/include
@@ -56,7 +63,7 @@ clean-tests:
 
 
 libUALCPPInterface.so : UALMethods.o
-	$(LD) $(LDFLAGS) -o $@ -shared  UALMethods.o $(LIBS_MDSPLUS)
+	$(LD) $(LDFLAGS) -o $@ -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)  UALMethods.o $(LIBS_MDSPLUS)
 
 libUALCPPInterface.a : UALMethods.o
 	ar rvs $@ $^
@@ -67,7 +74,7 @@ UALMethods.o: UALMethods.cpp UALClasses.h
 UALClasses.h: IDSDef2CPPClasses.xsl $(IDSDEF)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) | $(BEAUTIFY) > UALClasses.h
 
-UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF) $(SAXONICAJAR)
+UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF) saxonicajar
 	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   | $(BEAUTIFY) > UALMethods.cpp
 
 cpptest: cpptest.cpp
