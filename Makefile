@@ -24,7 +24,7 @@ else
  BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
-all : libUALCPPInterface.so libUALCPPInterface.a
+all : libUALCPPInterface.so libUALCPPInterface.a pkgconfig
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
@@ -40,7 +40,7 @@ else
  tests: cpptest
 endif
 	
-install:
+install: pkgconfig_install
 	mkdir -p $(INSTALL)/lib $(INSTALL)/include
 	for OBJECT in *.so ;do \
 		cp -v $$OBJECT $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
@@ -52,7 +52,7 @@ install:
 	cp UALDef.h $(INSTALL)/include
 	cp IdsDef.h $(INSTALL)/include
 
-clean: clean-tests
+clean: clean-tests pkgconfig_clean
 	rm -f *.o *.so *~ *.a
 
 clean-src: clean
@@ -85,3 +85,6 @@ cpptest_hdf5: cpptest.cpp
 
 cpptest.cpp: IDSDef2CPPtests.xsl
 	xsltproc IDSDef2CPPtests.xsl $(IDSDEF) | $(BEAUTIFY) > cpptest.cpp
+
+PC_FILES = imas-cpp.pc
+include ../Makefile.pkgconfig
