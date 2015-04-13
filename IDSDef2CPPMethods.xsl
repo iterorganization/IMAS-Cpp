@@ -914,7 +914,7 @@ releaseObject(expIdx,obj1);
           </xsl:apply-templates>
           }
           }
-          releaseObject(expIdx,obj_all_times);
+          releaseObject(obj_all_times);
           }
         </xsl:when>
       <xsl:otherwise>
@@ -938,7 +938,7 @@ releaseObject(expIdx,obj1);
           </xsl:apply-templates>
           }
           }
-          releaseObject(expIdx,obj_all_times);
+          releaseObject(obj_all_times);
           }
 
         </xsl:otherwise>
@@ -4605,7 +4605,7 @@ if (status) return status;
      <xsl:with-param name="timed" select="'yes'"/>
    </xsl:apply-templates>
    }
-    releaseObject(expIdx,obj_single_time);
+    releaseObject(obj_single_time);
   }
  } 
 </xsl:when>
@@ -4626,7 +4626,7 @@ if (status) return status;
  <xsl:with-param name="timed" select="'yes'"/>
  </xsl:apply-templates>
  }
- releaseObject(expIdx,obj_single_time);
+ releaseObject(obj_single_time);
  }
  </xsl:otherwise>
  </xsl:choose>
