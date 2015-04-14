@@ -3,12 +3,12 @@ include ../Makefile.common
 ifeq "$(strip $(CC))" "icc"
  CXX=icpc
  LD=$(CXX)
- CXXFLAGS=-g -fPIC -Wno-deprecated -pthread -shared-intel
+ CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
  LDFLAGS= -g -pthread
 else
  CXX=g++
  LD=$(CXX)
- CXXFLAGS=-g -fPIC -Wno-deprecated -pthread
+ CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread
  LDFLAGS= -g -pthread
 endif
 
