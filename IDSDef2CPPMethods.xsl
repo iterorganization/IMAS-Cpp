@@ -363,6 +363,7 @@ if(!connected) return -1;
 int status, dim1, dim2, dim3, dim4, dim5, dim6, dim7, _i, _j, _k, _h, _l, _m, _n;
 int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 double *doubleArray;
+char fullpath[1024];
 int *intArray;
 char **stringArray;
 char *path = "<xsl:value-of select="@name"/>";
@@ -385,6 +386,7 @@ if(!connected) return -1;
 int status, dim1, dim2, dim3, dim4, dim5, dim6, dim7, _i, _j, _k, _h, _l, _m, _n, h;
 int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 double *doubleArray;
+char fullpath[1024];
 int *intArray;
 char **stringArray;
 char *basePath = "<xsl:value-of select="@name"/>";
@@ -413,6 +415,7 @@ int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
 int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray;
+char fullpath[1024];
 int _i, _j, _k, _h, _l, _m, _n;
 char *str;
 char *basePath = "<xsl:value-of select="@name"/>";
@@ -446,6 +449,7 @@ int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
 int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray;
+char fullpath[1024];
 int _i, _j, _k, _h, _l, _m, _n;
 char *str;
 char *path = "<xsl:value-of select="@name"/>";
@@ -2377,7 +2381,7 @@ if (status) return status;
         <xsl:otherwise>
           // Structure array of type 3 : <xsl:value-of select = "@path"/>
           if (<xsl:value-of select = "translate(@path,'/','.')"/>.extent(0) &gt; 0) {
-           char fullpath[1024];
+           //char fullpath[1024]; //18/04
            //sprintf(fullpath,"path/<xsl:value-of select = "@path"/>"); //BYY
            sprintf(fullpath,"%s/<xsl:value-of select = "@path"/>",path);
            dim1 = <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0);
@@ -2440,7 +2444,7 @@ if (status) return status;
            <!-- Handle only non-timed descendants of type 2 AoS for the moment -->
            <!-- Type 2 structure arrays not handled yet, I put here a copy of the ITM treatment for recall -->
            // Write non-timed fields 
-            char fullpath[1024];
+            //char fullpath[1024]; //18/04
             sprintf(fullpath,"path/<xsl:value-of select = "@path"/>");
             void *obj1=beginObject(expIdx,-1,1,fullpath,NON_TIMED);
             dim1=<xsl:value-of select = "translate(@path,'/','.')"/>.extent(0);
@@ -4143,7 +4147,8 @@ if (status) return status;
 			<xsl:when test="@data_type='struct_array'">
 				{ /*     3Array of structure     */
 				/*     Write timed fields    */
-				char fullpath[1024]; sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
+				//char fullpath[1024];
+                                sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
 				void *obj_all_times = beginObject(expIdx,NULL,0,fullpath,TIMED_CLEAR);
 				for (int i0 = 0; i0 &lt; numElements; i0++) {
 				void *obj1 = beginObject(expIdx,obj_all_times,i0,"ALLTIMES",TIMED);
@@ -4500,7 +4505,8 @@ if (status) return status;
 			<!--========== Arrays of structures ==========-->
 			<xsl:when test="@data_type='struct_array'">
 				{ /*     4Array of structure    */
-				char fullpath[1024]; sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
+				//char fullpath[1024];
+                                sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
 				void *obj1 = beginObject(expIdx,NULL,0,fullpath,NON_TIMED);
 				for (int i1 = 0; i1 &lt; array(0).<xsl:value-of select="translate(@path,'/','.')"/>.extent(0); i1++) {
 				<xsl:apply-templates select="field" mode="PUT_IN_OBJECT">
@@ -4589,7 +4595,7 @@ if (status) return status;
    { /*     11 jul  */
    void *obj_single_time;
    void *obj1;
-   lepath=<xsl:value-of select = "concat($mds_path,'+&quot;/',@name,'&quot;')"/>; 
+   lepath=<xsl:value-of select = "concat($mds_path,'+ string(&quot;/',@name,'&quot;')"/>); 
    clepath = const_cast&lt;char *&gt; (lepath.c_str());
    status = getObjectSlice(expIdx, path, clepath, inTime, &amp;obj_single_time);
    checkStatus(status);
@@ -5093,7 +5099,7 @@ strcpy(clepath, lepath.c_str());-->
 </xsl:when>
 <xsl:otherwise>
   // Structure array of type 3 : <xsl:value-of select = "@path"/>
-  char fullpath[1024];
+  //char fullpath[1024];
       if (<xsl:value-of select = "translate(@path,'/','.')"/>.extent(0) &gt; 0) {
        sprintf(fullpath,"%s/<xsl:value-of select = "@path"/>",path);
       void *obj_single_time = beginObject(expIdx,(void *) -1,0,fullpath,TIMED);
@@ -5822,7 +5828,8 @@ if (status) return status;
 	<!--========== Arrays of structures ==========-->
 	<xsl:when test="@data_type='struct_array'">
 		{ /*     5Array of structure     */
-		char fullpath[1024]; sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
+		//char fullpath[1024];
+                sprintf(fullpath,"%s/<xsl:value-of select="@path"/>",path);
 		void *obj1 = beginObject(expIdx,NULL,0,fullpath,NON_TIMED);
 		for (int i1 = 0; i1 &lt; <xsl:value-of select="translate(@path,'/','.')"/>.extent(0); i1++) {
 		<xsl:apply-templates select="field" mode="PUT_IN_OBJECT">
