@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?modxslt-stylesheet type="text/xsl" media="fuffa, screen and $GET[stylesheet]" href="./%24GET%5Bstylesheet%5D" alternate="no" title="Translation using provided stylesheet" charset="ISO-8859-1" ?>
 <?modxslt-stylesheet type="text/xsl" media="screen" alternate="no" title="Show raw source of the XML file" charset="ISO-8859-1" ?>
-<!-- Jo Lister, CRPP-EPFL, 2005, Generating  Fortran 90 code calls from XSD schemas -->
+<!-- Generating  C++ access layer code from Data Dictionary IDSDef.xml -->
 <!-- -->
 <xsl:stylesheet xmlns:yaslt="http://www.mod-xslt2.com/ns/2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:fn="http://www.w3.orng/2005/02/xpath-functions" version="2.0" extension-element-prefixes="yaslt">
 
@@ -2368,7 +2368,7 @@ if (status) return status;
            checkStatus(status);
            if (status) return status;
            endIdsPutTimed(expIdx, path);
-           timepath=<xsl:value-of select = "concat($mds_path,' + &quot;/',@name)"/>";
+           timepath=<xsl:value-of select = "concat($mds_path,' + string(&quot;/',@name)"/>");
            clepath = const_cast&lt;char *&gt; (timepath.c_str());
            putObject(expIdx,path,clepath, obj_all_times,1);
           }
@@ -5060,7 +5060,7 @@ strcpy(clepath, lepath.c_str());-->
       </xsl:apply-templates>
       obj_single_time = putObjectInObject(expIdx, obj_single_time, "ALLTIMES", 0, obj1);
       //H7
-      lepath = <xsl:value-of select = "concat($mds_path, ' + &quot;/', @name)"/>";
+      lepath = <xsl:value-of select = "concat($mds_path, ' + string(&quot;/', @name)"/>");
       clepath = const_cast&lt;char *&gt; (lepath.c_str());
       status = putObjectSlice(expIdx, path, clepath, time(0), obj_single_time);
       checkStatus(status);
