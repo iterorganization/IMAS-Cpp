@@ -28,11 +28,6 @@ all : libUALCPPInterface.so libUALCPPInterface.a pkgconfig
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
-.PHONY:saxonicajar
-saxonicajar:
-ifeq (,$(SAXONICAJAR))
-	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
-endif
 
 ifeq "$(strip $(HDF5))" "yes"
  tests: cpptest cpptest_hdf5
@@ -74,7 +69,10 @@ UALMethods.o: UALMethods.cpp UALClasses.h
 UALClasses.h: IDSDef2CPPClasses.xsl $(IDSDEF)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) | $(BEAUTIFY) > UALClasses.h
 
-UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF) saxonicajar
+UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF)
+ifeq (,$(SAXONICAJAR))
+	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
+endif
 	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   | $(BEAUTIFY) > UALMethods.cpp
 
 cpptest: cpptest.cpp
