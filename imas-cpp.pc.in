@@ -4,8 +4,8 @@ libdir=${exec_prefix}/lib
 includedir=${prefix}/include
 
 Name: imas-cpp
+Version: imas:__DD_GIT_DESCRIBE__ ual:__UAL_GIT_DESCRIBE__
 Description: IMAS C++ Libraries
 URL: https://portal.iter.org/departments/POP/Pages/IM-Users-and-Developers.aspx
-Version: __VERSION__
-Libs: -L${libdir} -lUALCPPInterface
+Libs: -L${libdir} -limas-cpp
 Cflags: -I${includedir}
