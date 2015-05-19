@@ -17,7 +17,7 @@
 #define BZ_THREADSAFE
 
 #include "UALDef.h"
-#include &lt;blitz/array.h&gt; 
+#include &lt;blitz/array.h&gt;
 
 using namespace blitz;
 namespace IdsNs {
@@ -29,9 +29,9 @@ typedef struct {
 } codeparam_t;
 
 
-                         
-inline 
-void checkObject(void *obj) 
+
+inline
+void checkObject(void *obj)
 {
     if (!obj) printf("Problem with array of structure allocation\n");
 }
@@ -43,7 +43,7 @@ class IDS
     int shot, run, refShot, refRun;
     string treeName;
     bool connected;
-    
+
     public:
     IDS();
     IDS(int shot, int run, int refShot, int refRun);
@@ -80,16 +80,16 @@ class IDS
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const IDS <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 
     #include "IdsDef.h"
-    
-    
+
+
     <xsl:apply-templates select = "IDS" mode = "CLASS_DEFINITION"/>
     <xsl:apply-templates select = "IDS" mode = "CLASS_INSTANTIATION"/>
 
     };
 }
- 
+
  #endif
- 
+
 <!--=================================================-->
 <!--                 IDS instances                   -->
 <!--=================================================-->
@@ -99,11 +99,11 @@ class IDS
  <!--YBYB   <xsl:choose> >
         <xsl:when test = "@timed = 'no'">
 YBYB-->
-            <xsl:value-of select="@name"/>  
+            <xsl:value-of select="@name"/>
             _<xsl:value-of select="@name"/>;
  <!--YBYB          </xsl:when>
       <xsl:otherwise>
-            <xsl:value-of select="@name"/>  
+            <xsl:value-of select="@name"/>
             _<xsl:value-of select="@name"/>;
             <xsl:value-of select="@name"/>Array
             _<xsl:value-of select="@name"/>Array;
@@ -119,10 +119,10 @@ YBYB-->
 
 <xsl:template match = "IDS" mode = "CLASS_DEFINITION">
 <!-- YBYB  <xsl:choose> -->
-  
+
 <!--============ Define time-independent IDSs ============-->
 
-<!-- YBYB        <xsl:when test = "@timed = 'no'"> 
+<!-- YBYB        <xsl:when test = "@timed = 'no'">
           class <xsl:value-of select="@name"/>:Ids
           {
           private:
@@ -145,7 +145,7 @@ YBYB-->
 };
      </xsl:when>
 YBYB-->
-      
+
 <!--============= Define time-dependent IDSs =============-->
 <!-- YBYBYBYBYBYB
       <xsl:otherwise>
@@ -187,8 +187,8 @@ class <xsl:value-of select="@name"/>Array:Ids
 private:
           int expIdx;
 	  bool connected;
-          
-          
+
+
 public:
     <xsl:value-of select="@name"/>Array(){connected = false;}
     void setExpIdx(int expIdx){this->expIdx = expIdx; connected = true;}
@@ -213,8 +213,8 @@ public:
   </xsl:choose>
 -->
   </xsl:template>
-    
- 
+
+
 <!--============ Define IDS fields ============-->
 
 <xsl:template match = "field" mode = "DECLARE">
@@ -360,6 +360,6 @@ public:
     </xsl:when>
   </xsl:choose>
 </xsl:template>
-    
+
 
 </xsl:stylesheet>

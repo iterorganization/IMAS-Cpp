@@ -14,8 +14,8 @@ endif
 
 IDSDEF= ../xml/IDSDef.xml
 INCDIR=`pkg-config blitz --cflags`  -I../lowlevel
-LIBS=-L../lowlevel `pkg-config blitz --libs` -lUALLowLevel
-# LIBS_HDF5=   -L../lowlevel /afs/efda-itm.eu/project/switm/blitz/blitz-0.9_X86_64_GNU/lib/libblitz.a -lUALLowLevel_hdf5
+LIBS=-L../lowlevel `pkg-config blitz --libs` -limas
+# LIBS_HDF5=   -L../lowlevel /afs/efda-itm.eu/project/switm/blitz/blitz-0.9_X86_64_GNU/lib/libblitz.a -limas_hdf5
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
@@ -24,7 +24,7 @@ else
  BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
-all : libUALCPPInterface.so libUALCPPInterface.a pkgconfig
+all : libimas-cpp.so libimas-cpp.a pkgconfig
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
@@ -57,10 +57,10 @@ clean-tests:
 	rm -f cpptest*
 
 
-libUALCPPInterface.so : UALMethods.o
+libimas-cpp.so : UALMethods.o
 	$(LD) $(LDFLAGS) -o $@ -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)  UALMethods.o $(LIBS_MDSPLUS)
 
-libUALCPPInterface.a : UALMethods.o
+libimas-cpp.a : UALMethods.o
 	ar rvs $@ $^
 
 UALMethods.o: UALMethods.cpp UALClasses.h
@@ -76,10 +76,10 @@ endif
 	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   | $(BEAUTIFY) > UALMethods.cpp
 
 cpptest: cpptest.cpp
-	$(CXX) -o $@ $(CXXFLAGS) $(INCDIR) $(LDFLAGS) libUALCPPInterface.so cpptest.cpp $(LIBS) -Wl,-rpath,../itmcatalog/lib
+	$(CXX) -o $@ $(CXXFLAGS) $(INCDIR) $(LDFLAGS) libimas-cpp.so cpptest.cpp $(LIBS)
 
 cpptest_hdf5: cpptest.cpp
-	$(CXX) -o $@ -DHDF5 $(CXXFLAGS) $(INCDIR) $(LDFLAGS) libUALCPPInterface.so cpptest.cpp $(LIBS) -Wl,-rpath,../itmcatalog/lib
+	$(CXX) -o $@ -DHDF5 $(CXXFLAGS) $(INCDIR) $(LDFLAGS) libimas-cpp.so cpptest.cpp $(LIBS)
 
 cpptest.cpp: IDSDef2CPPtests.xsl
 	xsltproc IDSDef2CPPtests.xsl $(IDSDEF) | $(BEAUTIFY) > cpptest.cpp
