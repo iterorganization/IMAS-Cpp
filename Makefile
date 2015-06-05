@@ -35,7 +35,7 @@ else
  tests: cpptest
 endif
 	
-install: pkgconfig_install
+install: all pkgconfig_install
 	mkdir -p $(INSTALL)/lib $(INSTALL)/include
 	for OBJECT in *.so ;do \
 		cp -v $$OBJECT $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
