@@ -2504,7 +2504,7 @@ if (status) return status;
 						<xsl:when test="@type='dynamic'">
 							if (ids_properties.homogeneous_time == 0) {
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -2656,7 +2656,7 @@ YBYB-->
 							if (ids_properties.homogeneous_time == 0) {
 							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
@@ -2757,7 +2757,7 @@ YBYB-->
 						<xsl:when test="@type='dynamic'">
 							if (ids_properties.homogeneous_time == 0) {
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+ string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -2865,7 +2865,7 @@ if (status) return status;
 						<xsl:when test="@type='dynamic'">
 							if (ids_properties.homogeneous_time == 0) {
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -2980,7 +2980,7 @@ if (status) return status;
 							if (ids_properties.homogeneous_time == 0) {
 							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -3081,7 +3081,7 @@ if (status) return status;
 							if (ids_properties.homogeneous_time == 0) {
 							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -3204,7 +3204,7 @@ if (status) return status;
 							if (ids_properties.homogeneous_time == 0) {
 							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -3313,7 +3313,7 @@ if (status) return status;
 							if (ids_properties.homogeneous_time == 0) {
 							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -3460,7 +3460,7 @@ if (status) return status;
 							if (ids_properties.homogeneous_time == 0) {
 							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -3618,7 +3618,7 @@ if (status) return status;
 							if (ids_properties.homogeneous_time == 0) {
 							<!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->
 							<xsl:choose>
-								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+								<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 									timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 									dim1= <xsl:value-of select="concat($variable_path,'.time')"/>.extent(0);
 									doubleArray = new double[dim1];
@@ -4644,7 +4644,7 @@ if (status) return status;
 			<xsl:when test="$variable_path">
 				if (ids_properties.homogeneous_time == 0) {
 				<xsl:choose>
-					<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data'])">
+					<xsl:when test="(@name='data' and ../field[@name='time']) or (@name='time' and ../field[@name='data']) or @name='data_error_upper' or @name='data_error_lower'">
 						timebasepath=<xsl:value-of select="$mds_path"/>+string("/time");
 					</xsl:when>
 					<xsl:otherwise>
