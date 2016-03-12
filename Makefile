@@ -1,5 +1,13 @@
 include ../Makefile.common
 
+ifeq ("no","$(CPP)")
+$(warning "Ignoring cppinterface (CPP=no).")
+all:
+clean:
+clean-src:
+install:
+else
+
 ifeq "$(strip $(CC))" "icc"
  CXX=icpc
  LD=$(CXX)
@@ -86,3 +94,4 @@ cpptest.cpp: IDSDef2CPPtests.xsl
 
 PC_FILES = imas-cpp.pc
 include ../Makefile.pkgconfig
+endif # CPP=no?
