@@ -66,7 +66,7 @@ clean-tests:
 
 
 libimas-cpp.so : UALMethods.o
-	$(LD) $(LDFLAGS) -o $@ -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)  UALMethods.o $(LIBS_MDSPLUS)
+	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)  UALMethods.o $(LIBS_MDSPLUS)
 
 libimas-cpp.a : UALMethods.o
 	ar rvs $@ $^
