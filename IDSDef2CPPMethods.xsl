@@ -6560,13 +6560,13 @@ if (status) return status;
 <xsl:template name="printtimepath">
 <xsl:if test="@type = 'dynamic'">
 	<xsl:choose>
-  <xsl:when test="contains(@coordinate7,'time')"> <xsl:value-of select="translate(@coordinate7,'(:)','')"/></xsl:when>
-  <xsl:when test="contains(@coordinate6,'time')"> <xsl:value-of select="translate(@coordinate6,'(:)','')"/></xsl:when>
-  <xsl:when test="contains(@coordinate5,'time')"> <xsl:value-of select="translate(@coordinate5,'(:)','')"/></xsl:when>
-  <xsl:when test="contains(@coordinate4,'time')"> <xsl:value-of select="translate(@coordinate4,'(:)','')"/></xsl:when>
-  <xsl:when test="contains(@coordinate3,'time')"> <xsl:value-of select="translate(@coordinate3,'(:)','')"/></xsl:when>
-  <xsl:when test="contains(@coordinate2,'time')"> <xsl:value-of select="translate(@coordinate2,'(:)','')"/></xsl:when>
-  <xsl:when test="contains(@coordinate1,'time')"> <xsl:value-of select="translate(@coordinate1,'(:)','')"/></xsl:when>
+<xsl:when test="contains(@coordinate7,'time')"> <xsl:value-of select="translate(replace(@coordinate7,'(itime)',''),'()','')"/></xsl:when> <!-- We remove the (itime) pattern from the coordinate attribute in IDSDef, which is documentation-oriented -->
+<xsl:when test="contains(@coordinate6,'time')"> <xsl:value-of select="translate(replace(@coordinate6,'(itime)',''),'()','')"/></xsl:when>
+<xsl:when test="contains(@coordinate5,'time')"> <xsl:value-of select="translate(replace(@coordinate5,'(itime)',''),'()','')"/></xsl:when>
+<xsl:when test="contains(@coordinate4,'time')"> <xsl:value-of select="translate(replace(@coordinate4,'(itime)',''),'()','')"/></xsl:when>
+<xsl:when test="contains(@coordinate3,'time')"> <xsl:value-of select="translate(replace(@coordinate3,'(itime)',''),'()','')"/></xsl:when>
+<xsl:when test="contains(@coordinate2,'time')"> <xsl:value-of select="translate(replace(@coordinate2,'(itime)',''),'()','')"/></xsl:when>
+<xsl:when test="contains(@coordinate1,'time')"> <xsl:value-of select="translate(replace(@coordinate1,'(itime)',''),'()','')"/></xsl:when>
 	</xsl:choose>
 </xsl:if>
 <xsl:if test="@name='time'">
