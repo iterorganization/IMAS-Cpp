@@ -20,9 +20,10 @@ else
  LDFLAGS= -g -pthread
 endif
 
+IDAMDIR=$(HOME)/itmwork/IdamInstall
 IDSDEF= ../xml/IDSDef.xml
 INCDIR=`pkg-config blitz --cflags`  -I../lowlevel
-LIBS=-L../lowlevel `pkg-config blitz --libs` -limas
+LIBS=-L../lowlevel `pkg-config blitz --libs` -L$(IDAMDIR)/lib -lidam64 -limas
 # LIBS_HDF5=   -L../lowlevel /afs/efda-itm.eu/project/switm/blitz/blitz-0.9_X86_64_GNU/lib/libblitz.a -limas_hdf5
 
 # Check existence of the "indent" utility to get a clean C format
@@ -66,7 +67,7 @@ clean-tests:
 
 
 libimas-cpp.so : UALMethods.o
-	$(LD) $(LDFLAGS) -o $@ -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)  UALMethods.o $(LIBS_MDSPLUS)
+	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)  UALMethods.o $(LIBS)
 
 libimas-cpp.a : UALMethods.o
 	ar rvs $@ $^
