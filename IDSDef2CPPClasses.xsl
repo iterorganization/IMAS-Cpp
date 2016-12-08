@@ -69,6 +69,8 @@ class IDS
     void createEnv(char *user, char *tokamak, char *version);
     void openHdf5();
     void createHdf5();
+    void openPublic(const char* expName);
+    void createPublic(const char* expName);
     void close();
     void close(char *name, int shot, int run) {close();}
     void discardAll();
