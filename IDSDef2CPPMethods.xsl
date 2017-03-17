@@ -4610,8 +4610,8 @@ if (status) return status;
      <xsl:with-param name="idxpath" select="concat($variable_path,'.',@name,'(0)')"/>
      <xsl:with-param name="timed" select="'yes'"/>
    </xsl:apply-templates>
+     releaseObject(expIdx,obj_single_time);
    }
-    releaseObject(expIdx,obj_single_time);
   }
  }
 </xsl:when>
@@ -4631,8 +4631,8 @@ if (status) return status;
  <xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(0)')"/>
  <xsl:with-param name="timed" select="'yes'"/>
  </xsl:apply-templates>
- }
  releaseObject(expIdx,obj_single_time);
+ }
  }
  </xsl:otherwise>
  </xsl:choose>
