@@ -1,7 +1,7 @@
 include ../Makefile.common
 
-ifeq ("no","$(CPP)")
-$(warning "Ignoring cppinterface (CPP=no).")
+ifeq ("no","$(IMAS_CPP)")
+$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 all:
 clean:
 clean-src:
