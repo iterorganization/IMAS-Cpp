@@ -445,6 +445,7 @@ int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
 int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray;
+char **stringArray;
 char fullpath[1024];
 int _i, _j, _k, _h, _l, _m, _n;
 char *str;
@@ -479,6 +480,7 @@ int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
 int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
 int *intArray;
 double *doubleArray;
+char **stringArray;
 char fullpath[1024];
 int _i, _j, _k, _h, _l, _m, _n;
 char *str;
@@ -4640,8 +4642,8 @@ if (status) return status;
      <xsl:with-param name="idxpath" select="concat($variable_path,'.',@name,'(0)')"/>
      <xsl:with-param name="timed" select="'yes'"/>
    </xsl:apply-templates>
+     releaseObject(expIdx,obj_single_time);
    }
-    releaseObject(expIdx,obj_single_time);
   }
  }
 </xsl:when>
@@ -4661,8 +4663,8 @@ if (status) return status;
  <xsl:with-param name="idxpath" select="concat(translate(@path,'/','.'),'(0)')"/>
  <xsl:with-param name="timed" select="'yes'"/>
  </xsl:apply-templates>
- }
  releaseObject(expIdx,obj_single_time);
+ }
  }
  </xsl:otherwise>
  </xsl:choose>
