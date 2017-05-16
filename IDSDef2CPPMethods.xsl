@@ -101,7 +101,7 @@ connected = true;
 void IdsNs::IDS::openPublic(const char* expName)
 {
 int idx;
-int status = imas_open_public(expName, "ids", shot, run, &amp;idx);
+int status = imas_open_public("ids", shot, run, &amp;idx, expName);
 if(status != 0)
 {
 printf("Error opening imas shot %d, run %d: %s\n", shot, run, imas_last_errmsg());
@@ -164,7 +164,7 @@ connected = true;
 void IdsNs::IDS::createPublic(const char* expName)
 {
 int idx;
-int status = imas_create_public(expName, "ids", shot, run, refShot, refRun, &amp; idx);
+int status = imas_create_public("ids", shot, run, refShot, refRun, &amp; idx, expName);
 if(status != 0)
 {
 printf("Error opening imas shot %d, run %d: %s\n", shot, run, imas_last_errmsg());
