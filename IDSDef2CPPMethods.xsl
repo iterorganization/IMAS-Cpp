@@ -1110,6 +1110,7 @@ free(doubleArray);
 		<xsl:choose>
 			<xsl:when test="$variable_path">
 				lepath =  <xsl:value-of select="$mds_path"/>+string("/<xsl:value-of select="@name"/>");
+				clepath = const_cast&lt;char *&gt; (lepath.c_str());
 				status = getVect1DInt(expIdx, path, clepath, &amp;intArray, &amp;dim1);
 				checkStatus(status);
 				if(!status) {
