@@ -48,6 +48,7 @@ class IDS
     IDS();
     IDS(int shot, int run, int refShot, int refRun);
     IDS(int idx);
+    void setExpIdx(int idx);
     void setShot(int inShot) {shot = inShot;}
     void setRun(int inRun) {run = inRun;}
     void setRefShot(int inRefShot){refShot = inRefShot;}

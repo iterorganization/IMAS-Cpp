@@ -49,8 +49,16 @@ this-&gt;run = ual_get_run(idx);
 this-&gt;refShot =  ual_get_shot(idx);
 this-&gt;refRun = ual_get_run(idx);
 expIdx = idx;
+this->setExpIdx(idx);
+}
+
+void IdsNs::IDS::setExpIdx(int idx)
+{
 <xsl:apply-templates select="IDS" mode="SET_IDX"/>
 }
+
+
+
 void IdsNs::IDS::open()
 {
 int idx;
@@ -63,7 +71,7 @@ else
 {
 expIdx = idx;
 connected = true;
-<xsl:apply-templates select="IDS" mode="SET_IDX"/>
+this->setExpIdx(idx);
 }
 }
 void IdsNs::IDS::openEnv(char *user, char *tokamak, char *version)
@@ -78,7 +86,7 @@ else
 {
 expIdx = idx;
 connected = true;
-<xsl:apply-templates select="IDS" mode="SET_IDX"/>
+this->setExpIdx(idx);
 }
 
 }
@@ -94,7 +102,7 @@ else
 {
 expIdx = idx;
 connected = true;
-<xsl:apply-templates select="IDS" mode="SET_IDX"/>
+this->setExpIdx(idx);
 }
 
 }
@@ -110,7 +118,7 @@ else
 {
 expIdx = idx;
 connected = true;
-<xsl:apply-templates select="IDS" mode="SET_IDX"/>
+this->setExpIdx(idx);
 }
 
 }
@@ -126,7 +134,7 @@ else
 {
 expIdx = idx;
 connected = true;
-<xsl:apply-templates select="IDS" mode="SET_IDX"/>
+this->setExpIdx(idx);
 }
 }
 
@@ -142,7 +150,7 @@ else
 {
 expIdx = idx;
 connected = true;
-<xsl:apply-templates select="IDS" mode="SET_IDX"/>
+this->setExpIdx(idx);
 }
 }
 
@@ -158,7 +166,7 @@ else
 {
 expIdx = idx;
 connected = true;
-<xsl:apply-templates select="IDS" mode="SET_IDX"/>
+this->setExpIdx(idx);
 }
 }
 void IdsNs::IDS::createPublic(const char* expName)
@@ -173,7 +181,7 @@ else
 {
 expIdx = idx;
 connected = true;
-<xsl:apply-templates select="IDS" mode="SET_IDX"/>
+this->setExpIdx(idx);
 }
 }
 
@@ -297,10 +305,10 @@ return ss.str();
 <!--YBYB   <xsl:choose>
 <xsl:when test = "@timed = 'no'">
 YBYB-->
-_<xsl:value-of select="@name"/>.setExpIdx(expIdx);
+_<xsl:value-of select="@name"/>.setExpIdx(idx);
 <!--YBYB       </xsl:when>
 <xsl:otherwise>
-_<xsl:value-of select="@name"/>.setExpIdx(expIdx);
+_<xsl:value-of select="@name"/>.setExpIdx(idx);
 _<xsl:value-of select="@name"/>Array.setExpIdx(expIdx);
 </xsl:otherwise>
 </xsl:choose>
@@ -338,25 +346,7 @@ connected = false;
 
 int IDS::<xsl:value-of select="@name"/>::get()
 {
-if(!connected) return -1;
-double *times, double0d;
-void * obj_all_times;
-int i, _i, numSamples,dim1, dim2, dim3, dim4, dim5, dim6, dim7, status, int0d;
-int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
-int *intArray;
-char **stringArray;
-double *doubleArray;
-char *str;
-char *path = "<xsl:value-of select="@name"/>";
-char *clepath;
-string lepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-status = beginIdsGet(expIdx, "<xsl:value-of select="@name"/>", NON_TIMED, &amp;numSamples);
-checkStatus(status);
-if (status) return status;
-<xsl:apply-templates select="field" mode="GET_SINGLE"/>
-endIdsGet(expIdx, "<xsl:value-of select="@name"/>");
-return 0;
+	return this->get(0);
 }
 
 int IDS::<xsl:value-of select="@name"/>::get(int idx)
@@ -389,25 +379,7 @@ return 0;
 
 int IDS::<xsl:value-of select="@name"/>::put()
 {
-if(!connected) return -1;
-int status, dim1, dim2, dim3, dim4, dim5, dim6, dim7, _i, _j, _k, _h, _l, _m, _n;
-int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
-double *doubleArray;
-char fullpath[1024];
-int *intArray;
-char **stringArray;
-char *path = "<xsl:value-of select="@name"/>";
-char *clepath;
-string lepath, timepath;
-string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-deleteAll();
-status = beginIdsPut(expIdx, "<xsl:value-of select="@name"/>");
-checkStatus(status);
-if(status) return status;
-<xsl:apply-templates select="field" mode="PUT_SINGLE"/>
-endIdsPut(expIdx, "<xsl:value-of select="@name"/>");
-return 0;
+	return this->put(0);
 }
 
 int IDS::<xsl:value-of select="@name"/>::put(int idx)
@@ -475,32 +447,7 @@ return 0;
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::putSlice()
 {
-if(!connected) return -1;
-int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
-int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
-int *intArray;
-double *doubleArray;
-char **stringArray;
-char fullpath[1024];
-int _i, _j, _k, _h, _l, _m, _n;
-char *str;
-char *path = "<xsl:value-of select="@name"/>";
-double retTime;
-char *clepath;
-string lepath;
-string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-if (ids_properties.homogeneous_time != 1) {
-puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
-return (-99);
-}
-timebasepath = "time";
-int status = beginIdsPutSlice(expIdx,  "<xsl:value-of select="@name"/>");
-checkStatus(status);
-if(status) return status;
-<xsl:apply-templates select="field" mode="PUT_SLICE"/>
-endIdsPutSlice(expIdx, path);
-return 0;
+	return this->putSlice(0);
 }
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::remove(int idx)
@@ -521,13 +468,7 @@ return 0;
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::remove()
 {
-string lepath;
-char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-if(!connected) return -1;
-char *path = "<xsl:value-of select="@name"/>";
-<xsl:apply-templates select="field" mode="DELETE"/>
-return 0;
+	return this->remove(0);
 }
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::deleteAll(int idx)
@@ -548,39 +489,12 @@ return 0;
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::deleteAll()
 {
-string lepath;
-char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-if(!connected) return -1;
-char *path = "<xsl:value-of select="@name"/>";
-<xsl:apply-templates select="field" mode="DELETE"/>
-return 0;
+	return this->deleteAll(0);
 }
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::putNonTimed()
 {
-if(!connected) return -1;
-string lepath, timebasepath, timepath;
-char * clepath;
-int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
-int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
-int *intArray;
-double *doubleArray;
-int _i, _j, _k, _h, _l, _m, numSamples;
-char **stringArray;
-char *path = "<xsl:value-of select="@name"/>";
-char *str; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-double retTime;
-deleteAll();
-int status = beginIdsPutNonTimed(expIdx,  "<xsl:value-of select="@name"/>");
-checkStatus(status);
-if(status) return status;
-<xsl:apply-templates select="field" mode="PUT_SINGLE">
-	<xsl:with-param name="non_timed" select="yes"/>
-</xsl:apply-templates>
-endIdsPutNonTimed(expIdx, path);
-return 0;
+	return this->putNonTimed(0);
 }
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::putNonTimed(int idx)
@@ -616,25 +530,7 @@ return 0;
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::getSlice(double inTime, char interpolMode)
 {
-if(!connected) return -1;
-int dim1, dim2, dim3, dim4, dim5, dim6, dim7, _i, int0d, numDims;
-int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
-int *intArray;
-double *doubleArray, double0d;
-char **stringArray;
-char *str;
-char *clepath;
-string timepath,timebasepath;
-string lepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-char *path = "<xsl:value-of select="@name"/>";
-double retTime;
-int status = beginIdsGetSlice(expIdx,  "<xsl:value-of select="@name"/>", inTime);
-checkStatus(status);
-if(status) return status;
-<xsl:apply-templates select="field" mode="GET_SLICE"/>
-endIdsGetSlice(expIdx, path);
-return 0;
+	return this->getSlice(0, inTime, interpolMode);
 }
 
 int IdsNs::IDS::<xsl:value-of select="@name"/>::getSlice(int idx, double inTime, char interpolMode)
