@@ -214,21 +214,21 @@ void assertField(blitz::Array<int, 1>& observedValue, const char* fieldPath)
 {
 blitz::Array<int, 1> expectedValue;
 setArray(expectedValue, 3);
-/*if(expectedValue != observedValue)
+if(any(expectedValue != observedValue))
 	{
 	std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 	}
-*/}
+}
 
 void assertField(blitz::Array<double, 1>&observedValue, const char*fieldPath)
 {
 blitz::Array<double, 1> expectedValue;
 setArray(expectedValue, 3);
-/*if(expectedValue != observedValue)
+if(any(expectedValue != observedValue))
 	{
 	std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 	}
-*/}
+}
 
 
 #endif // _HELPER

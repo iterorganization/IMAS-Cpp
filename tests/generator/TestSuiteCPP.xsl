@@ -165,11 +165,12 @@ using namespace IdsNs;
         <xsl:text>&#9;printf("Testing put() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
-        <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
-        <xsl:apply-templates select="field" mode="put"/>
-        <xsl:text>&#9;&#9;ids.put(occurrence);&#10;</xsl:text>
-        <xsl:text>&#9;}&#10;</xsl:text>
-        <xsl:text>}&#10;</xsl:text>
+     <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
+     -->   <xsl:apply-templates select="field" mode="put"/>
+        <xsl:text>&#9;&#9;ids.put(0);&#10;</xsl:text>
+	<!-- <xsl:text>&#9;&#9;ids.put(occurrence);&#10;</xsl:text>
+   -     <xsl:text>&#9;}&#10;</xsl:text>
+    -->    <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
@@ -191,12 +192,13 @@ using namespace IdsNs;
 
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
-        <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
+ <!--       <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
    	<xsl:text>&#9;&#9;ids.get(occurrence);&#10;</xsl:text>
-
+-->
+	<xsl:text>&#9;&#9;ids.get(0);&#10;</xsl:text>
    	<xsl:apply-templates select="field" mode="get"/> 
-        <xsl:text>&#9;}&#10;</xsl:text>
-        <xsl:text>}&#10;</xsl:text>
+  <!--      <xsl:text>&#9;}&#10;</xsl:text>
+    -->    <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
@@ -226,19 +228,22 @@ using namespace IdsNs;
 
     <!-- field put() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="put">
-   <!--     <xsl:call-template name="putStructArray">
-            <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '[0]')"/>
+       <xsl:call-template name="putStructArray">
+            <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
             <xsl:with-param name="resize" select="true()"/>
         </xsl:call-template>
-   --> </xsl:template>
+    </xsl:template>
 
 
     <xsl:template name="putStructArray">
         <xsl:param name="path"/>
         <xsl:param name="resize"/>
-        <xsl:if test="$resize"><xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text> = new imas.</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:for-each select="ancestor-or-self::field"><xsl:text>.</xsl:text><xsl:value-of select="@name"/><xsl:if test="@data_type='struct_array' or @data_type='structure'">Class</xsl:if></xsl:for-each><xsl:text>[1];&#10;</xsl:text><xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>[0] = new imas.</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:for-each select="ancestor-or-self::field"><xsl:text>.</xsl:text><xsl:value-of select="@name"/><xsl:if test="@data_type='struct_array' or @data_type='structure'">Class</xsl:if></xsl:for-each><xsl:text>();&#10;</xsl:text></xsl:if>
+        <xsl:if test="$resize"><xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>.resize(1);&#10;</xsl:text>
+	</xsl:if>
         <xsl:for-each select="field[not(@data_type='struct_array' or @data_type='structure')]">
-            <xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text> = </xsl:text><xsl:call-template name="type2value"/>;<xsl:text>&#10;</xsl:text>
+	     	<xsl:call-template name="setValue">
+        	  <xsl:with-param name="path" select="concat($path, '.', @name)"/>
+		</xsl:call-template>
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='structure']">
             <xsl:call-template name="putStructArray">
@@ -248,7 +253,7 @@ using namespace IdsNs;
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='struct_array']">
             <xsl:call-template name="putStructArray">
-                <xsl:with-param name="path" select="concat($path, '.', @name, '[0]')"/>
+                <xsl:with-param name="path" select="concat($path, '.', @name, '(0)')"/>
                 <xsl:with-param name="resize" select="true()"/>
             </xsl:call-template>
         </xsl:for-each>
@@ -257,22 +262,30 @@ using namespace IdsNs;
 
     <!-- field get() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="get">
-        <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>");&#10;</xsl:text>
+    <xsl:choose>
+	
+	  <xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
+      <xsl:otherwise>
+		   <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>");&#10;</xsl:text>
+		</xsl:otherwise>
+        </xsl:choose>
     </xsl:template>
 
 
     <!-- field get() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="get">
-  <!--      <xsl:call-template name="getStructArray">
-            <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '[0]')"/>
+       <xsl:call-template name="getStructArray">
+            <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
 	     <xsl:with-param name="slice" select="false()"/>
         </xsl:call-template>
-    --></xsl:template>
+  </xsl:template>
 
 
 
     <!-- field getSlice() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="getSlice">
+
+
         <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>");&#10;</xsl:text>
     </xsl:template>
 
@@ -280,7 +293,7 @@ using namespace IdsNs;
     <!-- field get() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="getSlice">
         <xsl:call-template name="getStructArray">
-            <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '[0]')"/>
+            <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
 	     <xsl:with-param name="slice" select="true()"/>
         </xsl:call-template>
     </xsl:template>
@@ -296,7 +309,8 @@ using namespace IdsNs;
       		  <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, </xsl:text><xsl:call-template name="type2value4slice"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>");&#10;</xsl:text>
         	</xsl:when>
 	        <xsl:otherwise>
-	        <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, </xsl:text><xsl:call-template name="type2value"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>");&#10;</xsl:text>
+	<!--        <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, </xsl:text><xsl:call-template name="type2value"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>");&#10;</xsl:text>
+       --> <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>");&#10;</xsl:text>
      	        </xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>
@@ -308,7 +322,7 @@ using namespace IdsNs;
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='struct_array']">
             <xsl:call-template name="getStructArray">
-                <xsl:with-param name="path" select="concat($path, '.', @name, '[0]')"/>
+                <xsl:with-param name="path" select="concat($path, '.', @name, '(0)')"/>
 		 <xsl:with-param name="slice" select="$slice"/>
             </xsl:call-template>
         </xsl:for-each>
@@ -353,6 +367,45 @@ using namespace IdsNs;
 		</xsl:otherwise>
         </xsl:choose>
     </xsl:template>
+
+
+   <xsl:template name="getValue">
+
+        <xsl:choose>
+	
+	  <xsl:when test="@name='homogeneous_time'">              <xsl:text>// homogeneous_time not tested </xsl:text></xsl:when>
+
+	
+      <!-- <xsl:when test="@name='time'  and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">              <xsl:text>getTime()</xsl:text></xsl:when>
+-->
+            <xsl:when test="@data_type='str_type' or @data_type='STR_0D'">        <xsl:text>getString()</xsl:text></xsl:when>
+            <xsl:when test="@data_type='str_1d_type' or @data_type='STR_1D'">    <xsl:text>new Vect1DString((String[]) getArray(Types.STRING, 1))</xsl:text></xsl:when>
+
+            <xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">          <xsl:text>getDouble()</xsl:text></xsl:when>
+            <xsl:when test="@data_type='flt_1d_type' or @data_type='FLT_1D'">     <xsl:text>getDoubleArray(3)</xsl:text></xsl:when>
+            <xsl:when test="@data_type='FLT_2D'">     <xsl:text>new Vect2DDouble(1, 2, (double[]) getArray(Types.DOUBLE, 2))</xsl:text></xsl:when>
+            <xsl:when test="@data_type='FLT_3D'">   <xsl:text>new Vect3DDouble(1, 1, 3, (double[]) getArray(Types.DOUBLE, 3))</xsl:text></xsl:when>
+            <xsl:when test="@data_type='FLT_4D'">   <xsl:text>new Vect4DDouble(1, 1, 1, 4, (double[]) getArray(Types.DOUBLE, 4))</xsl:text></xsl:when>
+            <xsl:when test="@data_type='FLT_5D'">   <xsl:text>new Vect5DDouble(1, 1, 1, 1, 5, (double[]) getArray(Types.DOUBLE, 5))</xsl:text></xsl:when>
+            <xsl:when test="@data_type='FLT_6D'">	<xsl:text>new Vect6DDouble(1, 1, 1, 1, 1, 6, (double[]) getArray(Types.DOUBLE, 6))</xsl:text></xsl:when>
+
+            <xsl:when test="@data_type='int_type' or @data_type='INT_0D'">        <xsl:text>getInteger()</xsl:text></xsl:when>
+            <xsl:when test="@data_type='int_1d_type' or @data_type='INT_1D'">       <xsl:text>getIntegerArray(3)</xsl:text></xsl:when>
+            <xsl:when test="@data_type='INT_2D'">      <xsl:text>new Vect2DInt(1, 2, (int[]) getArray(Types.INTEGER, 2))</xsl:text></xsl:when>
+            <xsl:when test="@data_type='INT_3D'">  <xsl:text>new Vect3DInt(1, 1, 3, (int[]) getArray(Types.INTEGER, 3))</xsl:text></xsl:when>
+            <xsl:when test="@data_type='INT_4D'">  <xsl:text>new Vect4DInt(1, 1, 1, 4, (int[]) getArray(Types.INTEGER, 4))</xsl:text></xsl:when>
+            <xsl:when test="@data_type='INT_5D'">   <xsl:text>new Vect5DInt(1, 1, 1, 1, 5, (int[]) getArray(Types.INTEGER, 5))</xsl:text></xsl:when>
+            <xsl:when test="@data_type='INT_6D'">  <xsl:text>new Vect6DInt(1, 1, 1, 1, 1, 6, (int[]) getArray(Types.INTEGER, 6))</xsl:text></xsl:when>
+
+     	    
+	    <xsl:otherwise>
+	       <xsl:message terminate="yes">     
+		             <xsl:text>&#xA; UNKNOWN TYPE:   </xsl:text>  <xsl:value-of select="@data_type"/>  : <xsl:value-of select="@path"/>   : <xsl:value-of select="@maxoccur"/>   :  <xsl:value-of select="@type"/> 
+		</xsl:message>
+		</xsl:otherwise>
+        </xsl:choose>
+    </xsl:template>
+
 
     <xsl:template name="type2value">
 
