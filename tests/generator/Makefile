@@ -22,7 +22,7 @@ clean:
 clean-src:
 	rm -f TestSuite.cpp
 
-TestSuite: helper.o TestSuite.o 
+TestSuite: TestSuite.o 
 	  $(LD) $(LDFLAGS) $@.o -o $@ $(LIBDIR) $(LIBS)
 
 #RULES

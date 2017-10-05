@@ -8,10 +8,22 @@
 
 using namespace blitz;
 
+/*
+int dim1 = 3;
+int dim2 = 1;
+int dim3 = 1;
+int dim4 = 1;
+int dim5 = 1;
+int dim6 = 1;
+*/
+
 const char* PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r";
 int randseed = (int)time(NULL);
+Range all = Range::all();
 
-
+/*******************************************************************************/
+/**********************    Random data generation        ***********************/
+/*******************************************************************************/
 int getInteger()
 {
 	return (int)rand();
@@ -50,7 +62,9 @@ char* getString()
 }
 
 
-
+/*******************************************************************************/
+/**********************         Setting arrays           ***********************/
+/*******************************************************************************/
 
 void setArray(Array<int,1>&array,int dim1)
 {
@@ -185,49 +199,96 @@ void setArray(Array<double,6>&array, int dim1, int dim2, int dim3, int dim4, int
 	array = newArray;
 }
 
-void assertField(std::string&, const char* fieldPath)
+/*******************************************************************************/
+/**********************         Field checking           ***********************/
+/*******************************************************************************/
+
+/**********************        Assert array shape        ***********************/
+
+int assertShape(const blitz::TinyVector<int, 1> expectedShape, const blitz::TinyVector<int, 1> observedShape, const char* fieldPath)
+{
+	if(any(expectedShape != observedShape))
+	{
+		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+
+/**********************        Assert field value        ***********************/
+int assertField(std::string&, const char* fieldPath, bool sliceMode)
 {
 	char* expectedValue = getString();
+	return 0;
 }
 
-void assertField(int observedValue, const char* fieldPath)
+int assertField(int observedValue, const char* fieldPath,  bool sliceMode)
 {
 	int expectedValue = getInteger();
-if(expectedValue != observedValue)
+	if(expectedValue != observedValue)
 	{
-	std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
 	}
+	return 0;
 }
 
-void assertField(double observedValue, const char* fieldPath)
+int assertField(double observedValue, const char* fieldPath, bool sliceMode)
 {
 	double expectedValue = getDouble();
 	
 	if(expectedValue != observedValue)
 	{
-	std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
 	}
+	return 0;
 	
 }
 
-void assertField(blitz::Array<int, 1>& observedValue, const char* fieldPath)
+int assertField(const blitz::Array<int, 1> observedValue, const char* fieldPath, bool sliceMode)
 {
-blitz::Array<int, 1> expectedValue;
-setArray(expectedValue, 3);
-if(any(expectedValue != observedValue))
+	blitz::Array<int, 1> expectedValue;
+
+	setArray(expectedValue, 3);
+	
+
+	
+	if(assertShape(expectedValue(Range(1)).shape(), observedValue.shape(), fieldPath))
+		return -1;
+	
+
+	if(any(expectedValue != observedValue))
 	{
-	std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
 	}
+	return 0;
 }
 
-void assertField(blitz::Array<double, 1>&observedValue, const char*fieldPath)
+int assertField(const blitz::Array<double, 1> observedValue, const char*fieldPath, bool sliceMode)
 {
-blitz::Array<double, 1> expectedValue;
-setArray(expectedValue, 3);
-if(any(expectedValue != observedValue))
+
+	const blitz::TinyVector<int, 1> *expectedShape;
+ 	const blitz::TinyVector<int, 1> *observedShape;
+
+	blitz::Array<double, 1> expectedValue;
+	setArray(expectedValue, 3);
+
+
+	if(assertShape(expectedValue(Range(1)).shape(), observedValue.shape(), fieldPath))
+{
+	std::cerr <<" bla"<<std::endl;
+		return -1;
+	
+}
+	if(any(expectedValue != observedValue))
 	{
-	std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
 	}
+
+	return 0;
 }
 
 
