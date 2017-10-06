@@ -8,14 +8,13 @@
 
 using namespace blitz;
 
-/*
-int dim1 = 3;
-int dim2 = 1;
-int dim3 = 1;
-int dim4 = 1;
-int dim5 = 1;
-int dim6 = 1;
-*/
+
+int dim1 = 2;
+int dim2 = 2;
+int dim3 = 2;
+int dim4 = 2;
+int dim5 = 2;
+int dim6 = 2;
 
 const char* PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r";
 int randseed = (int)time(NULL);
@@ -66,136 +65,312 @@ char* getString()
 /**********************         Setting arrays           ***********************/
 /*******************************************************************************/
 
-void setArray(Array<int,1>&array,int dim1)
+void setValue(std::string& idsField, bool isReduced)
 {
-	int size = dim1;
-	int *arrayPtr = generateIntegerArray(size);
 
-	Array<int,1> newArray(arrayPtr, shape(dim1));
-	array.resize(newArray.shape());
+}
+
+void setValue(int& idsField, bool isReduced)
+{
+	idsField = getInteger();
+}
+
+
+void setValue(double& idsField, bool isReduced)
+{
+	idsField = getDouble();
+}
+
+void setValue(Array<int,1>&array, bool isReduced)
+{
+	int size = -1;
+	int *arrayPtr = NULL;
+	
+	const blitz::TinyVector<int, 1> *ptrShape;
+
+	if(isReduced)
+	{
+		size = 1;
+		ptrShape = new const blitz::TinyVector<int, 1> (1);
+	}
+	else
+	{
+		size = dim1;
+		ptrShape = new const blitz::TinyVector<int, 1> (dim1);
+	}
+
+
+	arrayPtr = generateIntegerArray(size);
+	Array<double,1> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
+	array = newArray;;
+}
+
+
+void setValue(Array<double,1>&array, bool isReduced)
+{
+	int size = -1;
+	double *arrayPtr = NULL;
+	const blitz::TinyVector<int, 1> *ptrShape;
+
+	if(isReduced)
+	{
+		size = 1;
+		ptrShape = new const blitz::TinyVector<int, 1> (1);
+	}
+	else
+	{
+		size = dim1;
+		ptrShape = new const blitz::TinyVector<int, 1> (dim1);
+	}
+
+	arrayPtr = generateDoubleArray(size);
+	Array<double,1> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
-Array<int,1> getIntegerArray(int dim1)
+void setValue(Array<int,2>&array, bool isReduced)
 {
-	int size = dim1;
-	int *arrayPtr = generateIntegerArray(size);
+	int size = -1;
+	int *arrayPtr = NULL;
+	const blitz::TinyVector<int, 2> *ptrShape;
 
-	Array<int,1> newArray(arrayPtr, shape(dim1));
-	return newArray;
-}
+	if(isReduced)
+	{
+		size = 1 * dim2;
+		ptrShape = new const blitz::TinyVector<int, 2> (1, dim2);
+	}
+	else
+	{
+		size = dim1 * dim2;
+		ptrShape = new const blitz::TinyVector<int, 2> (dim1, dim2);
+	}
 
-void setArray(Array<double,1>&array, int dim1)
-{
-	int size = dim1;
-	double *arrayPtr = generateDoubleArray(size);
-	Array<double,1> newArray(arrayPtr, shape(dim1));
-	array.resize(newArray.shape());
+	arrayPtr = generateIntegerArray(size);
+	Array<int,2> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
-Array<double,1> getDoubleArray( int dim1)
+void setValue(Array<double,2>&array, bool isReduced)
 {
-	int size = dim1;
-	double *arrayPtr = generateDoubleArray(size);
-	Array<double,1> newArray(arrayPtr, shape(dim1));
+	int size = -1;
+	double *arrayPtr = NULL;
+	const blitz::TinyVector<int, 2> *ptrShape;
 
-	return newArray;
-}
+	if(isReduced)
+	{
+		size = 1 * dim2;
+		ptrShape = new const blitz::TinyVector<int, 2> (1, dim2);
+	}
+	else
+	{
+		size = dim1 * dim2;
+		ptrShape = new const blitz::TinyVector<int, 2> (dim1, dim2);
+	}
 
-void setArray(Array<int,2>&array, int dim1, int dim2)
-{
-	int size = dim1 * dim2 ;
-	int *arrayPtr = generateIntegerArray(size);
-	Array<int,2> newArray(arrayPtr, shape(dim1, dim2));
-	array.resize(newArray.shape());
+	arrayPtr = generateDoubleArray(size);
+	
+	Array<double,2> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
-void setArray(Array<double,2>&array, int dim1, int dim2)
+void setValue(Array<int,3>&array, bool isReduced)
 {
-	int size = dim1 * dim2;
-	double *arrayPtr = generateDoubleArray(size);
-	Array<double,2> newArray(arrayPtr, shape(dim1, dim2));
-	array.resize(newArray.shape());
+	int size = -1;
+	int *arrayPtr = NULL;
+	const blitz::TinyVector<int, 3> *ptrShape;
+
+	if(isReduced)
+	{
+		size = 1 * dim2 * dim3;
+		ptrShape = new const blitz::TinyVector<int, 3> (1, dim2, dim3);
+	}
+	else
+	{
+		size = dim1 * dim2 * dim3;
+		ptrShape = new const blitz::TinyVector<int, 3> (dim1, dim2, dim3);
+	}
+
+	arrayPtr = generateIntegerArray(size);
+
+	Array<int,3> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
-void setArray(Array<int,3>&array, int dim1, int dim2, int dim3)
+void setValue(Array<double,3>&array, bool isReduced)
 {
-	int size = dim1 * dim2 * dim3;
-	int *arrayPtr = generateIntegerArray(size);
+	int size = -1;
+	double *arrayPtr = NULL;
+	const blitz::TinyVector<int, 3> *ptrShape;
 
-	Array<int,3> newArray(arrayPtr, shape(dim1, dim2, dim3));
-	array.resize(newArray.shape());
+	if(isReduced)
+	{
+		size = 1 * dim2 * dim3;
+		ptrShape = new const blitz::TinyVector<int, 3> (1, dim2, dim3);
+	}
+	else
+	{
+		size = dim1 * dim2 * dim3;
+		ptrShape = new const blitz::TinyVector<int, 3> (dim1, dim2, dim3);
+	}
+
+	arrayPtr = generateDoubleArray(size);
+
+	Array<double,3> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
-void setArray(Array<double,3>&array, int dim1, int dim2, int dim3)
+void setValue(Array<int,4>&array, bool isReduced)
 {
-	int size = dim1 * dim2 * dim3;
-	double *arrayPtr = generateDoubleArray(size);
+	int size = -1;
+	int *arrayPtr = NULL;
+	const blitz::TinyVector<int, 4> *ptrShape;
 
-	Array<double,3> newArray(arrayPtr, shape(dim1, dim2, dim3));
-	array.resize(newArray.shape());
+	if(isReduced)
+	{
+		size = 1 * dim2 * dim3 * dim4;
+		ptrShape = new const blitz::TinyVector<int, 4> (1, dim2, dim3, dim4);
+	}
+	else
+	{
+		size = dim1 * dim2 * dim3 * dim4;
+		ptrShape = new const blitz::TinyVector<int, 4> (dim1, dim2, dim3, dim4);
+	}
+
+
+	arrayPtr = generateIntegerArray(size);
+
+	Array<int,4> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
+	array = newArray;
+}
+void setValue(Array<double,4>&array, bool isReduced)
+{
+	int size = -1;
+	double *arrayPtr = NULL;
+	const blitz::TinyVector<int, 4> *ptrShape;
+
+	if(isReduced)
+	{
+		size = 1 * dim2 * dim3 * dim4;
+		ptrShape = new const blitz::TinyVector<int, 4> (1, dim2, dim3, dim4);
+	}
+	else
+	{
+		size = dim1 * dim2 * dim3 * dim4;
+		ptrShape = new const blitz::TinyVector<int, 4> (dim1, dim2, dim3, dim4);
+	}
+
+
+	arrayPtr = generateDoubleArray(size);
+
+	Array<double,4> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
-void setArray(Array<int,4>&array, int dim1, int dim2, int dim3, int dim4)
+void setValue(Array<int,5>&array, bool isReduced)
 {
-	int size = dim1 * dim2 * dim3 * dim4;
-	int *arrayPtr = generateIntegerArray(size);
+	int size = -1;
+	int *arrayPtr = NULL;
+	const blitz::TinyVector<int, 5> *ptrShape;
 
-	Array<int,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4));
-	array.resize(newArray.shape());
+	if(isReduced)
+	{
+		size = 1 * dim2 * dim3 * dim4 * dim5;
+		ptrShape = new const blitz::TinyVector<int, 5> (1, dim2, dim3, dim4, dim5);
+	}
+	else
+	{
+		size = dim1 * dim2 * dim3 * dim4 * dim5;
+		ptrShape = new const blitz::TinyVector<int, 5> (dim1, dim2, dim3, dim4, dim5);
+	}
+
+	
+	arrayPtr = generateIntegerArray(size);
+
+	Array<int,5> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
-void setArray(Array<double,4>&array, int dim1, int dim2, int dim3, int dim4)
+void setValue(Array<double,5>&array, bool isReduced)
 {
-	int size = dim1 * dim2 * dim3 * dim4;
-	double *arrayPtr = generateDoubleArray(size);
+	int size = -1;
+	double *arrayPtr = NULL;
+	const blitz::TinyVector<int, 5> *ptrShape;
 
-	Array<double,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4));
-	array.resize(newArray.shape());
+	if(isReduced)
+	{
+		size = 1 * dim2 * dim3 * dim4 * dim5;
+		ptrShape = new const blitz::TinyVector<int, 5> (1, dim2, dim3, dim4, dim5);
+	}
+	else
+	{
+		size = dim1 * dim2 * dim3 * dim4 * dim5;
+		ptrShape = new const blitz::TinyVector<int, 5> (dim1, dim2, dim3, dim4, dim5);
+
+	}
+
+	
+	arrayPtr = generateDoubleArray(size);
+
+	Array<double,5> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
-void setArray(Array<int,5>&array, int dim1, int dim2, int dim3, int dim4, int dim5)
-{
-	int size = dim1 * dim2 * dim3 * dim4 * dim5;
-	int *arrayPtr = generateIntegerArray(size);
+void setValue(Array<int,6>&array, bool isReduced)
+{		
+	int size = -1;
+	int *arrayPtr = NULL;
+	const blitz::TinyVector<int, 6> *ptrShape;
 
-	Array<int,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5));
-	array.resize(newArray.shape());
-	array = newArray;
-}
-void setArray(Array<double,5>&array, int dim1, int dim2, int dim3, int dim4, int dim5)
-{
-	int size = dim1 * dim2 * dim3 * dim4 * dim5;
-	double *arrayPtr = generateDoubleArray(size);
+	if(isReduced)
+	{
+		size = 1 * dim2 * dim3 * dim4 * dim5 * dim6;
+		ptrShape = new const blitz::TinyVector<int, 6> (1, dim2, dim3, dim4, dim5, dim6);
+	}
+	else
+	{
+		size = dim1 * dim2 * dim3 * dim4 * dim5 * dim6;
+		ptrShape = new const blitz::TinyVector<int, 6> (dim1, dim2, dim3, dim4, dim5, dim6);
+	}
 
-	Array<double,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5));
-	array.resize(newArray.shape());
-	array = newArray;
-}
-
-void setArray(Array<int,6>&array, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
-{
-	int size = dim1 * dim2 * dim3 * dim4 * dim5 * dim6;
-	int *arrayPtr = generateIntegerArray(size);
+	
+	arrayPtr = generateIntegerArray(size);
 
 	Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6));
-	array.resize(newArray.shape());
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
-void setArray(Array<double,6>&array, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
+void setValue(Array<double,6>&array, bool isReduced)
 {
-	int size = dim1 * dim2 * dim3 * dim4 * dim5 * dim6;
-	double *arrayPtr = generateDoubleArray(size);
+	int size = -1;
+	double *arrayPtr = NULL;
+	const blitz::TinyVector<int, 6> *ptrShape;
 
-	Array<double,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6));
-	array.resize(newArray.shape());
+	if(isReduced)
+	{
+		size = 1 * dim2 * dim3 * dim4 * dim5 * dim6;
+		ptrShape = new const blitz::TinyVector<int, 6> (1, dim2, dim3, dim4, dim5, dim6);
+	}
+	else
+	{
+		size = dim1 * dim2 * dim3 * dim4 * dim5 * dim6;
+		ptrShape = new const blitz::TinyVector<int, 6> (dim1, dim2, dim3, dim4, dim5, dim6);
+	}
+
+	
+	arrayPtr = generateDoubleArray(size);
+
+	Array<double,6> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
 	array = newArray;
 }
 
@@ -250,11 +425,11 @@ int assertField(const blitz::Array<int, 1> observedValue, const char* fieldPath,
 {
 	blitz::Array<int, 1> expectedValue;
 
-	setArray(expectedValue, 3);
+	setValue(expectedValue, sliceMode);
 	
 
 	
-	if(assertShape(expectedValue(Range(1)).shape(), observedValue.shape(), fieldPath))
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
 		return -1;
 	
 
@@ -273,10 +448,10 @@ int assertField(const blitz::Array<double, 1> observedValue, const char*fieldPat
  	const blitz::TinyVector<int, 1> *observedShape;
 
 	blitz::Array<double, 1> expectedValue;
-	setArray(expectedValue, 3);
+	setValue(expectedValue, sliceMode);
 
 
-	if(assertShape(expectedValue(Range(1)).shape(), observedValue.shape(), fieldPath))
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
 {
 	std::cerr <<" bla"<<std::endl;
 		return -1;
