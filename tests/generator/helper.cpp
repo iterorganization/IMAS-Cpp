@@ -81,6 +81,33 @@ void setValue(double& idsField, bool isReduced)
 	idsField = getDouble();
 }
 
+void setValue(Array<std::string,1>&array, bool isReduced)
+{
+	int size = -1;
+	int *arrayPtr = NULL;
+/*	
+	const blitz::TinyVector<int, 1> *ptrShape;
+
+	if(isReduced)
+	{
+		size = 1;
+		ptrShape = new const blitz::TinyVector<int, 1> (1);
+	}
+	else
+	{
+		size = dim1;
+		ptrShape = new const blitz::TinyVector<int, 1> (dim1);
+	}
+
+
+	arrayPtr = generateIntegerArray(size);
+	Array<std::string,1> newArray(arrayPtr, *ptrShape);
+	array.resize(*ptrShape);
+	array = newArray;;
+*/
+}
+
+
 void setValue(Array<int,1>&array, bool isReduced)
 {
 	int size = -1;
@@ -101,7 +128,7 @@ void setValue(Array<int,1>&array, bool isReduced)
 
 
 	arrayPtr = generateIntegerArray(size);
-	Array<double,1> newArray(arrayPtr, *ptrShape);
+	Array<int, 1> newArray(arrayPtr, *ptrShape);
 	array.resize(*ptrShape);
 	array = newArray;;
 }
@@ -139,7 +166,7 @@ void setValue(Array<int,2>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2;
-		ptrShape = new const blitz::TinyVector<int, 2> (1, dim2);
+		ptrShape = new const blitz::TinyVector<int, 2> (dim1, 1);
 	}
 	else
 	{
@@ -162,7 +189,7 @@ void setValue(Array<double,2>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2;
-		ptrShape = new const blitz::TinyVector<int, 2> (1, dim2);
+		ptrShape = new const blitz::TinyVector<int, 2> (dim1, 1);
 	}
 	else
 	{
@@ -186,7 +213,7 @@ void setValue(Array<int,3>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2 * dim3;
-		ptrShape = new const blitz::TinyVector<int, 3> (1, dim2, dim3);
+		ptrShape = new const blitz::TinyVector<int, 3> (dim1, dim2, 1);
 	}
 	else
 	{
@@ -210,7 +237,7 @@ void setValue(Array<double,3>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2 * dim3;
-		ptrShape = new const blitz::TinyVector<int, 3> (1, dim2, dim3);
+		ptrShape = new const blitz::TinyVector<int, 3> (dim1, dim2, 1);
 	}
 	else
 	{
@@ -234,7 +261,7 @@ void setValue(Array<int,4>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2 * dim3 * dim4;
-		ptrShape = new const blitz::TinyVector<int, 4> (1, dim2, dim3, dim4);
+		ptrShape = new const blitz::TinyVector<int, 4> (dim1, dim2, dim3, 1);
 	}
 	else
 	{
@@ -258,7 +285,7 @@ void setValue(Array<double,4>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2 * dim3 * dim4;
-		ptrShape = new const blitz::TinyVector<int, 4> (1, dim2, dim3, dim4);
+		ptrShape = new const blitz::TinyVector<int, 4> (dim1, dim2, dim3, 1);
 	}
 	else
 	{
@@ -283,7 +310,7 @@ void setValue(Array<int,5>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2 * dim3 * dim4 * dim5;
-		ptrShape = new const blitz::TinyVector<int, 5> (1, dim2, dim3, dim4, dim5);
+		ptrShape = new const blitz::TinyVector<int, 5> (dim1, dim2, dim3, dim4, 1);
 	}
 	else
 	{
@@ -307,7 +334,7 @@ void setValue(Array<double,5>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2 * dim3 * dim4 * dim5;
-		ptrShape = new const blitz::TinyVector<int, 5> (1, dim2, dim3, dim4, dim5);
+		ptrShape = new const blitz::TinyVector<int, 5> (dim1, dim2, dim3, dim4, 1);
 	}
 	else
 	{
@@ -333,7 +360,7 @@ void setValue(Array<int,6>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2 * dim3 * dim4 * dim5 * dim6;
-		ptrShape = new const blitz::TinyVector<int, 6> (1, dim2, dim3, dim4, dim5, dim6);
+		ptrShape = new const blitz::TinyVector<int, 6> (dim1, dim2, dim3, dim4, dim5, 1);
 	}
 	else
 	{
@@ -358,7 +385,7 @@ void setValue(Array<double,6>&array, bool isReduced)
 	if(isReduced)
 	{
 		size = 1 * dim2 * dim3 * dim4 * dim5 * dim6;
-		ptrShape = new const blitz::TinyVector<int, 6> (1, dim2, dim3, dim4, dim5, dim6);
+		ptrShape = new const blitz::TinyVector<int, 6> (dim1, dim2, dim3, dim4, dim5, 1);
 	}
 	else
 	{
@@ -390,6 +417,51 @@ int assertShape(const blitz::TinyVector<int, 1> expectedShape, const blitz::Tiny
 	return 0;
 }
 
+int assertShape(const blitz::TinyVector<int, 2> expectedShape, const blitz::TinyVector<int, 2> observedShape, const char* fieldPath)
+{
+	if(any(expectedShape != observedShape))
+	{
+		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+int assertShape(const blitz::TinyVector<int, 3> expectedShape, const blitz::TinyVector<int,3> observedShape, const char* fieldPath)
+{
+	if(any(expectedShape != observedShape))
+	{
+		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+int assertShape(const blitz::TinyVector<int, 4> expectedShape, const blitz::TinyVector<int, 4> observedShape, const char* fieldPath)
+{
+	if(any(expectedShape != observedShape))
+	{
+		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+int assertShape(const blitz::TinyVector<int, 5> expectedShape, const blitz::TinyVector<int, 5> observedShape, const char* fieldPath)
+{
+	if(any(expectedShape != observedShape))
+	{
+		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+int assertShape(const blitz::TinyVector<int, 6> expectedShape, const blitz::TinyVector<int, 6> observedShape, const char* fieldPath)
+{
+	if(any(expectedShape != observedShape))
+	{
+		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		return -1;
+	}
+	return 0;
+}
 /**********************        Assert field value        ***********************/
 int assertField(std::string&, const char* fieldPath, bool sliceMode)
 {
@@ -421,18 +493,118 @@ int assertField(double observedValue, const char* fieldPath, bool sliceMode)
 	
 }
 
+int assertField(const blitz::Array<std::string, 1> observedValue, const char* fieldPath, bool sliceMode)
+{
+	blitz::Array<std::string, 1> expectedValue;
+
+	setValue(expectedValue, sliceMode);
+		
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+	
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+
 int assertField(const blitz::Array<int, 1> observedValue, const char* fieldPath, bool sliceMode)
 {
 	blitz::Array<int, 1> expectedValue;
 
 	setValue(expectedValue, sliceMode);
-	
-
-	
+		
 	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
 		return -1;
 	
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+int assertField(const blitz::Array<int, 2> observedValue, const char* fieldPath, bool sliceMode)
+{
+	blitz::Array<int, 2> expectedValue;
 
+	setValue(expectedValue, sliceMode);
+		
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+	
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+
+int assertField(const blitz::Array<int, 3> observedValue, const char* fieldPath, bool sliceMode)
+{
+	blitz::Array<int, 3> expectedValue;
+
+	setValue(expectedValue, sliceMode);
+		
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+	
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+
+int assertField(const blitz::Array<int, 4> observedValue, const char* fieldPath, bool sliceMode)
+{
+	blitz::Array<int, 4> expectedValue;
+
+	setValue(expectedValue, sliceMode);
+		
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+	
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+
+
+int assertField(const blitz::Array<int, 5> observedValue, const char* fieldPath, bool sliceMode)
+{
+	blitz::Array<int, 5> expectedValue;
+
+	setValue(expectedValue, sliceMode);
+		
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+	
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+	return 0;
+}
+
+
+int assertField(const blitz::Array<int, 6> observedValue, const char* fieldPath, bool sliceMode)
+{
+	blitz::Array<int, 6> expectedValue;
+
+	setValue(expectedValue, sliceMode);
+		
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+	
 	if(any(expectedValue != observedValue))
 	{
 		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
@@ -443,20 +615,13 @@ int assertField(const blitz::Array<int, 1> observedValue, const char* fieldPath,
 
 int assertField(const blitz::Array<double, 1> observedValue, const char*fieldPath, bool sliceMode)
 {
-
-	const blitz::TinyVector<int, 1> *expectedShape;
- 	const blitz::TinyVector<int, 1> *observedShape;
-
 	blitz::Array<double, 1> expectedValue;
 	setValue(expectedValue, sliceMode);
 
 
 	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
-{
-	std::cerr <<" bla"<<std::endl;
 		return -1;
-	
-}
+
 	if(any(expectedValue != observedValue))
 	{
 		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
@@ -466,6 +631,91 @@ int assertField(const blitz::Array<double, 1> observedValue, const char*fieldPat
 	return 0;
 }
 
+int assertField(const blitz::Array<double, 2> observedValue, const char*fieldPath, bool sliceMode)
+{
+	blitz::Array<double, 2> expectedValue;
+	setValue(expectedValue, sliceMode);
+
+
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+
+	return 0;
+}
+int assertField(const blitz::Array<double, 3> observedValue, const char*fieldPath, bool sliceMode)
+{
+	blitz::Array<double, 3> expectedValue;
+	setValue(expectedValue, sliceMode);
+
+
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+
+	return 0;
+}
+int assertField(const blitz::Array<double, 4> observedValue, const char*fieldPath, bool sliceMode)
+{
+	blitz::Array<double, 4> expectedValue;
+	setValue(expectedValue, sliceMode);
+
+
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+
+	return 0;
+}
+int assertField(const blitz::Array<double, 5> observedValue, const char*fieldPath, bool sliceMode)
+{
+	blitz::Array<double, 5> expectedValue;
+	setValue(expectedValue, sliceMode);
+
+
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+
+	return 0;
+}
+int assertField(const blitz::Array<double, 6> observedValue, const char*fieldPath, bool sliceMode)
+{
+	blitz::Array<double, 6> expectedValue;
+	setValue(expectedValue, sliceMode);
+
+
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+
+	return 0;
+}
 
 #endif // _HELPER
 

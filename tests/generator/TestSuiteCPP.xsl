@@ -54,22 +54,19 @@ using namespace IdsNs;
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
 
-<!--
-
         <xsl:apply-templates select="child::IDS" mode="put"/>
         <xsl:apply-templates select="child::IDS" mode="get"/>
 
   	<xsl:apply-templates select="child::IDS" mode="putSlice"/>
         <xsl:apply-templates select="child::IDS" mode="getSlice"/>
--->
 
-
-                 <xsl:apply-templates select="child::IDS[@name='core_transport']" mode="put"/>
-                 <xsl:apply-templates select="child::IDS[@name='core_transport']" mode="get"/>
+<!--
+                 <xsl:apply-templates select="child::IDS[@name='em_coupling']" mode="put"/>
+                 <xsl:apply-templates select="child::IDS[@name='em_coupling']" mode="get"/>
         
-             <xsl:apply-templates select="child::IDS[@name='core_transport']" mode="putSlice"/>
-                 <xsl:apply-templates select="child::IDS[@name='core_transport']" mode="getSlice"/>
-
+             <xsl:apply-templates select="child::IDS[@name='em_coupling']" mode="putSlice"/>
+                 <xsl:apply-templates select="child::IDS[@name='em_coupling']" mode="getSlice"/>
+-->
         <xsl:text>void initPut()&#10;</xsl:text>
         <xsl:text>{&#10;</xsl:text>
         <xsl:text>&#9;imas.create();&#10;</xsl:text>
@@ -104,19 +101,18 @@ using namespace IdsNs;
 
     <!-- IDS perform the tests -->
 
-
-    <xsl:template match="IDS[@name='core_transport']" mode="test">
 <!--
- <xsl:template match="IDS" mode="test">
+    <xsl:template match="IDS[@name='em_coupling']" mode="test">
 -->
 
-<!--	<xsl:text>&#9;&#9;initPut();&#10;</xsl:text> 
+ <xsl:template match="IDS" mode="test">
+	<xsl:text>&#9;&#9;initPut();&#10;</xsl:text> 
         <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_put();&#10;</xsl:text>
 	<xsl:text>&#9;&#9;finish();&#10;</xsl:text> 
 	<xsl:text>&#9;&#9;initGet();&#10;</xsl:text> 
         <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_get();&#10;</xsl:text>
 	<xsl:text>&#9;&#9;finish();&#10;</xsl:text> 
-  -->
+ 
      	<xsl:text>&#9;&#9;initPut();&#10;</xsl:text> 
         <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice();&#10;</xsl:text>
 	<xsl:text>&#9;&#9;finish();&#10;</xsl:text> 
@@ -136,12 +132,12 @@ using namespace IdsNs;
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
      -->  
-       <!-- <xsl:apply-templates select="field" mode="put"/>
-       --> <xsl:text>&#9;&#9;ids.put(0);&#10;</xsl:text>
-	<!-- <xsl:text>&#9;&#9;ids.put(occurrence);&#10;</xsl:text>
+        <xsl:apply-templates select="field" mode="put"/>
+       <xsl:text>&#9;&#9;ids.put(0);&#10;</xsl:text>
+<!--	 <xsl:text>&#9;&#9;ids.put(occurrence);&#10;</xsl:text>
    -     <xsl:text>&#9;}&#10;</xsl:text>
-    -->    <xsl:text>}&#10;</xsl:text>
-        <xsl:text>&#10;</xsl:text>
+   -->   <xsl:text>}&#10;</xsl:text>
+       <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
 
@@ -175,8 +171,8 @@ using namespace IdsNs;
    	<xsl:text>&#9;&#9;ids.get(occurrence);&#10;</xsl:text>
 -->
 	<xsl:text>&#9;&#9;ids.get(0);&#10;</xsl:text>
-   <!--	<xsl:apply-templates select="field" mode="get"/> 
-     -->  
+   	<xsl:apply-templates select="field" mode="get"/> 
+    
 <!--      <xsl:text>&#9;}&#10;</xsl:text>
     -->    <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
@@ -296,7 +292,7 @@ using namespace IdsNs;
 	
 	  <xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
       <xsl:otherwise>
-		   <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>, false");&#10;</xsl:text>
+		   <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
 		</xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -318,11 +314,19 @@ using namespace IdsNs;
     <xsl:choose>
   	<xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
 	<xsl:otherwise>
-        <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
-		</xsl:otherwise>
-        </xsl:choose>
+		<xsl:choose>
+                	<xsl:when test="@type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
+				<xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
+        		</xsl:when>
+	        	<xsl:otherwise>
+				<xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
+     	        	</xsl:otherwise>
+            </xsl:choose>
+	</xsl:otherwise>
+     </xsl:choose>
     </xsl:template>
 
+        
 
     <!-- field get() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="getSlice">
