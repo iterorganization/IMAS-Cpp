@@ -12,16 +12,17 @@
 #include &lt;time.h>
 #include "UALClasses.h"
 
-#include "helper.cpp"
+#include "helper.h"
 
 using namespace IdsNs;
+int randseed = (int)time(NULL);
 <xsl:text>&#10;</xsl:text>
 
    	<xsl:text>const int TEST_SHOT = 9999;&#10;</xsl:text>
         <xsl:text>const int TEST_RUN = 9999;&#10;</xsl:text>
      
 	
-	  <xsl:text>IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
+	  
 
 
   
@@ -47,12 +48,13 @@ using namespace IdsNs;
     -->   
     
   
-  
+  <!--
 
         <xsl:text>double* getTime() {&#10;</xsl:text>
         <xsl:text>&#9;return (new double[8]);&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
+-->
 
         <xsl:apply-templates select="child::IDS" mode="put"/>
         <xsl:apply-templates select="child::IDS" mode="get"/>
@@ -60,29 +62,30 @@ using namespace IdsNs;
   	<xsl:apply-templates select="child::IDS" mode="putSlice"/>
         <xsl:apply-templates select="child::IDS" mode="getSlice"/>
 
+
 <!--
-                 <xsl:apply-templates select="child::IDS[@name='em_coupling']" mode="put"/>
-                 <xsl:apply-templates select="child::IDS[@name='em_coupling']" mode="get"/>
+                 <xsl:apply-templates select="child::IDS[@name='wall']" mode="put"/>
+                 <xsl:apply-templates select="child::IDS[@name='wall']" mode="get"/>
         
-             <xsl:apply-templates select="child::IDS[@name='em_coupling']" mode="putSlice"/>
-                 <xsl:apply-templates select="child::IDS[@name='em_coupling']" mode="getSlice"/>
--->
-        <xsl:text>void initPut()&#10;</xsl:text>
+             <xsl:apply-templates select="child::IDS[@name='wall']" mode="putSlice"/>
+                 <xsl:apply-templates select="child::IDS[@name='wall']" mode="getSlice"/>
+    -->
+    <xsl:text>void initPut()&#10;</xsl:text>
         <xsl:text>{&#10;</xsl:text>
-        <xsl:text>&#9;imas.create();&#10;</xsl:text>
+        <xsl:text>&#9;//imas.create();&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
 
         <xsl:text>void initGet() &#10;</xsl:text>
         <xsl:text>{&#10;</xsl:text>
-        <xsl:text>&#9;imas.open();&#10;</xsl:text>
+        <xsl:text>&#9;//imas.open();&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
 	
 
         <xsl:text>void finish()&#10;</xsl:text>
 	     <xsl:text>{&#10;</xsl:text>
-        <xsl:text>&#9;imas.close();&#10;</xsl:text>
+        <xsl:text>&#9;//imas.close();&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
  
@@ -102,10 +105,10 @@ using namespace IdsNs;
     <!-- IDS perform the tests -->
 
 <!--
-    <xsl:template match="IDS[@name='em_coupling']" mode="test">
+    <xsl:template match="IDS[@name='wall']" mode="test">
 -->
-
  <xsl:template match="IDS" mode="test">
+
 	<xsl:text>&#9;&#9;initPut();&#10;</xsl:text> 
         <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_put();&#10;</xsl:text>
 	<xsl:text>&#9;&#9;finish();&#10;</xsl:text> 
@@ -128,7 +131,9 @@ using namespace IdsNs;
     <xsl:template match="IDS" mode="put">
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_put(){&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing put() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
+	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
+        <xsl:text>&#9;imas.create();&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
      -->  
@@ -136,7 +141,10 @@ using namespace IdsNs;
        <xsl:text>&#9;&#9;ids.put(0);&#10;</xsl:text>
 <!--	 <xsl:text>&#9;&#9;ids.put(occurrence);&#10;</xsl:text>
    -     <xsl:text>&#9;}&#10;</xsl:text>
-   -->   <xsl:text>}&#10;</xsl:text>
+    
+   -->   
+ <xsl:text>&#9;imas.close();&#10;</xsl:text>
+<xsl:text>}&#10;</xsl:text>
        <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
@@ -146,7 +154,10 @@ using namespace IdsNs;
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice() {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing putSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
                 <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
-       <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
+
+	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
+        <xsl:text>&#9;imas.create();&#10;</xsl:text>
+       	<xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
      -->   <xsl:apply-templates select="field" mode="putSlice"/>
        <xsl:text>&#9;&#9;&#9;ids.putNonTimed(0);&#10;</xsl:text>
@@ -155,6 +166,7 @@ using namespace IdsNs;
         <xsl:text>&#9;&#9;&#9;ids.putNonTimed(occurrence);&#10;</xsl:text>
         <xsl:text>&#9;&#9;&#9;ids.putSlice(occurrence);&#10;</xsl:text>
     -->    
+     <xsl:text>&#9;imas.close();&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
     </xsl:template>
@@ -164,8 +176,9 @@ using namespace IdsNs;
     <xsl:template match="IDS" mode="get">
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_get() {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing get() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
-
+	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
+        <xsl:text>&#9;imas.open();&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
  <!--       <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
    	<xsl:text>&#9;&#9;ids.get(occurrence);&#10;</xsl:text>
@@ -174,7 +187,10 @@ using namespace IdsNs;
    	<xsl:apply-templates select="field" mode="get"/> 
     
 <!--      <xsl:text>&#9;}&#10;</xsl:text>
-    -->    <xsl:text>}&#10;</xsl:text>
+   
+    -->    
+  <xsl:text>&#9;imas.close();&#10;</xsl:text>
+	<xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
     </xsl:template>
 
@@ -183,14 +199,18 @@ using namespace IdsNs;
     <xsl:template match="IDS" mode="getSlice">
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice()  {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing getSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
+	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
+        <xsl:text>&#9;imas.open();&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
    <!--     <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
  	<xsl:text>&#9;&#9;ids.getSlice(occurrence, 0.0, CLOSEST_SAMPLE);&#10;</xsl:text>
 -->	<xsl:text>&#9;&#9;ids.getSlice(0, 0.0, CLOSEST_SAMPLE);&#10;</xsl:text> 
 	<xsl:apply-templates select="field" mode="getSlice"/> 
   <!--      <xsl:text>&#9;}&#10;</xsl:text>
-     -->   <xsl:text>}&#10;</xsl:text>
+     --> 
+ 	<xsl:text>&#9;imas.close();&#10;</xsl:text> 
+	<xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
     </xsl:template>
     
@@ -198,16 +218,6 @@ using namespace IdsNs;
     <!-- field put() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="put">
 	<xsl:call-template name="COMMENT_FIELD"/>
-    <xsl:choose>
-
-                <xsl:when test="@type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-      		  <xsl:text>&#9;&#9;//SLICE ON ;&#10;</xsl:text>
-        	</xsl:when>
-	        <xsl:otherwise>
-			  <xsl:text>&#9;&#9;//SLICE OFF ;&#10;</xsl:text>
-     	        </xsl:otherwise>
-            </xsl:choose>
-	
         <xsl:call-template name="setValue">
           <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
 		<xsl:with-param name="slice" select="false()"/>
@@ -215,19 +225,9 @@ using namespace IdsNs;
 	</xsl:call-template>
     </xsl:template>
 
-    <!-- field put() -->
+    <!-- field putSlice() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="putSlice">
 	<xsl:call-template name="COMMENT_FIELD"/>
-    <xsl:choose>
-
-                <xsl:when test="@type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-      		  <xsl:text>&#9;&#9;//SLICE ON ;&#10;</xsl:text>
-        	</xsl:when>
-	        <xsl:otherwise>
-			  <xsl:text>&#9;&#9;//SLICE OFF ;&#10;</xsl:text>
-     	        </xsl:otherwise>
-            </xsl:choose>
-	
         <xsl:call-template name="setValue">
           <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
 		<xsl:with-param name="slice" select="true()"/>
@@ -237,6 +237,7 @@ using namespace IdsNs;
 
     <!-- field put() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="put">
+		<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="putStructArray">
             <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
             <xsl:with-param name="resize" select="true()"/>
@@ -244,8 +245,20 @@ using namespace IdsNs;
         </xsl:call-template>
    </xsl:template>
 
+  <!-- field put() for array of structures -->
+    <xsl:template match="field[@data_type='structure']" mode="put">
+		<xsl:call-template name="COMMENT_FIELD"/>
+      <xsl:call-template name="putStructArray">
+            <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
+            <xsl:with-param name="resize" select="false()"/>
+	<xsl:with-param name="slice" select="false()"/>
+        </xsl:call-template>
+   </xsl:template>
+  
+
     <!-- field put() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="putSlice">
+		<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="putStructArray">
             <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
             <xsl:with-param name="resize" select="true()"/>
@@ -253,23 +266,33 @@ using namespace IdsNs;
         </xsl:call-template>
     </xsl:template>
 
+  <!-- field put() for array of structures -->
+    <xsl:template match="field[@data_type='structure']" mode="putSlice">
+		<xsl:call-template name="COMMENT_FIELD"/>
+      <xsl:call-template name="putStructArray">
+            <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
+            <xsl:with-param name="resize" select="false()"/>
+	<xsl:with-param name="slice" select="true()"/>
+        </xsl:call-template>
+   </xsl:template>
 
 
     <xsl:template name="putStructArray">
         <xsl:param name="path"/>
         <xsl:param name="resize"/>
 	<xsl:param name="slice"/>
-<xsl:call-template name="COMMENT_FIELD"/>
+
         <xsl:if test="$resize"><xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>.resize(1);&#10;</xsl:text>
 	</xsl:if>
         <xsl:for-each select="field[not(@data_type='struct_array' or @data_type='structure')]">
 		<xsl:call-template name="COMMENT_FIELD"/>
 	     	<xsl:call-template name="setValue">
-        	<xsl:with-param name="path" select="concat($path, '.', @name)"/>
-		<xsl:with-param name="slice" select="$slice"/>
+        		<xsl:with-param name="path" select="concat($path, '.', @name)"/>
+			<xsl:with-param name="slice" select="$slice"/>
 		</xsl:call-template>
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='structure']">
+	  <xsl:call-template name="COMMENT_FIELD"/>
 	  <xsl:call-template name="putStructArray">
                 <xsl:with-param name="path" select="concat($path, '.', @name)"/>
                 <xsl:with-param name="resize" select="false()"/>
@@ -277,6 +300,7 @@ using namespace IdsNs;
             </xsl:call-template>
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='struct_array']">
+	    <xsl:call-template name="COMMENT_FIELD"/>
             <xsl:call-template name="putStructArray">
                 <xsl:with-param name="path" select="concat($path, '.', @name, '(0)')"/>
                 <xsl:with-param name="resize" select="true()"/>
@@ -288,6 +312,7 @@ using namespace IdsNs;
 
     <!-- field get() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="get">
+	<xsl:call-template name="COMMENT_FIELD"/>
     <xsl:choose>
 	
 	  <xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
@@ -300,13 +325,20 @@ using namespace IdsNs;
 
     <!-- field get() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="get">
+	<xsl:call-template name="COMMENT_FIELD"/>
        <xsl:call-template name="getStructArray">
             <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
 	     <xsl:with-param name="slice" select="false()"/>
         </xsl:call-template>
   </xsl:template>
 
-
+    <xsl:template match="field[@data_type='structure']" mode="get">
+	<xsl:call-template name="COMMENT_FIELD"/>
+       <xsl:call-template name="getStructArray">
+            <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
+	     <xsl:with-param name="slice" select="false()"/>
+        </xsl:call-template>
+  </xsl:template>
 
     <!-- field getSlice() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="getSlice">
@@ -330,8 +362,18 @@ using namespace IdsNs;
 
     <!-- field get() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="getSlice">
+	<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="getStructArray">
             <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
+	     <xsl:with-param name="slice" select="true()"/>
+        </xsl:call-template>
+    </xsl:template>
+
+    <!-- field get() for array of structures -->
+    <xsl:template match="field[@data_type='structure']" mode="getSlice">
+	<xsl:call-template name="COMMENT_FIELD"/>
+      <xsl:call-template name="getStructArray">
+            <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
 	     <xsl:with-param name="slice" select="true()"/>
         </xsl:call-template>
     </xsl:template>
@@ -344,6 +386,7 @@ using namespace IdsNs;
         <xsl:for-each select="field[not(@data_type='struct_array' or @data_type='structure')]">
    	<xsl:call-template name="COMMENT_FIELD"/>
             <xsl:choose>
+		<xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
                 <xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
       		  <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
         	</xsl:when>

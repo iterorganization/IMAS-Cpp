@@ -1,6 +1,6 @@
-#ifndef _HELPER
+#ifndef _HELPER_CPP
 
-#define _HELPER
+#define _HELPER_CPP
 
 
 #include <blitz/array.h>
@@ -8,17 +8,16 @@
 
 using namespace blitz;
 
+const int dim1 = 2;
+const int dim2 = 2;
+const int dim3 = 2;
+const int dim4 = 2;
+const int dim5 = 2;
+const int dim6 = 2;
 
-int dim1 = 2;
-int dim2 = 2;
-int dim3 = 2;
-int dim4 = 2;
-int dim5 = 2;
-int dim6 = 2;
+
 
 const char* PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r";
-int randseed = (int)time(NULL);
-Range all = Range::all();
 
 /*******************************************************************************/
 /**********************    Random data generation        ***********************/
@@ -41,7 +40,7 @@ int* generateIntegerArray(int size)
 
 double getDouble() 
 {
-	return (double) rand();
+	return (double) (rand() %100) * 1.1;
 }
 
 double* generateDoubleArray(int size)
@@ -101,7 +100,7 @@ void setValue(Array<std::string,1>&array, bool isReduced)
 
 
 	arrayPtr = generateIntegerArray(size);
-	Array<std::string,1> newArray(arrayPtr, *ptrShape);
+	Array<std::string,1> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;;
 */
@@ -128,9 +127,11 @@ void setValue(Array<int,1>&array, bool isReduced)
 
 
 	arrayPtr = generateIntegerArray(size);
-	Array<int, 1> newArray(arrayPtr, *ptrShape);
+	Array<int, 1> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 
@@ -152,9 +153,11 @@ void setValue(Array<double,1>&array, bool isReduced)
 	}
 
 	arrayPtr = generateDoubleArray(size);
-	Array<double,1> newArray(arrayPtr, *ptrShape);
+	Array<double,1> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 void setValue(Array<int,2>&array, bool isReduced)
@@ -165,7 +168,7 @@ void setValue(Array<int,2>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2;
+		size = dim1 * 1;
 		ptrShape = new const blitz::TinyVector<int, 2> (dim1, 1);
 	}
 	else
@@ -175,9 +178,11 @@ void setValue(Array<int,2>&array, bool isReduced)
 	}
 
 	arrayPtr = generateIntegerArray(size);
-	Array<int,2> newArray(arrayPtr, *ptrShape);
+	Array<int,2> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 void setValue(Array<double,2>&array, bool isReduced)
@@ -188,7 +193,7 @@ void setValue(Array<double,2>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2;
+		size = dim1 * 1;
 		ptrShape = new const blitz::TinyVector<int, 2> (dim1, 1);
 	}
 	else
@@ -199,9 +204,10 @@ void setValue(Array<double,2>&array, bool isReduced)
 
 	arrayPtr = generateDoubleArray(size);
 	
-	Array<double,2> newArray(arrayPtr, *ptrShape);
+	Array<double,2> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
 }
 
 void setValue(Array<int,3>&array, bool isReduced)
@@ -212,7 +218,7 @@ void setValue(Array<int,3>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2 * dim3;
+		size = dim1 * dim2 * 1;
 		ptrShape = new const blitz::TinyVector<int, 3> (dim1, dim2, 1);
 	}
 	else
@@ -223,9 +229,11 @@ void setValue(Array<int,3>&array, bool isReduced)
 
 	arrayPtr = generateIntegerArray(size);
 
-	Array<int,3> newArray(arrayPtr, *ptrShape);
+	Array<int,3> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 void setValue(Array<double,3>&array, bool isReduced)
@@ -236,7 +244,7 @@ void setValue(Array<double,3>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2 * dim3;
+		size = dim1 * dim2 * 1;
 		ptrShape = new const blitz::TinyVector<int, 3> (dim1, dim2, 1);
 	}
 	else
@@ -247,9 +255,11 @@ void setValue(Array<double,3>&array, bool isReduced)
 
 	arrayPtr = generateDoubleArray(size);
 
-	Array<double,3> newArray(arrayPtr, *ptrShape);
+	Array<double,3> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 void setValue(Array<int,4>&array, bool isReduced)
@@ -260,7 +270,7 @@ void setValue(Array<int,4>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2 * dim3 * dim4;
+		size = dim1 * dim2 * dim3 * 1;
 		ptrShape = new const blitz::TinyVector<int, 4> (dim1, dim2, dim3, 1);
 	}
 	else
@@ -272,9 +282,11 @@ void setValue(Array<int,4>&array, bool isReduced)
 
 	arrayPtr = generateIntegerArray(size);
 
-	Array<int,4> newArray(arrayPtr, *ptrShape);
+	Array<int,4> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 void setValue(Array<double,4>&array, bool isReduced)
 {
@@ -284,7 +296,7 @@ void setValue(Array<double,4>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2 * dim3 * dim4;
+		size = dim1 * dim2 * dim3 * 1;
 		ptrShape = new const blitz::TinyVector<int, 4> (dim1, dim2, dim3, 1);
 	}
 	else
@@ -296,9 +308,11 @@ void setValue(Array<double,4>&array, bool isReduced)
 
 	arrayPtr = generateDoubleArray(size);
 
-	Array<double,4> newArray(arrayPtr, *ptrShape);
+	Array<double,4> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 void setValue(Array<int,5>&array, bool isReduced)
@@ -309,7 +323,7 @@ void setValue(Array<int,5>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2 * dim3 * dim4 * dim5;
+		size = dim1 * dim2 * dim3 * dim4 * 1;
 		ptrShape = new const blitz::TinyVector<int, 5> (dim1, dim2, dim3, dim4, 1);
 	}
 	else
@@ -321,9 +335,11 @@ void setValue(Array<int,5>&array, bool isReduced)
 	
 	arrayPtr = generateIntegerArray(size);
 
-	Array<int,5> newArray(arrayPtr, *ptrShape);
+	Array<int,5> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 void setValue(Array<double,5>&array, bool isReduced)
 {
@@ -333,7 +349,7 @@ void setValue(Array<double,5>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2 * dim3 * dim4 * dim5;
+		size = dim1 * dim2 * dim3 * dim4 * 1;
 		ptrShape = new const blitz::TinyVector<int, 5> (dim1, dim2, dim3, dim4, 1);
 	}
 	else
@@ -346,9 +362,11 @@ void setValue(Array<double,5>&array, bool isReduced)
 	
 	arrayPtr = generateDoubleArray(size);
 
-	Array<double,5> newArray(arrayPtr, *ptrShape);
+	Array<double,5> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 void setValue(Array<int,6>&array, bool isReduced)
@@ -359,7 +377,7 @@ void setValue(Array<int,6>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2 * dim3 * dim4 * dim5 * dim6;
+		size = dim1 * dim2 * dim3 * dim4 * dim5 * 1;
 		ptrShape = new const blitz::TinyVector<int, 6> (dim1, dim2, dim3, dim4, dim5, 1);
 	}
 	else
@@ -374,6 +392,8 @@ void setValue(Array<int,6>&array, bool isReduced)
 	Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6));
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 void setValue(Array<double,6>&array, bool isReduced)
@@ -384,7 +404,7 @@ void setValue(Array<double,6>&array, bool isReduced)
 
 	if(isReduced)
 	{
-		size = 1 * dim2 * dim3 * dim4 * dim5 * dim6;
+		size = dim1 * dim2 * dim3 * dim4 * dim5 * 1;
 		ptrShape = new const blitz::TinyVector<int, 6> (dim1, dim2, dim3, dim4, dim5, 1);
 	}
 	else
@@ -396,9 +416,11 @@ void setValue(Array<double,6>&array, bool isReduced)
 	
 	arrayPtr = generateDoubleArray(size);
 
-	Array<double,6> newArray(arrayPtr, *ptrShape);
+	Array<double,6> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
+	delete ptrShape;
+	delete arrayPtr;
 }
 
 /*******************************************************************************/
@@ -717,5 +739,5 @@ int assertField(const blitz::Array<double, 6> observedValue, const char*fieldPat
 	return 0;
 }
 
-#endif // _HELPER
+#endif // _HELPER_CPP
 
