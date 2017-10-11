@@ -8,18 +8,18 @@
 
 
 <!--============ Includes   ===========-->
-#include &lt;stdlib.h>
-#include &lt;time.h>
-#include "UALClasses.h"
+<xsl:text>#include &lt;stdlib.h>&#10;</xsl:text>
+<xsl:text>#include &lt;time.h>&#10;</xsl:text>
+<xsl:text>#include "UALClasses.h"&#10;</xsl:text>
 
-#include "helper.h"
+<xsl:text>#include "helper.h"&#10;</xsl:text>
 
-using namespace IdsNs;
-int randseed = (int)time(NULL);
+<xsl:text>using namespace IdsNs;&#10;</xsl:text>
+<xsl:text>int randseed = (int)time(NULL);&#10;</xsl:text>
 <xsl:text>&#10;</xsl:text>
 
-   	<xsl:text>const int TEST_SHOT = 9999;&#10;</xsl:text>
-        <xsl:text>const int TEST_RUN = 9999;&#10;</xsl:text>
+<xsl:text>const int TEST_SHOT = 9999;&#10;</xsl:text>
+<xsl:text>const int TEST_RUN = 9999;&#10;</xsl:text>
      
 	
 	  
@@ -56,44 +56,27 @@ int randseed = (int)time(NULL);
         <xsl:text>&#10;</xsl:text>
 -->
 
+
         <xsl:apply-templates select="child::IDS" mode="put"/>
         <xsl:apply-templates select="child::IDS" mode="get"/>
 
   	<xsl:apply-templates select="child::IDS" mode="putSlice"/>
         <xsl:apply-templates select="child::IDS" mode="getSlice"/>
-
-
 <!--
-                 <xsl:apply-templates select="child::IDS[@name='wall']" mode="put"/>
-                 <xsl:apply-templates select="child::IDS[@name='wall']" mode="get"/>
+                 <xsl:apply-templates select="child::IDS[@name='transport_solver_numerics']" mode="put"/>
+                 <xsl:apply-templates select="child::IDS[@name='transport_solver_numerics']" mode="get"/>
         
-             <xsl:apply-templates select="child::IDS[@name='wall']" mode="putSlice"/>
-                 <xsl:apply-templates select="child::IDS[@name='wall']" mode="getSlice"/>
-    -->
-    <xsl:text>void initPut()&#10;</xsl:text>
-        <xsl:text>{&#10;</xsl:text>
-        <xsl:text>&#9;//imas.create();&#10;</xsl:text>
-        <xsl:text>}&#10;</xsl:text>
-        <xsl:text>&#10;</xsl:text>
+             <xsl:apply-templates select="child::IDS[@name='transport_solver_numerics']" mode="putSlice"/>
+                 <xsl:apply-templates select="child::IDS[@name='transport_solver_numerics']" mode="getSlice"/>
+-->
 
-        <xsl:text>void initGet() &#10;</xsl:text>
-        <xsl:text>{&#10;</xsl:text>
-        <xsl:text>&#9;//imas.open();&#10;</xsl:text>
-        <xsl:text>}&#10;</xsl:text>
-        <xsl:text>&#10;</xsl:text>
-	
 
-        <xsl:text>void finish()&#10;</xsl:text>
-	     <xsl:text>{&#10;</xsl:text>
-        <xsl:text>&#9;//imas.close();&#10;</xsl:text>
-        <xsl:text>}&#10;</xsl:text>
-        <xsl:text>&#10;</xsl:text>
- 
         <xsl:text> int main(int argc, char** argv){&#10;</xsl:text>
 
 
         <xsl:apply-templates select="child::IDS" mode="test"/>
 
+	<xsl:text>&#9;return finalStatus;&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
 
@@ -103,25 +86,17 @@ int randseed = (int)time(NULL);
 
 
     <!-- IDS perform the tests -->
-
 <!--
-    <xsl:template match="IDS[@name='wall']" mode="test">
+    <xsl:template match="IDS[@name='transport_solver_numerics']" mode="test">
 -->
- <xsl:template match="IDS" mode="test">
 
-	<xsl:text>&#9;&#9;initPut();&#10;</xsl:text> 
+ <xsl:template match="IDS" mode="test">
+    	<xsl:text>&#9;// </xsl:text><xsl:value-of select="@name"/><xsl:text>&#10;</xsl:text>
         <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_put();&#10;</xsl:text>
-	<xsl:text>&#9;&#9;finish();&#10;</xsl:text> 
-	<xsl:text>&#9;&#9;initGet();&#10;</xsl:text> 
         <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_get();&#10;</xsl:text>
-	<xsl:text>&#9;&#9;finish();&#10;</xsl:text> 
- 
-     	<xsl:text>&#9;&#9;initPut();&#10;</xsl:text> 
+
         <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice();&#10;</xsl:text>
-	<xsl:text>&#9;&#9;finish();&#10;</xsl:text> 
-   	<xsl:text>&#9;&#9;initGet();&#10;</xsl:text> 
         <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice();&#10;</xsl:text>
-	<xsl:text>&#9;&#9;finish();&#10;</xsl:text> 
  
 	<xsl:text>&#10;</xsl:text>
     </xsl:template>
@@ -153,7 +128,7 @@ int randseed = (int)time(NULL);
     <xsl:template match="IDS" mode="putSlice">
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice() {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing putSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
-                <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
+        <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
 
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;imas.create();&#10;</xsl:text>
@@ -176,6 +151,7 @@ int randseed = (int)time(NULL);
     <xsl:template match="IDS" mode="get">
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_get() {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing get() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
+        <xsl:text>&#9;int status = 0;&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
         <xsl:text>&#9;imas.open();&#10;</xsl:text>
@@ -199,6 +175,7 @@ int randseed = (int)time(NULL);
     <xsl:template match="IDS" mode="getSlice">
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice()  {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing getSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
+        <xsl:text>&#9;int status = 0;&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
         <xsl:text>&#9;imas.open();&#10;</xsl:text>
@@ -317,7 +294,8 @@ int randseed = (int)time(NULL);
 	
 	  <xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
       <xsl:otherwise>
-		   <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
+		   <xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
+ 			<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
 		</xsl:otherwise>
         </xsl:choose>
     </xsl:template>
@@ -348,12 +326,13 @@ int randseed = (int)time(NULL);
 	<xsl:otherwise>
 		<xsl:choose>
                 	<xsl:when test="@type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-				<xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
+				<xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
         		</xsl:when>
 	        	<xsl:otherwise>
-				<xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
+				<xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
      	        	</xsl:otherwise>
             </xsl:choose>
+		<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
 	</xsl:otherwise>
      </xsl:choose>
     </xsl:template>
@@ -388,10 +367,12 @@ int randseed = (int)time(NULL);
             <xsl:choose>
 		<xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
                 <xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-      		  <xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
+      		  <xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
+			<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
         	</xsl:when>
 	        <xsl:otherwise>
-			<xsl:text>&#9;&#9;assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
+			<xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
+			<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
      	        </xsl:otherwise>
             </xsl:choose>
         </xsl:for-each>

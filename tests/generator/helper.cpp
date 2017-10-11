@@ -8,6 +8,9 @@
 
 using namespace blitz;
 
+
+int finalStatus = 0;
+
 const int dim1 = 2;
 const int dim2 = 2;
 const int dim3 = 2;
@@ -15,9 +18,15 @@ const int dim4 = 2;
 const int dim5 = 2;
 const int dim6 = 2;
 
-
-
 const char* PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r";
+
+
+void checkStatus(int status)
+{
+	if(finalStatus == 0 && status < 0)
+		finalStatus = EXIT_FAILURE;
+	
+}
 
 /*******************************************************************************/
 /**********************    Random data generation        ***********************/

@@ -1,9 +1,10 @@
-IDSDEF= /work/imas/core/installer/src/3.11.0/ual/3.6.2/xml/IDSDef.xml
+IDSDEF= ../../../xml/IDSDef.xml
+#IDSDEF= /work/imas/core/installer/src/3.11.0/ual/3.6.2/xml/IDSDef.xml
 TESTDIR = ../testsuite
 
 CXX=g++
 LD=$(CXX)
-CXXFLAGS=-pthread #-g -O0 #-fPIC
+CXXFLAGS=-pthread -g -O0 #-fPIC
 LDFLAGS= #-pthread #-g
 
 INCDIR=`pkg-config blitz --cflags` -I$(IMAS_PREFIX)/include
@@ -22,7 +23,7 @@ install:
 clean:
 	  rm -f $(ALL_PROGS) *~ *.o
 
-clean-src:
+clean-src: clean
 	rm -f TestSuite.cpp
 
 TestSuite: helper.o TestSuite.o 

@@ -7,6 +7,7 @@
 
 using namespace blitz;
 
+extern int finalStatus;
 /*
 extern int dim1;
 extern int dim2;
@@ -17,6 +18,9 @@ extern int dim6;
 
 extern int randseed;
 */
+
+
+void checkStatus(int status);
 /*******************************************************************************/
 /**********************         Setting arrays           ***********************/
 /*******************************************************************************/
