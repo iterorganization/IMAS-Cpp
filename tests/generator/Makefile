@@ -39,6 +39,11 @@ TestSuite.o: TestSuite.cpp
 
 TestSuite.cpp:
 	xsltproc TestSuiteCPP.xsl $(IDSDEF)  > TestSuite.cpp
+	
+	
+test:  TestSuite
+	./TestSuite
+	
 #RULES
 #.SUFFIXES: .cpp
 
