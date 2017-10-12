@@ -83,14 +83,16 @@ ifeq (,$(SAXONICAJAR))
 endif
 	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   | $(BEAUTIFY) > UALMethods.cpp
 
-cpptest: cpptest.cpp
-	$(CXX) -o $@ $(CXXFLAGS) $(INCDIR) $(LDFLAGS) libimas-cpp.so cpptest.cpp $(LIBS)
 
-cpptest_hdf5: cpptest.cpp
-	$(CXX) -o $@ -DHDF5 $(CXXFLAGS) $(INCDIR) $(LDFLAGS) libimas-cpp.so cpptest.cpp $(LIBS)
+test:
+	  $(MAKE) -C tests/generator test
 
-cpptest.cpp: IDSDef2CPPtests.xsl
-	xsltproc IDSDef2CPPtests.xsl $(IDSDEF) | $(BEAUTIFY) > cpptest.cpp
+test-clean:
+	  $(MAKE) -C tests/generator clean
+
+test-clean-src:
+	  $(MAKE) -C tests/generator clean-src
+
 
 PC_FILES = imas-cpp.pc
 include ../Makefile.pkgconfig
