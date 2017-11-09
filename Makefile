@@ -42,7 +42,7 @@ OBJ_H_FILES:=$(GENERATED_GCH_FILES)
 
 CPP_FILES:=$(GENERATED_CPP_FILES)
 OBJ_FILES:= $(BUILD_DIR)/UALDef.o $(GENERATED_OBJ_FILES) $(BUILD_DIR)/UALMethods.o
-OBJ_FILES:=  $(GENERATED_OBJ_FILES) $(BUILD_DIR)/UALMethods.o
+OBJ_FILES:=  $(BUILD_DIR)/IdsDef.o $(GENERATED_OBJ_FILES) $(BUILD_DIR)/UALMethods.o
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
@@ -76,24 +76,17 @@ install: all pkgconfig_install
 
 clean: clean-tests pkgconfig_clean
 	rm -f *.o *.so *~ *.a
+	rm -rf ./build
 
 clean-src: clean
-	rm -f UALClasses.h UALMethods.cpp
+	rm -f src/UALClasses.h src/UALMethods.cpp
+	rm -rf src/ids
 
 clean-tests:
 	rm -f cpptest*
 
 
-libimas-cpp.so :$(OBJ_FILES) 
-	@mkdir -p $(LIB_DIR)
-	$(LD) $(LDFLAGS) -o $(LIB_DIR)/$@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)  UALMethods.o $(LIBS)
 
-libimas-cpp.a : $(OBJ_FILES)  
-	@mkdir -p $(LIB_DIR)
-	ar rvs $(LIB_DIR)/$@ $^
-
-$(BUILD_DIR)/UALMethods.o: $(SRC_DIR)/UALMethods.cpp $(SRC_DIR)/UALClasses.h 
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c  $(SRC_DIR)/UALMethods.cpp -o $@
 	
 
 
@@ -101,7 +94,21 @@ $(BUILD_DIR)/UALMethods.o: $(SRC_DIR)/UALMethods.cpp $(SRC_DIR)/UALClasses.h
 #################################################
 #              BUILD
 #################################################
+libimas-cpp.so :$(OBJ_FILES) 
+	@mkdir -p $(LIB_DIR)
+	$(LD) $(LDFLAGS) -o $(LIB_DIR)/$@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)   $(LIBS) $^
 
+libimas-cpp.a : $(OBJ_FILES)  
+	@mkdir -p $(LIB_DIR)
+	ar rvs $(LIB_DIR)/$@ $^
+
+$(BUILD_DIR)/UALMethods.o: $(SRC_DIR)/UALMethods.cpp $(SRC_DIR)/UALClasses.h 
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c  $(SRC_DIR)/UALMethods.cpp -o $@
+
+
+$(BUILD_DIR)/IdsDef.o: $(SRC_DIR)/IdsDef.cpp $(SRC_DIR)/IdsDef.h 
+	@mkdir -p $(@D)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(SRC_DIR)/IdsDef.cpp -o $@
 
 
 $(BUILD_DIR)/UALDef.o: $(SRC_DIR)/UALDef.cpp $(SRC_DIR)/UALDef.h 
@@ -122,10 +129,10 @@ $(BUILD_DIR)/%.o: $(GENERATED_SRC_DIR)/%.cpp
 
 #$(SRC_DIR)/UALDef.cpp $(CPP_FILES) UALMethods.cpp: CPODef2CPPMethods.xsl
 
-$(BUILD_DIR)/UALClasses.h: IDSDef2CPPClasses.xsl $(IDSDEF)
+$(SRC_DIR)/UALClasses.h: IDSDef2CPPClasses.xsl $(IDSDEF)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) 
 
-$(BUILD_DIR)/UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF)
+$(SRC_DIR)/UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF)
 ifeq (,$(SAXONICAJAR))
 	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
 endif
@@ -134,7 +141,7 @@ endif
 #################################################
 #                 INIT
 #################################################
-init:  $(BUILD_DIR)/UALClasses.h $(BUILD_DIR)/UALMethods.cpp
+init:  $(SRC_DIR)/UALClasses.h $(BUILD_DIR)/UALMethods.cpp
 	mkdir -p $(BUILD_DIR)
 	@touch init.tmp
 

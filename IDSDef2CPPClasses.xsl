@@ -179,6 +179,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 
 }
 #endif // _IDS_BASE_<xsl:value-of select="@name"/>
+<xsl:text>&#10;</xsl:text>
    </exsl:document>
   </xsl:template>
 
@@ -250,7 +251,8 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 	      Array&lt;class <xsl:value-of select = "@name"/>,1&gt; <xsl:value-of select = "@name"/>;
     </xsl:when>
 	<xsl:otherwise>
-    <xsl:message terminate="yes">        Error: Unknown data type: <xsl:value-of select = "@data_type"/> !      </xsl:message>
+    <xsl:message terminate="yes">
+        Error: Unknown data type: <xsl:value-of select = "@data_type"/> !      </xsl:message>
 </xsl:otherwise>
   </xsl:choose>
 </xsl:template>
