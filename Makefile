@@ -38,6 +38,9 @@ TARGETS = libimas-cpp.so libimas-cpp.a
 
 all: $(SOURCES) $(TARGETS)
 sources: $(SOURCES)
+sources_install: $(SOURCES)
+	install -d $(INSTALL)/share/src/cppinterface
+	install -m 644 $^ $(INSTALL)/share/src/cppinterface
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
