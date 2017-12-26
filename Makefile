@@ -3,6 +3,7 @@ include ../Makefile.common
 ifeq ("no","$(IMAS_CPP)")
 $(warning "Ignoring cppinterface (IMAS_CPP=no).")
 all:
+sources:
 clean:
 clean-src:
 install:
@@ -32,7 +33,11 @@ else
  BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
-all : libimas-cpp.so libimas-cpp.a pkgconfig
+SOURCES = UALClasses.h UALMethods.cpp
+TARGETS = libimas-cpp.so libimas-cpp.a
+
+all: $(SOURCES) $(TARGETS)
+sources: $(SOURCES)
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
@@ -59,7 +64,7 @@ clean: clean-tests pkgconfig_clean
 	rm -f *.o *.so *~ *.a
 
 clean-src: clean
-	rm -f UALClasses.h UALMethods.cpp
+	rm -f $(SOURCES)
 
 clean-tests:
 	rm -f cpptest*
