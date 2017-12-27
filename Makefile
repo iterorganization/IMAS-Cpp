@@ -22,9 +22,8 @@ else
 endif
 
 IDSDEF= ../xml/IDSDef.xml
-INCDIR=`pkg-config blitz --cflags`  -I../lowlevel
+INCDIR=`pkg-config blitz --cflags` -I../lowlevel
 LIBS=-L../lowlevel `pkg-config blitz --libs` -limas
-# LIBS_HDF5=   -L../lowlevel /afs/efda-itm.eu/project/switm/blitz/blitz-0.9_X86_64_GNU/lib/libblitz.a -limas_hdf5
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
@@ -52,16 +51,14 @@ else
 endif
 	
 install: all pkgconfig_install
-	mkdir -p $(INSTALL)/lib $(INSTALL)/include
-	for OBJECT in *.so ;do \
-		cp -vT $$OBJECT $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT; \
+	install -d $(INSTALL)/lib $(INSTALL)/include
+	for OBJECT in $(filter %.so,$(TARGETS)) ;do \
+		install -m644 $$OBJECT $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
+		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR); \
+		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR); \
+		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$$OBJECT; \
 	done
-	cp UALClasses.h $(INSTALL)/include
-	cp UALDef.h $(INSTALL)/include
-	cp IdsDef.h $(INSTALL)/include
+	install -m644 UALClasses.h UALDef.h IdsDef.h $(INSTALL)/include
 
 clean: clean-tests pkgconfig_clean
 	rm -f *.o *.so *~ *.a
@@ -74,7 +71,7 @@ clean-tests:
 
 
 libimas-cpp.so : UALMethods.o
-	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)  UALMethods.o $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR) $^ $(LIBS)
 
 libimas-cpp.a : UALMethods.o
 	ar rvs $@ $^
@@ -89,18 +86,17 @@ UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF)
 ifeq (,$(SAXONICAJAR))
 	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
 endif
-	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   | $(BEAUTIFY) > UALMethods.cpp
+	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl | $(BEAUTIFY) > UALMethods.cpp
 
 
 test:
-	  $(MAKE) -C tests/generator test
+	$(MAKE) -C tests/generator test
 
 test-clean:
-	  $(MAKE) -C tests/generator clean
+	$(MAKE) -C tests/generator clean
 
 test-clean-src:
-	  $(MAKE) -C tests/generator clean-src
-
+	$(MAKE) -C tests/generator clean-src
 
 PC_FILES = imas-cpp.pc
 include ../Makefile.pkgconfig
