@@ -322,22 +322,22 @@ return os;
 <!--=================================================-->
 
 <xsl:template match="IDS" mode="CLASS_DEFINITION">
-<xsl:result-document href="src/ids/{@name}_IDSBase.cpp" standalone="yes" method="text">
+<xsl:result-document href="src/ids/{@name}.cpp" standalone="yes" method="text">
 #include &lt;blitz/array.h&gt;
 #include "UALDef.h"
-#include "<xsl:value-of select="@name"/>_IDSBase.h"
-IdsNs::<xsl:value-of select="@name"/>_IDSBase::<xsl:value-of select="@name"/>_IDSBase()
+#include "<xsl:value-of select="@name"/>.h"
+IdsNs::<xsl:value-of select="@name"/>::<xsl:value-of select="@name"/>()
 {
 connected = false;
 <xsl:apply-templates select="field" mode="CONSTRUCTOR"/>
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get()
+int IdsNs::<xsl:value-of select="@name"/>::get()
 {
 	return this->get(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int idx)
+int IdsNs::<xsl:value-of select="@name"/>::get(int idx)
 {
 if(!connected) return -1;
 double *times, double0d;
@@ -365,12 +365,12 @@ endIdsGet(expIdx, path);
 return 0;
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put()
+int IdsNs::<xsl:value-of select="@name"/>::put()
 {
 	return this->put(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int idx)
+int IdsNs::<xsl:value-of select="@name"/>::put(int idx)
 {
 if(!connected) return -1;
 int status, dim1, dim2, dim3, dim4, dim5, dim6, dim7, _i, _j, _k, _h, _l, _m, _n, h;
@@ -398,7 +398,7 @@ endIdsPut(expIdx, path);
 return 0;
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int idx)
+int IdsNs::<xsl:value-of select="@name"/>::putSlice(int idx)
 {
 if(!connected) return -1;
 int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
@@ -433,12 +433,12 @@ endIdsPutSlice(expIdx, path);
 return 0;
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice()
+int IdsNs::<xsl:value-of select="@name"/>::putSlice()
 {
 	return this->putSlice(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove(int idx)
+int IdsNs::<xsl:value-of select="@name"/>::remove(int idx)
 {
 string lepath;
 char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
@@ -454,12 +454,12 @@ sprintf(path, "%s/%d", basePath, idx);
 return 0;
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove()
+int IdsNs::<xsl:value-of select="@name"/>::remove()
 {
 	return this->remove(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int idx)
+int IdsNs::<xsl:value-of select="@name"/>::deleteAll(int idx)
 {
 string lepath;
 char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
@@ -475,17 +475,17 @@ sprintf(path, "%s/%d", basePath, idx);
 return 0;
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll()
+int IdsNs::<xsl:value-of select="@name"/>::deleteAll()
 {
 	return this->deleteAll(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putNonTimed()
+int IdsNs::<xsl:value-of select="@name"/>::putNonTimed()
 {
 	return this->putNonTimed(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putNonTimed(int idx)
+int IdsNs::<xsl:value-of select="@name"/>::putNonTimed(int idx)
 {
 if(!connected) return -1;
 string lepath, timebasepath, timepath;
@@ -516,12 +516,12 @@ endIdsPutNonTimed(expIdx, path);
 return 0;
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char interpolMode)
+int IdsNs::<xsl:value-of select="@name"/>::getSlice(double inTime, char interpolMode)
 {
 	return this->getSlice(0, inTime, interpolMode);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int idx, double inTime, char interpolMode)
+int IdsNs::<xsl:value-of select="@name"/>::getSlice(int idx, double inTime, char interpolMode)
 {
 if(!connected) return -1;
 int dim1, dim2, dim3, dim4, dim5, dim6,  dim7, _i, int0d, numDims;

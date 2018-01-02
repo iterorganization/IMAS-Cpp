@@ -8,6 +8,12 @@ clean-src:
 install:
 else
 
+
+ifeq ($(IDS_CPP_FILES),) 
+	#@echo "Error: Source files have been not created. Please run 'make sources' first"
+	#@exit 1	
+endif
+
 ifeq "$(strip $(CC))" "icc"
  CXX=icpc
  LD=$(CXX)
@@ -24,25 +30,36 @@ endif
 BUILD_DIR:=./build
 LIB_DIR:=./lib
 SRC_DIR:=./src
-GENERATED_SRC_DIR:=$(SRC_DIR)/ids
-INCDIR=-I$(SRC_DIR) -I$(GENERATED_SRC_DIR) `pkg-config --cflags blitz` -I../lowlevel
+IDS_SRC_DIR:=$(SRC_DIR)/ids
+INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) `pkg-config --cflags blitz` -I../lowlevel
 
 IDSDEF= ../xml/IDSDef.xml
 LIBS=-L../lowlevel `pkg-config blitz --libs` -limas
-# LIBS_HDF5=   -L../lowlevel /afs/efda-itm.eu/project/switm/blitz/blitz-0.9_X86_64_GNU/lib/libblitz.a -limas_hdf5
 
-GENERATED_H_FILES=$(wildcard $(GENERATED_SRC_DIR)/*.h)
-GENERATED_GCH_FILES=$(addprefix cpo/,$(notdir $(GENERATED_H_FILES:.h=.h.gch)))
 
-GENERATED_CPP_FILES=$(wildcard $(GENERATED_SRC_DIR)/*.cpp)
-GENERATED_OBJ_FILES=$(addprefix $(BUILD_DIR)/,$(notdir $(GENERATED_CPP_FILES:.cpp=.o)))
+# Sets a path where make will search for files
+VPATH = $(SRC_DIR) $(IDS_SRC_DIR) build lib
 
-H_FILES:=$(GENERATED_H_FILES)
-OBJ_H_FILES:=$(GENERATED_GCH_FILES)
 
-CPP_FILES:=$(GENERATED_CPP_FILES)
-OBJ_FILES:= $(BUILD_DIR)/UALDef.o $(GENERATED_OBJ_FILES) $(BUILD_DIR)/UALMethods.o
-OBJ_FILES:=  $(BUILD_DIR)/IdsDef.o $(GENERATED_OBJ_FILES) $(BUILD_DIR)/UALMethods.o
+#IDSNAMES=$(shell sed '/<IDS name=/!d;s/.*name="\(.*\)"/\1/' $(IDSDEF))
+
+IDS_H_FILES=$(wildcard $(IDS_SRC_DIR)/*.h)
+IDS_GCH_FILES=$(notdir $(IDS_H_FILES:.h=.h.gch))
+
+
+IDS_CPP_FILES=$(wildcard $(IDS_SRC_DIR)/*.cpp)
+#IDS_OBJ_FILES=$(notdir $(IDS_CPP_FILES:.cpp=.o))
+
+H_FILES:=$(IDS_H_FILES)
+OBJ_H_FILES:=$(IDS_GCH_FILES)
+
+CPP_FILES= IdsDef.cpp UALMethods.cpp $(IDS_CPP_FILES)
+#OBJ_FILES= $(notdir $(CPP_FILES:.cpp=.o))
+#OBJ_FILES=$(CPP_FILES:.cpp=.o)
+OBJ_FILES=$(patsubst %.cpp,$(BUILD_DIR)/%.o,$(notdir $(CPP_FILES)))
+
+# Check that "saxon9he.jar" utility is set in CLASSPATH
+SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
@@ -51,112 +68,86 @@ else
  BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
-all : libimas-cpp.so libimas-cpp.a pkgconfig
-
-# Check that "saxon9he.jar" utility is set in CLASSPATH
-SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
-
-ifeq "$(strip $(HDF5))" "yes"
- tests: cpptest cpptest_hdf5
+ifeq ($(strip $(IDS_CPP_FILES)),)
+all:  
+	@echo "Error: Source files have been not created. Please run 'make sources' first"
+	@exit 1	
 else
- tests: cpptest
+all:  libimas-cpp.so libimas-cpp.a pkgconfig
+
 endif
-	
-install: all pkgconfig_install
-	mkdir -p $(INSTALL)/lib $(INSTALL)/include
-	for OBJECT in *.so ;do \
-		cp -vT $$OBJECT $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT; \
-	done
-	cp UALClasses.h $(INSTALL)/include
-	cp UALDef.h $(INSTALL)/include
-	cp IdsDef.h $(INSTALL)/include
-
-clean: clean-tests pkgconfig_clean
-	rm -f *.o *.so *~ *.a
-	rm -rf ./build
-
-clean-src: clean
-	rm -f src/UALClasses.h src/UALMethods.cpp
-	rm -rf src/ids
-
-clean-tests:
-	rm -f cpptest*
-
-
 
 	
+#################################################
+#                 INIT: SOURCE GENERATION
+#################################################
+sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF)
+	@mkdir -p $(BUILD_DIR)
+
+	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) 
+
+ifeq (,$(SAXONICAJAR))
+	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module? YYY)
+endif
+	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   
+
 
 
 
 #################################################
 #              BUILD
 #################################################
-libimas-cpp.so :$(OBJ_FILES) 
+libimas-cpp.so : $(OBJ_FILES) 
 	@mkdir -p $(LIB_DIR)
-	$(LD) $(LDFLAGS) -o $(LIB_DIR)/$@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)   $(LIBS) $^
+	$(LD) $(LDFLAGS) -o $(LIB_DIR)/$@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)   $(LIBS) $(OBJ_FILES)
 
 libimas-cpp.a : $(OBJ_FILES)  
 	@mkdir -p $(LIB_DIR)
 	ar rvs $(LIB_DIR)/$@ $^
 
-$(BUILD_DIR)/UALMethods.o: $(SRC_DIR)/UALMethods.cpp $(SRC_DIR)/UALClasses.h 
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c  $(SRC_DIR)/UALMethods.cpp -o $@
+$(BUILD_DIR)/IdsDef.o: IdsDef.cpp 
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
 
+$(BUILD_DIR)/%.o: %.cpp IdsDef.o 
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
 
-$(BUILD_DIR)/IdsDef.o: $(SRC_DIR)/IdsDef.cpp $(SRC_DIR)/IdsDef.h 
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(SRC_DIR)/IdsDef.cpp -o $@
-
-
-$(BUILD_DIR)/UALDef.o: $(SRC_DIR)/UALDef.cpp $(SRC_DIR)/UALDef.h 
-	@mkdir -p $(@D)
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(SRC_DIR)/UALDef.cpp -o $@
-
-$(BUILD_DIR)/%.o: $(GENERATED_SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(GENERATED_SRC_DIR)/$*.cpp -o $@
-
-
-	
-	
-#$(H_FILES) UALClasses.h:  CPODef2CPPClasses.xsl 
-#	#xsltproc CPODef2CPPClasses.xsl $(CPODEF)
 	
 %.h.gch: %.h    
-	$(CXX) $(CXXFLAGS) $(INCDIR) -o $@ -c $<
-
-#$(SRC_DIR)/UALDef.cpp $(CPP_FILES) UALMethods.cpp: CPODef2CPPMethods.xsl
-
-$(SRC_DIR)/UALClasses.h: IDSDef2CPPClasses.xsl $(IDSDEF)
-	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) 
-
-$(SRC_DIR)/UALMethods.cpp: IDSDef2CPPMethods.xsl $(IDSDEF)
-ifeq (,$(SAXONICAJAR))
-	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
-endif
-	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $@ 
 
 #################################################
-#                 INIT
+#              INSTALL
 #################################################
-init:  $(SRC_DIR)/UALClasses.h $(BUILD_DIR)/UALMethods.cpp
-	mkdir -p $(BUILD_DIR)
-	@touch init.tmp
+install: all pkgconfig_install
+	mkdir -p $(INSTALL)/lib $(INSTALL)/include $(INSTALL)/include/ids
+	@cd $(LIB_DIR) && \
+	for OBJECT in *.so ;do \
+		cp -vT $$OBJECT $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
+		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR); \
+		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR); \
+		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT; \
+	done
 
-check_init:
-ifeq ($(wildcard init.tmp),) 
-	@echo "Error: Environment not initialized. Please run 'make init' first"
-	@exit 1	
-endif
+	cp $(SRC_DIR)/*.h $(INSTALL)/include
+	cp $(IDS_SRC_DIR)/*.h $(INSTALL)/include/ids
 
+#################################################
+#              CLEAN
+#################################################
+clean: test-clean pkgconfig_clean
+	rm -f *.o *.so *~ *.a
+	rm -rf ./build/*
+	rm -rf ./lib/*
+
+clean-src: clean
+	rm -f src/UALClasses.h src/UALMethods.cpp
+	rm -rf src/ids
 
 #################################################
 #                 TESTS
 #################################################
 
-test:
+test: all
 	  $(MAKE) -C tests/generator test
 
 test-clean:

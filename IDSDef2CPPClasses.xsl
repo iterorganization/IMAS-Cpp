@@ -105,7 +105,7 @@ class IDS
 <!--=================================================-->
 
 <xsl:template match = "IDS" mode = "CLASS_HEADER">
- #include "./ids/<xsl:value-of select="@name"/>_IDSBase.h"
+ #include "./ids/<xsl:value-of select="@name"/>.h"
 </xsl:template>
 
 
@@ -116,7 +116,7 @@ class IDS
 
 <xsl:template match = "IDS" mode = "EMPTY_CLASS_DEFINITION">
       /***** IDS <xsl:value-of select="@name"/>; *****/
-      class <xsl:value-of select="@name"/> : public <xsl:value-of select="@name"/>_IDSBase {};
+    //  class <xsl:value-of select="@name"/> : public <xsl:value-of select="@name"/> {};
 </xsl:template>
 
 
@@ -134,7 +134,7 @@ class IDS
 <!--=================================================-->
 
 <xsl:template match = "IDS" mode = "CLASS_DEFINITION">
-<exsl:document href="ids/{@name}_IDSBase.h" standalone="yes" method="text">
+<exsl:document href="ids/{@name}.h" standalone="yes" method="text">
 #ifndef _IDS_BASE_<xsl:value-of select="@name"/>
 
 #define _IDS_BASE_<xsl:value-of select="@name"/>
@@ -144,7 +144,7 @@ class IDS
 namespace IdsNs {
 
 <!--============= Define time-dependent IDSs =============-->
-class <xsl:value-of select="@name"/>_IDSBase:Ids
+class <xsl:value-of select="@name"/>:Ids
 {
     private:
       int expIdx;
@@ -152,7 +152,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
       public:
       void setExpIdx(int expIdx){this->expIdx = expIdx; connected = true;}
       <xsl:apply-templates select = "field" mode = "DECLARE"/>
-      <xsl:value-of select="@name"/>_IDSBase();
+      <xsl:value-of select="@name"/>();
     int get();
     int get(int idx);
     int put();
@@ -173,9 +173,9 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     void discardCache(int idx);
     void flushCache();
     void flushCache(int idx);
-      friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
+      friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/> <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 };
- ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
+ ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/> <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 
 }
 #endif // _IDS_BASE_<xsl:value-of select="@name"/>
