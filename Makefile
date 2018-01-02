@@ -9,11 +9,6 @@ install:
 else
 
 
-ifeq ($(IDS_CPP_FILES),) 
-	#@echo "Error: Source files have been not created. Please run 'make sources' first"
-	#@exit 1	
-endif
-
 ifeq "$(strip $(CC))" "icc"
  CXX=icpc
  LD=$(CXX)
@@ -58,7 +53,7 @@ SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
- BEAUTIFY = cat
+ BEAUTIFY = echo
 else
  BEAUTIFY = indent -kr --no-tabs -l1000
 endif
