@@ -41,21 +41,16 @@ LIBS=-L../lowlevel `pkg-config blitz --libs` -limas
 VPATH = $(SRC_DIR) $(IDS_SRC_DIR) build lib
 
 
-#IDSNAMES=$(shell sed '/<IDS name=/!d;s/.*name="\(.*\)"/\1/' $(IDSDEF))
-
 IDS_H_FILES=$(wildcard $(IDS_SRC_DIR)/*.h)
 IDS_GCH_FILES=$(notdir $(IDS_H_FILES:.h=.h.gch))
 
 
 IDS_CPP_FILES=$(wildcard $(IDS_SRC_DIR)/*.cpp)
-#IDS_OBJ_FILES=$(notdir $(IDS_CPP_FILES:.cpp=.o))
 
 H_FILES:=$(IDS_H_FILES)
 OBJ_H_FILES:=$(IDS_GCH_FILES)
 
 CPP_FILES= IdsDef.cpp UALMethods.cpp $(IDS_CPP_FILES)
-#OBJ_FILES= $(notdir $(CPP_FILES:.cpp=.o))
-#OBJ_FILES=$(CPP_FILES:.cpp=.o)
 OBJ_FILES=$(patsubst %.cpp,$(BUILD_DIR)/%.o,$(notdir $(CPP_FILES)))
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
@@ -81,19 +76,25 @@ endif
 #################################################
 #                 INIT: SOURCE GENERATION
 #################################################
-sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF)
+generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF)
 	@mkdir -p $(BUILD_DIR)
 
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) 
 
 ifeq (,$(SAXONICAJAR))
-	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module? YYY)
+	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
 endif
 	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   
 
+beautify: generate_sources
+	@for i in $(IDS_SRC_DIR)/*; do \
+		echo Correcting indentation of $$i; \
+		$(BEAUTIFY) $$i; \
+	done 
 
+	rm $(IDS_SRC_DIR)/*~
 
-
+sources: generate_sources beautify
 #################################################
 #              BUILD
 #################################################
