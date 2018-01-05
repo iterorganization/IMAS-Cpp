@@ -31,22 +31,20 @@ INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) `pkg-config --cflags blitz` -I../lowlevel
 IDSDEF= ../xml/IDSDef.xml
 LIBS=-L../lowlevel `pkg-config blitz --libs` -limas
 
-
 # Sets a path where make will search for files
 VPATH = $(SRC_DIR) $(IDS_SRC_DIR) build lib
 
+# Get a list of IDS from IDSDEF file
+IDSNAMES := $(shell sed '/<IDS name=/!d;s/.*name="\(.*\)"/\1/' $(IDSDEF))
+IDS_H_FILES = $(addsuffix _IDSBase.h,$(IDSNAMES))
+IDS_CPP_FILES = $(IDS_H_FILES:.h=.cpp)
 
-IDS_H_FILES=$(wildcard $(IDS_SRC_DIR)/*.h)
-IDS_GCH_FILES=$(notdir $(IDS_H_FILES:.h=.h.gch))
+# Generated sources (excluding static sources)
+GENSOURCES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_H_FILES) $(IDS_CPP_FILES))
+GENSOURCES += $(addprefix $(SRC_DIR)/,UALClasses.h UALMethods.cpp)
 
-
-IDS_CPP_FILES=$(wildcard $(IDS_SRC_DIR)/*.cpp)
-
-H_FILES:=$(IDS_H_FILES)
-OBJ_H_FILES:=$(IDS_GCH_FILES)
-
-CPP_FILES= IdsDef.cpp UALMethods.cpp $(IDS_CPP_FILES)
-OBJ_FILES=$(patsubst %.cpp,$(BUILD_DIR)/%.o,$(notdir $(CPP_FILES)))
+# Compiled objects
+OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o) IdsDef.o UALMethods.o)
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
@@ -58,38 +56,43 @@ else
  BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
-ifeq ($(strip $(IDS_CPP_FILES)),)
-all:  
-	@echo "Error: Source files have been not created. Please run 'make sources' first"
-	@exit 1	
-else
 all:  libimas-cpp.so libimas-cpp.a pkgconfig
 
-endif
-
-	
 #################################################
 #                 INIT: SOURCE GENERATION
 #################################################
-generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF)
+# Use an intermediate target to enforce nonparallel generation.
+generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF) saxonicajar
 	@mkdir -p $(BUILD_DIR)
-
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) 
-
-ifeq (,$(SAXONICAJAR))
-	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
-endif
-	java net.sf.saxon.Transform -t -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl   
+	java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
 
 beautify: generate_sources
 	@for i in $(IDS_SRC_DIR)/*; do \
 		echo Correcting indentation of $$i; \
 		$(BEAUTIFY) $$i; \
 	done 
-
 	rm $(IDS_SRC_DIR)/*~
 
-sources: generate_sources beautify
+sources: $(GENSOURCES)
+sources_install: $(GENSOURCES)
+
+# Test if all generated sources are found to exist as files to
+# gracefully skip generation if not needed.
+ifeq ($(words $(GENSOURCES)), $(words $(wildcard $(GENSOURCES))))
+$(GENSOURCES):
+	$(warning All sources generated.)
+else
+$(GENSOURCES): generate_sources beautify
+  $(warning Missing sources: $(filter-out $(wildcard $(GENSOURCES)),$(GENSOURCES)))
+endif
+
+# Check that "saxon9he.jar" utility is set in CLASSPATH and exists
+saxonicajar:
+ifeq (,$(SAXONICAJAR))
+	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
+endif
+
 #################################################
 #              BUILD
 #################################################
@@ -104,12 +107,8 @@ libimas-cpp.a : $(OBJ_FILES)
 $(BUILD_DIR)/IdsDef.o: IdsDef.cpp 
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
 
-$(BUILD_DIR)/%.o: %.cpp IdsDef.o 
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
-
-	
-%.h.gch: %.h    
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $@ 
+$(BUILD_DIR)/%.o: IdsDef.o $(GENSOURCES) %.cpp
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@)
 
 #################################################
 #              INSTALL
