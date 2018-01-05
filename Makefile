@@ -57,21 +57,21 @@ else
 endif
 
 all:  libimas-cpp.so libimas-cpp.a pkgconfig
-
+	
 #################################################
 #                 INIT: SOURCE GENERATION
 #################################################
 # Use an intermediate target to enforce nonparallel generation.
 generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF) saxonicajar
 	@mkdir -p $(BUILD_DIR)
-	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) 
+	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF)
 	java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
 
 beautify: generate_sources
 	@for i in $(IDS_SRC_DIR)/*; do \
 		echo Correcting indentation of $$i; \
 		$(BEAUTIFY) $$i; \
-	done 
+	done
 	rm $(IDS_SRC_DIR)/*~
 
 sources: $(GENSOURCES)
@@ -96,20 +96,20 @@ endif
 #################################################
 #              BUILD
 #################################################
-libimas-cpp.so : $(OBJ_FILES) 
+libimas-cpp.so : $(OBJ_FILES)
 	@mkdir -p $(LIB_DIR)
 	$(LD) $(LDFLAGS) -o $(LIB_DIR)/$@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)   $(LIBS) $(OBJ_FILES)
 
-libimas-cpp.a : $(OBJ_FILES)  
+libimas-cpp.a : $(OBJ_FILES)
 	@mkdir -p $(LIB_DIR)
 	ar rvs $(LIB_DIR)/$@ $^
 
-$(BUILD_DIR)/IdsDef.o: IdsDef.cpp 
+$(BUILD_DIR)/IdsDef.o: IdsDef.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
 
 $(BUILD_DIR)/%.o: IdsDef.o $(GENSOURCES) %.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@)
-
+	
 #################################################
 #              INSTALL
 #################################################
