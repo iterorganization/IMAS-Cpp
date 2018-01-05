@@ -1,2 +1,6 @@
-UALClasses.h
-UALMethods.cpp
+build/
+lib/
+src/UALClasses.h
+src/UALMethods.cpp
+src/ids/
+imas-cpp.pc
