@@ -3,11 +3,11 @@ include ../Makefile.common
 ifeq ("no","$(IMAS_CPP)")
 $(warning "Ignoring cppinterface (IMAS_CPP=no).")
 all:
+sources:
 clean:
 clean-src:
 install:
 else
-
 
 ifeq "$(strip $(CC))" "icc"
  CXX=icpc
@@ -21,7 +21,6 @@ else
  LDFLAGS= -g -pthread
 endif
 
-
 BUILD_DIR:=./build
 LIB_DIR:=./lib
 SRC_DIR:=./src
@@ -30,6 +29,13 @@ INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) `pkg-config --cflags blitz` -I../lowlevel
 
 IDSDEF= ../xml/IDSDef.xml
 LIBS=-L../lowlevel `pkg-config blitz --libs` -limas
+
+# Check existence of the "indent" utility to get a clean C format
+ifeq "$(shell which indent 2> /dev/null)" ""
+ BEAUTIFY = echo
+else
+ BEAUTIFY = indent -kr --no-tabs -l1000
+endif
 
 # Sets a path where make will search for files
 VPATH = $(SRC_DIR) $(IDS_SRC_DIR) build lib
@@ -42,25 +48,23 @@ IDS_CPP_FILES = $(IDS_H_FILES:.h=.cpp)
 # Generated sources (excluding static sources)
 GENSOURCES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_H_FILES) $(IDS_CPP_FILES))
 GENSOURCES += $(addprefix $(SRC_DIR)/,UALClasses.h UALMethods.cpp)
+# Add static sources
+SOURCES = $(GENSOURCES) $(addprefix $(SRC_DIR)/,IdsDef.cpp  IdsDef.h  UALDef.h)
 
 # Compiled objects
 OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o) IdsDef.o UALMethods.o)
+TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
 
-# Check existence of the "indent" utility to get a clean C format
-ifeq "$(shell which indent 2> /dev/null)" ""
- BEAUTIFY = echo
-else
- BEAUTIFY = indent -kr --no-tabs -l1000
-endif
-
-all:  libimas-cpp.so libimas-cpp.a pkgconfig
+all: $(SOURCES) $(TARGETS)
 	
 #################################################
 #                 INIT: SOURCE GENERATION
 #################################################
+sources: $(SOURCES)
+
 # Use an intermediate target to enforce nonparallel generation.
 generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF) saxonicajar
 	@mkdir -p $(BUILD_DIR)
@@ -74,17 +78,12 @@ beautify: generate_sources
 	done
 	rm $(IDS_SRC_DIR)/*~
 
-sources: $(GENSOURCES)
-sources_install: $(GENSOURCES)
-
 # Test if all generated sources are found to exist as files to
 # gracefully skip generation if not needed.
 ifeq ($(words $(GENSOURCES)), $(words $(wildcard $(GENSOURCES))))
 $(GENSOURCES):
-	$(warning All sources generated.)
 else
 $(GENSOURCES): generate_sources beautify
-  $(warning Missing sources: $(filter-out $(wildcard $(GENSOURCES)),$(GENSOURCES)))
 endif
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH and exists
@@ -96,11 +95,11 @@ endif
 #################################################
 #              BUILD
 #################################################
-libimas-cpp.so : $(OBJ_FILES)
+$(LIB_DIR)/libimas-cpp.so : $(OBJ_FILES)
 	@mkdir -p $(LIB_DIR)
 	$(LD) $(LDFLAGS) -o $(LIB_DIR)/$@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)   $(LIBS) $(OBJ_FILES)
 
-libimas-cpp.a : $(OBJ_FILES)
+$(LIB_DIR)/libimas-cpp.a : $(OBJ_FILES)
 	@mkdir -p $(LIB_DIR)
 	ar rvs $(LIB_DIR)/$@ $^
 
@@ -114,42 +113,43 @@ $(BUILD_DIR)/%.o: IdsDef.o $(GENSOURCES) %.cpp
 #              INSTALL
 #################################################
 install: all pkgconfig_install
-	mkdir -p $(INSTALL)/lib $(INSTALL)/include $(INSTALL)/include/ids
-	@cd $(LIB_DIR) && \
-	for OBJECT in *.so ;do \
-		cp -vT $$OBJECT $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT.$(IMAS_MAJOR); \
-		ln -svfT $$OBJECT.$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO)  $(INSTALL)/lib/$$OBJECT; \
-	done
+	install -d $(INSTALL)/lib $(INSTALL)/include/ids
+	$(foreach sofile,$(filter $.so,$(TARGETS)),\
+		install -m644 $(sofile) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)) ;\
+	)
+	install -m644 $(SRC_DIR)/*.h $(INSTALL)/include
+	install -m644 $(IDS_SRC_DIR)/*.h $(INSTALL)/include/ids
 
-	cp $(SRC_DIR)/*.h $(INSTALL)/include
-	cp $(IDS_SRC_DIR)/*.h $(INSTALL)/include/ids
+sources_install: $(SOURCES)
+	install -d $(INSTALL)/share/src/cppinterface/ids
+	install -m644 $(IDS_SRC_DIR)/*.* $(INSTALL)/share/src/cppinterface/ids
+	install -m644 $(SRC_DIR)/*.* $(INSTALL)/share/src/cppinterface
 
 #################################################
 #              CLEAN
 #################################################
 clean: test-clean pkgconfig_clean
-	rm -f *.o *.so *~ *.a
-	rm -rf ./build/*
-	rm -rf ./lib/*
+	$(RM) $(OBJ_FILES)
+	$(RM) $(TARGETS)
 
 clean-src: clean
-	rm -f src/UALClasses.h src/UALMethods.cpp
-	rm -rf src/ids
+	$(RM) $(GENSOURCES)
 
 #################################################
 #                 TESTS
 #################################################
 
 test: all
-	  $(MAKE) -C tests/generator test
+	$(MAKE) -C tests/generator test
 
 test-clean:
-	  $(MAKE) -C tests/generator clean
+	$(MAKE) -C tests/generator clean
 
 test-clean-src:
-	  $(MAKE) -C tests/generator clean-src
+	$(MAKE) -C tests/generator clean-src
 
 PC_FILES = imas-cpp.pc
 include ../Makefile.pkgconfig
