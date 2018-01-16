@@ -95,13 +95,13 @@ endif
 #################################################
 #              BUILD
 #################################################
-$(LIB_DIR)/libimas-cpp.so : $(OBJ_FILES)
+$(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES)
 	@mkdir -p $(LIB_DIR)
-	$(LD) $(LDFLAGS) -o $(LIB_DIR)/$@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)   $(LIBS) $(OBJ_FILES)
+	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR)   $(LIBS) $(OBJ_FILES)
 
-$(LIB_DIR)/libimas-cpp.a : $(OBJ_FILES)
+$(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES)
 	@mkdir -p $(LIB_DIR)
-	ar rvs $(LIB_DIR)/$@ $^
+	ar rvs $@ $(OBJ_FILES)
 
 $(BUILD_DIR)/IdsDef.o: IdsDef.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
