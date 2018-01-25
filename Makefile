@@ -52,14 +52,15 @@ GENSOURCES += $(addprefix $(SRC_DIR)/,UALClasses.h UALMethods.cpp)
 SOURCES = $(GENSOURCES) $(addprefix $(SRC_DIR)/,IdsDef.cpp  IdsDef.h  UALDef.h)
 
 # Compiled objects
-OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o) IdsDef.o UALMethods.o)
+IDS_OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o))
+OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o UALMethods.o)
 TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
 
 all: $(SOURCES) $(TARGETS)
-	
+
 #################################################
 #                 INIT: SOURCE GENERATION
 #################################################
@@ -95,20 +96,20 @@ endif
 #################################################
 #              BUILD
 #################################################
-$(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES)
+$(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	@mkdir -p $(LIB_DIR)
-	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(LIBS)
+	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$@.$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
 
-$(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES)
+$(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	@mkdir -p $(LIB_DIR)
 	ar rvs $@ $(OBJ_FILES)
 
-$(BUILD_DIR)/IdsDef.o: IdsDef.cpp
+$(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
 
-$(BUILD_DIR)/%.o: IdsDef.o $(GENSOURCES) %.cpp
+$(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@)
-	
+
 #################################################
 #              INSTALL
 #################################################
