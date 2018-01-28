@@ -77,7 +77,7 @@ beautify: generate_sources
 		echo Correcting indentation of $$i; \
 		$(BEAUTIFY) $$i; \
 	done
-	rm $(IDS_SRC_DIR)/*~
+	@$(RM) $(IDS_SRC_DIR)/*~
 
 # Test if all generated sources are found to exist as files to
 # gracefully skip generation if not needed.
