@@ -307,7 +307,7 @@ _<xsl:value-of select="@name"/>.setExpIdx(idx);
 <!--=================================================-->
 <!--YBYBDUMP -->
 <xsl:template match="IDS" mode="DUMP">
-ostream &amp;IdsNs::operator &lt;&lt; (ostream &amp;os, const IDS::<xsl:value-of select="@name"/>_IDSBase &amp;obj)
+ostream &amp;IdsNs::operator &lt;&lt; (ostream &amp;os, const <xsl:value-of select="@name"/>_IDSBase &amp;obj)
 {
 <xsl:apply-templates select="field" mode="DUMP">
 	<xsl:with-param name="level" select="1"/>
@@ -549,7 +549,7 @@ endIdsGetSlice(expIdx, path);
 return 0;
 }
 
-<xsl:apply-templates select="IDS" mode="DUMP"/>
+<xsl:apply-templates select="." mode="DUMP"/>
 </xsl:result-document>
 </xsl:template>
 
