@@ -41,7 +41,7 @@ endif
 VPATH = $(SRC_DIR) $(IDS_SRC_DIR) build lib
 
 # Get a list of IDS from IDSDEF file
-IDSNAMES := $(shell sed '/<IDS name=/!d;s/.*name="\(.*\)"/\1/' $(IDSDEF))
+IDSNAMES := $(shell sed '/<IDS name=/!d;s/.*name="\([^"]*\)".*/\1/' $(IDSDEF))
 IDS_H_FILES = $(addsuffix _IDSBase.h,$(IDSNAMES))
 IDS_CPP_FILES = $(IDS_H_FILES:.h=.cpp)
 
