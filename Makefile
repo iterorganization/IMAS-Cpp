@@ -1,12 +1,8 @@
 include ../Makefile.common
 
 ifeq ("no","$(IMAS_CPP)")
-$(warning "Ignoring cppinterface (IMAS_CPP=no).")
-all:
-sources:
-clean:
-clean-src:
-install:
+all sources sources_install install clean clean-src:
+	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 else
 
 ifeq "$(strip $(CC))" "icc"
