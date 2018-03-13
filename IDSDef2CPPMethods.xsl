@@ -2166,6 +2166,24 @@ free(intArray);
 <xsl:param name="mds_path"/>
 <xsl:param name="non_timed"/>
 <xsl:if test="$non_timed !='yes' or @type !='dynamic' or not(@type) or @data_type='structure' or (@data_type='struct_array' and  @type !='dynamic')">
+<xsl:if test="
+		      	@data_type='str_1d_type' or @data_type='STR_1D' or
+			@data_type='flt_1d_type' or @data_type='FLT_1D' or
+			@data_type='int_1d_type' or @data_type='INT_1D' or
+			@data_type='FLT_2D' or @data_type='INT_2D' or
+			@data_type='FLT_2D' or @data_type='INT_3D' or
+			@data_type='FLT_3D' or @data_type='INT_4D' or
+			@data_type='FLT_4D' or @data_type='INT_5D' or
+			@data_type='FLT_5D' or @data_type='INT_6D'"> 
+<xsl:choose>
+				<xsl:when test="$variable_path">
+	if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0) &gt; 0) {
+	</xsl:when>
+				<xsl:otherwise>
+         if ( <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0) &gt; 0) {
+</xsl:otherwise>
+</xsl:choose>
+	</xsl:if>
 	<xsl:choose>
 		<!--========== Regular structures ==========-->
     <!-- YB 2014 -->
@@ -3646,6 +3664,7 @@ if (status) return status;
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:when>
+
 		<!-- SUPPRIME
 <xsl:when test="@name='array6ddbl_type'">
 dim1 = <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0);
@@ -3695,6 +3714,18 @@ if (status) return status;
 		</xsl:otherwise>
 
 	</xsl:choose>
+<xsl:if test="
+		      	@data_type='str_1d_type' or @data_type='STR_1D' or
+			@data_type='flt_1d_type' or @data_type='FLT_1D' or
+			@data_type='int_1d_type' or @data_type='INT_1D' or
+			@data_type='FLT_2D' or @data_type='INT_2D' or
+			@data_type='FLT_2D' or @data_type='INT_3D' or
+			@data_type='FLT_3D' or @data_type='INT_4D' or
+			@data_type='FLT_4D' or @data_type='INT_5D' or
+			@data_type='FLT_5D' or @data_type='INT_6D'"> 
+	} 
+
+	</xsl:if>
 </xsl:if>
 </xsl:template>
 <!--=================================================-->
