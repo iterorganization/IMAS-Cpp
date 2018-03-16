@@ -150,4 +150,4 @@ test-clean-src:
 
 PC_FILES = imas-cpp.pc
 include ../Makefile.pkgconfig
-endif # CPP=no?
+endif # IMAS_CPP=no?
