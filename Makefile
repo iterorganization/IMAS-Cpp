@@ -1,6 +1,6 @@
 include ../Makefile.common
 
-ifeq ("no","$(IMAS_CPP)")
+ifeq ("no","$(strip $(IMAS_CPP))")
 all sources sources_install install clean clean-src:
 	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 else
