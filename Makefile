@@ -110,20 +110,20 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 #              INSTALL
 #################################################
 install: all pkgconfig_install
-	install -d $(INSTALL)/lib $(INSTALL)/include/ids
+	install -d $(libdir) $(includedir)/ids
 	$(foreach sofile,$(filter %.so,$(TARGETS)),\
-		install -m644 $(sofile) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)) ;\
+		install -m644 -T $(sofile) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
 	)
-	install -m644 $(SRC_DIR)/*.h $(INSTALL)/include
-	install -m644 $(IDS_SRC_DIR)/*.h $(INSTALL)/include/ids
+	install -m644 $(SRC_DIR)/*.h $(includedir)
+	install -m644 $(IDS_SRC_DIR)/*.h $(includedir)/ids
 
 sources_install: $(SOURCES)
-	install -d $(INSTALL)/share/src/cppinterface/ids
-	install -m644 $(IDS_SRC_DIR)/*.* $(INSTALL)/share/src/cppinterface/ids
-	install -m644 $(SRC_DIR)/*.* $(INSTALL)/share/src/cppinterface
+	install -d $(datadir)/src/cppinterface/ids
+	install -m644 $(IDS_SRC_DIR)/*.* $(datadir)/src/cppinterface/ids
+	install -m644 $(SRC_DIR)/*.* $(datadir)/src/cppinterface
 
 #################################################
 #              CLEAN
