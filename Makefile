@@ -92,7 +92,7 @@ endif
 #################################################
 $(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
-	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(notdir $@).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
 
 $(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
