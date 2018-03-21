@@ -3,7 +3,6 @@ IDSDEF= ../../../xml/IDSDef.xml
 TESTDIR = ../testsuite
 
 CXX=g++
-LD=$(CXX)
 CXXFLAGS=-pthread -g -O0 #-fPIC
 LDFLAGS= #-pthread #-g
 
@@ -21,20 +20,20 @@ all:$(ALL_PROGS)
 install:
 
 clean:
-	  rm -f $(ALL_PROGS) *~ *.o
+	$(RM) $(ALL_PROGS) *~ *.o
 
 clean-src: clean
-	rm -f TestSuite.cpp
+	$(RM) TestSuite.cpp
 
-TestSuite: helper.o TestSuite.o 
-	  $(LD) $(LDFLAGS)  -o $@  $^ $(LIBDIR) $(LIBS)
+TestSuite: helper.o TestSuite.o
+	$(CXX) $(LDFLAGS) -o $@  $^ $(LIBDIR) $(LIBS)
 
 
 helper.o: helper.cpp
-	  $(CXX) $(INCDIR) $(CXXFLAGS) -c $<
+	$(CXX) $(INCDIR) $(CXXFLAGS) -c $<
 
 TestSuite.o: TestSuite.cpp
-	  $(CXX) $(INCDIR) $(CXXFLAGS) -c $<
+	$(CXX) $(INCDIR) $(CXXFLAGS) -c $<
 
 
 TestSuite.cpp:

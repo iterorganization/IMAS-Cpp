@@ -7,12 +7,10 @@ else
 
 ifeq "$(strip $(CC))" "icc"
  CXX=icpc
- LD=$(CXX)
  CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
  LDFLAGS= -g -pthread
 else
  CXX=g++
- LD=$(CXX)
  CXXFLAGS=-g -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
  LDFLAGS= -g -pthread
 endif
@@ -64,7 +62,7 @@ sources: $(SOURCES)
 
 # Use an intermediate target to enforce nonparallel generation.
 generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF) saxonicajar
-	@mkdir -p $(BUILD_DIR)
+	@$(mkdir_p) $(BUILD_DIR)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF)
 	java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
 
@@ -93,12 +91,12 @@ endif
 #              BUILD
 #################################################
 $(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
-	@mkdir -p $(LIB_DIR)
-	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(notdir $@).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+	$(mkdir_p) $(LIB_DIR)
+	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(notdir $@).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
 
 $(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
-	@mkdir -p $(LIB_DIR)
-	ar rvs $@ $(OBJ_FILES)
+	$(mkdir_p) $(LIB_DIR)
+	$(AR) rvs $@ $(OBJ_FILES)
 
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
