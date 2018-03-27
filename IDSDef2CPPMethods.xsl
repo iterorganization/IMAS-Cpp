@@ -12,7 +12,7 @@
 
 #include "UALClasses.h"
 
-using namespace blitz;
+//using namespace blitz;
 using namespace IdsNs;
 <!--
 #define NON_TIMED    0
@@ -323,7 +323,8 @@ return os;
 
 <xsl:template match="IDS" mode="CLASS_DEFINITION">
 <xsl:result-document href="src/ids/{@name}_IDSBase.cpp" standalone="yes" method="text">
-#include &lt;blitz/array.h&gt;
+#include "IdsDef.h"
+//#include &lt;blitz/array.h&gt;
 #include "UALDef.h"
 #include "<xsl:value-of select="@name"/>_IDSBase.h"
 IdsNs::<xsl:value-of select="@name"/>_IDSBase::<xsl:value-of select="@name"/>_IDSBase()

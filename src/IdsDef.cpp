@@ -1,7 +1,7 @@
-#include <blitz/array.h>
+//#include <blitz/array.h>
 #include "IdsDef.h"
-using namespace blitz;
-using namespace IdsNs;
+//using namespace blitz;
+//using namespace IdsNs;
 
 
 #ifdef DEBUG
