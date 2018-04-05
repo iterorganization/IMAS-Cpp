@@ -59,8 +59,8 @@ class IDS
     void setRefNum(int inRefRun){refRun = inRefRun;}
     void setTreeName(char *inTreeName){treeName = inTreeName; }
     void setTreeName(string inTreeName){treeName = inTreeName;}
-    void setCacheLevel(int level) {imas_set_cache_level(expIdx, level);}
-    int getCacheLevel() {return imas_get_cache_level(expIdx);}
+    void setCacheLevel(int level) {/*imas_set_cache_level(expIdx, level);*/}
+    int getCacheLevel() {return 1;/*imas_get_cache_level(expIdx);*/}
     int getIdx() {return expIdx;}
     int getShot() {return shot;}
     int getRun() {return run;}
@@ -238,6 +238,16 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 		  <xsl:value-of select = "@name"/>() {
 		    <xsl:apply-templates select = "field" mode = "CONSTRUCTOR"/>
 		  };
+    int get(int idx);
+    int put(int idx);
+    int getSlice(int idx, double inTime, char interpolMode);
+    int putSlice(int idx);
+    int replaceLastSlice(int idx);
+    int deleteAll(int idx);
+    int remove(int idx);
+    int putNonTimed(int idx);
+    void discardCache(int idx);
+    void flushCache(int idx);
 	      } <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='struct_array'">
@@ -247,6 +257,16 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 		<xsl:value-of select = "@name"/>() {
 		<xsl:apply-templates select = "field" mode = "CONSTRUCTOR"/>
 		  };
+    int get(int idx);
+    int put(int idx);
+    int getSlice(int idx, double inTime, char interpolMode);
+    int putSlice(int idx);
+    int replaceLastSlice(int idx);
+    int deleteAll(int idx);
+    int remove(int idx);
+    int putNonTimed(int idx);
+    void discardCache(int idx);
+    void flushCache(int idx);
 	      };
 	      Array&lt;class <xsl:value-of select = "@name"/>,1&gt; <xsl:value-of select = "@name"/>;
     </xsl:when>
