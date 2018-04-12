@@ -577,7 +577,7 @@ if(status) return status;
 return 0;
 }
 
-  <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHODS"/>
+  <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT"/>
 
 <!--<xsl:apply-templates select="." mode="DUMP"/>
 --> </xsl:result-document>
@@ -587,14 +587,16 @@ return 0;
 </xsl:template>
 
 
-<xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHODS">
+<xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_PUT">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
 <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int idx)&#xA;</xsl:text>
 {
-<xsl:apply-templates select="field" mode="PUT_SINGLE">
-	<xsl:with-param name="non_timed" select="'no'"/>
-</xsl:apply-templates>
+	int status = -1;
+	int arraySize = -1;
+	<xsl:apply-templates select="field" mode="PUT_SINGLE">
+		<xsl:with-param name="non_timed" select="'no'"/>
+	</xsl:apply-templates>
 }
 </xsl:template>
 
@@ -1662,8 +1664,9 @@ free(intArray);
 		<!--========== Regular structures ==========-->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
-
-		<xsl:value-of select="@name"/>.put(1234);
+		status = <xsl:value-of select="@name"/>.put(1234);
+		if (status != 0)
+			return status;
 
 <!--
 			<xsl:choose>
@@ -1685,33 +1688,70 @@ free(intArray);
 -->
 		</xsl:when>
 
-    <!-- YB 2014 -->
-		<xsl:when test="@data_type='struct_array' ">
- 	 for( int i = 0; i &lt;<xsl:value-of select = "@name"/>.extent(0); i++){
-			<xsl:value-of select="@name"/>(i).put(1234);
-          
-          }
+
+		<xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
+			<xsl:text>//  ARRAY of TYPE 1 BLABLA &#xA;</xsl:text>
+			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
+			aosSize = <xsl:value-of select = "@name"/>.extent(0);
+		<!--	aosCtx = ual_begin_arraystruct_action(opCtx, aosPath, aosTimebasePath, &aosSize);
+		-->	if (aosCtx &lt; 0)  
+				return aosCtx; 
+			
+			for( int i = 0; i &lt;arraySize; i++){
+				status = <xsl:value-of select="@name"/>(i).put(1234);
+				if (status != 0)
+					return status;
+			}
+		</xsl:when>
+ 		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">
+			<xsl:text>//  ARRAY of TYPE 2 YYY &#xA;</xsl:text>
+			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
+			timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+			timepath=&quot;<xsl:call-template name="printtimevariable"/>&quot;;
+			arraySize = <xsl:value-of select = "@name"/>.extent(0);
+			for( int i = 0; i &lt;arraySize; i++){
+				status = <xsl:value-of select="@name"/>(i).put(1234);
+				if (status != 0)
+					return status;
+			}
+		</xsl:when>
+		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
+			<xsl:text>//  ARRAY of TYPE 3 XXX&#xA;</xsl:text>
+timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+	timepath=&quot;<xsl:call-template name="printtimevariable"/>&quot;;
+
+	aosTimepath=&quot;<xsl:call-template name="printtimepathrelative"/>&quot;;
+			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
+			arraySize = <xsl:value-of select = "@name"/>.extent(0);
+			for( int i = 0; i &lt;arraySize; i++){
+			status = <xsl:value-of select="@name"/>(i).put(1234);
+			if (status != 0)
+				return status;
+			}
+		</xsl:when>
+    
+
+	     
+
+<!--
+			<xsl:choose>
+				<xsl:when test="$variable_path">
+					<xsl:apply-templates select="field" mode="PUT_SINGLE">
+						<xsl:with-param name="variable_path" select="concat($variable_path,'.',@name)"/>
+						<xsl:with-param name="mds_path" select="concat($mds_path,'+string(&quot;/',@name,'&quot;)')"/>
+            <xsl:with-param name="non_timed" select="$non_timed"/>
+					</xsl:apply-templates>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="field" mode="PUT_SINGLE">
+						<xsl:with-param name="variable_path" select="@name"/>
+						<xsl:with-param name="mds_path" select="concat('&quot;',@name,'&quot;')"/>
+             <xsl:with-param name="non_timed" select="$non_timed"/>
+					</xsl:apply-templates>
+				</xsl:otherwise>
+			</xsl:choose>
+-->
 		
-
-<!--
-			<xsl:choose>
-				<xsl:when test="$variable_path">
-					<xsl:apply-templates select="field" mode="PUT_SINGLE">
-						<xsl:with-param name="variable_path" select="concat($variable_path,'.',@name)"/>
-						<xsl:with-param name="mds_path" select="concat($mds_path,'+string(&quot;/',@name,'&quot;)')"/>
-            <xsl:with-param name="non_timed" select="$non_timed"/>
-					</xsl:apply-templates>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates select="field" mode="PUT_SINGLE">
-						<xsl:with-param name="variable_path" select="@name"/>
-						<xsl:with-param name="mds_path" select="concat('&quot;',@name,'&quot;')"/>
-             <xsl:with-param name="non_timed" select="$non_timed"/>
-					</xsl:apply-templates>
-				</xsl:otherwise>
-			</xsl:choose>
--->
-		</xsl:when>
 		<!--========== Arrays of structures ==========-->
 		<xsl:when test="false() and @data_type='struct_array' and @maxoccur!='unbounded'">
        <!-- Type 1 arrays of structure, with potentially multiple time bases -->
@@ -1910,11 +1950,21 @@ free(intArray);
 
 		<xsl:when test="@data_type='str_1d_type' or @data_type='STR_1D'">
 			//Doc! Put <xsl:value-of select="@path"/>
-		// if (status) return status;
- 
+
+		
 		</xsl:when>
 		<xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
 			//Doc  <xsl:value-of select="@path"/>
+
+		  int ual_write_data(ctx,
+		     const char *fieldpath,
+		     const char *timebasepath,
+		     void *data,
+		     int datatype,
+		     0,
+		     int *size);
+		// if (status) return status;
+ 
 
 		</xsl:when>
 		<!--YBYB
@@ -4502,6 +4552,22 @@ strcpy(clepath, lepath.c_str());-->
 	<xsl:value-of select="translate(@path,'/','.')"/>
 </xsl:if>
 <!-- If the field itself IS time, then it is its own time coordinate -->
+</xsl:template>
+
+
+<xsl:template name ="printtimepathrelative">
+<xsl:if test="@type = 'dynamic'">
+<xsl:choose>
+<xsl:when test="contains(@coordinate7_AosParent_relative,'time')"> <xsl:value-of select="@coordinate7_AosParent_relative"/></xsl:when> <!-- We remove the (itime) pattern from the coordinate attribute in IDSDef, which is documentation-oriented -->
+<xsl:when test="contains(@coordinate6_AosParent_relative,'time')"> <xsl:value-of select="@coordinate6_AosParent_relative"/></xsl:when>
+<xsl:when test="contains(@coordinate5_AosParent_relative,'time')"> <xsl:value-of select="@coordinate5_AosParent_relative"/></xsl:when>
+<xsl:when test="contains(@coordinate4_AosParent_relative,'time')"> <xsl:value-of select="@coordinate4_AosParent_relative"/></xsl:when>
+<xsl:when test="contains(@coordinate3_AosParent_relative,'time')"> <xsl:value-of select="@coordinate3_AosParent_relative"/></xsl:when>
+<xsl:when test="contains(@coordinate2_AosParent_relative,'time')"> <xsl:value-of select="@coordinate2_AosParent_relative"/></xsl:when>
+<xsl:when test="contains(@coordinate1_AosParent_relative,'time')"> <xsl:value-of select="@coordinate1_AosParent_relative"/></xsl:when>
+</xsl:choose>
+</xsl:if>
+<xsl:if test="@name='time'"><xsl:value-of select="@path"/></xsl:if>  <!-- If the field itself IS time, then it is its own time coordinate -->
 </xsl:template>
 
 <xsl:template name="printIsTimed">
