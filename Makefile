@@ -13,7 +13,7 @@ ifeq "$(strip $(CC))" "icc"
 else
  CXX=g++
  LD=$(CXX)
- CXXFLAGS=-g -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
+ CXXFLAGS=-g -std=gnu++11  -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
  LDFLAGS= -g -pthread
 endif
 

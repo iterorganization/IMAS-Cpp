@@ -62,7 +62,43 @@ class Ids
    
         void setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
 
+    	/************************************************************************************************************************************************/
+    	/*********************************                           WRITE DATA                                      ************************************/
+    	/************************************************************************************************************************************************/
+	
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, int value);
+
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,1> array);
+
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,2> array);
+
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,3> array);
+
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,4> array);
+ 
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,5> array);
+
+    	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,6> array);
+
+  	/************************************************************************************************************************************************/
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, double value);
+
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,1> array);
+
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,2> array);
+
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,3> array);
+
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,4> array);
+ 
+	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,5> array);
+
+    	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,6> array);
     
+      	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, std::string text);
+
+
+    	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std::string, 1> text);
 
 };
 }

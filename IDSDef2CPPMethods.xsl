@@ -352,6 +352,9 @@ return os;
 #include &lt;blitz/array.h&gt;
 #include "UALDef.h"
 #include "<xsl:value-of select="@name"/>_IDSBase.h"
+
+using namespace IdsNs;
+
 IdsNs::<xsl:value-of select="@name"/>_IDSBase::<xsl:value-of select="@name"/>_IDSBase()
 {
 connected = false;
@@ -409,8 +412,13 @@ char *basePath = "<xsl:value-of select="@name"/>";
 char path[strlen(basePath)+4];
 char *clepath;
 string lepath,  timepath;
-string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
+int ctx;
+std::string fieldPath;
+std::string timeBasePath;
+bool isIdsHomogeneous = false;
+int arraySize;
+
+
 if(idx &lt; 1)
 sprintf(path, "%s", basePath);
 else
@@ -590,10 +598,12 @@ return 0;
 <xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_PUT">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int idx)&#xA;</xsl:text>
+<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int ctx, bool isIdsHomogeneous)&#xA;</xsl:text>
 {
 	int status = -1;
 	int arraySize = -1;
+	std::string fieldPath = "";
+	std::string timeBasePath = "";
 	<xsl:apply-templates select="field" mode="PUT_SINGLE">
 		<xsl:with-param name="non_timed" select="'no'"/>
 	</xsl:apply-templates>
@@ -1660,11 +1670,16 @@ free(intArray);
 <xsl:param name="non_timed"/>
     <xsl:call-template name="COMMENT_FIELD"/>
 <xsl:if test="$non_timed !='yes' or @type !='dynamic' or not(@type) or @data_type='structure' or (@data_type='struct_array' and  @type !='dynamic')">
-	<xsl:choose>
+
+
+<xsl:choose>
+
+
+
 		<!--========== Regular structures ==========-->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
-		status = <xsl:value-of select="@name"/>.put(1234);
+		status = <xsl:value-of select="@name"/>.put(ctx, isIdsHomogeneous);
 		if (status != 0)
 			return status;
 
@@ -1692,13 +1707,13 @@ free(intArray);
 		<xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
 			<xsl:text>//  ARRAY of TYPE 1 BLABLA &#xA;</xsl:text>
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			aosSize = <xsl:value-of select = "@name"/>.extent(0);
+			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 		<!--	aosCtx = ual_begin_arraystruct_action(opCtx, aosPath, aosTimebasePath, &aosSize);
-		-->	if (aosCtx &lt; 0)  
+			if (aosCtx &lt; 0)  
 				return aosCtx; 
-			
+		-->	
 			for( int i = 0; i &lt;arraySize; i++){
-				status = <xsl:value-of select="@name"/>(i).put(1234);
+				status = <xsl:value-of select="@name"/>(i).put(ctx, isIdsHomogeneous);
 				if (status != 0)
 					return status;
 			}
@@ -1706,25 +1721,25 @@ free(intArray);
  		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">
 			<xsl:text>//  ARRAY of TYPE 2 YYY &#xA;</xsl:text>
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
-			timepath=&quot;<xsl:call-template name="printtimevariable"/>&quot;;
+			//timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+			//timepath=&quot;<xsl:call-template name="printtimevariable"/>&quot;;
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			for( int i = 0; i &lt;arraySize; i++){
-				status = <xsl:value-of select="@name"/>(i).put(1234);
+				status = <xsl:value-of select="@name"/>(i).put(ctx, isIdsHomogeneous);
 				if (status != 0)
 					return status;
 			}
 		</xsl:when>
 		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
 			<xsl:text>//  ARRAY of TYPE 3 XXX&#xA;</xsl:text>
-timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
-	timepath=&quot;<xsl:call-template name="printtimevariable"/>&quot;;
+			//timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+			//timepath=&quot;<xsl:call-template name="printtimevariable"/>&quot;;
 
-	aosTimepath=&quot;<xsl:call-template name="printtimepathrelative"/>&quot;;
+			//aosTimepath=&quot;<xsl:call-template name="printtimepathrelative"/>&quot;;
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			for( int i = 0; i &lt;arraySize; i++){
-			status = <xsl:value-of select="@name"/>(i).put(1234);
+			status = <xsl:value-of select="@name"/>(i).put(ctx, isIdsHomogeneous);
 			if (status != 0)
 				return status;
 			}
@@ -1942,7 +1957,43 @@ timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
 
 
 
-		<!--========== Simple types ==========-->
+
+
+	<xsl:when test="
+		   @data_type='str_type' or @data_type='STR_0D'
+		or @data_type='str_1d_type' or @data_type='STR_1D'
+		or @data_type='int_type' or @data_type='INT_0D'
+		or @data_type='flt_type' or @data_type='FLT_0D' 
+		or @data_type='flt_1d_type' or @data_type='FLT_1D'
+		or @data_type='int_1d_type' or @data_type='INT_1D'
+		or @data_type='FLT_2D' or @data_type='INT_2D'
+		or @data_type='FLT_3D'	or @data_type='INT_3D'
+		or @data_type='FLT_4D'	or @data_type='INT_4D'
+		or @data_type='FLT_5D'or @data_type='INT_5D'
+		or @data_type='FLT_6D'or @data_type='INT_6D'">
+		//Doc X=<xsl:value-of select="@timebasepath"/>
+<xsl:choose>
+<xsl:when test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
+    if (isIdsHomogeneous) 
+    <!--XSLtest whether this is a data/time structure, otherwise assume that the timepath attribute from IDSDef is correct-->   
+	timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
+    else
+       timeBasePath="/time";
+  </xsl:when>
+  <xsl:otherwise>
+    timeBasePath = "";
+  </xsl:otherwise>
+	</xsl:choose>
+
+		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
+		status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
+		if (status) 
+			return status;
+		</xsl:when>
+
+
+
+		<!--
 		<xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
 			//Doc Put <xsl:value-of select="@path"/>
 			
@@ -1956,47 +2007,23 @@ timepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
 		<xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
 			//Doc  <xsl:value-of select="@path"/>
 
-		  int ual_write_data(ctx,
-		     const char *fieldpath,
-		     const char *timebasepath,
-		     void *data,
-		     int datatype,
-		     0,
-		     int *size);
-		// if (status) return status;
- 
+   	</xsl:when>
 
-		</xsl:when>
-		<!--YBYB
-<xsl:when test="@name='xs:boolean'">
-//status = putInt(expIdx, path, "<xsl:value-of select = "@path"/>", <xsl:value-of select = "translate(@path,'/','.')"/>);
-//checkStatus(status);
-// if (status) return status;
-</xsl:when>
-
-<xsl:when test="@name='xs:double'">
-//status = putDouble(expIdx, path, "<xsl:value-of select = "@path"/>", <xsl:value-of select = "translate(@path,'/','.')"/>);
-//checkStatus(status);
-// if (status) return status;
-</xsl:when>
-YBYB-->
 		<xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
 
 		</xsl:when>
 
-		<!--========== Vectors ==========-->
+
 		<xsl:when test="@data_type='flt_1d_type' or @data_type='FLT_1D'">
 			//Doc <xsl:value-of select="@path"/>
 			
 		</xsl:when>
-		<!--    -->
 
 		<xsl:when test="@data_type='int_1d_type' or @data_type='INT_1D'">
 			//Doc <xsl:value-of select="@path"/>
 			
 		</xsl:when>
 
-		<!--========== Matrices ==========-->
 		<xsl:when test="@data_type='FLT_2D'">
 			//Doc <xsl:value-of select="@path"/>
 			
@@ -2006,7 +2033,7 @@ YBYB-->
 			//Doc  <xsl:value-of select="@path"/>
 		
 		</xsl:when>
-		<!--========== 3D arrays ==========-->
+	
 		<xsl:when test="@data_type='FLT_3D'">
 			//Doc <xsl:value-of select="@path"/>
 					</xsl:when>
@@ -2014,22 +2041,19 @@ YBYB-->
 		<xsl:when test="@data_type='INT_3D'">
 			//Doc <xsl:value-of select="@path"/>
 		</xsl:when>
-		<!--========== 4D arrays ==========-->
+
 		<xsl:when test="@data_type='FLT_4D'">
 			//Doc Put <xsl:value-of select="@path"/>
 		</xsl:when>
 		
-		<!--========== 5D arrays ==========-->
 		<xsl:when test="@data_type='FLT_5D'">
 			//Doc <xsl:value-of select="@path"/>
 		</xsl:when>
-		
 
-		<!--========== 6D arrays ==========-->
 		<xsl:when test="@data_type='FLT_6D'">
 			//Doc <xsl:value-of select="@path"/>
 		</xsl:when>
-
+		-->
 		<xsl:otherwise>
 			//Doc Put <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
 		</xsl:otherwise>

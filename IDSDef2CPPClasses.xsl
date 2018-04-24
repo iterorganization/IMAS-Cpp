@@ -239,7 +239,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 		    <xsl:apply-templates select = "field" mode = "CONSTRUCTOR"/>
 		  };
     int get(int idx);
-    int put(int idx);
+    int put(int ctx, bool isIdsHomogeneous);
     int getSlice(int idx, double inTime, char interpolMode);
     int putSlice(int idx);
     int replaceLastSlice(int idx);
@@ -258,7 +258,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 		<xsl:apply-templates select = "field" mode = "CONSTRUCTOR"/>
 		  };
     int get(int idx);
-    int put(int idx);
+     int put(int ctx, bool isIdsHomogeneous);
     int getSlice(int idx, double inTime, char interpolMode);
     int putSlice(int idx);
     int replaceLastSlice(int idx);
