@@ -43,7 +43,7 @@ void checkObject(void *obj)
 class IDS
 {
     private:
-    int expIdx;
+    int pulseCtx;
     int shot, run, refShot, refRun;
     string treeName;
     bool connected;
@@ -52,7 +52,7 @@ class IDS
     IDS();
     IDS(int shot, int run, int refShot, int refRun);
     IDS(int idx);
-    void setExpIdx(int idx);
+    void setPulseCtx(int idx);
     void setShot(int inShot) {shot = inShot;}
     void setRun(int inRun) {run = inRun;}
     void setRefShot(int inRefShot){refShot = inRefShot;}
@@ -61,7 +61,7 @@ class IDS
     void setTreeName(string inTreeName){treeName = inTreeName;}
     void setCacheLevel(int level) {/*imas_set_cache_level(expIdx, level);*/}
     int getCacheLevel() {return 1;/*imas_get_cache_level(expIdx);*/}
-    int getIdx() {return expIdx;}
+    int getPulseCtx() {return this->pulseCtx;}
     int getShot() {return shot;}
     int getRun() {return run;}
     int getRefShot(){return refShot;}
@@ -147,10 +147,10 @@ namespace IdsNs {
 class <xsl:value-of select="@name"/>_IDSBase:Ids
 {
     private:
-      int expIdx;
+      int pulseCtx;
       bool connected;
       public:
-      void setExpIdx(int expIdx){this->expIdx = expIdx; connected = true;}
+      void setPulseCtx(int pulseCtx){this->pulseCtx = pulseCtx; connected = true;}
       <xsl:apply-templates select = "field" mode = "DECLARE"/>
       <xsl:value-of select="@name"/>_IDSBase();
     int get();
