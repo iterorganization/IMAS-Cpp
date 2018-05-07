@@ -151,7 +151,9 @@ void checkObject(void *obj)
             array = newArray;
         }
     	/************************************************************************************************************************************************/
+    	/*********************************                                                                           ************************************/
     	/*********************************                           WRITE DATA                                      ************************************/
+    	/*********************************                                                                           ************************************/
     	/************************************************************************************************************************************************/
   
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, int value)
@@ -323,6 +325,8 @@ void checkObject(void *obj)
   		return status;
         }
 
+	/************************************************************************************************************************************************/
+
     	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, std::string text)
         {
         	int status = -1;
@@ -369,6 +373,272 @@ void checkObject(void *obj)
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, arrayOfSizes);
   		return status;
         }
-    
+
+    	/************************************************************************************************************************************************/
+    	/*********************************                                                                           ************************************/
+    	/*********************************                             READ DATA                                     ************************************/
+    	/*********************************                                                                           ************************************/
+    	/************************************************************************************************************************************************/
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, double &value)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 0, &retSize[0]);
+  		if (status != 0)
+    			return status;
+		
+		value = *(double*)ptrData;
+
+  		return status;
+	}
+
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 1> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 1, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0]);
+
+  		return status;
+	}
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 2> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 2, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1]);
+
+  		return status;
+	}
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 3> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 3, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2]);
+
+  		return status;
+	}
+	
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 4> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 4, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
+
+  		return status;
+	}
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 5> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 5, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
+
+  		return status;
+	}
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 6> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 6, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
+
+  		return status;
+	}
+
+	/************************************************************************************************************************************************/
+	/************************************************************************************************************************************************/
+	/************************************************************************************************************************************************/
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, int  &value)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
+  		if (status != 0)
+    			return status;
+		
+		value = *(int*)ptrData;
+
+  		return status;
+	}
+
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 1> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 1, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
+
+  		return status;
+	}
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 2> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 2, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
+
+  		return status;
+	}
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 3> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 3, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2]);
+
+  		return status;
+	}
+	
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 4> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 4, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
+
+  		return status;
+	}
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 6> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 6, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
+
+  		return status;
+	}
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 5> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		void* ptrData = NULL;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 5, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
+
+  		return status;
+	}
+	/************************************************************************************************************************************************/
+	/************************************************************************************************************************************************/
+	/************************************************************************************************************************************************/
+    	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, std::string& text)
+        {
+        	int status = -1;
+		int retSize[MAXDIM];	
+		void* ptrData = NULL;
+		
+		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, CHAR_DATA, 1, &retSize[0]);
+		
+		text = (char*)ptrData;
+
+  		return status;
+        }
+
+	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std::string, 1> &array)
+        {
+		int status = 0;
+		int retSize[MAXDIM];
+		char* ptrData = NULL;
+
+		int  numberOfStrings = -1;
+		int maxStringSize = -1;
+
+  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void**)(&ptrData), CHAR_DATA, 2, &retSize[0]);
+  		if (status != 0)
+    			return status;
+
+		numberOfStrings = retSize[0];
+		maxStringSize = retSize[1];
+
+		array.resize(numberOfStrings);
+
+		for(int i=0; i < numberOfStrings; i++)
+		{
+			
+			array(i) = ptrData; 	
+			ptrData = ptrData + maxStringSize;	
+		}
+
+  		return status;
+	}
 
 

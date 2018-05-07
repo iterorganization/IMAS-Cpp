@@ -24,43 +24,43 @@ namespace IdsNs {
 class Ids
 {
     protected:
-        void setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1);
+        static void setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1);
         
-        void setArray(blitz::Array<float,1>&array,float *arrayPtr, int dim1);
+        static void setArray(blitz::Array<float,1>&array,float *arrayPtr, int dim1);
   
-        void setArray(blitz::Array<double,1>&array,double *arrayPtr, int dim1);
+        static void setArray(blitz::Array<double,1>&array,double *arrayPtr, int dim1);
 
-        void setArray(blitz::Array<int,2>&array,int *arrayPtr, int dim1, int dim2);
+        static void setArray(blitz::Array<int,2>&array,int *arrayPtr, int dim1, int dim2);
 
-        void setArray(blitz::Array<float,2>&array,float *arrayPtr, int dim1, int dim2);
+        static void setArray(blitz::Array<float,2>&array,float *arrayPtr, int dim1, int dim2);
 
-        void setArray(blitz::Array<double,2>&array,double *arrayPtr, int dim1, int dim2);
+        static void setArray(blitz::Array<double,2>&array,double *arrayPtr, int dim1, int dim2);
 
-        void setArray(blitz::Array<int,3>&array,int *arrayPtr, int dim1, int dim2, int dim3);
+        static void setArray(blitz::Array<int,3>&array,int *arrayPtr, int dim1, int dim2, int dim3);
 
-        void setArray(blitz::Array<float,3>&array,float *arrayPtr, int dim1, int dim2, int dim3);
+        static void setArray(blitz::Array<float,3>&array,float *arrayPtr, int dim1, int dim2, int dim3);
 
-        void setArray(blitz::Array<double,3>&array,double *arrayPtr, int dim1, int dim2, int dim3);
+        static void setArray(blitz::Array<double,3>&array,double *arrayPtr, int dim1, int dim2, int dim3);
 
-        void setArray(blitz::Array<int,4>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4);
+        static void setArray(blitz::Array<int,4>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4);
    
-        void setArray(blitz::Array<float,4>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4);
+        static void setArray(blitz::Array<float,4>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4);
    
-        void setArray(blitz::Array<double,4>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4);
+        static void setArray(blitz::Array<double,4>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4);
     
 
-        void setArray(blitz::Array<int,5>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
+        static void setArray(blitz::Array<int,5>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
    
-        void setArray(blitz::Array<float,5>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
+        static void setArray(blitz::Array<float,5>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
      
-        void setArray(blitz::Array<double,5>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
+        static void setArray(blitz::Array<double,5>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
    
 
-        void setArray(blitz::Array<int,6>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
+        static void setArray(blitz::Array<int,6>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
   
-        void setArray(blitz::Array<float,6>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
+        static void setArray(blitz::Array<float,6>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
    
-        void setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
+        static void setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
 
     	/************************************************************************************************************************************************/
     	/*********************************                           WRITE DATA                                      ************************************/
@@ -94,12 +94,35 @@ class Ids
 	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,5> array);
 
     	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,6> array);
+
+  	/************************************************************************************************************************************************/
     
       	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, std::string text);
 
-
     	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std::string, 1> text);
 
+    	/************************************************************************************************************************************************/
+    	/*********************************                             READ DATA                                     ************************************/
+    	/************************************************************************************************************************************************/
+	
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, double &value);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 1> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 2> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 3> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 4> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 5> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 6> &array);
+
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, int &value);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 1> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 2> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 3> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 4> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 5> &array);
+	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 6> &array);
+
+      	static int readData(int ctx, std::string fieldPath, std::string timebasePath, std::string& text);
+    	static int readData(int ctx, std::string fieldPath, std::string timebasePath, blitz::Array<std::string, 1>& array);
 };
 }
 #endif // _IDS_CLASS
