@@ -464,7 +464,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put()
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 {
-if(!connected) return -1;
+
 int status;
 char *idsName = "<xsl:value-of select="@name"/>";
 char idsFullName[strlen(idsName)+4];
@@ -479,6 +479,7 @@ std::string timeBasePath;
 bool isIdsHomogeneous = false;
 int arraySize;
 
+if(!connected) return -1;
 
 if(iOccurrence &lt; 1)
 sprintf(idsFullName, "%s", idsName);
@@ -497,46 +498,12 @@ deleteAll(iOccurrence);
 
 ctx = putOpCtx;
 isIdsHomogeneous = ids_properties.homogeneous_time;
- <xsl:apply-templates select="field" mode="PUT_SINGLE"/>
+<!--<xsl:apply-templates select="field" mode="PUT_SINGLE">
+		<xsl:with-param name="dynamic_only" select="'no'"/>
+	</xsl:apply-template>
+-->
 	ual_end_action(putOpCtx);
 	
-return 0;
-}
-
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int idx)
-{
-if(!connected) return -1;
-int dim1, dim2, dim3, dim4, dim5, dim6, dim7;
-int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
-int *intArray;
-double *doubleArray;
-char **stringArray;
-char fullpath[1024];
-int _i, _j, _k, _h, _l, _m, _n;
-char *str;
-char *basePath = "<xsl:value-of select="@name"/>";
-char path[strlen(basePath)+4];
-char *clepath;
-string lepath, timepath;
-string timebasepath; 
-<!--<xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
--->
-if(idx &lt; 1)
-sprintf(path, "%s", basePath);
-else
-sprintf(path, "%s/%d", basePath, idx);
-double retTime;
-if (ids_properties.homogeneous_time != 1) {
-puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
-return (-99);
-}
-timebasepath = "time";
-int status = 1; //beginIdsPutSlice(expIdx,  path);
-//checkStatus(status);
-if(status) return status;
-<!-- <xsl:apply-templates select="field" mode="PUT_SLICE"/> -->
-//endIdsPutSlice(expIdx, path);
 return 0;
 }
 
@@ -544,6 +511,67 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice()
 {
 	return this->putSlice(0);
 }
+
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
+{
+	int status;
+	char *idsName = "<xsl:value-of select="@name"/>";
+	char idsFullName[strlen(idsName)+4];
+
+
+	int pulseCtx = this->pulseCtx;
+	int putSliceOpCtx = -1;
+	int ctx = -1;
+	int aosCtx = -1;
+	std::string fieldPath;
+	std::string timeBasePath;
+	bool isIdsHomogeneous = false;
+	int arraySize;
+	double sliceTime = -1.0;
+
+
+// SHOULD we use only homo-time?
+// timebasepath = "time";
+
+
+	if(!connected) 
+		return -1;
+
+	if(iOccurrence &lt; 1)
+		sprintf(idsFullName, "%s", idsName);
+	else
+		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+
+	isIdsHomogeneous = this->ids_properties.homogeneous_time;
+	if (isIdsHomogeneous != 1) {
+		puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
+		return (-99);
+	}
+
+//if (.NOT.(associated(IDS%time))) then
+//   write(*,*) "ERROR : the ids%time vector of an homogeneous_time IDS must be associated"
+//   return
+// endif
+	sliceTime = this->time(0);
+
+	// Open put context
+	putSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, sliceTime, UNDEFINED_INTERP);
+
+	if(putSliceOpCtx &lt; 0) 
+		return putSliceOpCtx;
+
+	ctx = putSliceOpCtx;
+
+	<xsl:apply-templates select="field" mode="PUT_SINGLE">
+		<xsl:with-param name="dynamic_only" select="'yes'"/>
+	</xsl:apply-templates>
+	ual_end_action(putSliceOpCtx);
+
+
+return 0;
+}
+
+
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove(int idx)
 {
@@ -655,8 +683,8 @@ if(status) return status;
 --> ////endIdsGetSlice(expIdx, path);
 return 0;
 }
-  <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT"/>
-  <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_GET"/>
+  <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT_SLICE"/>
+ <!-- <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_GET"/> -->
 
 <!--<xsl:apply-templates select="." mode="DUMP"/>
 --> </xsl:result-document>
@@ -678,11 +706,34 @@ return 0;
 	std::string timeBasePath = "";
 
 	<xsl:apply-templates select="field" mode="PUT_SINGLE">
-		<xsl:with-param name="non_timed" select="'no'"/>
+		<xsl:with-param name="dynamic_only" select="'no'"/>
 	</xsl:apply-templates>
 
 	return 0;
 }
+</xsl:template>
+
+
+
+<xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_PUT_SLICE">
+<xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
+     <xsl:text>&#xA;&#xA;</xsl:text>
+    <xsl:call-template name="COMMENT_FIELD"/>
+<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::putSlice(int ctx, bool isIdsHomogeneous)&#xA;</xsl:text>
+{
+	int status = -1;
+	int arraySize = -1;
+	int aosCtx = -1;
+	std::string fieldPath = "";
+	std::string timeBasePath = "";
+
+	<xsl:apply-templates select="field" mode="PUT_SINGLE">
+		<xsl:with-param name="dynamic_only" select="'yes'"/>
+	</xsl:apply-templates>
+
+	return 0;
+}
+</xsl:if>
 </xsl:template>
 
 
@@ -698,11 +749,33 @@ return 0;
 	std::string timeBasePath = "";
 
 	<xsl:apply-templates select="field" mode="GET_SINGLE">
-		<xsl:with-param name="non_timed" select="'no'"/>
+		<xsl:with-param name="dynamic_only" select="'no'"/>
 	</xsl:apply-templates>
 
 	return 0;
 }
+</xsl:template>
+
+
+<xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_GET_SLICE">
+<xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
+     <xsl:text>&#xA;&#xA;</xsl:text>
+    <xsl:call-template name="COMMENT_FIELD"/>
+<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::getSlice(int ctx, bool isIdsHomogeneous)&#xA;</xsl:text>
+{
+	int status = -1;
+	int arraySize = -1;
+	int aosCtx = -1;
+	std::string fieldPath = "";
+	std::string timeBasePath = "";
+
+	<xsl:apply-templates select="field" mode="GET_SINGLE">
+		<xsl:with-param name="dynamic_only" select="'yes'"/>
+	</xsl:apply-templates>
+
+	return 0;
+}
+</xsl:if>
 </xsl:template>
 
 
@@ -1762,23 +1835,31 @@ free(intArray);
 <!--=================================================-->
 
 <xsl:template match="field" mode="PUT_SINGLE">
-<xsl:param name="variable_path"/>
-<xsl:param name="mds_path"/>
-<xsl:param name="non_timed"/>
+<xsl:param name="dynamic_only"/>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:if test="$non_timed !='yes' or @type !='dynamic' or not(@type) or @data_type='structure' or (@data_type='struct_array' and  @type !='dynamic')">
+<xsl:if test="dynamic_only !='yes' or descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
+
+<xsl:variable name="methodName">
+	        <xsl:choose>
+		        <xsl:when test="$dynamic_only !='yes'" >
+	                	<xsl:value-of select="'put'" />
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of select="'putSlice'" />
+	                </xsl:otherwise>
+	        </xsl:choose>
+	</xsl:variable>
 <xsl:choose>
 <!--========== Regular structures ==========-->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
-		status = <xsl:value-of select="@name"/>.put(ctx, isIdsHomogeneous);
+		status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, isIdsHomogeneous);
 		if (status != 0)
 			return status;
 		</xsl:when>
 
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 		<xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
-			<xsl:text>//  ARRAY of TYPE 1 BLABLA &#xA;</xsl:text>
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
 			fieldPath = "<xsl:value-of select = "@name"/>";
 			timeBasePath = "";
@@ -1790,7 +1871,7 @@ free(intArray);
 					return aosCtx; 
 			
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).put(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
 					if (status != 0)
 						return status;
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
@@ -1815,7 +1896,7 @@ free(intArray);
 				if (aosCtx &lt; 0)  
 					return aosCtx; 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).put(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
 					if (status != 0)
 						return status;
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
@@ -1840,7 +1921,7 @@ free(intArray);
 				if (aosCtx &lt; 0)  
 					return aosCtx; 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).put(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
 					if (status != 0)
 						return status;
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
@@ -1909,6 +1990,8 @@ free(intArray);
 <xsl:param name="non_timed"/>
     <xsl:call-template name="COMMENT_FIELD"/>
 <xsl:if test="$non_timed !='yes' or @type !='dynamic' or not(@type) or @data_type='structure' or (@data_type='struct_array' and  @type !='dynamic')">
+
+
 <xsl:choose>
 <!--========== Regular structures ==========-->
     <!-- YB 2014 -->

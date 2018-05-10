@@ -241,8 +241,10 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 		  };
     int get(int ctx, bool isIdsHomogeneous);
     int put(int ctx, bool isIdsHomogeneous);
+    <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
     int getSlice(int idx, double inTime, char interpolMode);
-    int putSlice(int idx);
+    int putSlice(int ctx, bool isIdsHomogeneous);
+     </xsl:if> 
     int replaceLastSlice(int idx);
     int deleteAll(int idx);
     int remove(int idx);
@@ -260,8 +262,10 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 		  };
     int get(int ctx, bool isIdsHomogeneous);
      int put(int ctx, bool isIdsHomogeneous);
+    <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
     int getSlice(int idx, double inTime, char interpolMode);
-    int putSlice(int idx);
+    int putSlice(int ctx, bool isIdsHomogeneous);
+     </xsl:if> 
     int replaceLastSlice(int idx);
     int deleteAll(int idx);
     int remove(int idx);
