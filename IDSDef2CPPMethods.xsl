@@ -34,7 +34,6 @@ treeName = "ids";
 connected = false;
 shot = refShot = run = refRun = -1;
 }
-
 IdsNs::IDS::IDS(int shot, int run, int refShot, int refRun)
 {
 treeName = "ids";
@@ -64,63 +63,57 @@ void IdsNs::IDS::setPulseCtx(int pulseCtx)
 
 
 
-int IdsNs::IDS::open()
+void IdsNs::IDS::open()
 {
-	int pulseCtx;
-	int status = -1;
+int pulseCtx;
+int status = 1;
 
-  	pulseCtx = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, "", "", ""); 
-  	if (pulseCtx &lt; 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-    		return pulseCtx;
-	}
- 
 
-    	status = ual_open_pulse(pulseCtx, OPEN_PULSE, "");
-	if(status != 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-		return status;
-	}
+// imas_open("ids", shot, run, &amp;idx);
+if(status != 0)
+{
+//printf("Error opening imas shot %d, run %d: %s\n", shot, run, // imas_last_errmsg());
+}
+else
+{
 	this->pulseCtx = pulseCtx;
 	this->connected = true;
 	this->setPulseCtx(pulseCtx);
 }
-
-
-int IdsNs::IDS::openEnv(char *user, char *tokamak, char *version)
+}
+void IdsNs::IDS::openEnv(char *user, char *tokamak, char *version)
 {
-	int pulseCtx;
-	int status = -1;
-
-  	pulseCtx = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, user, tokamak, version); 
-  	if (pulseCtx &lt; 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-    		return pulseCtx;
-	}
- 
-
-    	status = ual_open_pulse(pulseCtx, OPEN_PULSE, "");
-	if(status != 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-		return status;
-	}
-	this->pulseCtx = pulseCtx;
-	this->connected = true;
-	this->setPulseCtx(pulseCtx);
+int idx;
+int status =1;
+ // imas_open_env("ids", shot, run, &amp;idx, user, tokamak, version);
+if(status != 0)
+{
+//printf("Error opening imas shot %d, run %d: %s\n", shot, run, // imas_last_errmsg());
+}
+else
+{
+pulseCtx = pulseCtx;
+connected = true;
+this->setPulseCtx(idx);
 }
 
-
-
-int IdsNs::IDS::openHdf5()
+}
+void IdsNs::IDS::openHdf5()
 {
-	printf("ERROR: Deprecated method: openHdf5()!");
-    	return -1;
+int pulseCtx;
+int status = 1;// imas_open_hdf5("ids", shot, run, &amp;idx);
+if(status != 0)
+{
+//printf("Error opening imas shot %d, run %d: %s\n", shot, run, // imas_last_errmsg());
+}
+else
+{
+this->pulseCtx = pulseCtx;
+connected = true;
+this->setPulseCtx(pulseCtx);
 }
 
+}
 void IdsNs::IDS::openPublic(const char* expName)
 {
 int pulseCtx;
@@ -137,70 +130,53 @@ this->setPulseCtx(pulseCtx);
 }
 
 }
-int IdsNs::IDS::create()
+void IdsNs::IDS::create()
 {
-	int pulseCtx = -1;
-	int status = 1;
-
-	pulseCtx = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, "", "", ""); 
-  	if (pulseCtx &lt; 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-    		return pulseCtx;
-	}
- 
-
-
-	status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, "");
-	if(status != 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-		return status;
-	}
-
-	this->pulseCtx = pulseCtx;
-	this->connected = true;
-	this->setPulseCtx(pulseCtx);
-
+int idx;
+int status = 1;// imas_create("ids", shot, run, refShot, refRun, &amp; idx);
+if(status != 0)
+{
+//printf("Error opening imas shot %d, run %d: %s\n", shot, run, // imas_last_errmsg());
+}
+else
+{
+this->pulseCtx = pulseCtx;
+connected = true;
+this->setPulseCtx(pulseCtx);
+}
 }
 
-int IdsNs::IDS::createEnv(char *user, char *tokamak, char *version)
+void IdsNs::IDS::createEnv(char *user, char *tokamak, char *version)
 {
-	int pulseCtx = -1;
-	int status = 1;
-
-	pulseCtx = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, user, tokamak, version); 
-  	if (pulseCtx &lt; 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-    		return pulseCtx;
-	}
- 
-
-
-	status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, "");
-	if(status != 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-		return status;
-	}
-
-	this->pulseCtx = pulseCtx;
-	this->connected = true;
-	this->setPulseCtx(pulseCtx);
-
+int idx;
+int status = 1;// imas_create_env("ids", shot, run, refShot, refRun, &amp; idx, user, tokamak, version);
+if(status != 0)
+{
+//printf("Error opening imas shot %d, run %d: %s\n", shot, run, // imas_last_errmsg());
+}
+else
+{
+this->pulseCtx = pulseCtx;
+connected = true;
+this->setPulseCtx(pulseCtx);
+}
 }
 
-
-
-
-int IdsNs::IDS::createHdf5()
+void IdsNs::IDS::createHdf5()
 {
-
-	printf("ERROR: Deprecated method: openHdf5()!");
-    	return -1;
+int idx;
+int status = 1;// imas_create_hdf5("ids", shot, run, refShot, refRun, &amp; idx);
+if(status != 0)
+{
+//printf("Error opening imas shot %d, run %d: %s\n", shot, run, // imas_last_errmsg());
 }
-
+else
+{
+this->pulseCtx = pulseCtx;
+connected = true;
+this->setPulseCtx(pulseCtx);
+}
+}
 void IdsNs::IDS::createPublic(const char* expName)
 {
 int idx;
@@ -217,15 +193,12 @@ this->setPulseCtx(pulseCtx);
 }
 }
 
-int IdsNs::IDS::close()
+void IdsNs::IDS::close()
 {
-  	int status = ual_close_pulse(this->pulseCtx, CLOSE_PULSE, "");
-	if(status != 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_close_pulse");
-		return status;
-	}
-    	return ual_end_action(this->pulseCtx);
+if(!connected) return;
+if(this->pulseCtx != -1)
+// imas_close(expIdx);
+connected = false;
 }
 
 void IdsNs::IDS::enableMemCache()
@@ -392,69 +365,36 @@ connected = false;
 <xsl:apply-templates select="field" mode="CONSTRUCTOR"/>
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::isHomogeneous(int ctx, bool&amp; isIdsHomogeneous )
-{
-    	int homogenousTime = -1;
-	int status = -1;
-	
-    	status = IdsNs::Ids::readData(ctx, "ids_properties/homogeneous_time", "", homogenousTime);
-	if (status)
-        	return status;
-	
-	if(homogenousTime)
-		isIdsHomogeneous = false;
-	else
-		isIdsHomogeneous = true;
-
-	return 0;
-}
-
-
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get()
 {
 	return this->get(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int idx)
 {
-int status;
+if(!connected) return -1;
+double *times, double0d;
+void * obj_all_times;
+int i, _i, numSamples, dim1, dim2, dim3, dim4, dim5, dim6, dim7, status, int0d;
+int dim1In, dim2In, dim3In, dim4In, dim5In, dim6In, dim7In;
+int *intArray;
+char **stringArray;
+double *doubleArray;
 char *str;
-char *idsName = "<xsl:value-of select="@name"/>";
-char idsFullName[strlen(idsName)+4];
-
-int pulseCtx = this->pulseCtx;
-int getOpCtx = -1;
-int ctx = -1;
-int aosCtx = -1;
-std::string fieldPath;
-std::string timeBasePath;
-bool isIdsHomogeneous = false;
-int arraySize;
-
-	if(!connected) 
-		return -1;
-
-	if(iOccurrence &lt; 1)
-		sprintf(idsFullName, "%s", idsName);
-	else
-		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
-
-	// Open get context
-	getOpCtx = ual_begin_global_action(pulseCtx, idsFullName, READ_OP);
-
-	if(getOpCtx &lt; 0) 
-		return getOpCtx;
-
-	ctx = getOpCtx;
-
-	status = this->isHomogeneous(getOpCtx,isIdsHomogeneous );
-	if(status &lt; 0) 
-		return status;
-
- 	<xsl:apply-templates select="field" mode="GET_SINGLE"/> 
-	ual_end_action(getOpCtx);
-	
-	return 0;
+char *basePath = "<xsl:value-of select="@name"/>";
+char *clepath;
+string lepath; 
+char path[strlen(basePath)+4];
+if(idx &lt; 1)
+sprintf(path, "%s", basePath);
+else
+sprintf(path, "%s/%d", basePath, idx);
+////status = beginIdsGet(expIdx, path, NON_TIMED, &amp;numSamples);
+//checkStatus(status);
+// if (status) return status;
+<!-- <xsl:apply-templates select="field" mode="GET_SINGLE"/> -->
+////endIdsGet(expIdx, path);
+return 0;
 }
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put()
@@ -467,7 +407,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 if(!connected) return -1;
 int status;
 char *idsName = "<xsl:value-of select="@name"/>";
-char idsFullName[strlen(idsName)+4];
+char idsPath[strlen(idsName)+4];
 
 
 int pulseCtx = this->pulseCtx;
@@ -481,23 +421,23 @@ int arraySize;
 
 
 if(iOccurrence &lt; 1)
-sprintf(idsFullName, "%s", idsName);
+sprintf(idsPath, "%s", idsName);
 else
-sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+sprintf(idsPath, "%s/%d", idsName, iOccurrence);
 
 deleteAll(iOccurrence);
 
 
 
 	// Open put context
-	putOpCtx = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP);
+	putOpCtx = ual_begin_global_action(pulseCtx, idsPath, WRITE_OP);
 
-	if(putOpCtx &lt; 0) return putOpCtx;
+	if(putOpCtx &lt; 0) return status;
 
 
 ctx = putOpCtx;
 isIdsHomogeneous = ids_properties.homogeneous_time;
- <xsl:apply-templates select="field" mode="PUT_SINGLE"/>
+<xsl:apply-templates select="field" mode="PUT_SINGLE"/>
 	ual_end_action(putOpCtx);
 	
 return 0;
@@ -655,8 +595,8 @@ if(status) return status;
 --> ////endIdsGetSlice(expIdx, path);
 return 0;
 }
+
   <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT"/>
-  <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_GET"/>
 
 <!--<xsl:apply-templates select="." mode="DUMP"/>
 --> </xsl:result-document>
@@ -680,32 +620,8 @@ return 0;
 	<xsl:apply-templates select="field" mode="PUT_SINGLE">
 		<xsl:with-param name="non_timed" select="'no'"/>
 	</xsl:apply-templates>
-
-	return 0;
 }
 </xsl:template>
-
-
-<xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_GET">
-     <xsl:text>&#xA;&#xA;</xsl:text>
-    <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::get(int ctx, bool isIdsHomogeneous)&#xA;</xsl:text>
-{
-	int status = -1;
-	int arraySize = -1;
-	int aosCtx = -1;
-	std::string fieldPath = "";
-	std::string timeBasePath = "";
-
-	<xsl:apply-templates select="field" mode="GET_SINGLE">
-		<xsl:with-param name="non_timed" select="'no'"/>
-	</xsl:apply-templates>
-
-	return 0;
-}
-</xsl:template>
-
-
 
 <!--=================================================-->
 <!--              field initialization               -->
@@ -894,7 +810,7 @@ See IDSDef2Classes.xsl  -->
 <!--=================================================-->
 <!--       get field of a time-independent IDS       -->
 <!--=================================================-->
-<xsl:template match="field" mode="GET_SINGLE_XXX">
+<xsl:template match="field" mode="GET_SINGLE">
 <xsl:param name="variable_path"/>
 <xsl:param name="mds_path"/>
 <xsl:choose>
@@ -1614,7 +1530,7 @@ free(doubleArray);
 //checkStatus(status);
 if(!status) {
 if (dim1In >0) {
-setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dimh1In, dim2In);
+setArray(<xsl:value-of select="$currentidxpath"/>,doubleArray, dim1In, dim2In);
 free(doubleArray);
 }
 }
@@ -1835,7 +1751,7 @@ free(intArray);
 			timeBasePath = "<xsl:value-of select = "@name"/>/time";
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			if(arraySize > 0)
-			{	
+			{	fieldPath = "<xsl:value-of select = "@name"/>";
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 				if (aosCtx &lt; 0)  
 					return aosCtx; 
@@ -1894,148 +1810,6 @@ free(intArray);
 	</xsl:choose>
 </xsl:if>
 </xsl:template>
-
-
-
-
-<!-- 2014 YBYB-->
-<!--=================================================-->
-<!--       put field of a time-independent IDS       -->
-<!--=================================================-->
-
-<xsl:template match="field" mode="GET_SINGLE">
-<xsl:param name="variable_path"/>
-<xsl:param name="mds_path"/>
-<xsl:param name="non_timed"/>
-    <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:if test="$non_timed !='yes' or @type !='dynamic' or not(@type) or @data_type='structure' or (@data_type='struct_array' and  @type !='dynamic')">
-<xsl:choose>
-<!--========== Regular structures ==========-->
-    <!-- YB 2014 -->
-		<xsl:when test="@data_type='structure'">
-		status = <xsl:value-of select="@name"/>.get(ctx, isIdsHomogeneous);
-		if (status != 0)
-			return status;
-		</xsl:when>
-
-<!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
-		<xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
-			<xsl:text>//  ARRAY of TYPE 1 BLABLA &#xA;</xsl:text>
-			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
-			timeBasePath = "";
-			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (aosCtx &lt; 0)  
-				return aosCtx; 
-
-			if(arraySize > 0)
-			{	
-				<xsl:value-of select="@name"/>.resize(arraySize);
-				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
-					if (status != 0)
-						return status;
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (status != 0)
-						return status;
-				}
-				status = ual_end_action(aosCtx);
-				if (status != 0)  
-					return status; 
- 			}
-		</xsl:when>
- 		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">	
-			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
-			timeBasePath = "";
-			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (aosCtx &lt; 0)  
-				return aosCtx; 
-
-			if(arraySize > 0)
-			{	
-				<xsl:value-of select="@name"/>.resize(arraySize);
-				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
-					if (status != 0)
-						return status;
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (status != 0)
-						return status;
-				}
-				status = ual_end_action(aosCtx);
-				if (status != 0)  
-					return status; 
- 			}
-		</xsl:when>
-		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
-			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
-			timeBasePath = "<xsl:value-of select = "@name"/>/time";
-			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (aosCtx &lt; 0)  
-				return aosCtx; 
-
-			if(arraySize > 0)
-			{	
-				<xsl:value-of select="@name"/>.resize(arraySize);
-				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
-					if (status != 0)
-						return status;
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (status != 0)
-						return status;
-				}
-				status = ual_end_action(aosCtx);
-				if (status != 0)  
-					return status; 
- 			}
-		</xsl:when>
-
-	<xsl:when test="
-		   @data_type='str_type' or @data_type='STR_0D'
-		or @data_type='str_1d_type' or @data_type='STR_1D'
-		or @data_type='int_type' or @data_type='INT_0D'
-		or @data_type='flt_type' or @data_type='FLT_0D' 
-		or @data_type='flt_1d_type' or @data_type='FLT_1D'
-		or @data_type='int_1d_type' or @data_type='INT_1D'
-		or @data_type='FLT_2D' or @data_type='INT_2D'
-		or @data_type='FLT_3D'	or @data_type='INT_3D'
-		or @data_type='FLT_4D'	or @data_type='INT_4D'
-		or @data_type='FLT_5D'or @data_type='INT_5D'
-		or @data_type='FLT_6D'or @data_type='INT_6D'">
-		<xsl:choose>
-			<xsl:when test="ancestor::field[@data_type='struct_array']">
-				fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
-			</xsl:when>
-  			<xsl:otherwise>
-   			 	fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
-  			</xsl:otherwise>
-		</xsl:choose>
-		<xsl:choose>
-			<xsl:when test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
-    		if (isIdsHomogeneous) 
-			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
-    		else
-       			timeBasePath="/time";
-  			</xsl:when>
-  			<xsl:otherwise>
-    				timeBasePath = "";
-  			</xsl:otherwise>
-		</xsl:choose>
-		status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
-		if (status) 
-			return status;
-	</xsl:when>
-		<xsl:otherwise>
-			//Doc GET <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
-		</xsl:otherwise>
-	</xsl:choose>
-</xsl:if>
-</xsl:template>
-
-
 <!--=================================================-->
 <!--       put field of full time-dependent IDS      -->
 <!--=================================================-->

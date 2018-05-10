@@ -68,15 +68,15 @@ class IDS
     int getRefRun(){return refRun;}
     string getTreeName(){return treeName;}
     bool isConnected(){return connected;}
-    int open();
-    int create();
-    int openEnv(char *user, char *tokamak, char *version);
-    int createEnv(char *user, char *tokamak, char *version);
-    int openHdf5();
-    int createHdf5();
+    void open();
+    void create();
+    void openEnv(char *user, char *tokamak, char *version);
+    void createEnv(char *user, char *tokamak, char *version);
+    void openHdf5();
+    void createHdf5();
     void openPublic(const char* expName);
     void createPublic(const char* expName);
-    int close();
+    void close();
     void close(char *name, int shot, int run) {close();}
     void discardAll();
     void flushAll();
@@ -149,7 +149,6 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     private:
       int pulseCtx;
       bool connected;
-	int isHomogeneous(int ctx, bool&amp;isIdsHomogeneous );
       public:
       void setPulseCtx(int pulseCtx){this->pulseCtx = pulseCtx; connected = true;}
       <xsl:apply-templates select = "field" mode = "DECLARE"/>
@@ -239,7 +238,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 		  <xsl:value-of select = "@name"/>() {
 		    <xsl:apply-templates select = "field" mode = "CONSTRUCTOR"/>
 		  };
-    int get(int ctx, bool isIdsHomogeneous);
+    int get(int idx);
     int put(int ctx, bool isIdsHomogeneous);
     int getSlice(int idx, double inTime, char interpolMode);
     int putSlice(int idx);
@@ -258,7 +257,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
 		<xsl:value-of select = "@name"/>() {
 		<xsl:apply-templates select = "field" mode = "CONSTRUCTOR"/>
 		  };
-    int get(int ctx, bool isIdsHomogeneous);
+    int get(int idx);
      int put(int ctx, bool isIdsHomogeneous);
     int getSlice(int idx, double inTime, char interpolMode);
     int putSlice(int idx);

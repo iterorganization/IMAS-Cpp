@@ -384,8 +384,7 @@ void checkObject(void *obj)
         {
 		int status = 0;
 		int retSize[MAXDIM];
-		double retVal = -1;
-		void* ptrData = &retVal;
+		void* ptrData = NULL;
 
   		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 0, &retSize[0]);
   		if (status != 0)
@@ -496,8 +495,7 @@ void checkObject(void *obj)
         {
 		int status = 0;
 		int retSize[MAXDIM];
-		int retVal = -1;
-		void* ptrData = &retVal;
+		void* ptrData = NULL;
 
   		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
   		if (status != 0)
@@ -609,8 +607,6 @@ void checkObject(void *obj)
 		void* ptrData = NULL;
 		
 		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, CHAR_DATA, 1, &retSize[0]);
-		if (status != 0)
-    			return status;
 		
 		text = (char*)ptrData;
 

@@ -4,7 +4,7 @@ TESTDIR = ../testsuite
 
 CXX=g++
 LD=$(CXX)
-CXXFLAGS= -std=gnu++11  -pthread -g -O0 #-fPIC
+CXXFLAGS=-pthread -g -O0 #-fPIC
 LDFLAGS= #-pthread #-g
 
 INCDIR=`pkg-config blitz --cflags` -I$(IMAS_PREFIX)/include
