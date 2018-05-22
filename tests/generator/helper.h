@@ -18,9 +18,17 @@ extern int dim6;
 
 extern int randseed;
 */
-
+const int DIM_SIZE = 2;
+const int noOfSlices = DIM_SIZE;
 
 void checkStatus(int status);
+
+void initTime();
+double getTime(int timeIdx);
+
+void setTime(Array<double,1>&array, int timeIdx);
+int assertTime(const blitz::Array<double, 1> observedValue, const char* fieldPath, int timeIdx);
+
 /*******************************************************************************/
 /**********************         Setting arrays           ***********************/
 /*******************************************************************************/
@@ -54,6 +62,19 @@ void setValue(Array<double,4>&array, bool isReduced);
 void setValue(Array<double,5>&array, bool isReduced);
 void setValue(Array<double,6>&array, bool isReduced);
 
+/**********************        Assert array shape        ***********************/
+
+int assertShape(const blitz::TinyVector<int, 1> expectedShape, const blitz::TinyVector<int, 1> observedShape, const char* fieldPath);
+
+int assertShape(const blitz::TinyVector<int, 2> expectedShape, const blitz::TinyVector<int, 2> observedShape, const char* fieldPath);
+
+int assertShape(const blitz::TinyVector<int, 3> expectedShape, const blitz::TinyVector<int,3> observedShape, const char* fieldPath);
+
+int assertShape(const blitz::TinyVector<int, 4> expectedShape, const blitz::TinyVector<int, 4> observedShape, const char* fieldPath);
+
+int assertShape(const blitz::TinyVector<int, 5> expectedShape, const blitz::TinyVector<int, 5> observedShape, const char* fieldPath);
+
+int assertShape(const blitz::TinyVector<int, 6> expectedShape, const blitz::TinyVector<int, 6> observedShape, const char* fieldPath);
 
 /**********************        Assert field value        ***********************/
 int assertField(std::string&, const char* fieldPath, bool sliceMode);

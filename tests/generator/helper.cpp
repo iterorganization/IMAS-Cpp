@@ -4,6 +4,7 @@
 
 
 #include <blitz/array.h>
+#include "helper.h"
 
 
 using namespace blitz;
@@ -11,12 +12,15 @@ using namespace blitz;
 
 int finalStatus = 0;
 
-const int dim1 = 2;
-const int dim2 = 2;
-const int dim3 = 2;
-const int dim4 = 2;
-const int dim5 = 2;
-const int dim6 = 2;
+
+
+
+const int dim1 = DIM_SIZE;
+const int dim2 = DIM_SIZE;
+const int dim3 = DIM_SIZE;
+const int dim4 = DIM_SIZE;
+const int dim5 = DIM_SIZE;
+const int dim6 = DIM_SIZE;
 
 const char* PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r";
 
@@ -27,6 +31,26 @@ void checkStatus(int status)
 		finalStatus = EXIT_FAILURE;
 	
 }
+
+double timeVector[DIM_SIZE];
+
+//CHARACTER(len=:), ALLOCATABLE :: dataVersion
+//CHARACTER(len=:), ALLOCATABLE :: userName
+
+
+void initTime()
+{
+       for(int i =0; i< DIM_SIZE; i++)
+       	timeVector[i] = (double) i;
+
+}
+
+double getTime(int timeIdx)
+{
+       return timeVector[timeIdx];
+
+}
+
 
 /*******************************************************************************/
 /**********************    Random data generation        ***********************/
@@ -69,6 +93,47 @@ char* getString()
 }
 
 
+/*******************************************************************************/
+/**********************        TIME           ***********************/
+/*******************************************************************************/
+void setTime(Array<double,1>&array, int timeIdx)
+{
+	int size = -1;
+	double* arrPtr = NULL;
+
+	if(timeIdx >= 0)
+	{
+		size = 1;
+		arrPtr = &timeVector[timeIdx];
+	}
+	else
+	{
+		size = DIM_SIZE;
+		arrPtr = timeVector;
+	}
+
+	Array<double, 1> newArray(arrPtr, shape(size), duplicateData);
+	array.resize(size);
+	array = newArray;
+
+}
+
+int assertTime(const blitz::Array<double, 1> observedValue, const char* fieldPath, int timeIdx)
+{
+	blitz::Array<double, 1> expectedValue;
+
+	setTime(expectedValue, timeIdx);
+		
+	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+		return -1;
+	
+	if(any(expectedValue != observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
+	return 0;
+}
 /*******************************************************************************/
 /**********************         Setting arrays           ***********************/
 /*******************************************************************************/

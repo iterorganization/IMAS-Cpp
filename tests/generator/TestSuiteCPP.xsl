@@ -74,7 +74,7 @@
 
 
         <xsl:text> int main(int argc, char** argv){&#10;</xsl:text>
-
+    	<xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>initTime();&#10;</xsl:text>
 
         <xsl:apply-templates select="child::IDS" mode="test"/>
 
@@ -106,7 +106,7 @@
     
 
     <xsl:template match="IDS" mode="set_non_timed">
-        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed(){&#10;</xsl:text>
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed(IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids){&#10;</xsl:text>
         <xsl:text>&#9;printf("Calling setNonTimed() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
 	 <xsl:apply-templates select="field" mode="putStatic"/>
 	<xsl:text>}&#10;</xsl:text>
@@ -114,7 +114,7 @@
     </xsl:template>
 
     <xsl:template match="IDS" mode="set_timed">
-        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(int timeIdx){&#10;</xsl:text>
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids, int timeIdx){&#10;</xsl:text>
         <xsl:text>&#9;printf("Calling setNonTimed() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
 	 <xsl:apply-templates select="field" mode="putDynamic"/>
 	<xsl:text>}&#10;</xsl:text>
@@ -125,9 +125,9 @@
 
     <!-- IDS put()-->
     <xsl:template match="IDS" mode="put">
-        <xsl:text>!====================================================================================&#10;</xsl:text>
-        <xsl:text>!&#9;&#9; PUT </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
-        <xsl:text>!====================================================================================&#10;</xsl:text>
+        <xsl:text>//====================================================================================&#10;</xsl:text>
+        <xsl:text>//&#9;&#9; PUT </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
+        <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_put(){&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing put() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
@@ -153,9 +153,9 @@
 
     <!-- IDS putSlice()-->
     <xsl:template match="IDS" mode="putSlice">
-        <xsl:text>!====================================================================================&#10;</xsl:text>
-        <xsl:text>!&#9;&#9; PUT SLICE </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
-        <xsl:text>!====================================================================================&#10;</xsl:text>
+        <xsl:text>//====================================================================================&#10;</xsl:text>
+        <xsl:text>//&#9;&#9; PUT SLICE </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
+        <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice() {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing putSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
@@ -164,27 +164,26 @@
         <xsl:text>&#9;imas.create();&#10;</xsl:text>
        	<xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
-	<xsl:text>&#9;&#9;&#9;printf(" --- Testing occurrence : %d\n", i);&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;printf("  Testing occurrence : %d\n", i);&#10;</xsl:text>
      -->  
 	
 
-<xsl:text>&#9;&#9;for (int j = 0; j &lt; noOfSlices; j++) { &#10;</xsl:text>
+<xsl:text>&#9;&#9;for (int j = 0; j &lt; noOfSlices; j++)&#10;</xsl:text>
  	<xsl:text>&#9;&#9;{&#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;printf(" --- --- Testing slice : %d\n", j);&#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;if (j == 1) &#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;{&#10;</xsl:text>
-		<xsl:text>&#9;&#9;&#9;if (j == 1) then &#10;</xsl:text>
-		<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed();&#10;</xsl:text> 
-       		<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(j);&#10;</xsl:text> 
-        	<xsl:text>&#9;&#9;&#9;&#9;ids.put(0);&#10;</xsl:text>
-		<xsl:text>&#9;&#9;else&#10;</xsl:text>
-		<xsl:text>&#9;&#9;{&#10;</xsl:text>
-       		<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(j);&#10;</xsl:text> 
-		<xsl:text>&#9;&#9;&#9;&#9;ids.putSlice(0);&#10;</xsl:text>
-		<xsl:text>&#9;&#9;}&#10;</xsl:text>
-
-	 <xsl:text>&#9;&#9;&#9;//call ids_deallocate(ids)&#10;</xsl:text>
-	  <xsl:text>&#9;&#9;&#9;}&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed(ids);&#10;</xsl:text> 
+	<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(ids, j);&#10;</xsl:text> 
+	<xsl:text>&#9;&#9;&#9;&#9;ids.put(0);&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;}&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;else&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;{&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(ids, j);&#10;</xsl:text> 
+	<xsl:text>&#9;&#9;&#9;&#9;ids.putSlice(0);&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;}&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;//call ids_deallocate(ids)&#10;</xsl:text>
+	<xsl:text>&#9;&#9;}&#10;</xsl:text>
      <xsl:text>&#9;imas.close();&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
@@ -194,9 +193,9 @@
     <!-- IDS get()-->
 
     <xsl:template match="IDS" mode="get">
-        <xsl:text>!====================================================================================&#10;</xsl:text>
-        <xsl:text>!&#9;&#9; GET </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
-        <xsl:text>!====================================================================================&#10;</xsl:text>
+        <xsl:text>//====================================================================================&#10;</xsl:text>
+        <xsl:text>//&#9;&#9; GET </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
+        <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_get() {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing get() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
@@ -225,9 +224,9 @@
    <!-- IDS getSlice()-->
     <xsl:template match="IDS" mode="getSlice">
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice()  {&#10;</xsl:text>
-        <xsl:text>!====================================================================================&#10;</xsl:text>
-        <xsl:text>!&#9;&#9; GET SLICE </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
-        <xsl:text>!====================================================================================&#10;</xsl:text>
+        <xsl:text>//====================================================================================&#10;</xsl:text>
+        <xsl:text>//&#9;&#9; GET SLICE </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
+        <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing getSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
@@ -239,12 +238,12 @@
 	<!--<xsl:apply-templates select="field" mode="getSlice"/> 
 
         -->
-	<xsl:text>&#9;&#9;for (int j = 0; j &lt; noOfSlices ; j++) {&#10;</xsl:text>
+	<xsl:text>&#9;&#9;for (int j = 0; j &lt; noOfSlices ; j++)&#10;</xsl:text>
 	<xsl:text>&#9;&#9;{&#10;</xsl:text>
  	<xsl:text>&#9;&#9;&#9;printf(" --- --- Testing slice : %d\n", j);&#10;</xsl:text>
 
 
-	<xsl:text>&#9;&#9;&#9;ids.getSlice(0, getTimeScalar(j), CLOSEST_SAMPLE);&#10;</xsl:text> 
+	<xsl:text>&#9;&#9;&#9;ids.getSlice(0, getTime(j), CLOSEST_SAMPLE);&#10;</xsl:text> 
 
 	<xsl:text>&#9;&#9;&#9;if (j == 1)&#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;{&#10;</xsl:text>
@@ -397,8 +396,8 @@
  	<xsl:if test="@data_type='struct_array'">
 	<xsl:if test="(not($dynamicOnly) and ( (@type !='dynamic' or not(@type)) and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])))
 	or
-	(not($staticOnly) and (@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
-	<xsl:text>&#9;&#9;if(ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>.extent(0) &gt; 0) then&#10;</xsl:text>
+	(not($staticOnly) and (descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
+	<xsl:text>&#9;&#9;if(ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>.extent(0) &lt; 1) &#10;</xsl:text>
 		<xsl:text>&#9;&#9;&#9;ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>.resize(1);&#10;</xsl:text>
 	</xsl:if>
 	</xsl:if>
@@ -567,11 +566,11 @@
 		<xsl:when test="@name='time' and @type='dynamic' and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">
 			<xsl:choose>
 				<xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-      					<xsl:text>&#9;&#9;status = assertTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, true);&#10;</xsl:text>
+      					<xsl:text>&#9;&#9;status = assertTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", j);&#10;</xsl:text>
 					<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
         			</xsl:when>
 	        		<xsl:otherwise>
-					<xsl:text>&#9;&#9;status = assertTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, false);&#10;</xsl:text>
+					<xsl:text>&#9;&#9;status = assertTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", -1);&#10;</xsl:text>
 					<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
      	        		</xsl:otherwise>
             		</xsl:choose>
@@ -614,10 +613,10 @@
 		<xsl:when test="@name='time' and @type='dynamic' and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">
 			<xsl:choose>
 				<xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-      					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, true);&#10;</xsl:text>
+      					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, j);&#10;</xsl:text>
         			</xsl:when>
 	        		<xsl:otherwise>
-					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, false);&#10;</xsl:text>
+					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, -1);&#10;</xsl:text>
      	        		</xsl:otherwise>
             		</xsl:choose>
 		</xsl:when>
