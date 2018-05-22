@@ -401,10 +401,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::isHomogeneous(int ctx, bool&a
 	if (status)
         	return status;
 	
-	if(homogenousTime)
-		isIdsHomogeneous = false;
-	else
+	if(homogenousTime == 1)
 		isIdsHomogeneous = true;
+	else
+		isIdsHomogeneous = false;
 
 	return 0;
 }
@@ -498,10 +498,10 @@ deleteAll(iOccurrence);
 
 ctx = putOpCtx;
 isIdsHomogeneous = ids_properties.homogeneous_time;
-<!--<xsl:apply-templates select="field" mode="PUT_SINGLE">
+<xsl:apply-templates select="field" mode="PUT_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'no'"/>
-	</xsl:apply-template>
--->
+	</xsl:apply-templates>
+
 	ual_end_action(putOpCtx);
 	
 return 0;
