@@ -56,6 +56,8 @@
         <xsl:text>&#10;</xsl:text>
 -->
 
+     	<xsl:apply-templates select="child::IDS" mode="set_non_timed"/>
+        <xsl:apply-templates select="child::IDS" mode="set_timed"/>
 
         <xsl:apply-templates select="child::IDS" mode="put"/>
         <xsl:apply-templates select="child::IDS" mode="get"/>
@@ -102,8 +104,30 @@
     </xsl:template>
 
     
+
+    <xsl:template match="IDS" mode="set_non_timed">
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed(){&#10;</xsl:text>
+        <xsl:text>&#9;printf("Calling setNonTimed() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
+	 <xsl:apply-templates select="field" mode="putStatic"/>
+	<xsl:text>}&#10;</xsl:text>
+       <xsl:text>&#10;</xsl:text>
+    </xsl:template>
+
+    <xsl:template match="IDS" mode="set_timed">
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(int timeIdx){&#10;</xsl:text>
+        <xsl:text>&#9;printf("Calling setNonTimed() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
+	 <xsl:apply-templates select="field" mode="putDynamic"/>
+	<xsl:text>}&#10;</xsl:text>
+       <xsl:text>&#10;</xsl:text>
+    </xsl:template>
+
+
+
     <!-- IDS put()-->
     <xsl:template match="IDS" mode="put">
+        <xsl:text>!====================================================================================&#10;</xsl:text>
+        <xsl:text>!&#9;&#9; PUT </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
+        <xsl:text>!====================================================================================&#10;</xsl:text>
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_put(){&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing put() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
@@ -112,7 +136,10 @@
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
      -->  
-        <xsl:apply-templates select="field" mode="put"/>
+	<xsl:apply-templates select="field" mode="put">
+                  	<xsl:with-param name="dynamicOnly" select="false()"/>
+			<xsl:with-param name="staticOnly" select="false()"/>
+                </xsl:apply-templates>
        <xsl:text>&#9;&#9;ids.put(0);&#10;</xsl:text>
 <!--	 <xsl:text>&#9;&#9;ids.put(occurrence);&#10;</xsl:text>
    -     <xsl:text>&#9;}&#10;</xsl:text>
@@ -126,6 +153,9 @@
 
     <!-- IDS putSlice()-->
     <xsl:template match="IDS" mode="putSlice">
+        <xsl:text>!====================================================================================&#10;</xsl:text>
+        <xsl:text>!&#9;&#9; PUT SLICE </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
+        <xsl:text>!====================================================================================&#10;</xsl:text>
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice() {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing putSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
@@ -134,13 +164,27 @@
         <xsl:text>&#9;imas.create();&#10;</xsl:text>
        	<xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
-     -->   <xsl:apply-templates select="field" mode="putSlice"/>
-       <xsl:text>&#9;&#9;&#9;ids.putNonTimed(0);&#10;</xsl:text>
-        <xsl:text>&#9;&#9;&#9;ids.putSlice(0);&#10;</xsl:text>
-	<!-- 
-        <xsl:text>&#9;&#9;&#9;ids.putNonTimed(occurrence);&#10;</xsl:text>
-        <xsl:text>&#9;&#9;&#9;ids.putSlice(occurrence);&#10;</xsl:text>
-    -->    
+	<xsl:text>&#9;&#9;&#9;printf(" --- Testing occurrence : %d\n", i);&#10;</xsl:text>
+     -->  
+	
+
+<xsl:text>&#9;&#9;for (int j = 0; j &lt; noOfSlices; j++) { &#10;</xsl:text>
+ 	<xsl:text>&#9;&#9;{&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;printf(" --- --- Testing slice : %d\n", j);&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;if (j == 1) &#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;{&#10;</xsl:text>
+		<xsl:text>&#9;&#9;&#9;if (j == 1) then &#10;</xsl:text>
+		<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed();&#10;</xsl:text> 
+       		<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(j);&#10;</xsl:text> 
+        	<xsl:text>&#9;&#9;&#9;&#9;ids.put(0);&#10;</xsl:text>
+		<xsl:text>&#9;&#9;else&#10;</xsl:text>
+		<xsl:text>&#9;&#9;{&#10;</xsl:text>
+       		<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(j);&#10;</xsl:text> 
+		<xsl:text>&#9;&#9;&#9;&#9;ids.putSlice(0);&#10;</xsl:text>
+		<xsl:text>&#9;&#9;}&#10;</xsl:text>
+
+	 <xsl:text>&#9;&#9;&#9;//call ids_deallocate(ids)&#10;</xsl:text>
+	  <xsl:text>&#9;&#9;&#9;}&#10;</xsl:text>
      <xsl:text>&#9;imas.close();&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
@@ -148,7 +192,11 @@
     
 
     <!-- IDS get()-->
+
     <xsl:template match="IDS" mode="get">
+        <xsl:text>!====================================================================================&#10;</xsl:text>
+        <xsl:text>!&#9;&#9; GET </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
+        <xsl:text>!====================================================================================&#10;</xsl:text>
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_get() {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing get() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
@@ -160,7 +208,10 @@
    	<xsl:text>&#9;&#9;ids.get(occurrence);&#10;</xsl:text>
 -->
 	<xsl:text>&#9;&#9;ids.get(0);&#10;</xsl:text>
-   	<xsl:apply-templates select="field" mode="get"/> 
+   	       	<xsl:apply-templates select="field" mode="get">
+                  	<xsl:with-param name="dynamicOnly" select="false()"/>
+			<xsl:with-param name="staticOnly" select="false()"/>
+                </xsl:apply-templates>
     
 <!--      <xsl:text>&#9;}&#10;</xsl:text>
    
@@ -174,6 +225,9 @@
    <!-- IDS getSlice()-->
     <xsl:template match="IDS" mode="getSlice">
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice()  {&#10;</xsl:text>
+        <xsl:text>!====================================================================================&#10;</xsl:text>
+        <xsl:text>!&#9;&#9; GET SLICE </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
+        <xsl:text>!====================================================================================&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing getSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
@@ -181,107 +235,198 @@
         <xsl:text>&#9;imas.open();&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
    <!--     <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
- 	<xsl:text>&#9;&#9;ids.getSlice(occurrence, 0.0, CLOSEST_SAMPLE);&#10;</xsl:text>
--->	<xsl:text>&#9;&#9;ids.getSlice(0, 0.0, CLOSEST_SAMPLE);&#10;</xsl:text> 
-	<xsl:apply-templates select="field" mode="getSlice"/> 
-  <!--      <xsl:text>&#9;}&#10;</xsl:text>
+-->	
+	<!--<xsl:apply-templates select="field" mode="getSlice"/> 
+
+        -->
+	<xsl:text>&#9;&#9;for (int j = 0; j &lt; noOfSlices ; j++) {&#10;</xsl:text>
+	<xsl:text>&#9;&#9;{&#10;</xsl:text>
+ 	<xsl:text>&#9;&#9;&#9;printf(" --- --- Testing slice : %d\n", j);&#10;</xsl:text>
+
+
+	<xsl:text>&#9;&#9;&#9;ids.getSlice(0, getTimeScalar(j), CLOSEST_SAMPLE);&#10;</xsl:text> 
+
+	<xsl:text>&#9;&#9;&#9;if (j == 1)&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;{&#10;</xsl:text>
+	<xsl:text>  &#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;// ======================== GET STATIC DATA (ONCE) =====================  &#10;</xsl:text>
+	<xsl:apply-templates select="field" mode="getSlice">
+                  	<xsl:with-param name="dynamicOnly" select="false()"/>
+			<xsl:with-param name="staticOnly" select="true()"/>
+                </xsl:apply-templates>
+
+	<xsl:text>&#9;&#9;&#9;// ======================== GET STATIC DATA (ONCE) =====================  &#10;</xsl:text>
+
+	<xsl:text>&#9;&#9;&#9;}&#10;</xsl:text>
+	<xsl:text>&#9;&#9;// ======================== GET DYNAMIC DATA (LOOP) =====================  &#10;</xsl:text>
+  		<xsl:apply-templates select="field" mode="getSlice">
+                  	<xsl:with-param name="dynamicOnly" select="true()"/>
+			<xsl:with-param name="staticOnly" select="false()"/>
+                </xsl:apply-templates>
+	<xsl:text>&#9;&#9;// ======================== GET DYNAMIC DATA (LOOP) =====================  &#10;</xsl:text>
+		 <!-- <xsl:text>&#9;call ids_deallocate(ids)&#10;</xsl:text> -->
+  	<xsl:text>&#9;&#9;&#9;}&#10;</xsl:text>
+	    <!--      <xsl:text>&#9;}&#10;</xsl:text>
      --> 
+        <xsl:text>&#9;&#10;</xsl:text>
  	<xsl:text>&#9;imas.close();&#10;</xsl:text> 
 	<xsl:text>}&#10;</xsl:text>
         <xsl:text>&#10;</xsl:text>
     </xsl:template>
     
 
+ 
+  <xsl:template match="field" mode="putDynamic">
+
+
+
+	<xsl:if test="@type ='dynamic' or @data_type='structure' or @data_type='struct_array'"> <!-- This skips the routine for non timed fields -->
+	<xsl:text>&#10;&#9;&#9;&#9;//// </xsl:text><xsl:value-of select="@name"/> : <xsl:value-of select="@path"/> : <xsl:value-of select="@data_type"/> : :<xsl:value-of select="@type"/>:<xsl:text>&#10;</xsl:text>
+		<xsl:apply-templates select="." mode="put">
+                	<xsl:with-param name="dynamicOnly" select="true()"/>
+			<xsl:with-param name="staticOnly" select="false()"/>
+                </xsl:apply-templates>
+	</xsl:if>
+    </xsl:template>
+
+
+ <xsl:template match="field" mode="putStatic">
+
+<xsl:if test="@type !='dynamic' or not(@type) or @data_type='structure' or (@data_type='struct_array' and @type !='dynamic')"> <!-- This skips the routine for timed fields when using this template in PUT_NON_TIMED mode -->
+
+	<xsl:text>&#10;&#9;&#9;&#9;///STATIC!! </xsl:text><xsl:value-of select="@name"/> : <xsl:value-of select="@path"/> : <xsl:value-of select="@data_type"/> : :<xsl:value-of select="@type"/>:<xsl:text>&#10;</xsl:text>
+
+
+		<xsl:apply-templates select="." mode="put">
+                  	<xsl:with-param name="dynamicOnly" select="false()"/>
+			<xsl:with-param name="staticOnly" select="true()"/>
+                </xsl:apply-templates>
+	</xsl:if>
+    </xsl:template>
+
     <!-- field put() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="put">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
+
 	<xsl:call-template name="COMMENT_FIELD"/>
         <xsl:call-template name="setValue">
           <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
 		<xsl:with-param name="slice" select="false()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
 
 	</xsl:call-template>
     </xsl:template>
 
     <!-- field putSlice() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="putSlice">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 	<xsl:call-template name="COMMENT_FIELD"/>
         <xsl:call-template name="setValue">
           <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
 		<xsl:with-param name="slice" select="true()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
 
 	</xsl:call-template>
     </xsl:template>
 
     <!-- field put() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="put">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 		<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="putStructArray">
             <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
-            <xsl:with-param name="resize" select="true()"/>
 	<xsl:with-param name="slice" select="false()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
         </xsl:call-template>
    </xsl:template>
 
   <!-- field put() for array of structures -->
     <xsl:template match="field[@data_type='structure']" mode="put">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 		<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="putStructArray">
             <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
-            <xsl:with-param name="resize" select="false()"/>
 	<xsl:with-param name="slice" select="false()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
         </xsl:call-template>
    </xsl:template>
   
 
     <!-- field put() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="putSlice">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 		<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="putStructArray">
             <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
-            <xsl:with-param name="resize" select="true()"/>
 	<xsl:with-param name="slice" select="true()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
         </xsl:call-template>
     </xsl:template>
 
   <!-- field put() for array of structures -->
     <xsl:template match="field[@data_type='structure']" mode="putSlice">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 		<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="putStructArray">
             <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
-            <xsl:with-param name="resize" select="false()"/>
 	<xsl:with-param name="slice" select="true()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
         </xsl:call-template>
    </xsl:template>
 
 
     <xsl:template name="putStructArray">
         <xsl:param name="path"/>
-        <xsl:param name="resize"/>
 	<xsl:param name="slice"/>
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 
-        <xsl:if test="$resize"><xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>.resize(1);&#10;</xsl:text>
+
+ 	<xsl:if test="@data_type='struct_array'">
+	<xsl:if test="(not($dynamicOnly) and ( (@type !='dynamic' or not(@type)) and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])))
+	or
+	(not($staticOnly) and (@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
+	<xsl:text>&#9;&#9;if(ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>.extent(0) &gt; 0) then&#10;</xsl:text>
+		<xsl:text>&#9;&#9;&#9;ids.</xsl:text><xsl:value-of select="substring($path, 1, string-length($path) - 3)"/><xsl:text>.resize(1);&#10;</xsl:text>
+	</xsl:if>
 	</xsl:if>
         <xsl:for-each select="field[not(@data_type='struct_array' or @data_type='structure')]">
 		<xsl:call-template name="COMMENT_FIELD"/>
 	     	<xsl:call-template name="setValue">
         		<xsl:with-param name="path" select="concat($path, '.', @name)"/>
 			<xsl:with-param name="slice" select="$slice"/>
+			<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+			<xsl:with-param name="staticOnly" select="$staticOnly"/>
 		</xsl:call-template>
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='structure']">
 	  <xsl:call-template name="COMMENT_FIELD"/>
 	  <xsl:call-template name="putStructArray">
                 <xsl:with-param name="path" select="concat($path, '.', @name)"/>
-                <xsl:with-param name="resize" select="false()"/>
 		<xsl:with-param name="slice" select="$slice"/>
+		<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+		<xsl:with-param name="staticOnly" select="$staticOnly"/>
             </xsl:call-template>
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='struct_array']">
 	    <xsl:call-template name="COMMENT_FIELD"/>
             <xsl:call-template name="putStructArray">
                 <xsl:with-param name="path" select="concat($path, '.', @name, '(0)')"/>
-                <xsl:with-param name="resize" select="true()"/>
 		<xsl:with-param name="slice" select="$slice"/>
+		<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+		<xsl:with-param name="staticOnly" select="$staticOnly"/>
             </xsl:call-template>
         </xsl:for-each>
     </xsl:template> 
@@ -289,71 +434,83 @@
 
     <!-- field get() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="get">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 	<xsl:call-template name="COMMENT_FIELD"/>
-    <xsl:choose>
-	
-	  <xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
-      <xsl:otherwise>
-		   <xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
- 			<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
-		</xsl:otherwise>
-        </xsl:choose>
+		<xsl:call-template name="COMMENT_FIELD"/>
+	     	<xsl:call-template name="setValue">
+        		<xsl:with-param name="path" select="translate(@path, '/', '.')"/>
+			<xsl:with-param name="slice" select="false()"/>
+			<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+			<xsl:with-param name="staticOnly" select="$staticOnly"/>
+		</xsl:call-template>
     </xsl:template>
 
 
     <!-- field get() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="get">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 	<xsl:call-template name="COMMENT_FIELD"/>
        <xsl:call-template name="getStructArray">
             <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
 	     <xsl:with-param name="slice" select="false()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
         </xsl:call-template>
   </xsl:template>
 
     <xsl:template match="field[@data_type='structure']" mode="get">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 	<xsl:call-template name="COMMENT_FIELD"/>
        <xsl:call-template name="getStructArray">
             <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
 	     <xsl:with-param name="slice" select="false()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
         </xsl:call-template>
   </xsl:template>
 
     <!-- field getSlice() -->
     <xsl:template match="field[not(@data_type='structure' or @data_type='struct_array')]" mode="getSlice">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
    <xsl:call-template name="COMMENT_FIELD"/>
-    <xsl:choose>
-  	<xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
-	<xsl:otherwise>
-		<xsl:choose>
-                	<xsl:when test="@type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-				<xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
-        		</xsl:when>
-	        	<xsl:otherwise>
-				<xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="translate(@path, '/', '.')"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
-     	        	</xsl:otherwise>
-            </xsl:choose>
-		<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
-	</xsl:otherwise>
-     </xsl:choose>
+		<xsl:call-template name="COMMENT_FIELD"/>
+	     	<xsl:call-template name="getValue">
+       			<xsl:with-param name="path" select="translate(@path, '/', '.')"/>
+			<xsl:with-param name="slice" select="true()"/>
+			<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+			<xsl:with-param name="staticOnly" select="$staticOnly"/>
+		</xsl:call-template>
     </xsl:template>
 
         
 
     <!-- field get() for array of structures -->
     <xsl:template match="field[@data_type='struct_array']" mode="getSlice">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 	<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="getStructArray">
             <xsl:with-param name="path" select="concat(translate(@path, '/', '.'), '(0)')"/>
 	     <xsl:with-param name="slice" select="true()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
         </xsl:call-template>
     </xsl:template>
 
     <!-- field get() for array of structures -->
     <xsl:template match="field[@data_type='structure']" mode="getSlice">
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
 	<xsl:call-template name="COMMENT_FIELD"/>
       <xsl:call-template name="getStructArray">
             <xsl:with-param name="path" select="translate(@path, '/', '.')"/>
 	     <xsl:with-param name="slice" select="true()"/>
+	    	<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+   	    	<xsl:with-param name="staticOnly" select="$staticOnly"/>
         </xsl:call-template>
     </xsl:template>
     
@@ -362,25 +519,24 @@
     <xsl:template name="getStructArray">
         <xsl:param name="path"/>
 	<xsl:param name="slice"/>
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
         <xsl:for-each select="field[not(@data_type='struct_array' or @data_type='structure')]">
-   	<xsl:call-template name="COMMENT_FIELD"/>
-            <xsl:choose>
-		<xsl:when test="@name='homogeneous_time'">              <xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text></xsl:when>
-                <xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-      		  <xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
-			<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
-        	</xsl:when>
-	        <xsl:otherwise>
-			<xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="concat($path, '.', @name)"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
-			<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
-     	        </xsl:otherwise>
-            </xsl:choose>
+		<xsl:call-template name="COMMENT_FIELD"/>
+	     	<xsl:call-template name="getValue">
+        		<xsl:with-param name="path" select="concat($path, '.', @name)"/>
+			<xsl:with-param name="slice" select="$slice"/>
+			<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+			<xsl:with-param name="staticOnly" select="$staticOnly"/>
+		</xsl:call-template>
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='structure']">
    		<xsl:call-template name="COMMENT_FIELD"/>
 		<xsl:call-template name="getStructArray">
                 	<xsl:with-param name="path" select="concat($path, '.', @name)"/>
 		   	<xsl:with-param name="slice" select="$slice"/>
+		<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+		<xsl:with-param name="staticOnly" select="$staticOnly"/>
             	</xsl:call-template>
         </xsl:for-each>
         <xsl:for-each select="field[@data_type='struct_array']">
@@ -388,20 +544,84 @@
             <xsl:call-template name="getStructArray">
                 <xsl:with-param name="path" select="concat($path, '.', @name, '(0)')"/>
 		 <xsl:with-param name="slice" select="$slice"/>
+		<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
+		<xsl:with-param name="staticOnly" select="$staticOnly"/>
             </xsl:call-template>
         </xsl:for-each>
     </xsl:template>
     
-    
+   <xsl:template name="getValue">
+        <xsl:param name="path"/>
+	<xsl:param name="slice"/>
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
+	
+	<xsl:if test="(not($dynamicOnly) and ( (@type !='dynamic' or not(@type)) and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])))
+	or
+	(not($staticOnly) and (@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
+
+	<xsl:choose>
+		<xsl:when test="@name='homogeneous_time'">
+			<xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text>
+		</xsl:when>
+		<xsl:when test="@name='time' and @type='dynamic' and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">
+			<xsl:choose>
+				<xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
+      					<xsl:text>&#9;&#9;status = assertTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, true);&#10;</xsl:text>
+					<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
+        			</xsl:when>
+	        		<xsl:otherwise>
+					<xsl:text>&#9;&#9;status = assertTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, false);&#10;</xsl:text>
+					<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
+     	        		</xsl:otherwise>
+            		</xsl:choose>
+		</xsl:when>
+
+  		<xsl:otherwise>
+ 			<xsl:choose>
+	   			<xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
+					<xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", true);&#10;</xsl:text>
+					<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
+        			</xsl:when>
+	        		<xsl:otherwise>
+					<xsl:text>&#9;&#9;status = assertField(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, "</xsl:text><xsl:value-of select="ancestor::IDS/@name"/><xsl:text>/</xsl:text><xsl:value-of select="@path"/><xsl:text>", false);&#10;</xsl:text>
+					<xsl:text>&#9;&#9;checkStatus(status);&#10;</xsl:text>
+     	        		</xsl:otherwise>
+            		</xsl:choose>
+
+         
+		</xsl:otherwise>
+    	</xsl:choose>
+  </xsl:if>
+   </xsl:template>
+
+
+
    <xsl:template name="setValue">
         <xsl:param name="path"/>
 	<xsl:param name="slice"/>
+	<xsl:param name="dynamicOnly"/>
+	<xsl:param name="staticOnly"/>
+	
+	<xsl:if test="(not($dynamicOnly) and ( (@type !='dynamic' or not(@type)) and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])))
+	or
+	(not($staticOnly) and (@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
+
 	<xsl:choose>
 		<xsl:when test="@name='homogeneous_time'">
 			<xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="$path"/><xsl:text> = 1;&#10;</xsl:text>
 		</xsl:when>
-      <!-- <xsl:when test="@name='time'  and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">              <xsl:text>getTime()</xsl:text></xsl:when>
--->
+		<xsl:when test="@name='time' and @type='dynamic' and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">
+			<xsl:choose>
+				<xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
+      					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, true);&#10;</xsl:text>
+        			</xsl:when>
+	        		<xsl:otherwise>
+					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, false);&#10;</xsl:text>
+     	        		</xsl:otherwise>
+            		</xsl:choose>
+		</xsl:when>
+
   		<xsl:otherwise>
  			<xsl:choose>
 				<xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
@@ -413,6 +633,7 @@
             		</xsl:choose>
 		</xsl:otherwise>
     	</xsl:choose>
+  </xsl:if>
    </xsl:template>
 <!--
             <xsl:when test="@data_type='str_type' or @data_type='STR_0D'">         <xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="$path"/><xsl:text> = getString(</xsl:text></xsl:when>
