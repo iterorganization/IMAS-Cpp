@@ -106,7 +106,7 @@
     
 
     <xsl:template match="IDS" mode="set_non_timed">
-        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed(IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids){&#10;</xsl:text>
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed(IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text>&amp; ids){&#10;</xsl:text>
         <xsl:text>&#9;printf("Calling setNonTimed() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
 	 <xsl:apply-templates select="field" mode="putStatic"/>
 	<xsl:text>}&#10;</xsl:text>
@@ -114,8 +114,8 @@
     </xsl:template>
 
     <xsl:template match="IDS" mode="set_timed">
-        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids, int timeIdx){&#10;</xsl:text>
-        <xsl:text>&#9;printf("Calling setNonTimed() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text>&amp; ids, int timeIdx){&#10;</xsl:text>
+        <xsl:text>&#9;printf("Calling setTimed() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
 	 <xsl:apply-templates select="field" mode="putDynamic"/>
 	<xsl:text>}&#10;</xsl:text>
        <xsl:text>&#10;</xsl:text>
@@ -171,7 +171,7 @@
 <xsl:text>&#9;&#9;for (int j = 0; j &lt; noOfSlices; j++)&#10;</xsl:text>
  	<xsl:text>&#9;&#9;{&#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;printf(" --- --- Testing slice : %d\n", j);&#10;</xsl:text>
-	<xsl:text>&#9;&#9;&#9;if (j == 1) &#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;if (j == 0) &#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;{&#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setNonTimed(ids);&#10;</xsl:text> 
 	<xsl:text>&#9;&#9;&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_setTimed(ids, j);&#10;</xsl:text> 
@@ -245,7 +245,7 @@
 
 	<xsl:text>&#9;&#9;&#9;ids.getSlice(0, getTime(j), CLOSEST_SAMPLE);&#10;</xsl:text> 
 
-	<xsl:text>&#9;&#9;&#9;if (j == 1)&#10;</xsl:text>
+	<xsl:text>&#9;&#9;&#9;if (j == 0)&#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;{&#10;</xsl:text>
 	<xsl:text>  &#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;// ======================== GET STATIC DATA (ONCE) =====================  &#10;</xsl:text>
@@ -281,7 +281,7 @@
 
 	<xsl:if test="@type ='dynamic' or @data_type='structure' or @data_type='struct_array'"> <!-- This skips the routine for non timed fields -->
 	<xsl:text>&#10;&#9;&#9;&#9;//// </xsl:text><xsl:value-of select="@name"/> : <xsl:value-of select="@path"/> : <xsl:value-of select="@data_type"/> : :<xsl:value-of select="@type"/>:<xsl:text>&#10;</xsl:text>
-		<xsl:apply-templates select="." mode="put">
+		<xsl:apply-templates select="." mode="putSlice">
                 	<xsl:with-param name="dynamicOnly" select="true()"/>
 			<xsl:with-param name="staticOnly" select="false()"/>
                 </xsl:apply-templates>
@@ -296,7 +296,7 @@
 	<xsl:text>&#10;&#9;&#9;&#9;///STATIC!! </xsl:text><xsl:value-of select="@name"/> : <xsl:value-of select="@path"/> : <xsl:value-of select="@data_type"/> : :<xsl:value-of select="@type"/>:<xsl:text>&#10;</xsl:text>
 
 
-		<xsl:apply-templates select="." mode="put">
+		<xsl:apply-templates select="." mode="putSlice">
                   	<xsl:with-param name="dynamicOnly" select="false()"/>
 			<xsl:with-param name="staticOnly" select="true()"/>
                 </xsl:apply-templates>
@@ -613,7 +613,7 @@
 		<xsl:when test="@name='time' and @type='dynamic' and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">
 			<xsl:choose>
 				<xsl:when test="$slice and @type='dynamic' and not(ancestor::field[@data_type='struct_array' and @maxoccur='unbounded'])  ">
-      					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, j);&#10;</xsl:text>
+      					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, timeIdx);&#10;</xsl:text>
         			</xsl:when>
 	        		<xsl:otherwise>
 					<xsl:text>&#9;&#9;setTime(ids.</xsl:text><xsl:value-of select="$path"/><xsl:text>, -1);&#10;</xsl:text>

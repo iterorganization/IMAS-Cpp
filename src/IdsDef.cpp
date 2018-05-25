@@ -40,55 +40,55 @@ void checkObject(void *obj)
 
         void IdsNs::Ids::setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1)
         {
-            blitz::Array<int,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
+            blitz::Array<int,1> newArray(arrayPtr, shape(dim1), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<float,1>&array,float *arrayPtr, int dim1)
         {
-            blitz::Array<float,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
+            blitz::Array<float,1> newArray(arrayPtr, shape(dim1), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<double,1>&array,double *arrayPtr, int dim1)
         {
-            blitz::Array<double,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
+            blitz::Array<double,1> newArray(arrayPtr, shape(dim1), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<int,2>&array,int *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<int,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
+            blitz::Array<int,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<float,2>&array,float *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<float,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
+            blitz::Array<float,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<double,2>&array,double *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<double,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
+            blitz::Array<double,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<int,3>&array,int *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<int,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
+            blitz::Array<int,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<float,3>&array,float *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<float,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
+            blitz::Array<float,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<double,3>&array,double *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<double,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
+            blitz::Array<double,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
@@ -96,57 +96,57 @@ void checkObject(void *obj)
 
         void IdsNs::Ids::setArray(blitz::Array<int,4>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<int,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
+            blitz::Array<int,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<float,4>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<float,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
+            blitz::Array<float,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<double,4>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<double,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
+            blitz::Array<double,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,5>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<int,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
+            blitz::Array<int,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<float,5>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<float,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
+            blitz::Array<float,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<double,5>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<double,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
+            blitz::Array<double,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,6>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
+            blitz::Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<float,6>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<float,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
+            blitz::Array<float,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
         void IdsNs::Ids::setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<double,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
+            blitz::Array<double,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
@@ -178,10 +178,12 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,2> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<int,2> fortranOrderArray((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[2] = {	array.extent(0), 
 					array.extent(1)};
-
+	std::cout<< "WRITE DATA before conv:" << std::endl << array << std::endl;
+		std::cout<< "WRITE DATA after conv:"<< std::endl << fortranOrderArray << std::endl;
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, arrayOfSizes);
   		return status;
         }
@@ -189,7 +191,8 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,3> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<int,3> fortranOrderArray((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[3] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2)};
@@ -201,7 +204,8 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,4> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<int,4> fortranOrderArray((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[4] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
@@ -214,7 +218,8 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,5> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<int,5> fortranOrderArray((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[5] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
@@ -228,7 +233,8 @@ void checkObject(void *obj)
     	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,6> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<int,6> fortranOrderArray((int*) array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[6] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
@@ -263,7 +269,8 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,2> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<double,2> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[2] = {	array.extent(0), 
 					array.extent(1)};
 
@@ -274,7 +281,8 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,3> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<double,3> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[3] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2)};
@@ -286,7 +294,8 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,4> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<double,4> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[4] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
@@ -299,7 +308,8 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,5> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<double,5> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[5] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
@@ -313,7 +323,8 @@ void checkObject(void *obj)
     	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,6> array)
         {
         	int status = -1;
-		void* ptrData = (void*) array.data();
+		blitz::Array<double,6> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[6] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
@@ -535,7 +546,7 @@ void checkObject(void *obj)
     			return status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
-
+		std::cout<< "READ DATA after CONV:" << std::endl << array << std::endl;
   		return status;
 	}
 

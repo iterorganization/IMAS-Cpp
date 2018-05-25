@@ -447,7 +447,7 @@ int arraySize;
 
 	ctx = getOpCtx;
 
-	status = this->isHomogeneous(getOpCtx,isIdsHomogeneous );
+	status = this->isHomogeneous(ctx,isIdsHomogeneous );
 	if(status &lt; 0) 
 		return status;
 
@@ -530,10 +530,6 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	double sliceTime = -1.0;
 
 
-// SHOULD we use only homo-time?
-// timebasepath = "time";
-
-
 	if(!connected) 
 		return -1;
 
@@ -542,7 +538,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	else
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
-	
+	isIdsHomogeneous = ids_properties.homogeneous_time;
+
 	sliceTime = this->time(0);
 
 	// Open put context
@@ -649,9 +646,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
 	
-	status = this->isHomogeneous(getSliceOpCtx,isIdsHomogeneous );
-	if(status &lt; 0) 
-		return status;
+	
 
 	// Open put context
 	getSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, READ_OP, inTime, interpolMode);
@@ -660,6 +655,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 		return getSliceOpCtx;
 
 	ctx = getSliceOpCtx;
+
+	status = this->isHomogeneous(ctx,isIdsHomogeneous );
+	if(status &lt; 0) 
+		return status;
 
 	<xsl:apply-templates select="field" mode="GET_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'yes'"/>
@@ -963,7 +962,14 @@ See IDSDef2Classes.xsl  -->
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 		<xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
+			<xsl:choose>
+				<xsl:when test="ancestor::field[@data_type='struct_array']">
+					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
+				</xsl:when>
+  				<xsl:otherwise>
+   			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
+  				</xsl:otherwise>
+			</xsl:choose>
 			timeBasePath = "";
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			if(arraySize > 0)
@@ -986,10 +992,19 @@ See IDSDef2Classes.xsl  -->
 			}
 		</xsl:when>
  		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">
-			<xsl:text>//  ARRAY of TYPE 2 YYY &#xA;</xsl:text>
 		
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
+			<xsl:choose>
+				<xsl:when test="ancestor::field[@data_type='struct_array']">
+					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
+	//<xsl:value-of select="ancestor::field[@data_type='struct_array'][1]/@path"/>
+
+	//<xsl:value-of  select="@path"/>
+				</xsl:when>
+  				<xsl:otherwise>
+   			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
+  				</xsl:otherwise>
+			</xsl:choose>
 			timeBasePath = "";
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			if(arraySize > 0)
@@ -1011,11 +1026,26 @@ See IDSDef2Classes.xsl  -->
  			}
 		</xsl:when>
 		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
-			<xsl:text>//  ARRAY of TYPE 3 XXX&#xA;</xsl:text>
 
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
-			timeBasePath = "<xsl:value-of select = "@name"/>/time";
+			<xsl:choose>
+				<xsl:when test="ancestor::field[@data_type='struct_array']">
+					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
+					if (isIdsHomogeneous) 
+          					timeBasePath = "/time";
+       					else
+						timeBasePath = &quot;<xsl:call-template  name="printAosRelativePath"/>/time&quot;;
+	//<xsl:value-of select="ancestor::field[@data_type='struct_array'][1]/@path"/>
+	//<xsl:value-of select="@path"/>
+				</xsl:when>
+  				<xsl:otherwise>
+   			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
+					if (isIdsHomogeneous) 
+          					timeBasePath = "/time";
+       					else
+						timeBasePath = &quot;<xsl:value-of select="@path"/>/time&quot;;
+  				</xsl:otherwise>
+			</xsl:choose>
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			if(arraySize > 0)
 			{	
@@ -1059,9 +1089,9 @@ See IDSDef2Classes.xsl  -->
 		<xsl:choose>
 			<xsl:when test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
     		if (isIdsHomogeneous) 
-			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
+			timeBasePath="/time";
     		else
-       			timeBasePath="/time";
+       			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
   			</xsl:when>
   			<xsl:otherwise>
     				timeBasePath = "";
@@ -1100,7 +1130,16 @@ See IDSDef2Classes.xsl  -->
 <!-- XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX -->
 		<xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
+			<xsl:choose>
+				<xsl:when test="ancestor::field[@data_type='struct_array']">
+					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;	
+	//<xsl:value-of select="ancestor::field[@data_type='struct_array'][1]/@path"/>
+	//<xsl:value-of select="@path"/>
+				</xsl:when>
+  				<xsl:otherwise>
+   			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
+  				</xsl:otherwise>
+			</xsl:choose>
 			timeBasePath = "";
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 			if (aosCtx &lt; 0)  
@@ -1124,7 +1163,16 @@ See IDSDef2Classes.xsl  -->
 		</xsl:when>
  		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">	
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
+			<xsl:choose>
+				<xsl:when test="ancestor::field[@data_type='struct_array']">
+					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
+	//<xsl:value-of select="ancestor::field[@data_type='struct_array'][1]/@path"/>
+	//<xsl:value-of select="@path"/>
+				</xsl:when>
+  				<xsl:otherwise>
+   			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
+  				</xsl:otherwise>
+			</xsl:choose>
 			timeBasePath = "";
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 			if (aosCtx &lt; 0)  
@@ -1148,8 +1196,24 @@ See IDSDef2Classes.xsl  -->
 		</xsl:when>
 		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
-			fieldPath = "<xsl:value-of select = "@name"/>";
-			timeBasePath = "<xsl:value-of select = "@name"/>/time";
+			<xsl:choose>
+				<xsl:when test="ancestor::field[@data_type='struct_array']">
+					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
+					if (isIdsHomogeneous) 
+          					timeBasePath = "/time";
+       					else
+						timeBasePath = &quot;<xsl:call-template  name="printAosRelativePath"/>/time&quot;;
+	//<xsl:value-of select="ancestor::field[@data_type='struct_array'][1]/@path"/>
+	//<xsl:value-of select="@path"/>
+				</xsl:when>
+  				<xsl:otherwise>
+   			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
+					if (isIdsHomogeneous) 
+          					timeBasePath = "/time";
+       					else
+						timeBasePath = &quot;<xsl:value-of select="@path"/>/time&quot;;
+  				</xsl:otherwise>
+			</xsl:choose>
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 			if (aosCtx &lt; 0)  
 				return aosCtx; 
@@ -1194,9 +1258,9 @@ See IDSDef2Classes.xsl  -->
 		<xsl:choose>
 			<xsl:when test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
     		if (isIdsHomogeneous) 
-			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
+			timeBasePath="/time";
     		else
-       			timeBasePath="/time";
+       			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
   			</xsl:when>
   			<xsl:otherwise>
     				timeBasePath = "";
@@ -1297,7 +1361,7 @@ See IDSDef2Classes.xsl  -->
 </xsl:template>
 
 <xsl:template name ="printAosRelativePath">
-	<xsl:variable name="AoSPath" select="ancestor-or-self::field[@data_type='struct_array'][1]/@path"/>
+	<xsl:variable name="AoSPath" select="ancestor::field[@data_type='struct_array'][1]/@path"/>
 	<xsl:variable name="elementPath" select="@path"/>
 
 	<xsl:value-of select="replace($elementPath,concat($AoSPath,'/'),'')"/>
