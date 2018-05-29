@@ -11,6 +11,7 @@
  <xsl:template match = "/IDSs">
  <exsl:document href="src/UALClasses.h" standalone="yes" method="text">
 
+
 #ifndef _UAL_CLASSES
 
 #define _UAL_CLASSES
@@ -245,7 +246,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     int putSlice(int ctx, bool isIdsHomogeneous);
      </xsl:if> 
     int replaceLastSlice(int idx);
-    int deleteAll(int idx);
+    int deleteAll(int ctx);
     int remove(int idx);
     int putNonTimed(int idx);
     void discardCache(int idx);
@@ -266,8 +267,8 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     int putSlice(int ctx, bool isIdsHomogeneous);
     </xsl:if> 
 
-    int replaceLastSlice(int idx);
-    int deleteAll(int idx);
+    int replaceLastSlice(int c);
+    int deleteAll(int ctx);
     int remove(int idx);
     int putNonTimed(int idx);
     void discardCache(int idx);

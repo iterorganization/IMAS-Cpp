@@ -449,10 +449,13 @@ int arraySize;
 
 	status = this->isHomogeneous(ctx,isIdsHomogeneous );
 	if(status &lt; 0) 
+	{	
+		ual_end_action(ctx);
 		return status;
+	}
 
  	<xsl:apply-templates select="field" mode="GET_SINGLE"/> 
-	ual_end_action(getOpCtx);
+	ual_end_action(ctx);
 	
 	return 0;
 }
@@ -561,20 +564,9 @@ return 0;
 
 
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove(int idx)
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove(int iOccurrence)
 {
-string lepath;
-char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int  i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-if(!connected) return -1;
-char *basePath = "<xsl:value-of select="@name"/>";
-char path[strlen(basePath)+4];
-if(idx &lt; 1)
-sprintf(path, "%s", basePath);
-else
-sprintf(path, "%s/%d", basePath, idx);
-<!-- <xsl:apply-templates select="field" mode="DELETE"/>  -->
-return 0;
+	return this->deleteAll(iOccurrence);
 }
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove()
@@ -582,19 +574,35 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove()
 	return this->remove(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int idx)
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 {
-string lepath;
-char * clepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
-int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
-if(!connected) return -1;
-char *basePath = "<xsl:value-of select="@name"/>";
-char path[strlen(basePath)+4];
-if(idx &lt; 1)
-sprintf(path, "%s", basePath);
-else
-sprintf(path, "%s/%d", basePath, idx);
-<!-- <xsl:apply-templates select="field" mode="DELETE"/>  -->
+	int status;
+	char *idsName = "<xsl:value-of select="@name"/>";
+	char idsFullName[strlen(idsName) + 4];
+	int pulseCtx = this->pulseCtx;
+	int deleteOpCtx = -1;
+	int ctx = -1;
+	int aosCtx = -1;
+	std::string fieldPath;
+	int arraySize;
+
+	if(!connected) 
+		return -1;
+
+	if(iOccurrence &lt; 1)
+		sprintf(idsFullName, "%s", idsName);
+	else
+		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+
+	// Open put context
+	deleteOpCtx = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP);
+
+	if(deleteOpCtx &lt; 0) 
+		return deleteOpCtx;
+
+	ctx = deleteOpCtx;
+
+ <xsl:apply-templates select="field" mode="DELETE"/>  
 return 0;
 }
 
@@ -658,7 +666,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 
 	status = this->isHomogeneous(ctx,isIdsHomogeneous );
 	if(status &lt; 0) 
+	{	
+		ual_end_action(ctx);
 		return status;
+	}
 
 	<xsl:apply-templates select="field" mode="GET_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'yes'"/>
@@ -671,6 +682,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_GET"/> 
 
   <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT_SLICE"/>
+
+<xsl:apply-templates select=".//field[@data_type='structure']" mode="METHOD_DELETE_ALL"/>
 
 
 <!--<xsl:apply-templates select="." mode="DUMP"/>
@@ -742,7 +755,20 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 }
 </xsl:template>
 
+<xsl:template match="field[@data_type='structure']" mode="METHOD_DELETE_ALL">
+     <xsl:text>&#xA;&#xA;</xsl:text>
+    <xsl:call-template name="COMMENT_FIELD"/>
+<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::deleteAll(int ctx)&#xA;</xsl:text>
+{
+	int status = -1;
+	std::string fieldPath = "";
 
+	<xsl:apply-templates select="field" mode="DELETE"/>
+
+
+	return 0;
+}
+</xsl:template>
 
 
 <!--=================================================-->
@@ -771,59 +797,23 @@ See IDSDef2Classes.xsl  -->
 <!--=================================================-->
 
 <xsl:template match="field" mode="DELETE">
-<xsl:param name="variable_path"/>
-<xsl:param name="mds_path"/>
-<xsl:choose>
-	<xsl:when test="@data_type='structure'">
-		<xsl:choose>
-			<xsl:when test="$variable_path">
-				<xsl:apply-templates select="field" mode="DELETE">
-					<xsl:with-param name="variable_path" select="concat($variable_path,'.',@name)"/>
-					<xsl:with-param name="mds_path" select="concat($mds_path,'+string(&quot;/',@name,'&quot;)')"/>
-				</xsl:apply-templates>
-			</xsl:when>
-			<xsl:otherwise>
-				<xsl:apply-templates select="field" mode="DELETE">
-					<xsl:with-param name="variable_path" select="@name"/>
-					<xsl:with-param name="mds_path" select="concat('&quot;',@name,'&quot;')"/>
-				</xsl:apply-templates>
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:when>
-	<!--========== Arrays of structures ==========-->
-  <xsl:when test="@data_type='struct_array' and @maxoccur!='unbounded'">
-		<xsl:choose>
-			<xsl:when test="$mds_path">
-				for (i<xsl:value-of select="concat(@name,generate-id(.))"/> = 0;i<xsl:value-of select="concat(@name,generate-id(.))"/>&lt;<xsl:value-of select="@maxoccur"/>; i<xsl:value-of select="concat(@name,generate-id(.))"/>++){
-				<xsl:apply-templates select="field" mode="DELETE">
-					<xsl:with-param name="variable_path" select="concat($variable_path,'.',@name,'(i',@name,generate-id(.),')')"/>
-					<xsl:with-param name="mds_path" select="concat($mds_path,' + ','string(&quot;/',@name,'/&quot;) + int2str(i',@name,generate-id(.),',1)')"/>
-				</xsl:apply-templates>
-				}
-			</xsl:when>
-			<xsl:otherwise>
-				for (i<xsl:value-of select="concat(@name,generate-id(.))"/> = 0;i<xsl:value-of select="concat(@name,generate-id(.))"/>&lt;<xsl:value-of select="@maxoccur"/>; i<xsl:value-of select="concat(@name,generate-id(.))"/>++){
-				<xsl:apply-templates select="field" mode="DELETE">
-					<xsl:with-param name="variable_path" select="concat(@name,'(i',@name,generate-id(.),')')"/>
-					<xsl:with-param name="mds_path" select="concat('&quot;',@name,'/&quot; + int2str(i',@name,generate-id(.),',1)')"/>
-				</xsl:apply-templates>
-				}
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:when>
-	<xsl:otherwise>
-		<xsl:choose>
-			<xsl:when test="$mds_path">
-				//lepath =  <xsl:value-of select="$mds_path"/>  + string("/<xsl:value-of select="@name"/>");
-				//clepath =   const_cast&lt;char *&gt; (lepath.c_str());
-				deleteData(expIdx, path, clepath);
-			</xsl:when>
-			<xsl:otherwise>
-				deleteData(expIdx, path, "<xsl:value-of select="@path"/>");
-			</xsl:otherwise>
-		</xsl:choose>
-	</xsl:otherwise>
-</xsl:choose>
+	<xsl:call-template name="COMMENT_FIELD"/>
+	<xsl:choose>
+		<xsl:when test="@data_type='structure'">
+			status = <xsl:value-of select="@name"/>.deleteAll(ctx);
+			if (status != 0)
+				return status;
+		</xsl:when>
+		<xsl:otherwise>
+			fieldPath = "<xsl:value-of select="@path"/>";
+			status = ual_delete_data(ctx, fieldPath.c_str());
+			if (status != 0)
+			{	
+				ual_end_action(ctx);
+				return status; 
+			}
+		</xsl:otherwise>
+	</xsl:choose>
 </xsl:template>
 
 <!--=================================================-->
@@ -976,19 +966,32 @@ See IDSDef2Classes.xsl  -->
 			{
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 				if (aosCtx &lt; 0)  
+				{	
+					ual_end_action(ctx);
 					return aosCtx; 
-			
+				}
+
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
 					if (status != 0)
-						return status;
+					{	
+						ual_end_action(ctx);
+						return status; 
+					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (status != 0)
-						return status;
+					{	
+						ual_end_action(aosCtx);
+						ual_end_action(ctx);
+						return status; 
+					}
 				}
 				status = ual_end_action(aosCtx);
 				if (status != 0)  
+				{	
+					ual_end_action(ctx);
 					return status; 
+				}
 			}
 		</xsl:when>
  		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">
@@ -1011,18 +1014,32 @@ See IDSDef2Classes.xsl  -->
 			{	
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 				if (aosCtx &lt; 0)  
-					return aosCtx; 
+				{	
+					ual_end_action(aosCtx);
+					return status;
+				}
+
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
 					if (status != 0)
+					{	
+						ual_end_action(ctx);
 						return status;
+					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (status != 0)
+					{	
+						ual_end_action(aosCtx);
+						ual_end_action(ctx);
 						return status;
+					}
 				}
 				status = ual_end_action(aosCtx);
 				if (status != 0)  
-					return status; 
+				{	
+					ual_end_action(ctx);
+					return status;
+				}
  			}
 		</xsl:when>
 		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
@@ -1051,18 +1068,33 @@ See IDSDef2Classes.xsl  -->
 			{	
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 				if (aosCtx &lt; 0)  
-					return aosCtx; 
+				{	
+					ual_end_action(ctx);
+					return aosCtx;
+				}
+
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
 					if (status != 0)
+					{	
+						ual_end_action(ctx);
 						return status;
+					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (status != 0)
+					{	
+						ual_end_action(aosCtx);
+						ual_end_action(ctx);
 						return status;
+					}
 				}
 				status = ual_end_action(aosCtx);
 				if (status != 0)  
-					return status; 
+				{	
+					ual_end_action(ctx);
+					return status;
+				}
+					 
  			}
 		</xsl:when>
 
@@ -1099,7 +1131,10 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
 		status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
 		if (status) 
+		{	
+			ual_end_action(ctx);
 			return status;
+		}
 	</xsl:when>
 		<xsl:otherwise>
 			//Doc Put <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
@@ -1143,7 +1178,10 @@ See IDSDef2Classes.xsl  -->
 			timeBasePath = "";
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 			if (aosCtx &lt; 0)  
-				return aosCtx; 
+			{	
+				ual_end_action(ctx);
+				return aosCtx;
+			}
 
 			if(arraySize > 0)
 			{	
@@ -1151,14 +1189,24 @@ See IDSDef2Classes.xsl  -->
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
 					if (status != 0)
+					{	
+						ual_end_action(ctx);
 						return status;
+					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (status != 0)
+					{	
+						ual_end_action(aosCtx);
+						ual_end_action(ctx);
 						return status;
+					}
 				}
 				status = ual_end_action(aosCtx);
 				if (status != 0)  
-					return status; 
+				{	
+					ual_end_action(ctx);
+					return status;
+				}
  			}
 		</xsl:when>
  		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">	
@@ -1176,7 +1224,10 @@ See IDSDef2Classes.xsl  -->
 			timeBasePath = "";
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 			if (aosCtx &lt; 0)  
-				return aosCtx; 
+			{	
+					ual_end_action(aosCtx);
+					return status;
+			}
 
 			if(arraySize > 0)
 			{	
@@ -1184,14 +1235,24 @@ See IDSDef2Classes.xsl  -->
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
 					if (status != 0)
+					{	
+						ual_end_action(ctx);
 						return status;
+					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (status != 0)
+					{	
+						ual_end_action(aosCtx);
+						ual_end_action(ctx);
 						return status;
+					}
 				}
 				status = ual_end_action(aosCtx);
 				if (status != 0)  
-					return status; 
+				{	
+					ual_end_action(ctx);
+					return status;
+				}
  			}
 		</xsl:when>
 		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
@@ -1203,8 +1264,6 @@ See IDSDef2Classes.xsl  -->
           					timeBasePath = "/time";
        					else
 						timeBasePath = &quot;<xsl:call-template  name="printAosRelativePath"/>/time&quot;;
-	//<xsl:value-of select="ancestor::field[@data_type='struct_array'][1]/@path"/>
-	//<xsl:value-of select="@path"/>
 				</xsl:when>
   				<xsl:otherwise>
    			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
@@ -1216,7 +1275,10 @@ See IDSDef2Classes.xsl  -->
 			</xsl:choose>
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 			if (aosCtx &lt; 0)  
-				return aosCtx; 
+			{	
+				ual_end_action(aosCtx);
+				return status;
+			}
 
 			if(arraySize > 0)
 			{	
@@ -1224,14 +1286,24 @@ See IDSDef2Classes.xsl  -->
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
 					if (status != 0)
+					{	
+						ual_end_action(ctx);
 						return status;
+					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (status != 0)
+					{	
+						ual_end_action(aosCtx);
+						ual_end_action(ctx);
 						return status;
+					}
 				}
 				status = ual_end_action(aosCtx);
 				if (status != 0)  
-					return status; 
+				{	
+					ual_end_action(ctx);
+					return status;
+				}
  			}
 		</xsl:when>
 
@@ -1268,7 +1340,10 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
 		status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
 		if (status) 
+		{	
+			ual_end_action(ctx);
 			return status;
+		}
 	</xsl:when>
 		<xsl:otherwise>
 			//Doc GET <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
