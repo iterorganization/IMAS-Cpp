@@ -182,8 +182,7 @@ void checkObject(void *obj)
 		void* ptrData = (void*) fortranOrderArray.data();
 		int arrayOfSizes[2] = {	array.extent(0), 
 					array.extent(1)};
-	std::cout<< "WRITE DATA before conv:" << std::endl << array << std::endl;
-		std::cout<< "WRITE DATA after conv:"<< std::endl << fortranOrderArray << std::endl;
+
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, arrayOfSizes);
   		return status;
         }
@@ -546,7 +545,7 @@ void checkObject(void *obj)
     			return status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
-		std::cout<< "READ DATA after CONV:" << std::endl << array << std::endl;
+
   		return status;
 	}
 

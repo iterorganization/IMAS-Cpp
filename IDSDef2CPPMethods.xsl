@@ -333,18 +333,18 @@ return os;
 	<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
 
 	  <xsl:if test="@type='dynamic' and @maxoccur='unbounded' and @data_type='struct_array'">
-		<xsl:text>//  ARRAY of TYPE 3 XXX&#xA;</xsl:text>
+		<xsl:text>//  ARRAY of TYPE 3 &#xA;</xsl:text>
 		<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
 
 	  </xsl:if>
      <xsl:if test="(not(@type) or @type!='dynamic') and @maxoccur='unbounded' and @data_type='struct_array'">
-		<xsl:text>//  ARRAY of TYPE 2 YYY &#xA;</xsl:text>
+		<xsl:text>//  ARRAY of TYPE 2  &#xA;</xsl:text>
 		<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
 
 	  </xsl:if>
 
 	       <xsl:if test="@maxoccur!='unbounded' and @data_type='struct_array'">
-		<xsl:text>//  ARRAY of TYPE 1 BLABLA &#xA;</xsl:text>
+		<xsl:text>//  ARRAY of TYPE 1  &#xA;</xsl:text>
 		<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
 
 	  </xsl:if>

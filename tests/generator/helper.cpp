@@ -255,7 +255,6 @@ void setValue(Array<int,2>&array, bool isReduced)
 	Array<int,2> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;
-	std::cout<< "SET ARRAY:" << std::endl << array << std::endl;
 	delete ptrShape;
 	delete arrayPtr;
 }
@@ -628,7 +627,6 @@ int assertField(const blitz::Array<int, 2> observedValue, const char* fieldPath,
 	blitz::Array<int, 2> expectedValue;
 
 	setValue(expectedValue, sliceMode);
-	std::cout<< "GET ARRAY:" << std::endl << observedValue << std::endl;
 		
 	if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
 		return -1;
