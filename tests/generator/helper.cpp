@@ -27,7 +27,7 @@ const char* PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRS
 
 char* userName = NULL;
 char* dataVersion = NULL;
-char* tokamak = "test";
+const char* tokamak = "test";
 
 char* getUserName()
 { 
