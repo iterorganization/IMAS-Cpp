@@ -64,32 +64,8 @@ void IdsNs::IDS::setPulseCtx(int pulseCtx)
 
 
 
-int IdsNs::IDS::open()
-{
-	int pulseCtx;
-	int status = -1;
 
-  	pulseCtx = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, "", "", ""); 
-  	if (pulseCtx &lt; 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-    		return pulseCtx;
-	}
- 
-
-    	status = ual_open_pulse(pulseCtx, OPEN_PULSE, "");
-	if(status != 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-		return status;
-	}
-	this->pulseCtx = pulseCtx;
-	this->connected = true;
-	this->setPulseCtx(pulseCtx);
-}
-
-
-int IdsNs::IDS::openEnv(char *user, char *tokamak, char *version)
+int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *version)
 {
 	int pulseCtx;
 	int status = -1;
@@ -114,57 +90,7 @@ int IdsNs::IDS::openEnv(char *user, char *tokamak, char *version)
 }
 
 
-
-int IdsNs::IDS::openHdf5()
-{
-	printf("ERROR: Deprecated method: openHdf5()!");
-    	return -1;
-}
-
-void IdsNs::IDS::openPublic(const char* expName)
-{
-int pulseCtx;
-int status = 1;// imas_open_public("ids", shot, run, &amp;idx, expName);
-if(status != 0)
-{
-//printf("Error opening imas shot %d, run %d: %s\n", shot, run, // imas_last_errmsg());
-}
-else
-{
-this->pulseCtx = pulseCtx;
-connected = true;
-this->setPulseCtx(pulseCtx);
-}
-
-}
-int IdsNs::IDS::create()
-{
-	int pulseCtx = -1;
-	int status = 1;
-
-	pulseCtx = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, "", "", ""); 
-  	if (pulseCtx &lt; 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-    		return pulseCtx;
-	}
- 
-
-
-	status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, "");
-	if(status != 0)
-	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-		return status;
-	}
-
-	this->pulseCtx = pulseCtx;
-	this->connected = true;
-	this->setPulseCtx(pulseCtx);
-
-}
-
-int IdsNs::IDS::createEnv(char *user, char *tokamak, char *version)
+int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version)
 {
 	int pulseCtx = -1;
 	int status = 1;
@@ -192,31 +118,6 @@ int IdsNs::IDS::createEnv(char *user, char *tokamak, char *version)
 }
 
 
-
-
-int IdsNs::IDS::createHdf5()
-{
-
-	printf("ERROR: Deprecated method: openHdf5()!");
-    	return -1;
-}
-
-void IdsNs::IDS::createPublic(const char* expName)
-{
-int idx;
-int status = 1;// imas_create_public("ids", shot, run, refShot, refRun, &amp; idx, expName);
-if(status != 0)
-{
-//printf("Error opening imas shot %d, run %d: %s\n", shot, run, // imas_last_errmsg());
-}
-else
-{
-this->pulseCtx = pulseCtx;
-connected = true;
-this->setPulseCtx(pulseCtx);
-}
-}
-
 int IdsNs::IDS::close()
 {
   	int status = ual_close_pulse(this->pulseCtx, CLOSE_PULSE, "");
@@ -228,34 +129,7 @@ int IdsNs::IDS::close()
     	return ual_end_action(this->pulseCtx);
 }
 
-void IdsNs::IDS::enableMemCache()
-{
-if(!connected) return;
-if(this->pulseCtx != -1)
-;// imas_enable_mem_cache(expIdx);
-}
 
-void IdsNs::IDS::disableMemCache()
-{
-if(!connected) return;
-if(this->pulseCtx != -1)
-;// imas_disable_mem_cache(expIdx);
-}
-
-
-void IdsNs::IDS::flushAll()
-{
-	if(!connected) return;
-	if(this->pulseCtx != -1)
-;// imas_flush_mem_cache(expIdx);
-}
-
-void IdsNs::IDS::discardAll()
-{
-	if(!connected) return;
-	if(this->pulseCtx != -1)
-;// imas_discard_mem_cache(expIdx);
-}
 
 int IdsNs::IDS::getTime(char *path, Array&lt;double,1&gt; &amp;time)
 {
@@ -564,16 +438,6 @@ return 0;
 
 
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove(int iOccurrence)
-{
-	return this->deleteAll(iOccurrence);
-}
-
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::remove()
-{
-	return this->remove(0);
-}
-
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 {
 	int status;
@@ -611,17 +475,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll()
 	return this->deleteAll(0);
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putNonTimed()
-{
-	return this->putNonTimed(0);
-}
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putNonTimed(int idx)
-{
-	printf("ERROR: Deprecated method: putNonTimed()! Use put() instead...");
-    	return -1;
-
-}
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char interpolMode)
 {

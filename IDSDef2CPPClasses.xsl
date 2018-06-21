@@ -60,8 +60,6 @@ class IDS
     void setRefNum(int inRefRun){refRun = inRefRun;}
     void setTreeName(char *inTreeName){treeName = inTreeName; }
     void setTreeName(string inTreeName){treeName = inTreeName;}
-    void setCacheLevel(int level) {/*imas_set_cache_level(expIdx, level);*/}
-    int getCacheLevel() {return 1;/*imas_get_cache_level(expIdx);*/}
     int getPulseCtx() {return this->pulseCtx;}
     int getShot() {return shot;}
     int getRun() {return run;}
@@ -69,20 +67,10 @@ class IDS
     int getRefRun(){return refRun;}
     string getTreeName(){return treeName;}
     bool isConnected(){return connected;}
-    int open();
-    int create();
-    int openEnv(char *user, char *tokamak, char *version);
-    int createEnv(char *user, char *tokamak, char *version);
-    int openHdf5();
-    int createHdf5();
-    void openPublic(const char* expName);
-    void createPublic(const char* expName);
+    int openEnv(const char *user, const char *tokamak, const char *version);
+    int createEnv(const char *user, const char *tokamak, const char *version);
     int close();
     void close(char *name, int shot, int run) {close();}
-    void discardAll();
-    void flushAll();
-    void enableMemCache();
-    void disableMemCache();
     int getTime(char *path, Array&lt;double,1&gt; &amp;time);
     ~IDS();
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const IDS <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
@@ -163,18 +151,8 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     int getSlice(int idx, double inTime, char interpolMode);
     int putSlice();
     int putSlice(int idx);
-    int replaceLastSlice();
-    int replaceLastSlice(int idx);
     int deleteAll();
     int deleteAll(int idx);
-    int remove();
-    int remove(int idx);
-    int putNonTimed();
-    int putNonTimed(int idx);
-    void discardCache();
-    void discardCache(int idx);
-    void flushCache();
-    void flushCache(int idx);
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 };
  ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
@@ -245,12 +223,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
     int putSlice(int ctx, bool isIdsHomogeneous);
      </xsl:if> 
-    int replaceLastSlice(int idx);
     int deleteAll(int ctx);
-    int remove(int idx);
-    int putNonTimed(int idx);
-    void discardCache(int idx);
-    void flushCache(int idx);
 	      } <xsl:value-of select = "@name"/>;
     </xsl:when>
 
@@ -267,12 +240,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     int putSlice(int ctx, bool isIdsHomogeneous);
     </xsl:if> 
 
-    int replaceLastSlice(int c);
     int deleteAll(int ctx);
-    int remove(int idx);
-    int putNonTimed(int idx);
-    void discardCache(int idx);
-    void flushCache(int idx);
 	      };
 	      Array&lt;class <xsl:value-of select = "@name"/>,1&gt; <xsl:value-of select = "@name"/>;
     </xsl:when>
