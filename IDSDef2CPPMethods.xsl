@@ -358,6 +358,11 @@ int arraySize;
 
 if(!connected) return -1;
 
+isIdsHomogeneous = ids_properties.homogeneous_time;
+	if(isIdsHomogeneous == EMPTY_INT)
+		return 0;
+
+
 if(iOccurrence &lt; 1)
 sprintf(idsFullName, "%s", idsName);
 else
@@ -374,7 +379,7 @@ deleteAll(iOccurrence);
 
 
 ctx = putOpCtx;
-isIdsHomogeneous = ids_properties.homogeneous_time;
+
 <xsl:apply-templates select="field" mode="PUT_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'no'"/>
 	</xsl:apply-templates>
@@ -410,12 +415,16 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	if(!connected) 
 		return -1;
 
+	isIdsHomogeneous = ids_properties.homogeneous_time;
+	if(isIdsHomogeneous == EMPTY_INT)
+		return 0;
+
+
 	if(iOccurrence &lt; 1)
 		sprintf(idsFullName, "%s", idsName);
 	else
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
-	isIdsHomogeneous = ids_properties.homogeneous_time;
 
 	sliceTime = this->time(0);
 
