@@ -23,6 +23,10 @@ const int noOfSlices = DIM_SIZE;
 
 void checkStatus(int status);
 
+
+char* getUserName();
+char* getDataVersion();
+
 void initTime();
 double getTime(int timeIdx);
 

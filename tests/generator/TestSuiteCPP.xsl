@@ -132,7 +132,7 @@
         <xsl:text>&#9;printf("Testing put() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
-        <xsl:text>&#9;imas.create();&#10;</xsl:text>
+        <xsl:text>&#9;imas.createEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
      -->  
@@ -161,7 +161,7 @@
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
 
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
-        <xsl:text>&#9;imas.create();&#10;</xsl:text>
+        <xsl:text>&#9;imas.createEnv(getUserName(), "test",  getDataVersion());&#10;</xsl:text>
        	<xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
 	<xsl:text>&#9;&#9;&#9;printf("  Testing occurrence : %d\n", i);&#10;</xsl:text>
@@ -201,7 +201,7 @@
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
-        <xsl:text>&#9;imas.open();&#10;</xsl:text>
+        <xsl:text>&#9;imas.openEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
  <!--       <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
    	<xsl:text>&#9;&#9;ids.get(occurrence);&#10;</xsl:text>
@@ -231,7 +231,7 @@
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
-        <xsl:text>&#9;imas.open();&#10;</xsl:text>
+        <xsl:text>&#9;imas.openEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
    <!--     <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
 -->	

@@ -25,6 +25,50 @@ const int dim6 = DIM_SIZE;
 const char* PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r";
 
 
+char* userName = NULL;
+char* dataVersion = NULL;
+char* tokamak = "test";
+
+char* getUserName()
+{ 
+	if(userName != NULL) 
+           return userName;
+	
+	userName = getenv("USER");
+	if(userName == NULL) 
+	{
+		printf( "PANIC: $USER not found! Exiting...");
+		exit(1);
+	}
+
+	return userName;
+}
+
+
+char* getDataVersion() 
+{ 
+	if(dataVersion != NULL) 
+           return dataVersion;
+	
+	dataVersion = getenv("IMAS_VERSION");
+	if(dataVersion == NULL) 
+	{
+		printf( "PANIC: $IMAS_VERSION not found! Exiting...");
+		exit(1);
+	}
+
+	return dataVersion;
+}
+
+
+char* getTokamak() 
+{ 
+
+	return tokamak;
+}
+
+
+
 void checkStatus(int status)
 {
 	if(finalStatus == 0 && status < 0)
