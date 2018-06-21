@@ -110,20 +110,20 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 #              INSTALL
 #################################################
 install: all pkgconfig_install
-	install -d $(INSTALL)/lib $(INSTALL)/include/ids
+	install -d $(IMAS_INSTALL_DIR)/lib $(IMAS_INSTALL_DIR)/include/ids
 	$(foreach sofile,$(filter %.so,$(TARGETS)),\
-		install -m644 $(sofile) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(INSTALL)/lib/$(notdir $(sofile)) ;\
+		install -m644 $(sofile) $(IMAS_INSTALL_DIR)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(IMAS_INSTALL_DIR)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(IMAS_INSTALL_DIR)/lib/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(IMAS_INSTALL_DIR)/lib/$(notdir $(sofile)) ;\
 	)
-	install -m644 $(SRC_DIR)/*.h $(INSTALL)/include
-	install -m644 $(IDS_SRC_DIR)/*.h $(INSTALL)/include/ids
+	install -m644 $(SRC_DIR)/*.h $(IMAS_INSTALL_DIR)/include
+	install -m644 $(IDS_SRC_DIR)/*.h $(IMAS_INSTALL_DIR)/include/ids
 
 sources_install: $(SOURCES)
-	install -d $(INSTALL)/share/src/cppinterface/ids
-	install -m644 $(IDS_SRC_DIR)/*.* $(INSTALL)/share/src/cppinterface/ids
-	install -m644 $(SRC_DIR)/*.* $(INSTALL)/share/src/cppinterface
+	install -d $(IMAS_INSTALL_DIR)/share/src/cppinterface/ids
+	install -m644 $(IDS_SRC_DIR)/*.* $(IMAS_INSTALL_DIR)/share/src/cppinterface/ids
+	install -m644 $(SRC_DIR)/*.* $(IMAS_INSTALL_DIR)/share/src/cppinterface
 
 #################################################
 #              CLEAN
