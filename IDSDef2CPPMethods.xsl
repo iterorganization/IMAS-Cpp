@@ -5047,26 +5047,26 @@ strcpy(clepath, lepath.c_str());-->
       if (status) return status;
        // Store time of the array of structure (hidden variable for the user, but used by the UAL for future get_slice operations)
        // A temporary "time" vector is filled then put as a regular variable (outside of the object) as AoS%time
-       double *timeh = new double[1];
-       if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time == EMPTY_DOUBLE) {
+       double timeh = -1;
+       
   // Check the presence of a time vector at the root of the  AoS (on the first index only)
  if (ids_properties.homogeneous_time == 1) {
-  timeh[0] = time(0);
+  timeh = time(0);
   }
   else {
+if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time == EMPTY_DOUBLE) {
   puts("ERROR : the time vector of the type 3 array of structure <xsl:value-of select = "translate(@path,'/','.')"/> must be filled");
   return (-1);
-  }
+  
   }
   else {
-
   //H5
-   for( int i1 = 0; i1 &lt;<xsl:value-of select = "concat($variable_path,'.',@name)"/>.extent(0); i1++){// the AoS time vector is there, fill tim     e with it
-   timeh[i1] = <xsl:value-of select = "concat($variable_path,'.',@name)"/>(i1).time;
+   // the AoS time vector is there, fill tim     e with it
+   timeh = <xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time;
   }
   }
   timebasepath = <xsl:value-of select="$mds_path"/> + string("/<xsl:value-of select="@name"/>/time"); //Start to put time
-  status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), time(0), time(0));
+  status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), timeh, timeh);
   checkStatus(status);
   if (status) return status;
   }
@@ -5090,25 +5090,25 @@ strcpy(clepath, lepath.c_str());-->
       checkStatus(status);
       if (status) return status;
        // Store time of the array of structure (hidden variable for the user, but used by the UAL for future get_slice operations)
-       double* timeh = new double(1);
+       double timeh = -1;
   //H6
-       if (<xsl:value-of select = "translate(@path,'/','.')"/>(0).time == EMPTY_DOUBLE) {
+       
       if (ids_properties.homogeneous_time == 1) {
-           timeh[0] = time(0); // Use the general time vector of the IDS to fill time
+           timeh = time(0); // Use the general time vector of the IDS to fill time
       }
       else {
+	if (<xsl:value-of select = "translate(@path,'/','.')"/>(0).time == EMPTY_DOUBLE) {
       puts("ERROR : the time vector of the type 3 array of structure <xsl:value-of select = "translate(@path,'/','.')"/> must be filled");
       return(-1);
+      }    else {
+      // the AoS time vector is there, fill time with it
+      timeh=<xsl:value-of select = "translate(@path,'/','.')"/>(0).time;
       }
       }
-      else {
-      for (int i1 = 0; i1 &lt; <xsl:value-of select = "translate(@path,'/','.')"/>.extent(0); i1++){ // the AoS time vector is there, fill time with it
-      timeh[i1]=<xsl:value-of select = "translate(@path,'/','.')"/>(i1).time;
-      }
-      }
+  
 
      timebasepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
-     status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), time(0), time(0));
+     status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), timeh, timeh);
      checkStatus(status);
      if (status) return status;
      }
