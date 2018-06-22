@@ -388,8 +388,11 @@ string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' an
 int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
 
 
-if( ids_properties.homogeneous_time == EMPTY_INT )
-	return 0;
+	if( ids_properties.homogeneous_time == EMPTY_INT )
+	{
+		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUT quits with no action.");
+   		return 0;
+	}
 
 if(idx &lt; 1)
 sprintf(path, "%s", basePath);
@@ -427,8 +430,11 @@ else
 sprintf(path, "%s/%d", basePath, idx);
 double retTime;
 
-if( ids_properties.homogeneous_time == EMPTY_INT )
-	return 0;
+	if( ids_properties.homogeneous_time == EMPTY_INT )
+	{
+		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUTSLICE quits with no action.");
+   		return 0;
+	}
 
 if (ids_properties.homogeneous_time != 1) {
 puts("ERROR : the PUT_SLICE routine works only for homogeneous timebase IDS");
@@ -510,8 +516,11 @@ char **stringArray;
 char *basePath = "<xsl:value-of select="@name"/>";
 char path[strlen(basePath)+4];
 
-if( ids_properties.homogeneous_time == EMPTY_INT )
-	return 0;
+	if( ids_properties.homogeneous_time == EMPTY_INT )
+	{
+		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUTNONTIMED quits with no action.");
+   		return 0;
+	}
 
 if(idx &lt; 1)
 sprintf(path, "%s", basePath);
