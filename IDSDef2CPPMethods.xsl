@@ -359,8 +359,11 @@ int arraySize;
 if(!connected) return -1;
 
 isIdsHomogeneous = ids_properties.homogeneous_time;
-	if(isIdsHomogeneous == EMPTY_INT)
-		return 0;
+	if( isIdsHomogeneous == EMPTY_INT )
+	{
+		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUT quits with no action.");
+   		return 0;
+	}
 
 
 if(iOccurrence &lt; 1)
@@ -416,8 +419,12 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 		return -1;
 
 	isIdsHomogeneous = ids_properties.homogeneous_time;
-	if(isIdsHomogeneous == EMPTY_INT)
-		return 0;
+	if( isIdsHomogeneous == EMPTY_INT )
+	{
+		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUTSLICE quits with no action.");
+   		return 0;
+	}
+
 
 
 	if(iOccurrence &lt; 1)
