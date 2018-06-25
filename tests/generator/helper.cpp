@@ -64,7 +64,7 @@ char* getDataVersion()
 char* getTokamak() 
 { 
 
-	return tokamak;
+	return (char*)tokamak;
 }
 
 
