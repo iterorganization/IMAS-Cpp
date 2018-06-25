@@ -249,7 +249,7 @@ void setValue(Array<int,1>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 
@@ -275,7 +275,7 @@ void setValue(Array<double,1>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 void setValue(Array<int,2>&array, bool isReduced)
@@ -300,7 +300,7 @@ void setValue(Array<int,2>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 void setValue(Array<double,2>&array, bool isReduced)
@@ -326,6 +326,7 @@ void setValue(Array<double,2>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
+	delete[] arrayPtr;
 }
 
 void setValue(Array<int,3>&array, bool isReduced)
@@ -351,7 +352,7 @@ void setValue(Array<int,3>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 void setValue(Array<double,3>&array, bool isReduced)
@@ -377,7 +378,7 @@ void setValue(Array<double,3>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 void setValue(Array<int,4>&array, bool isReduced)
@@ -404,7 +405,7 @@ void setValue(Array<int,4>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 void setValue(Array<double,4>&array, bool isReduced)
 {
@@ -430,7 +431,7 @@ void setValue(Array<double,4>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 void setValue(Array<int,5>&array, bool isReduced)
@@ -457,7 +458,7 @@ void setValue(Array<int,5>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 void setValue(Array<double,5>&array, bool isReduced)
 {
@@ -484,7 +485,7 @@ void setValue(Array<double,5>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 void setValue(Array<int,6>&array, bool isReduced)
@@ -511,7 +512,7 @@ void setValue(Array<int,6>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 void setValue(Array<double,6>&array, bool isReduced)
@@ -538,7 +539,7 @@ void setValue(Array<double,6>&array, bool isReduced)
 	array.resize(*ptrShape);
 	array = newArray;
 	delete ptrShape;
-	delete arrayPtr;
+	delete[] arrayPtr;
 }
 
 /*******************************************************************************/
