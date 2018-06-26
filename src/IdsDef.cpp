@@ -3,6 +3,8 @@
 
 #include "ual_const.h"
 #include "ual_lowlevel.h"
+#include "UALDef.h"
+
 using namespace blitz;
 using namespace IdsNs;
 
@@ -161,6 +163,9 @@ void checkObject(void *obj)
         	int status = -1;
 		void* ptrData = (void*) (&value);
 
+		if (value == EMPTY_INT)
+			return 0;
+
 		status =  ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 0, NULL);
   		return status;
         }
@@ -171,6 +176,9 @@ void checkObject(void *obj)
 		void* ptrData = (void*) array.data();
 		int arrayOfSizes[1] = {	array.extent(0)};
 
+		if(array.size() < 1)
+			return 0;
+
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, arrayOfSizes);
   		return status;
         }
@@ -178,10 +186,15 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,2> array)
         {
         	int status = -1;
-		blitz::Array<int,2> fortranOrderArray((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[2] = {	array.extent(0), 
 					array.extent(1)};
+
+		if(array.size() < 1)
+			return 0;
+
+		blitz::Array<int,2>  fortranOrderArray ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, arrayOfSizes);
   		return status;
@@ -190,11 +203,15 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,3> array)
         {
         	int status = -1;
-		blitz::Array<int,3> fortranOrderArray((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[3] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2)};
+		if(array.size() < 1)
+			return 0;
+
+		blitz::Array<int,3> fortranOrderArray ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, arrayOfSizes);
   		return status;
@@ -203,12 +220,17 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,4> array)
         {
         	int status = -1;
-		blitz::Array<int,4> fortranOrderArray((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[4] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
 					array.extent(3)};
+
+		if(array.size() < 1)
+			return 0;
+
+		blitz::Array<int,4> fortranOrderArray ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, arrayOfSizes);
   		return status;
@@ -217,13 +239,18 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,5> array)
         {
         	int status = -1;
-		blitz::Array<int,5> fortranOrderArray((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[5] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
 					array.extent(3), 
 					array.extent(4)};
+
+		if(array.size() < 1)
+			return 0;
+
+		blitz::Array<int,5> fortranOrderArray  ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, arrayOfSizes);
   		return status;
@@ -232,14 +259,20 @@ void checkObject(void *obj)
     	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,6> array)
         {
         	int status = -1;
-		blitz::Array<int,6> fortranOrderArray((int*) array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[6] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
 					array.extent(3), 
 					array.extent(4), 
 					array.extent(5)};
+
+		if(array.size() < 1)
+			return 0;
+
+
+		blitz::Array<int,6> fortranOrderArray ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, arrayOfSizes);
   		return status;
@@ -251,6 +284,9 @@ void checkObject(void *obj)
         	int status = -1;
 		void* ptrData = (void*) (&value);
 
+		if (value == EMPTY_DOUBLE)
+			return 0;
+
 		status =  ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 0, NULL);
   		return status;
         }
@@ -261,6 +297,9 @@ void checkObject(void *obj)
 		void* ptrData = (void*) array.data();
 		int arrayOfSizes[1] = {	array.extent(0)};
 
+		if(array.size() < 1)
+			return 0;
+
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, arrayOfSizes);
   		return status;
         }
@@ -268,10 +307,15 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,2> array)
         {
         	int status = -1;
-		blitz::Array<double,2> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[2] = {	array.extent(0), 
 					array.extent(1)};
+
+		if(array.size() < 1)
+			return 0;
+
+		blitz::Array<double,2> fortranOrderArray ((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, arrayOfSizes);
   		return status;
@@ -280,11 +324,16 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,3> array)
         {
         	int status = -1;
-		blitz::Array<double,3> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[3] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2)};
+
+		if(array.size() < 1)
+			return 0;
+
+		blitz::Array<double,3> fortranOrderArray  ((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, arrayOfSizes);
   		return status;
@@ -293,12 +342,19 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,4> array)
         {
         	int status = -1;
-		blitz::Array<double,4> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[4] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
 					array.extent(3)};
+
+		if(array.size() < 1)
+			return 0;
+
+
+		blitz::Array<double,4> fortranOrderArray ((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
+
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, arrayOfSizes);
   		return status;
@@ -307,13 +363,22 @@ void checkObject(void *obj)
 	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,5> array)
         {
         	int status = -1;
-		blitz::Array<double,5> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[5] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
 					array.extent(3), 
 					array.extent(4)};
+
+
+		if(array.size() < 1)
+			return 0;
+
+
+		blitz::Array<double,5> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
+
+
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, arrayOfSizes);
   		return status;
@@ -322,14 +387,22 @@ void checkObject(void *obj)
     	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,6> array)
         {
         	int status = -1;
-		blitz::Array<double,6> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		void* ptrData = (void*) fortranOrderArray.data();
+		void* ptrData = NULL;
 		int arrayOfSizes[6] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2), 
 					array.extent(3), 
 					array.extent(4), 
 					array.extent(5)};
+
+
+		if(array.size() < 1)
+			return 0;
+
+
+		blitz::Array<double,6>  fortranOrderArray ((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+		ptrData = (void*) fortranOrderArray.data();
+
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, arrayOfSizes);
   		return status;
@@ -356,6 +429,9 @@ void checkObject(void *obj)
 		char* ptrCString = NULL;
 		int arrayOfSizes[2];
 		int size;
+
+		if (numberOfStrings < 1)
+			return 0;
 
 		for(int i=0; i < numberOfStrings; i++)
 		{
