@@ -415,6 +415,8 @@ void checkObject(void *obj)
         	int status = -1;
 		void* ptrData = (void *) (text.c_str());
 		int arrayOfSizes[1] = {	(int)text.size()};
+		if (text.length() < 1)
+			return 0;
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, arrayOfSizes);
   		return status;
@@ -698,7 +700,10 @@ void checkObject(void *obj)
 		if (status != 0)
     			return status;
 		
-		text = (char*)ptrData;
+		if(ptrData != NULL)
+			text = (char*)ptrData;
+		else
+			text = "";
 
   		return status;
         }
