@@ -1,18 +1,16 @@
 include ../Makefile.common
 
-ifeq ("no","$(IMAS_CPP)")
+ifeq ("no","$(strip $(IMAS_CPP))")
 all sources sources_install install clean clean-src:
 	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 else
 
 ifeq "$(strip $(CC))" "icc"
  CXX=icpc
- LD=$(CXX)
  CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
  LDFLAGS= -g -pthread
 else
  CXX=g++
- LD=$(CXX)
  CXXFLAGS=-g -std=gnu++11  -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
  LDFLAGS= -g -pthread
 endif
@@ -64,7 +62,7 @@ sources: $(SOURCES)
 
 # Use an intermediate target to enforce nonparallel generation.
 generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF) saxonicajar
-	@mkdir -p $(BUILD_DIR)
+	@$(mkdir_p) $(BUILD_DIR)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF)
 	java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
 
@@ -93,12 +91,12 @@ endif
 #              BUILD
 #################################################
 $(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
-	@mkdir -p $(LIB_DIR)
-	$(LD) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(notdir $@).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+	$(mkdir_p) $(LIB_DIR)
+	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
 
 $(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
-	@mkdir -p $(LIB_DIR)
-	ar rvs $@ $(OBJ_FILES)
+	$(mkdir_p) $(LIB_DIR)
+	$(AR) rvs $@ $(OBJ_FILES)
 
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
@@ -110,20 +108,20 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 #              INSTALL
 #################################################
 install: all pkgconfig_install
-	install -d $(IMAS_INSTALL_DIR)/lib $(IMAS_INSTALL_DIR)/include/ids
+	$(mkdir_p) $(libdir) $(includedir)/ids
 	$(foreach sofile,$(filter %.so,$(TARGETS)),\
-		install -m644 $(sofile) $(IMAS_INSTALL_DIR)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(IMAS_INSTALL_DIR)/lib/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(IMAS_INSTALL_DIR)/lib/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(IMAS_INSTALL_DIR)/lib/$(notdir $(sofile)) ;\
+		$(INSTALL_DATA) -T $(sofile) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
+		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
 	)
-	install -m644 $(SRC_DIR)/*.h $(IMAS_INSTALL_DIR)/include
-	install -m644 $(IDS_SRC_DIR)/*.h $(IMAS_INSTALL_DIR)/include/ids
+	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
+	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
 
 sources_install: $(SOURCES)
-	install -d $(IMAS_INSTALL_DIR)/share/src/cppinterface/ids
-	install -m644 $(IDS_SRC_DIR)/*.* $(IMAS_INSTALL_DIR)/share/src/cppinterface/ids
-	install -m644 $(SRC_DIR)/*.* $(IMAS_INSTALL_DIR)/share/src/cppinterface
+	$(mkdir_p) $(datadir)/src/cppinterface/ids
+	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.* $(datadir)/src/cppinterface/ids
+	$(INSTALL_DATA) $(SRC_DIR)/*.* $(datadir)/src/cppinterface
 
 #################################################
 #              CLEAN
@@ -150,4 +148,4 @@ test-clean-src:
 
 PC_FILES = imas-cpp.pc
 include ../Makefile.pkgconfig
-endif # CPP=no?
+endif # IMAS_CPP=no?
