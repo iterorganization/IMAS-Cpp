@@ -556,8 +556,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:apply-templates select=".//field[@data_type='structure']" mode="METHOD_DELETE_ALL"/>
 
 
-<!--<xsl:apply-templates select="." mode="DUMP"/>
---> </xsl:result-document>
+<xsl:apply-templates select="." mode="DUMP"/>
+ </xsl:result-document>
 
 
 
