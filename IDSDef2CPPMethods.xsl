@@ -5073,8 +5073,8 @@ if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time == EMPTY
    timeh = <xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time;
   }
   }
-  timebasepath = <xsl:value-of select="$mds_path"/> + string("/<xsl:value-of select="@name"/>/time"); //Start to put time
-  status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), timeh, timeh);
+  <!--timebasepath = <xsl:value-of select="$mds_path"/> + string("/<xsl:value-of select="@name"/>/time"); //Start to put time
+  --> status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), timeh, timeh);
   checkStatus(status);
   if (status) return status;
   }
@@ -5115,7 +5115,8 @@ if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time == EMPTY
       }
   
 
-     timebasepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+     <!-- timebasepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+      -->
      status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), timeh, timeh);
      checkStatus(status);
      if (status) return status;
