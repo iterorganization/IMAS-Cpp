@@ -11,15 +11,6 @@ using namespace blitz;
 /*#define DEBUG*/
 
 
-void checkStatus(int status);
-
-char * str2char(string str);
-
-string int2str(int i, int j);
-
-
-void checkObject(void *obj);
-
 namespace IdsNs {
 class Ids
 {

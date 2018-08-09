@@ -9,36 +9,6 @@ using namespace blitz;
 using namespace IdsNs;
 
 
-#ifdef DEBUG
-void checkStatus(int status) {if(status) printf("%s\n", imas_last_errmsg());}
-#else
-void checkStatus(int status){}
-#endif
-
-char * str2char(string str)
-{
-char *cyb;
-cyb = new char[512];
-strcpy(cyb, str.c_str());
-return cyb;
-}
-
-string int2str(int i, int j)
-{
-int r;
-r= i+j;
-ostringstream convert;   // stream used for the conversion
-convert << r;      // insert the textual representation of 'Number' in the characters in the stream
-
-return(convert.str());
-}
-
-
-void checkObject(void *obj)
-{
-    if (!obj) printf("Problem with array of structure allocation\n");
-}
-
 
         void IdsNs::Ids::setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1)
         {
