@@ -885,7 +885,7 @@ See IDSDef2Classes.xsl  -->
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 				if (aosCtx &lt; 0)  
 				{	
-					ual_end_action(aosCtx);
+					ual_end_action(ctx);
 					return status;
 				}
 
