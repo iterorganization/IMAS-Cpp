@@ -8,7 +8,19 @@
 using namespace blitz;
 using namespace IdsNs;
 
+        bool IdsNs::Ids::isError(int statusCode)
+        {  
+            // no error
+            if (statusCode > -1)
+                return false;
+    
+            //warning only
+            if (statusCode == -5)
+                return false;
 
+            // critical error that should be propagated to higher levels
+            return true;
+         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1)
         {

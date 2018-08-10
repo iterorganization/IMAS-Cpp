@@ -15,6 +15,9 @@ namespace IdsNs {
 class Ids
 {
     protected:
+        static bool isError(int statusCode);
+
+
         static void setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1);
         
         static void setArray(blitz::Array<float,1>&array,float *arrayPtr, int dim1);
