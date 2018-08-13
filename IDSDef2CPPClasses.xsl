@@ -153,6 +153,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     int putSlice(int idx);
     int deleteAll();
     int deleteAll(int idx);
+    void clear();
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 };
  ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
@@ -223,7 +224,12 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
     int putSlice(int ctx, bool isIdsHomogeneous);
      </xsl:if> 
+
+    <xsl:if test="not(ancestor::field[@data_type='struct_array'])">
     int deleteAll(int ctx);
+    void clear();
+     </xsl:if> 
+
 	      } <xsl:value-of select = "@name"/>;
     </xsl:when>
 
@@ -240,7 +246,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     int putSlice(int ctx, bool isIdsHomogeneous);
     </xsl:if> 
 
-    int deleteAll(int ctx);
+//    int deleteAll(int ctx);
 	      };
 	      Array&lt;class <xsl:value-of select = "@name"/>,1&gt; <xsl:value-of select = "@name"/>;
     </xsl:when>

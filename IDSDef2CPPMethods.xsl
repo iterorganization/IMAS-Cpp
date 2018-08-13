@@ -313,6 +313,10 @@ int arraySize;
 	else
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
+
+    //reset the ids content
+    clear();
+
 	// Open get context
 	getOpCtx = ual_begin_global_action(pulseCtx, idsFullName, READ_OP);
 
@@ -491,7 +495,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll()
 	return this->deleteAll(0);
 }
 
-
+void IdsNs::<xsl:value-of select="@name"/>_IDSBase::clear()
+{
+<xsl:apply-templates select="field" mode="RESET"/>
+}
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char interpolMode)
 {
@@ -524,7 +531,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
 	
-	
+	//reset the ids content
+    clear();
 
 	// Open put context
 	getSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, READ_OP, inTime, interpolMode);
@@ -553,7 +561,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 
   <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT_SLICE"/>
 
-<xsl:apply-templates select=".//field[@data_type='structure']" mode="METHOD_DELETE_ALL"/>
+<xsl:apply-templates select=".//field[@data_type='structure'] " mode="METHOD_DELETE_ALL"/>
+<xsl:apply-templates select=".//field[@data_type='structure']" mode="METHOD_RESET"/>
 
 
 <xsl:apply-templates select="." mode="DUMP"/>
@@ -626,6 +635,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 </xsl:template>
 
 <xsl:template match="field[@data_type='structure']" mode="METHOD_DELETE_ALL">
+<xsl:if test="not(ancestor::field[@data_type='struct_array'])">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
 <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::deleteAll(int ctx)&#xA;</xsl:text>
@@ -638,8 +648,19 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 
 	return 0;
 }
+</xsl:if>
 </xsl:template>
 
+<xsl:template match="field[@data_type='structure']" mode="METHOD_RESET">
+<xsl:if test="not(ancestor::field[@data_type='struct_array'])">
+     <xsl:text>&#xA;&#xA;</xsl:text>
+    <xsl:call-template name="COMMENT_FIELD"/>
+<xsl:text> void IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::clear()&#xA;</xsl:text>
+{
+    <xsl:apply-templates select="field" mode="RESET"/>
+}
+</xsl:if>
+</xsl:template>
 
 <!--=================================================-->
 <!--              field initialization               -->
@@ -684,6 +705,44 @@ See IDSDef2Classes.xsl  -->
 			}
 		</xsl:otherwise>
 	</xsl:choose>
+</xsl:template>
+
+<!--=====================================================================================================================================-->
+<!--                  reset fields content to default values                                                                                                      -->
+<!--=====================================================================================================================================-->
+
+
+<xsl:template match="field" mode="RESET">
+    <xsl:call-template name="COMMENT_FIELD"/>
+    <xsl:choose>
+        <xsl:when test="@data_type='structure'">
+            <xsl:value-of select="@name"/>.clear();
+        </xsl:when>
+        <xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
+            <xsl:value-of select = "@name"/> = EMPTY_INT;
+        </xsl:when>
+        <xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
+            <xsl:value-of select = "@name"/> = EMPTY_DOUBLE;
+        </xsl:when>
+        <xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
+            <xsl:value-of select = "@name"/>.clear();
+        </xsl:when>
+        <xsl:when test="
+            @data_type='struct_array'
+        or @data_type='str_1d_type' or @data_type='STR_1D'
+        or @data_type='flt_1d_type' or @data_type='FLT_1D'
+        or @data_type='int_1d_type' or @data_type='INT_1D'
+        or @data_type='FLT_2D' or @data_type='INT_2D'
+        or @data_type='FLT_3D'  or @data_type='INT_3D'
+        or @data_type='FLT_4D'  or @data_type='INT_4D'
+        or @data_type='FLT_5D'or @data_type='INT_5D'
+        or @data_type='FLT_6D'or @data_type='INT_6D'">
+            <xsl:value-of select = "@name"/>.free();
+        </xsl:when>
+        <xsl:otherwise>
+            //Doc GET <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
+        </xsl:otherwise>
+    </xsl:choose>
 </xsl:template>
 
 <!--=================================================-->
