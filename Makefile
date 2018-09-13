@@ -6,6 +6,7 @@ all sources sources_install install clean clean-src:
 else
 
 ifeq "$(strip $(CC))" "icc"
+<<<<<<< HEAD
 	CXX=icpc
 	CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
 	LDFLAGS= -g -pthread
@@ -21,6 +22,23 @@ ifneq ("no","$(strip $(SYS_WIN))")
 	CXXFLAGS+= -DWIN32
 else
 	JAVA = java
+=======
+    CXX=icpc
+    CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
+    LDFLAGS= -g -pthread
+else
+    CXX=g++
+    CXXFLAGS=-g -std=gnu++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
+    LDFLAGS= -g -pthread
+endif
+
+ifneq ("no","$(strip $(SYS_WIN))")
+    JAVA = $(JAVA_HOME)/bin/java
+    CFLAGS+= -DWIN32
+    CXXFLAGS+= -DWIN32
+else
+    JAVA = java
+>>>>>>> First Windows commit
 endif
 
 BUILD_DIR:=./build
@@ -30,6 +48,7 @@ IDS_SRC_DIR:=$(SRC_DIR)/ids
 INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) -I../lowlevel
 
 IDSDEF= ../xml/IDSDef.xml
+<<<<<<< HEAD
 
 ifneq ("no","$(strip $(SYS_WIN))")
 	INCDIR+= -I$(BLITZ_HOME)/include
@@ -73,13 +92,33 @@ ifneq ("no","$(strip $(IMAS_HDF5))")
 		LIBS+= -L$(HDF5_HOME)/lib
 		LIBS+= -lhdf5 -ldl -lz
 	endif
+=======
+ifneq ("no","$(strip $(SYS_WIN))")
+    INCDIR+= -I$(BLITZ_HOME)
+    LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/TreeShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/TdiShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/XTreeShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsIpShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsObjectsCppShr.lib
+else
+    INCDIR+= `pkg-config --cflags blitz`
+    LIBS= -L../lowlevel -limas `pkg-config blitz --libs`
+>>>>>>> First Windows commit
 endif
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
+<<<<<<< HEAD
 	BEAUTIFY = echo
 else
 	BEAUTIFY = indent -kr --no-tabs -l1000
+=======
+    BEAUTIFY = echo
+else
+    BEAUTIFY = indent -kr --no-tabs -l1000
+>>>>>>> First Windows commit
 endif
 
 # Sets a path where make will search for files
@@ -100,9 +139,15 @@ SOURCES = $(GENSOURCES) $(addprefix $(SRC_DIR)/,IdsDef.cpp  IdsDef.h  UALDef.h)
 IDS_OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o))
 OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o UALMethods.o)
 ifneq ("no","$(strip $(SYS_WIN))")
+<<<<<<< HEAD
 	TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.lib libimas-cpp.dll)
 else
 	TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
+=======
+    TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.lib libimas-cpp.dll)
+else
+    TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
+>>>>>>> First Windows commit
 endif
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
@@ -150,7 +195,11 @@ $(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 
 $(LIB_DIR)/libimas-cpp.dll : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
+<<<<<<< HEAD
 	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) -Wl,--out-implib,$@.lib $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+=======
+	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+>>>>>>> First Windows commit
 
 $(LIB_DIR)/libimas-cpp.lib : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
@@ -158,10 +207,10 @@ $(LIB_DIR)/libimas-cpp.lib : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	ranlib $@
 
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@) $(LIBS)
 
 $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@) $(LIBS)
 
 #################################################
 #                  INSTALL
@@ -169,14 +218,22 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 install: all pkgconfig_install
 ifeq ("no","$(strip $(SYS_WIN))")
 	$(mkdir_p) $(libdir) $(includedir)/ids
+<<<<<<< HEAD
 	# Copy libraries
+=======
+ifeq ("no","$(strip $(SYS_WIN))")
+>>>>>>> First Windows commit
 	$(foreach sofile,$(filter %.so,$(TARGETS)),\
 		$(INSTALL_DATA) -T $(sofile) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
 	)
+<<<<<<< HEAD
 	# Copy includes
+=======
+endif
+>>>>>>> First Windows commit
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
 else
@@ -226,6 +283,9 @@ PC_FILES = imas-cpp.pc
 #----------------------- pkgconfig ---------------------
 include ../Makefile.pkgconfig
 
+<<<<<<< HEAD
 #----------------------- classpath deps ---------------------
 include ../Makefile.classpath
+=======
+>>>>>>> First Windows commit
 endif # IMAS_CPP=no?
