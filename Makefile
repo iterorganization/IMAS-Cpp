@@ -6,29 +6,49 @@ all sources sources_install install clean clean-src:
 else
 
 ifeq "$(strip $(CC))" "icc"
- CXX=icpc
- CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
- LDFLAGS= -g -pthread
+    CXX=icpc
+    CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
+    LDFLAGS= -g -pthread
 else
- CXX=g++
- CXXFLAGS=-g -std=gnu++11  -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
- LDFLAGS= -g -pthread
+    CXX=g++
+    CXXFLAGS=-g -std=gnu++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
+    LDFLAGS= -g -pthread
+endif
+
+ifneq ("no","$(strip $(SYS_WIN))")
+    JAVA = $(JAVA_HOME)/bin/java
+    CFLAGS+= -DWIN32
+    CXXFLAGS+= -DWIN32
+else
+    JAVA = java
 endif
 
 BUILD_DIR:=./build
 LIB_DIR:=./lib
 SRC_DIR:=./src
 IDS_SRC_DIR:=$(SRC_DIR)/ids
-INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) `pkg-config --cflags blitz` -I../lowlevel
+INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) -I../lowlevel
 
 IDSDEF= ../xml/IDSDef.xml
-LIBS=-L../lowlevel `pkg-config blitz --libs` -limas
+ifneq ("no","$(strip $(SYS_WIN))")
+    INCDIR+= -I$(BLITZ_HOME)
+    LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/TreeShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/TdiShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/XTreeShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsIpShr.lib
+    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsObjectsCppShr.lib
+else
+    INCDIR+= `pkg-config --cflags blitz`
+    LIBS= -L../lowlevel -limas `pkg-config blitz --libs`
+endif
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
- BEAUTIFY = echo
+    BEAUTIFY = echo
 else
- BEAUTIFY = indent -kr --no-tabs -l1000
+    BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
 # Sets a path where make will search for files
@@ -48,7 +68,11 @@ SOURCES = $(GENSOURCES) $(addprefix $(SRC_DIR)/,IdsDef.cpp  IdsDef.h  UALDef.h)
 # Compiled objects
 IDS_OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o))
 OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o UALMethods.o)
-TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
+ifneq ("no","$(strip $(SYS_WIN))")
+    TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.lib libimas-cpp.dll)
+else
+    TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
+endif
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
 SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
@@ -64,7 +88,7 @@ sources: $(SOURCES)
 generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar
 	@$(mkdir_p) $(BUILD_DIR)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF)
-	java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
+	$(JAVA) net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
 
 beautify: generate_sources
 	@for i in $(IDS_SRC_DIR)/*; do \
@@ -93,23 +117,34 @@ $(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
 	$(AR) rvs $@ $(OBJ_FILES)
 
+$(LIB_DIR)/libimas-cpp.dll : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
+	$(mkdir_p) $(LIB_DIR)
+	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+
+$(LIB_DIR)/libimas-cpp.lib : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
+	$(mkdir_p) $(LIB_DIR)
+	$(AR) rcvsu $@ $(OBJ_FILES) $(IDS_OBJ_FILES)
+	ranlib $@
+
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@) $(LIBS)
 
 $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@) $(LIBS)
 
 #################################################
 #              INSTALL
 #################################################
 install: all pkgconfig_install
 	$(mkdir_p) $(libdir) $(includedir)/ids
+ifeq ("no","$(strip $(SYS_WIN))")
 	$(foreach sofile,$(filter %.so,$(TARGETS)),\
 		$(INSTALL_DATA) -T $(sofile) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
 	)
+endif
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
 
@@ -122,6 +157,7 @@ sources_install: $(SOURCES)
 #              CLEAN
 #################################################
 clean: test-clean pkgconfig_clean
+	$(RM) $(IDS_OBJ_FILES)
 	$(RM) $(OBJ_FILES)
 	$(RM) $(TARGETS)
 
