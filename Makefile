@@ -96,12 +96,13 @@ ifneq ("no","$(strip $(IMAS_HDF5))")
 ifneq ("no","$(strip $(SYS_WIN))")
     INCDIR+= -I$(BLITZ_HOME)
     LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/TreeShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/TdiShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/XTreeShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsIpShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsObjectsCppShr.lib
+    #LIBS+= $(MDSPLUS_HOME)/lib/TreeShr.a
+    #LIBS+= $(MDSPLUS_HOME)/lib/TdiShr.a
+    #LIBS+= $(MDSPLUS_HOME)/lib/MdsShr.a
+    #LIBS+= $(MDSPLUS_HOME)/lib/XTreeShr.a
+    #LIBS+= $(MDSPLUS_HOME)/lib/MdsIpShr.a
+    #LIBS+= $(MDSPLUS_HOME)/lib/MdsObjectsCppShr.a
+    LIBS+= -lTreeShr -lTdiShr -lMdsShr -lXTreeShr -lMdsIpShr -lMdsObjectsCppShr
 else
     INCDIR+= `pkg-config --cflags blitz`
     LIBS= -L../lowlevel -limas `pkg-config blitz --libs`
