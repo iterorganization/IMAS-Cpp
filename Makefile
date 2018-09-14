@@ -32,8 +32,8 @@ INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) -I../lowlevel
 IDSDEF= ../xml/IDSDef.xml
 
 ifneq ("no","$(strip $(SYS_WIN))")
-	INCDIR+= -I$(BLITZ_HOME)
-	LIBS+= $(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib
+	INCDIR+= -I$(BLITZ_HOME)/include
+	LIBS+= $(BLITZ_HOME)/lib/libblitz.a ../lowlevel/libimas.lib
 else
 	INCDIR+= `pkg-config --cflags blitz`
 	LIBS+= -L../lowlevel -limas `pkg-config blitz --libs`
