@@ -164,10 +164,10 @@ $(LIB_DIR)/libimas-cpp.lib : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	ranlib $@
 
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
 
 $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@)
 
 #################################################
 #                  INSTALL
