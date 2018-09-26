@@ -22,10 +22,10 @@ else
 endif
 
 ifneq ("no","$(strip $(SYS_WIN))")
-	INCDIR= -I$(BLITZ_HOME) -I$(IMAS_PREFIX)/include -I../../src
-	LIBDIR= -L$(BLITZ_HOME)/lib/.libs -L$(IMAS_PREFIX)/lib -L$(IMAS_PREFIX)/cppinterface/lib
+	INCDIR= -I$(BLITZ_HOME)/include -I$(IMAS_PREFIX)/include -I../../src
+	LIBDIR= -L$(BLITZ_HOME)/lib -L$(IMAS_PREFIX)/lib -L$(IMAS_PREFIX)/cppinterface/lib
 	LIBS= $(IMAS_PREFIX)/cppinterface/lib/libimas-cpp.lib $(IMAS_PREFIX)/lib/libimas.lib
-	LIBS+= $(BLITZ_HOME)/lib/.libs/libblitz.a
+	LIBS+= $(BLITZ_HOME)/lib/libblitz.a
 	BINOUT=TestSuite.exe
 	CFLAGS+= -DWIN32
 	CXXFLAGS+= -DWIN32
