@@ -16,14 +16,18 @@ LDFLAGS=-g #-pthread
 
 ifneq ("no","$(strip $(SYS_WIN))")
     INCDIR=-I$(BLITZ_HOME) -I$(IMAS_PREFIX)/include -I../../src
-    LIBDIR=-L$(BLITZ_HOME)/lib/.libs -L$(IMAS_PREFIX)/lib -L$(IMAS_PREFIX)/cppinterface/lib
-    LIBS=$(IMAS_PREFIX)/cppinterface/lib/libimas-cpp.lib -lblitz $(IMAS_PREFIX)/lib/libimas.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/TreeShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/TdiShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/XTreeShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsIpShr.lib
-    LIBS+= $(MDSPLUS_HOME)/devtools/lib64/mingw/MdsObjectsCppShr.lib
+    LIBDIR=-L$(BLITZ_HOME)/lib/.libs -L$(IMAS_PREFIX)/lib -L$(IMAS_PREFIX)/cppinterface/lib -L$(MDSPLUS_DIR)/lib
+    LIBS=$(IMAS_PREFIX)/cppinterface/lib/libimas-cpp.lib $(IMAS_PREFIX)/lib/libimas.lib
+	LIBS+= $(BLITZ_HOME)/lib/.libs/libblitz.a
+ 	LIBS+= $(MDSPLUS_DIR)/lib/MdsMisc.a
+	LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
+	LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
+	LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
+	LIBS+= $(MDSPLUS_DIR)/lib/MdsLib.a
+	LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
+	LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
+	LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
+	LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
 	BINOUT=TestSuite.exe
     CFLAGS+= -DWIN32
     CXXFLAGS+= -DWIN32

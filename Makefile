@@ -32,14 +32,8 @@ INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) -I../lowlevel
 IDSDEF= ../xml/IDSDef.xml
 ifneq ("no","$(strip $(SYS_WIN))")
     INCDIR+= -I$(BLITZ_HOME)
-    LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib
-    #LIBS+= $(MDSPLUS_HOME)/lib/TreeShr.a
-    #LIBS+= $(MDSPLUS_HOME)/lib/TdiShr.a
-    #LIBS+= $(MDSPLUS_HOME)/lib/MdsShr.a
-    #LIBS+= $(MDSPLUS_HOME)/lib/XTreeShr.a
-    #LIBS+= $(MDSPLUS_HOME)/lib/MdsIpShr.a
-    #LIBS+= $(MDSPLUS_HOME)/lib/MdsObjectsCppShr.a
-    LIBS+= -lTreeShr -lTdiShr -lMdsShr -lXTreeShr -lMdsIpShr -lMdsObjectsCppShr
+    LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib -L$(MDSPLUS_DIR)/lib
+    LIBS+= -lMdsShr -lTreeShr -lTdiShr -lMdsLib -lMdsIpShr -lMdsObjectsCppShr -lXTreeShr
 else
     INCDIR+= `pkg-config --cflags blitz`
     LIBS= -L../lowlevel -limas `pkg-config blitz --libs`
@@ -120,7 +114,7 @@ $(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 
 $(LIB_DIR)/libimas-cpp.dll : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
-	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) -Wl,--out-implib,$@.lib $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
 
 $(LIB_DIR)/libimas-cpp.lib : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
@@ -128,10 +122,10 @@ $(LIB_DIR)/libimas-cpp.lib : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	ranlib $@
 
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
 
 $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@) $(LIBS)
+	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@)
 
 #################################################
 #              INSTALL

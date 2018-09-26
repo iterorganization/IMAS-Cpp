@@ -268,10 +268,12 @@ connected = false;
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::isHomogeneous(int ctx, bool&amp; isIdsHomogeneous )
 {
-    	int homogenousTime = -1;
+    int homogenousTime = -1;
 	int status = -1;
+	std::string fieldPath = "ids_properties/homogeneous_time";
+	std::string timeBasePath = "";
 	
-    	status = IdsNs::Ids::readData(ctx, "ids_properties/homogeneous_time", "", homogenousTime);
+    	status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, homogenousTime);
 	if (status)
         	return status;
 	
