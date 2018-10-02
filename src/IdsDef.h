@@ -2,6 +2,7 @@
 
 #define _IDS_CLASS
 
+#define BZ_THREADSAFE
 #include <blitz/array.h>
 using namespace blitz;
 

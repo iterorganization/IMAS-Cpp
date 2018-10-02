@@ -16,15 +16,10 @@
 
 #define _UAL_CLASSES
 
-// this definition is needed to avoid mutex problems with blitz++
-#define BZ_THREADSAFE
-
 #include "UALDef.h"
-#include &lt;blitz/array.h&gt;
 
 <xsl:apply-templates select = "IDS" mode = "CLASS_HEADER"/>
 
-using namespace blitz;
 namespace IdsNs {
 
 typedef struct {
@@ -128,7 +123,6 @@ class IDS
 
 #define _IDS_BASE_<xsl:value-of select="@name"/>
 
-#include &lt;blitz/array.h&gt;
 #include "IdsDef.h"
 namespace IdsNs {
 
