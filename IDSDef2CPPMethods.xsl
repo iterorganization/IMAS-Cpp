@@ -1112,7 +1112,7 @@ See IDSDef2Classes.xsl  -->
 				return aosCtx;
 			}
 
-			if(arraySize > 0)
+			if(aosCtx > 0 &amp;&amp; arraySize > 0)
 			{	
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
@@ -1154,11 +1154,11 @@ See IDSDef2Classes.xsl  -->
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 			if (IdsNs::Ids::isError(aosCtx)) 
 			{	
-					ual_end_action(aosCtx);
+					ual_end_action(ctx);
 					return status;
 			}
 
-			if(arraySize > 0)
+			if(aosCtx > 0 &amp;&amp; arraySize > 0)
 			{	
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
@@ -1205,11 +1205,11 @@ See IDSDef2Classes.xsl  -->
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 			if (IdsNs::Ids::isError(aosCtx))  
 			{	
-				ual_end_action(aosCtx);
+				ual_end_action(ctx);
 				return status;
 			}
 
-			if(arraySize > 0)
+			if(aosCtx > 0 &amp;&amp; arraySize > 0)
 			{	
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
