@@ -32,14 +32,8 @@ INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) -I../lowlevel
 IDSDEF= ../xml/IDSDef.xml
 
 ifneq ("no","$(strip $(SYS_WIN))")
-<<<<<<< HEAD
 	INCDIR+= -I$(BLITZ_HOME)/include
 	LIBS+= $(BLITZ_HOME)/lib/libblitz.a ../lowlevel/libimas.lib
-=======
-    INCDIR+= -I$(BLITZ_HOME)
-    LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib -L$(MDSPLUS_DIR)/lib
-    LIBS+= -lMdsShr -lTreeShr -lTdiShr -lMdsLib -lMdsIpShr -lMdsObjectsCppShr -lXTreeShr
->>>>>>> Fix to compile and execute correctly lowlevel with static and shared MDSplus libraries
 else
 	INCDIR+= `pkg-config --cflags blitz`
 	LIBS+= -L../lowlevel -limas `pkg-config blitz --libs`
