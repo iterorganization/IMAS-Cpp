@@ -6,21 +6,21 @@ all sources sources_install install clean clean-src:
 else
 
 ifeq "$(strip $(CC))" "icc"
-    CXX=icpc
-    CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
-    LDFLAGS= -g -pthread
+	CXX=icpc
+	CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
+	LDFLAGS= -g -pthread
 else
-    CXX=g++
-    CXXFLAGS=-g -std=gnu++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
-    LDFLAGS= -g -pthread
+	CXX=g++
+	CXXFLAGS=-g -std=c++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
+	LDFLAGS= -g -pthread
 endif
 
 ifneq ("no","$(strip $(SYS_WIN))")
-    JAVA = $(JAVA_HOME)/bin/java
-    CFLAGS+= -DWIN32
-    CXXFLAGS+= -DWIN32
+	JAVA = $(JAVA_HOME)/bin/java
+	CFLAGS+= -DWIN32
+	CXXFLAGS+= -DWIN32
 else
-    JAVA = java
+	JAVA = java
 endif
 
 BUILD_DIR:=./build
@@ -30,20 +30,42 @@ IDS_SRC_DIR:=$(SRC_DIR)/ids
 INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) -I../lowlevel
 
 IDSDEF= ../xml/IDSDef.xml
+
 ifneq ("no","$(strip $(SYS_WIN))")
-    INCDIR+= -I$(BLITZ_HOME)
-    LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib -L$(MDSPLUS_DIR)/lib
-    LIBS+= -lMdsShr -lTreeShr -lTdiShr -lMdsLib -lMdsIpShr -lMdsObjectsCppShr -lXTreeShr
+	INCDIR+= -I$(BLITZ_HOME)
+	LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib
+	ifneq ("no","$(strip $(IMAS_MDSPLUS))")
+		LIBS+=-L$(MDSPLUS_DIR)/lib
+		#LIBS+= -lMdsShr -lTreeShr -lTdiShr -lMdsLib -lMdsIpShr -lMdsObjectsCppShr -lXTreeShr
+		LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
+		LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
+		LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
+		LIBS+= $(MDSPLUS_DIR)/lib/MdsLib.a
+		LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
+		LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
+		LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
+		LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
+	endif
+	ifneq ("no","$(strip $(IMAS_UDA))")
+		LIBS+= -L$(UDA_HOME)/lib
+		LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
+		LIBS+= $(UDA_HOME)/lib/libportablexdr.a
+		LIBS+= -lws2_32 -lssl -lcrypto
+	endif
+	ifneq ("no","$(strip $(IMAS_HDF5))")
+		LIBS+= -L$(HDF5_HOME)/lib
+		LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
+	endif
 else
-    INCDIR+= `pkg-config --cflags blitz`
-    LIBS= -L../lowlevel -limas `pkg-config blitz --libs`
+	INCDIR+= `pkg-config --cflags blitz`
+	LIBS= -L../lowlevel -limas `pkg-config blitz --libs`
 endif
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
-    BEAUTIFY = echo
+	BEAUTIFY = echo
 else
-    BEAUTIFY = indent -kr --no-tabs -l1000
+	BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
 # Sets a path where make will search for files
@@ -64,9 +86,9 @@ SOURCES = $(GENSOURCES) $(addprefix $(SRC_DIR)/,IdsDef.cpp  IdsDef.h  UALDef.h)
 IDS_OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o))
 OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o UALMethods.o)
 ifneq ("no","$(strip $(SYS_WIN))")
-    TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.lib libimas-cpp.dll)
+	TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.lib libimas-cpp.dll)
 else
-    TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
+	TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
 endif
 
 # Check that "saxon9he.jar" utility is set in CLASSPATH
@@ -75,7 +97,7 @@ SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
 all: $(SOURCES) $(TARGETS)
 
 #################################################
-#                 INIT: SOURCE GENERATION
+#            INIT: SOURCE GENERATION
 #################################################
 sources: $(SOURCES)
 
@@ -102,7 +124,7 @@ endif
 
 
 #################################################
-#              BUILD
+#                    BUILD
 #################################################
 $(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
@@ -128,7 +150,7 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $(lastword $^) -o $(@)
 
 #################################################
-#              INSTALL
+#                  INSTALL
 #################################################
 install: all pkgconfig_install
 	$(mkdir_p) $(libdir) $(includedir)/ids
@@ -149,7 +171,7 @@ sources_install: $(SOURCES)
 	$(INSTALL_DATA) $(SRC_DIR)/*.* $(datadir)/src/cppinterface
 
 #################################################
-#              CLEAN
+#                    CLEAN
 #################################################
 clean: test-clean pkgconfig_clean
 	$(RM) $(IDS_OBJ_FILES)
@@ -160,7 +182,7 @@ clean-src: clean
 	$(RM) $(GENSOURCES)
 
 #################################################
-#                 TESTS
+#                    TESTS
 #################################################
 
 test: all
