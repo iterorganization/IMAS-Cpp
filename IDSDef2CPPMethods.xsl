@@ -58,6 +58,7 @@ IdsNs::IDS::IDS(int pulseCtx)
 
 void IdsNs::IDS::setPulseCtx(int pulseCtx)
 {
+    this->pulseCtx = pulseCtx;
 <xsl:apply-templates select="IDS" mode="SET_PULSE_CTX"/>
 }
 
@@ -229,7 +230,7 @@ return os;
 <!--=================================================-->
 
 <xsl:template match="IDS" mode="SET_PULSE_CTX">
-_<xsl:value-of select="@name"/>.setPulseCtx(this->pulseCtx);
+_<xsl:value-of select="@name"/>.setPulseCtx(pulseCtx);
 </xsl:template>
 
 <!--=================================================-->
