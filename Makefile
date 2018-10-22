@@ -33,10 +33,15 @@ IDSDEF= ../xml/IDSDef.xml
 
 ifneq ("no","$(strip $(SYS_WIN))")
 	INCDIR+= -I$(BLITZ_HOME)
-	LIBS=$(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib
-	ifneq ("no","$(strip $(IMAS_MDSPLUS))")
-		LIBS+=-L$(MDSPLUS_DIR)/lib
-		#LIBS+= -lMdsShr -lTreeShr -lTdiShr -lMdsLib -lMdsIpShr -lMdsObjectsCppShr -lXTreeShr
+	LIBS+= $(BLITZ_HOME)/lib/.libs/libblitz.a ../lowlevel/libimas.lib
+else
+	INCDIR+= `pkg-config --cflags blitz`
+	LIBS+= -L../lowlevel -limas `pkg-config blitz --libs`
+endif
+
+ifneq ("no","$(strip $(IMAS_MDSPLUS))")
+	ifneq ("no","$(strip $(SYS_WIN))")
+		LIBS+= -L$(MDSPLUS_DIR)/lib
 		LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
@@ -45,20 +50,29 @@ ifneq ("no","$(strip $(SYS_WIN))")
 		LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
 		LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
+	else
+		LIBS+= -L$(MDSPLUS_DIR)/lib64 -L$(MDSPLUS_DIR)/lib
+		LIBS+= -lMdsShr -lTreeShr -lTdiShr -lMdsLib -lMdsIpShr -lMdsObjectsCppShr -lXTreeShr
 	endif
-	ifneq ("no","$(strip $(IMAS_UDA))")
+endif
+ifneq ("no","$(strip $(IMAS_UDA))")
+	ifneq ("no","$(strip $(SYS_WIN))")
 		LIBS+= -L$(UDA_HOME)/lib
 		LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
 		LIBS+= $(UDA_HOME)/lib/libportablexdr.a
 		LIBS+= -lws2_32 -lssl -lcrypto
+	else
+		LIBS+= `pkg-config --libs uda-cpp`
 	endif
-	ifneq ("no","$(strip $(IMAS_HDF5))")
+endif
+ifneq ("no","$(strip $(IMAS_HDF5))")
+	ifneq ("no","$(strip $(SYS_WIN))")
 		LIBS+= -L$(HDF5_HOME)/lib
 		LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
+	else
+		LIBS+= -L$(HDF5_HOME)/lib
+		LIBS+= -hdf5 -ldl -lz
 	endif
-else
-	INCDIR+= `pkg-config --cflags blitz`
-	LIBS= -L../lowlevel -limas `pkg-config blitz --libs`
 endif
 
 # Check existence of the "indent" utility to get a clean C format
@@ -153,22 +167,36 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 #                  INSTALL
 #################################################
 install: all pkgconfig_install
-	$(mkdir_p) $(libdir) $(includedir)/ids
 ifeq ("no","$(strip $(SYS_WIN))")
+	$(mkdir_p) $(libdir) $(includedir)/ids
+	# Copy libraries
 	$(foreach sofile,$(filter %.so,$(TARGETS)),\
 		$(INSTALL_DATA) -T $(sofile) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
 	)
-endif
+	# Copy includes
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
+else
+	$(mkdir_p) $(packagedir)/cppinterface/lib
+	$(mkdir_p) $(packagedir)/cppinterface/include/ids
+	# Copy libraries
+	for OBJECT in `find . -type f \( -name "*.lib" -or -name "*.dll" \)`; do \
+		cp $$OBJECT $(packagedir)/cppinterface/lib; \
+	done
+	# Copy includes
+	cp $(SRC_DIR)/*.h $(packagedir)/cppinterface/include
+	cp $(IDS_SRC_DIR)/*.h $(packagedir)/cppinterface/include/ids
+endif
 
 sources_install: $(SOURCES)
+ifeq ("no","$(strip $(SYS_WIN))")
 	$(mkdir_p) $(datadir)/src/cppinterface/ids
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.* $(datadir)/src/cppinterface/ids
 	$(INSTALL_DATA) $(SRC_DIR)/*.* $(datadir)/src/cppinterface
+endif
 
 #################################################
 #                    CLEAN
