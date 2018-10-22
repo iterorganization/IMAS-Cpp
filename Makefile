@@ -175,22 +175,14 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 install: all pkgconfig_install
 ifeq ("no","$(strip $(SYS_WIN))")
 	$(mkdir_p) $(libdir) $(includedir)/ids
-<<<<<<< HEAD
 	# Copy libraries
-=======
-ifeq ("no","$(strip $(SYS_WIN))")
->>>>>>> First Windows commit
 	$(foreach sofile,$(filter %.so,$(TARGETS)),\
 		$(INSTALL_DATA) -T $(sofile) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
 		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
 	)
-<<<<<<< HEAD
 	# Copy includes
-=======
-endif
->>>>>>> First Windows commit
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
 else

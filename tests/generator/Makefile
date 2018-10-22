@@ -71,7 +71,7 @@ ifneq ("no","$(strip $(IMAS_HDF5))")
 		LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
 	else
 		LIBDIR+= -L$(HDF5_HOME)/lib
-		LIBS+= -hdf5 -ldl -lz
+		LIBS+= -lhdf5 -ldl -lz
 	endif
 endif
 
