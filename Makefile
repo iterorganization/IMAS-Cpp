@@ -61,7 +61,7 @@ all: $(SOURCES) $(TARGETS)
 sources: $(SOURCES)
 
 # Use an intermediate target to enforce nonparallel generation.
-generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl  $(IDSDEF) saxonicajar
+generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar
 	@$(mkdir_p) $(BUILD_DIR)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF)
 	java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
@@ -81,11 +81,6 @@ else
 $(GENSOURCES): generate_sources beautify
 endif
 
-# Check that "saxon9he.jar" utility is set in CLASSPATH and exists
-saxonicajar:
-ifeq (,$(SAXONICAJAR))
-	$(error Invalid /path/to/saxon9he.jar in CLASSPATH. Forgot to load module?)
-endif
 
 #################################################
 #              BUILD
@@ -147,5 +142,9 @@ test-clean-src:
 	$(MAKE) -C tests/generator clean-src
 
 PC_FILES = imas-cpp.pc
+#----------------------- pkgconfig ---------------------
 include ../Makefile.pkgconfig
+
+#----------------------- classpath deps ---------------------
+include ../Makefile.classpath
 endif # IMAS_CPP=no?
