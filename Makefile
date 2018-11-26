@@ -12,7 +12,7 @@ ifeq "$(strip $(CC))" "icc"
 else
 	CXX=g++
 	CXXFLAGS=-g -std=c++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
-	LDFLAGS= -g -pthread
+	LDFLAGS= -g -fPIC -pthread
 endif
 
 ifneq ("no","$(strip $(SYS_WIN))")
@@ -63,6 +63,7 @@ ifneq ("no","$(strip $(IMAS_UDA))")
 		LIBS+= -lws2_32 -lssl -lcrypto
 	else
 		LIBS+= `pkg-config --libs uda-cpp`
+		LIBS+= -lssl -lcrypto
 	endif
 endif
 ifneq ("no","$(strip $(IMAS_HDF5))")
