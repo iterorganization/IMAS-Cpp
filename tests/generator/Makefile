@@ -17,8 +17,13 @@ ifeq "$(strip $(CC))" "icc"
 else
 	CXX=g++
 	LD=$(CXX)
+	ifneq ("no","$(strip $(SYS_WIN))")
 	CXXFLAGS=-std=c++11 -pthread -g -O0 -Wa,-mbig-obj -fPIC
-	LDFLAGS=-g #-pthread
+		LDFLAGS=-g -pthread
+	else
+		CXXFLAGS=-std=c++11 -pthread -g -O0 -fPIC
+		LDFLAGS=-g -pthread
+	endif
 endif
 
 ifneq ("no","$(strip $(SYS_WIN))")
@@ -30,8 +35,8 @@ ifneq ("no","$(strip $(SYS_WIN))")
 	CFLAGS+= -DWIN32
 	CXXFLAGS+= -DWIN32
 else
-	INCDIR= `pkg-config blitz --cflags` -I$(IMAS_PREFIX)/include
-	LIBDIR= -L$(IMAS_PREFIX)/lib
+	INCDIR= `pkg-config blitz --cflags` -I$(IMAS_PREFIX)/include -I../../src
+	LIBDIR= -L$(IMAS_PREFIX)/lib -L../../lib
 	LIBS= -limas-cpp -limas `pkg-config blitz --libs`
 	BINOUT=TestSuite
 endif
@@ -62,6 +67,7 @@ ifneq ("no","$(strip $(IMAS_UDA))")
 		LIBS+= -lws2_32 -lssl -lcrypto
 	else
 		LIBS+= `pkg-config --libs uda-cpp`
+		LIBS+= -lssl -lcrypto
 	endif
 endif
 
