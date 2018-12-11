@@ -89,34 +89,6 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 	this->setPulseCtx(pulseCtx);
 }
 
-int IdsNs::IDS::createMemCache(const char *user, const char *tokamak,const char *version)
-{
-        int pulseCtx = -1;
-        int status = 1;
-
-        pulseCtx = ual_begin_pulse_action(MEMORY_BACKEND, this->shot, this->run, user, tokamak, version); 
-        if (pulseCtx &lt; 0)
-        {
-                printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-                return pulseCtx;
-        }
-
-
-
-        status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, "");
-        if(status != 0)
-        {
-                printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-                return status;
-        }
-
-        this->pulseCtx = pulseCtx;
-        this->connected = true;
-        this->setPulseCtx(pulseCtx);
-
-}
-
-
 
 int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version)
 {

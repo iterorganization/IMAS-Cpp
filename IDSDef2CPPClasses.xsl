@@ -63,7 +63,6 @@ class IDS
     string getTreeName(){return treeName;}
     bool isConnected(){return connected;}
     int openEnv(const char *user, const char *tokamak, const char *version);
-    int createMemCache(const char *user, const char *tokamak, const char *version);
     int createEnv(const char *user, const char *tokamak, const char *version);
     int close();
     void close(char *name, int shot, int run) {close();}
