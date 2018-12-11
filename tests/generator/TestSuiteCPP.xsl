@@ -437,7 +437,7 @@
 	<xsl:param name="staticOnly"/>
 	<xsl:call-template name="COMMENT_FIELD"/>
 		<xsl:call-template name="COMMENT_FIELD"/>
-	     	<xsl:call-template name="setValue">
+	     	<xsl:call-template name="getValue">
         		<xsl:with-param name="path" select="translate(@path, '/', '.')"/>
 			<xsl:with-param name="slice" select="false()"/>
 			<xsl:with-param name="dynamicOnly" select="$dynamicOnly"/>
