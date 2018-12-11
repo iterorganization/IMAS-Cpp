@@ -44,10 +44,9 @@ ifneq ("no","$(strip $(IMAS_MDSPLUS))")
 		LIBS+= -L$(MDSPLUS_DIR)/lib
 		LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/MdsLib.a
 		LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
+		LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
 		LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
 	else
@@ -142,7 +141,7 @@ endif
 $(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
 	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
-	cd $(LIB_DIR) && ln -s $(notdir $@) $(notdir $@).$(IMAS_MAJOR).$(IMAS_MINOR)
+	cd $(LIB_DIR) && $(ln_s) $(notdir $@) $(notdir $@).$(IMAS_MAJOR).$(IMAS_MINOR)
 
 $(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
@@ -180,9 +179,9 @@ ifeq ("no","$(strip $(SYS_WIN))")
 	# Copy libraries
 	$(foreach sofile,$(filter %.so,$(TARGETS)),\
 		$(INSTALL_DATA) -T $(sofile) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
+		$(ln_s) $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
+		$(ln_s) $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
+		$(ln_s) $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
 	)
 	# Copy includes
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
@@ -190,10 +189,13 @@ ifeq ("no","$(strip $(SYS_WIN))")
 else
 	$(mkdir_p) $(packagedir)/cppinterface/lib
 	$(mkdir_p) $(packagedir)/cppinterface/include/ids
+	$(mkdir_p) $(packagedir)/blitz/lib
 	# Copy libraries
 	for OBJECT in `find . -type f \( -name "*.lib" -or -name "*.dll" \)`; do \
 		cp $$OBJECT $(packagedir)/cppinterface/lib; \
 	done
+	# Copy Blitz libraries
+	cp $(BLITZ_HOME)/lib/libblitz.a $(packagedir)/blitz/lib
 	# Copy includes
 	cp $(SRC_DIR)/*.h $(packagedir)/cppinterface/include
 	cp $(IDS_SRC_DIR)/*.h $(packagedir)/cppinterface/include/ids

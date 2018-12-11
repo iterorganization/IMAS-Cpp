@@ -18,7 +18,7 @@ else
 	CXX=g++
 	LD=$(CXX)
 	ifneq ("no","$(strip $(SYS_WIN))")
-	CXXFLAGS=-std=c++11 -pthread -g -O0 -Wa,-mbig-obj -fPIC
+		CXXFLAGS=-std=c++11 -pthread -g -O2 -Wa,-mbig-obj -fPIC
 		LDFLAGS=-g -pthread
 	else
 		CXXFLAGS=-std=c++11 -pthread -g -O0 -fPIC
@@ -44,13 +44,11 @@ endif
 ifneq ("no","$(strip $(IMAS_MDSPLUS))")
 	ifneq ("no","$(strip $(SYS_WIN))")
 		LIBDIR+= -L$(MDSPLUS_DIR)/lib
-		LIBS+= $(MDSPLUS_DIR)/lib/MdsMisc.a
 		LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/MdsLib.a
 		LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
+		LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
 		LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
 		LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
 	else
