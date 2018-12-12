@@ -8,8 +8,8 @@
 using namespace blitz;
 using namespace IdsNs;
 
-        bool IdsNs::Ids::isError(int statusCode)
-        {  
+bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long line, const char *func)
+{  
             // no error
             if (statusCode > -1)
                 return false;
@@ -19,8 +19,9 @@ using namespace IdsNs;
                 return false;
 
             // critical error that should be propagated to higher levels
+            printf("ERROR while calling '%s', %s:%d\n", func, file, line);
             return true;
-         }
+}
 
         void IdsNs::Ids::setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1)
         {
