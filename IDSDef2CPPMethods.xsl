@@ -874,7 +874,7 @@ See IDSDef2Classes.xsl  -->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
 		status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, isIdsHomogeneous);
-		if (IdsNs::Ids::isError(status))
+		if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 			return status;
 		</xsl:when>
 
@@ -894,7 +894,7 @@ See IDSDef2Classes.xsl  -->
 			if(arraySize > 0)
 			{
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-				if (IdsNs::Ids::isError(aosCtx))
+				if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__))
 				{	
 					ual_end_action(ctx);
 					return aosCtx; 
@@ -902,13 +902,13 @@ See IDSDef2Classes.xsl  -->
 
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
 						return status; 
 					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
@@ -916,7 +916,7 @@ See IDSDef2Classes.xsl  -->
 					}
 				}
 				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status))  
+				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
 					return status; 
@@ -942,7 +942,7 @@ See IDSDef2Classes.xsl  -->
 			if(arraySize > 0)
 			{	
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-				if (IdsNs::Ids::isError(aosCtx)) 
+				if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__)) 
 				{	
 					ual_end_action(ctx);
 					return status;
@@ -950,13 +950,13 @@ See IDSDef2Classes.xsl  -->
 
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
 						return status;
 					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
@@ -964,7 +964,7 @@ See IDSDef2Classes.xsl  -->
 					}
 				}
 				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status))
+				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 				{	
 					ual_end_action(ctx);
 					return status;
@@ -996,7 +996,7 @@ See IDSDef2Classes.xsl  -->
 			if(arraySize > 0)
 			{	
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-				if (IdsNs::Ids::isError(aosCtx))  
+				if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
 					return aosCtx;
@@ -1004,13 +1004,13 @@ See IDSDef2Classes.xsl  -->
 
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
 						return status;
 					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
@@ -1018,7 +1018,7 @@ See IDSDef2Classes.xsl  -->
 					}
 				}
 				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status))  
+				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
 					return status;
@@ -1059,7 +1059,7 @@ See IDSDef2Classes.xsl  -->
   			</xsl:otherwise>
 		</xsl:choose>
 		status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
-		if (IdsNs::Ids::isError(status))
+		if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 		{	
 			ual_end_action(ctx);
 			return status;
@@ -1106,7 +1106,7 @@ See IDSDef2Classes.xsl  -->
 			</xsl:choose>
 			timeBasePath = "";
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (IdsNs::Ids::isError(aosCtx)) 
+			if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__)) 
 			{	
 				ual_end_action(ctx);
 				return aosCtx;
@@ -1117,13 +1117,13 @@ See IDSDef2Classes.xsl  -->
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
 						return status;
 					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
@@ -1131,7 +1131,7 @@ See IDSDef2Classes.xsl  -->
 					}
 				}
 				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status))  
+				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
 					return status;
@@ -1152,7 +1152,7 @@ See IDSDef2Classes.xsl  -->
 			</xsl:choose>
 			timeBasePath = "";
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (IdsNs::Ids::isError(aosCtx)) 
+			if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__)) 
 			{	
 					ual_end_action(ctx);
 					return status;
@@ -1163,13 +1163,13 @@ See IDSDef2Classes.xsl  -->
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
 						return status;
 					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
@@ -1177,7 +1177,7 @@ See IDSDef2Classes.xsl  -->
 					}
 				}
 				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status)) 
+				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__)) 
 				{	
 					ual_end_action(ctx);
 					return status;
@@ -1203,7 +1203,7 @@ See IDSDef2Classes.xsl  -->
   				</xsl:otherwise>
 			</xsl:choose>
 			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (IdsNs::Ids::isError(aosCtx))  
+			if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__))  
 			{	
 				ual_end_action(ctx);
 				return status;
@@ -1214,13 +1214,13 @@ See IDSDef2Classes.xsl  -->
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
 						return status;
 					}
 					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status))
+					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
@@ -1228,7 +1228,7 @@ See IDSDef2Classes.xsl  -->
 					}
 				}
 				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status))  
+				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
 					return status;
@@ -1268,7 +1268,7 @@ See IDSDef2Classes.xsl  -->
   			</xsl:otherwise>
 		</xsl:choose>
 		status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
-		if (IdsNs::Ids::isError(status)) 
+		if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__)) 
 		{	
 			ual_end_action(ctx);
 			return status;

@@ -16,7 +16,7 @@ namespace IdsNs {
 class Ids
 {
     protected:
-        static bool isError(int statusCode);
+        static bool isError(int statusCode, const char *file, const unsigned long line, const char *func);
 
 
         static void setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1);
