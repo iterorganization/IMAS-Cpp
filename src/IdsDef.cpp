@@ -1,4 +1,3 @@
-#include <blitz/array.h>
 #include "IdsDef.h"
 
 #include "ual_const.h"
