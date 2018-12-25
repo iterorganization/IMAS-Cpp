@@ -50,10 +50,10 @@ IDS_OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o))
 OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o UALMethods.o)
 TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
 
-# Check that "saxon9he.jar" utility is set in CLASSPATH
-SAXONICAJAR=$(wildcard $(filter %saxon9he.jar,$(subst :, ,$(CLASSPATH))))
-
 all: $(SOURCES) $(TARGETS)
+
+$(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/ids:
+	$(mkdir_p) $@
 
 #################################################
 #                 INIT: SOURCE GENERATION
@@ -61,8 +61,7 @@ all: $(SOURCES) $(TARGETS)
 sources: $(SOURCES)
 
 # Use an intermediate target to enforce nonparallel generation.
-generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar
-	@$(mkdir_p) $(BUILD_DIR)
+generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
 	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF)
 	java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
 
@@ -85,13 +84,26 @@ endif
 #################################################
 #              BUILD
 #################################################
-$(LIB_DIR)/libimas-cpp.so : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
-	$(mkdir_p) $(LIB_DIR)
-	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+# Dynamic library
+$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so.$(UAL_EPOCH): $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(@F) $^ $(LIBS)
+$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so: %:%.$(UAL_EPOCH)
+	ln -svfT $(<F) $@
+$(LIB_DIR)/libimas-cpp.so:%.so:%-$(DD_GIT_DESCRIBE).so
+	ln -svfT $(<F) $@
+$(LIB_DIR)/libimas-cpp.so_install: %.so_install:%-$(DD_GIT_DESCRIBE).so.$(UAL_EPOCH) | $(libdir)
+	$(INSTALL_DATA) $< $(libdir)
+	ln -svfT $(<F) $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so
+	ln -svfT $(<F) $(libdir)/$(*F).so
 
-$(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
-	$(mkdir_p) $(LIB_DIR)
-	$(AR) rvs $@ $(OBJ_FILES)
+# Static library
+$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).a: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+	$(AR) rvs $@ $^
+$(LIB_DIR)/libimas-cpp.a:%.a:%-$(DD_GIT_DESCRIBE).a
+	ln -svfT $(<F) $@
+$(LIB_DIR)/libimas-cpp.a_install: %.a_install:%-$(DD_GIT_DESCRIBE).a | $(libdir)
+	$(INSTALL_DATA) $< $(libdir)
+	ln -svfT $(<F) $(libdir)/$(*F).a
 
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
@@ -102,19 +114,11 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 #################################################
 #              INSTALL
 #################################################
-install: all pkgconfig_install
-	$(mkdir_p) $(libdir) $(includedir)/ids
-	$(foreach sofile,$(filter %.so,$(TARGETS)),\
-		$(INSTALL_DATA) -T $(sofile) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO); \
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)).$(IMAS_MAJOR) ;\
-		ln -svfT $(notdir $(sofile)).$(IMAS_MAJOR).$(IMAS_MINOR).$(IMAS_MICRO) $(libdir)/$(notdir $(sofile)) ;\
-	)
+install: all $(LIB_DIR)/libimas-cpp.so_install $(LIB_DIR)/libimas-cpp.a_install pkgconfig_install | $(libdir) $(includedir)/ids
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
 
-sources_install: $(SOURCES)
-	$(mkdir_p) $(datadir)/src/cppinterface/ids
+sources_install: $(SOURCES) $(datadir)/src/cppinterface/ids
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.* $(datadir)/src/cppinterface/ids
 	$(INSTALL_DATA) $(SRC_DIR)/*.* $(datadir)/src/cppinterface
 
@@ -142,6 +146,8 @@ test-clean-src:
 	$(MAKE) -C tests/generator clean-src
 
 PC_FILES = imas-cpp.pc
+PC_FILES_VAR = imas-cpp-$(DD_GIT_DESCRIBE).pc
+PC_FILES_VAR_PRE = %$(DD_GIT_DESCRIBE).pc:%DD_VERSION.pc.in
 #----------------------- pkgconfig ---------------------
 include ../Makefile.pkgconfig
 
