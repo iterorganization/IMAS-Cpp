@@ -59,7 +59,7 @@ IDS_OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o))
 OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o UALMethods.o)
 TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
 
-all: $(SOURCES) $(TARGETS)
+all: $(SOURCES) $(TARGETS) id_cpp_all
 
 $(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/ids:
 	$(mkdir_p) $@
@@ -67,7 +67,7 @@ $(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/
 #################################################
 #                 INIT: SOURCE GENERATION
 #################################################
-sources: $(SOURCES)
+sources: $(SOURCES) id_cpp_sources
 
 # Use an intermediate target to enforce nonparallel generation.
 generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
@@ -123,22 +123,22 @@ $(IDS_OBJ_FILES): $(BUILD_DIR)/%.o : $(OBJ_FILES) $(IDS_SRC_DIR)/%.cpp
 #################################################
 #              INSTALL
 #################################################
-install: all $(LIB_DIR)/libimas-cpp.so_install $(LIB_DIR)/libimas-cpp.a_install pkgconfig_install | $(libdir) $(includedir)/ids
+install: all $(LIB_DIR)/libimas-cpp.so_install $(LIB_DIR)/libimas-cpp.a_install pkgconfig_install id_cpp_install | $(libdir) $(includedir)/ids
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
 
-sources_install: $(SOURCES) $(datadir)/src/cppinterface/ids
+sources_install: $(SOURCES) id_cpp_sources_install | $(datadir)/src/cppinterface/ids
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.* $(datadir)/src/cppinterface/ids
 	$(INSTALL_DATA) $(SRC_DIR)/*.* $(datadir)/src/cppinterface
 
 #################################################
 #              CLEAN
 #################################################
-clean: test-clean pkgconfig_clean
+clean: test-clean pkgconfig_clean id_cpp_clean
 	$(RM) $(OBJ_FILES)
 	$(RM) $(TARGETS)
 
-clean-src: clean
+clean-src: clean id_cpp_clean-src
 	$(RM) $(GENSOURCES)
 
 #################################################
@@ -153,6 +153,10 @@ test-clean:
 
 test-clean-src:
 	$(MAKE) -C tests/generator clean-src
+
+#----------------------- identifiers ---------------------
+include ../Makefile.identifiers
+PC_FILES_ALT = $(ID_cpp_PC_FILES)
 
 PC_FILES = imas-cpp.pc
 PC_FILES_VAR = imas-cpp-$(DD_GIT_DESCRIBE).pc
