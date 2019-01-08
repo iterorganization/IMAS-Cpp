@@ -149,15 +149,7 @@ $(LIB_DIR)/libimas-cpp.a : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 
 $(LIB_DIR)/libimas-cpp.dll : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
-<<<<<<< HEAD
-<<<<<<< HEAD
 	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) -Wl,--out-implib,$@.lib $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
-=======
-	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
->>>>>>> First Windows commit
-=======
-	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(IMAS_MAJOR).$(IMAS_MINOR) -Wl,--out-implib,$@.lib $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
->>>>>>> Fix to compile and execute correctly lowlevel with static and shared MDSplus libraries
 
 $(LIB_DIR)/libimas-cpp.lib : $(GENSOURCES) $(OBJ_FILES) $(IDS_OBJ_FILES)
 	$(mkdir_p) $(LIB_DIR)
