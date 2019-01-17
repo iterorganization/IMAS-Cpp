@@ -1,5 +1,14 @@
 include ../Makefile.common
 
+# Library interface number (used as soname suffix)
+# If any interfaces have been added, removed, or changed since the last update,
+# increment this number. Do not increment if it is certain the changes retain
+# ABI compatibility. This may be possible if the changes are only in the
+# implementation and do not change any function signatures or data structures.
+# N.B. this number is not tied to the AL major version number whatsoever.
+SO_NUM=4
+
+
 ifeq ("no","$(strip $(IMAS_CPP))")
 all sources sources_install install clean clean-src:
 	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
@@ -85,13 +94,13 @@ endif
 #              BUILD
 #################################################
 # Dynamic library
-$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so.$(UAL_EPOCH): $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so.$(SO_NUM): $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
 	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(@F) $^ $(LIBS)
-$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so: %:%.$(UAL_EPOCH)
+$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so: %:%.$(SO_NUM)
 	ln -svfT $(<F) $@
 $(LIB_DIR)/libimas-cpp.so:%.so:%-$(DD_GIT_DESCRIBE).so
 	ln -svfT $(<F) $@
-$(LIB_DIR)/libimas-cpp.so_install: %.so_install:%-$(DD_GIT_DESCRIBE).so.$(UAL_EPOCH) | $(libdir)
+$(LIB_DIR)/libimas-cpp.so_install: %.so_install:%-$(DD_GIT_DESCRIBE).so.$(SO_NUM) | $(libdir)
 	$(INSTALL_DATA) $< $(libdir)
 	ln -svfT $(<F) $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so
 	ln -svfT $(<F) $(libdir)/$(*F).so
