@@ -155,8 +155,9 @@ test-clean-src:
 	$(MAKE) -C tests/generator clean-src
 
 #----------------------- identifiers ---------------------
+OBJECTCODE=cpp
 include ../Makefile.identifiers
-PC_FILES_ALT = $(ID_cpp_PC_FILES)
+PC_FILES_ALT = $(ID_cpp_PC_FILES_2)
 
 PC_FILES = imas-cpp.pc
 PC_FILES_VAR = imas-cpp-$(DD_GIT_DESCRIBE).pc
