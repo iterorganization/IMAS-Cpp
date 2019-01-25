@@ -97,22 +97,22 @@ endif
 $(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so.$(SO_NUM): $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
 	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(@F) $^ $(LIBS)
 $(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so: %:%.$(SO_NUM)
-	ln -svfT $(<F) $@
+	$(LN_S) $(<F) $@
 $(LIB_DIR)/libimas-cpp.so:%.so:%-$(DD_GIT_DESCRIBE).so
-	ln -svfT $(<F) $@
+	$(LN_S) $(<F) $@
 $(LIB_DIR)/libimas-cpp.so_install: %.so_install:%-$(DD_GIT_DESCRIBE).so.$(SO_NUM) | $(libdir)
 	$(INSTALL_DATA) $< $(libdir)
-	ln -svfT $(<F) $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so
-	ln -svfT $(<F) $(libdir)/$(*F).so
+	$(LN_S) $(<F) $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so
+	$(LN_S) $(<F) $(libdir)/$(*F).so
 
 # Static library
 $(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).a: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
 	$(AR) rvs $@ $^
 $(LIB_DIR)/libimas-cpp.a:%.a:%-$(DD_GIT_DESCRIBE).a
-	ln -svfT $(<F) $@
+	$(LN_S) $(<F) $@
 $(LIB_DIR)/libimas-cpp.a_install: %.a_install:%-$(DD_GIT_DESCRIBE).a | $(libdir)
 	$(INSTALL_DATA) $< $(libdir)
-	ln -svfT $(<F) $(libdir)/$(*F).a
+	$(LN_S) $(<F) $(libdir)/$(*F).a
 
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) $(INCDIR) -c $< -o $(@)
