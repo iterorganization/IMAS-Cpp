@@ -1,12 +1,5 @@
-prefix=__PREFIX__
-exec_prefix=${prefix}
-libdir=${exec_prefix}/lib
-includedir=${prefix}/include
-
 Name: imas-cpp
 Version: __DD_GIT_DESCRIBE__-__UAL_GIT_DESCRIBE__
 Description: IMAS C++ Libraries
 URL: https://portal.iter.org/departments/POP/Pages/IM-Users-and-Developers.aspx
-Requires: imas-lowlevel = __DD_GIT_DESCRIBE__-__UAL_GIT_DESCRIBE__ blitz
-Cflags: -I${includedir}
-Libs: -L${libdir} -limas-cpp
+Requires: imas-cpp-__DD_GIT_DESCRIBE__
