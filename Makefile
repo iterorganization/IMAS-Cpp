@@ -49,8 +49,9 @@ IDS_H_FILES = $(addsuffix _IDSBase.h,$(IDSNAMES))
 IDS_CPP_FILES = $(IDS_H_FILES:.h=.cpp)
 
 # Generated sources (excluding static sources)
-GENSOURCES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_H_FILES) $(IDS_CPP_FILES))
-GENSOURCES += $(addprefix $(SRC_DIR)/,UALClasses.h UALMethods.cpp)
+GEN_H_FILES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_H_FILES)) $(SRC_DIR)/UALClasses.h
+GEN_CPP_FILES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_CPP_FILES)) $(SRC_DIR)/UALMethods.cpp
+GENSOURCES = $(GEN_H_FILES) $(GEN_CPP_FILES)
 # Add static sources
 SOURCES = $(GENSOURCES) $(addprefix $(SRC_DIR)/,IdsDef.cpp  IdsDef.h  UALDef.h)
 
@@ -70,25 +71,19 @@ $(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/
 sources: $(SOURCES) id_cpp_sources
 
 # Use an intermediate target to enforce nonparallel generation.
-generate_sources:  IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
-	xsltproc IDSDef2CPPClasses.xsl $(IDSDEF)
-	java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl
-
-beautify: generate_sources
-	@for i in $(IDS_SRC_DIR)/*; do \
-		echo Correcting indentation of $$i; \
-		$(BEAUTIFY) $$i; \
-	done
-	@$(RM) $(IDS_SRC_DIR)/*~
-
-# Test if all generated sources are found to exist as files to
-# gracefully skip generation if not needed.
-ifeq ($(words $(GENSOURCES)), $(words $(wildcard $(GENSOURCES))))
-$(GENSOURCES):
-else
-$(GENSOURCES): generate_sources beautify
-endif
-
+# Gracefully skip generation of sources if not needed.
+# Gracefully skip beautify of sources if not newly generated.
+$(GEN_H_FILES): gen_h_files
+	$(if $(wildcard $@~),@echo Correcting indentation of $@ ; $(BEAUTIFY) $@ && $(RM) $@~)
+$(GEN_CPP_FILES): gen_cpp_files
+	$(if $(wildcard $@~),@echo Correcting indentation of $@ ; $(BEAUTIFY) $@ && $(RM) $@~)
+gen_h_files: IDSDef2CPPClasses.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
+	$(if $(call allnewerthan,$(GEN_H_FILES),$^),, xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) && \
+	  touch $(addsuffix ~,$(GEN_H_FILES)) )
+gen_cpp_files: IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
+	$(if $(call allnewerthan,$(GEN_CPP_FILES),$^),,\
+	  java net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl && \
+	  touch $(addsuffix ~,$(GEN_CPP_FILES)) )
 
 #################################################
 #              BUILD
