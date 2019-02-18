@@ -12,10 +12,6 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
             // no error
             if (statusCode > -1)
                 return false;
-    
-            //warning only
-            if (statusCode == -5)
-                return false;
 
             // critical error that should be propagated to higher levels
             printf("ERROR while calling '%s', %s:%d\n", func, file, line);
