@@ -10,73 +10,73 @@ IDSDEF= $(IMAS_PREFIX)/xml/IDSDef.xml
 TESTDIR = ../testsuite
 
 ifeq "$(strip $(CC))" "icc"
-	CXX=icpc
-	LD=$(CXX)
-	CXXFLAGS=-g -O0 -fPIC -shared-intel
-	LDFLAGS=-g
+CXX=icpc
+LD=$(CXX)
+CXXFLAGS=-g -O0 -fPIC -shared-intel
+LDFLAGS=-g
 else
-	CXX=g++
-	LD=$(CXX)
-	ifneq ("no","$(strip $(SYS_WIN))")
-		CXXFLAGS=-std=c++11 -pthread -g -O2 -Wa,-mbig-obj -fPIC
-		LDFLAGS=-g -pthread
-	else
-		CXXFLAGS=-std=c++11 -pthread -g -O0 -fPIC
-		LDFLAGS=-g -pthread
-	endif
+CXX=g++
+LD=$(CXX)
+ifneq ("no","$(strip $(SYS_WIN))")
+CXXFLAGS=-std=c++11 -pthread -g -O2 -Wa,-mbig-obj -fPIC
+LDFLAGS=-g -pthread
+else
+CXXFLAGS=-std=c++11 -pthread -g -O0 -fPIC
+LDFLAGS=-g -pthread
+endif
 endif
 
 ifneq ("no","$(strip $(SYS_WIN))")
-	INCDIR= -I$(BLITZ_HOME)/include -I$(IMAS_PREFIX)/include -I../../src
-	LIBDIR= -L$(BLITZ_HOME)/lib -L$(IMAS_PREFIX)/lib -L$(IMAS_PREFIX)/cppinterface/lib
-	LIBS= $(IMAS_PREFIX)/cppinterface/lib/libimas-cpp.lib $(IMAS_PREFIX)/lib/libimas.lib
-	LIBS+= $(BLITZ_HOME)/lib/libblitz.a
-	BINOUT=TestSuite.exe
-	CFLAGS+= -DWIN32
-	CXXFLAGS+= -DWIN32
+INCDIR= -I$(BLITZ_HOME)/include -I$(IMAS_PREFIX)/include -I../../src
+LIBS= -L$(BLITZ_HOME)/lib -L$(IMAS_PREFIX)/lib -L$(IMAS_PREFIX)/cppinterface/lib
+LIBS+= $(IMAS_PREFIX)/cppinterface/lib/libimas-cpp.lib $(IMAS_PREFIX)/lib/libimas.lib
+LIBS+= $(BLITZ_HOME)/lib/libblitz.a
+BINOUT=TestSuite.exe
+CFLAGS+= -DWIN32
+CXXFLAGS+= -DWIN32
 else
-	INCDIR= `pkg-config blitz --cflags` -I$(IMAS_PREFIX)/include -I../../src
-	LIBDIR= -L$(IMAS_PREFIX)/lib -L../../lib
-	LIBS= -limas-cpp -limas `pkg-config blitz --libs`
-	BINOUT=TestSuite
+INCDIR= `pkg-config blitz --cflags` -I$(IMAS_PREFIX)/include -I../../src
+LIBS= -L$(IMAS_PREFIX)/lib -L../../lib
+LIBS+= -limas-cpp -limas `pkg-config blitz --libs`
+BINOUT=TestSuite
 endif
 	
 ifneq ("no","$(strip $(IMAS_MDSPLUS))")
-	ifneq ("no","$(strip $(SYS_WIN))")
-		LIBDIR+= -L$(MDSPLUS_DIR)/lib
-		LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
-		LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
-		LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
-	else
-		LIBS+= -L$(MDSPLUS_DIR)/lib64 -L$(MDSPLUS_DIR)/lib
-		LIBS+= -lMdsShr -lTreeShr -lTdiShr -lMdsLib -lMdsIpShr -lMdsObjectsCppShr -lXTreeShr
-	endif
+ifneq ("no","$(strip $(SYS_WIN))")
+LIBS+= -L$(MDSPLUS_DIR)/lib
+LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
+LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
+else
+LIBS+= -L$(MDSPLUS_DIR)/lib64 -L$(MDSPLUS_DIR)/lib
+LIBS+= -lMdsShr -lTreeShr -lTdiShr -lMdsLib -lMdsIpShr -lMdsObjectsCppShr -lXTreeShr
+endif
 endif
 
 ifneq ("no","$(strip $(IMAS_UDA))")
-	ifneq ("no","$(strip $(SYS_WIN))")
-		LIBDIR+= -L$(UDA_HOME)/lib
-		LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
-		LIBS+= $(UDA_HOME)/lib/libportablexdr.a
-		LIBS+= -lws2_32 -lssl -lcrypto
-	else
-		LIBS+= `pkg-config --libs uda-cpp`
-		LIBS+= -lssl -lcrypto
-	endif
+ifneq ("no","$(strip $(SYS_WIN))")
+LIBS+= -L$(UDA_HOME)/lib
+LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
+LIBS+= $(UDA_HOME)/lib/libportablexdr.a
+LIBS+= -lws2_32 -lssl -lcrypto
+else
+LIBS+= `pkg-config --libs uda-cpp`
+LIBS+= -lssl -lcrypto
+endif
 endif
 
 ifneq ("no","$(strip $(IMAS_HDF5))")
-	ifneq ("no","$(strip $(SYS_WIN))")
-		LIBDIR+= -L$(HDF5_HOME)/lib
-		LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
-	else
-		LIBDIR+= -L$(HDF5_HOME)/lib
-		LIBS+= -lhdf5 -ldl -lz
-	endif
+ifneq ("no","$(strip $(SYS_WIN))")
+LIBS+= -L$(HDF5_HOME)/lib
+LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
+else
+LIBS+= -L$(HDF5_HOME)/lib
+LIBS+= -lhdf5 -ldl -lz
+endif
 endif
 
 
@@ -92,8 +92,8 @@ clean:
 clean-src: clean
 	$(RM) TestSuite.cpp
 
-$(BINOUT): helper.o TestSuite.o 
-	$(LD) $(LDFLAGS) -o $@ $^ $(LIBDIR) $(LIBS)
+$(BINOUT): helper.o TestSuite.o
+	$(LD) $(LDFLAGS) -o $@ $^ $(LIBS)
 
 
 helper.o: helper.cpp
