@@ -216,9 +216,7 @@ endif
 #                    CLEAN
 #################################################
 clean: test-clean pkgconfig_clean id_cpp_clean
-	$(RM) $(IDS_OBJ_FILES)
-	$(RM) $(OBJ_FILES)
-	$(RM) $(TARGETS)
+	$(RM) -r $(LIB_DIR) $(BUILD_DIR)
 
 clean-src: clean id_cpp_clean-src
 	$(RM) $(GENSOURCES)
