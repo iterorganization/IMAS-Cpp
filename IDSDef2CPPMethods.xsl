@@ -421,7 +421,7 @@ char *str;
 char *basePath = "<xsl:value-of select="@name"/>";
 char path[strlen(basePath)+4];
 char *clepath;
-string lepath, timepath;
+string lepath, timepath, aosTime;
 string timebasepath; <xsl:for-each select=".//field[@data_type='struct_array' and @maxoccur!='unbounded']">
 int i<xsl:value-of select="concat(@name,generate-id(.))"/>; </xsl:for-each>
 if(idx &lt; 1)
@@ -5073,8 +5073,8 @@ if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time == EMPTY
    timeh = <xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time;
   }
   }
-  <!--timebasepath = <xsl:value-of select="$mds_path"/> + string("/<xsl:value-of select="@name"/>/time"); //Start to put time
-  --> status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), timeh, timeh);
+  aosTime = <xsl:value-of select="$mds_path"/> + string("/<xsl:value-of select="@name"/>/time"); //Start to put time
+  status = putDoubleSlice(expIdx, path, (char *)aosTime.c_str(), (char *)aosTime.c_str(), timeh, timeh);
   checkStatus(status);
   if (status) return status;
   }
@@ -5115,9 +5115,9 @@ if (<xsl:value-of select = "concat($variable_path,'.',@name)"/>(0).time == EMPTY
       }
   
 
-     <!-- timebasepath=&quot;<xsl:call-template name="printtimepath"/>&quot;;
-      -->
-     status = putDoubleSlice(expIdx, path, (char *)timebasepath.c_str(), (char *)timebasepath.c_str(), timeh, timeh);
+     aosTime=&quot;<xsl:call-template name="printtimepath"/>&quot;;
+     
+     status = putDoubleSlice(expIdx, path, (char *)aosTime.c_str(), (char *)aosTime.c_str(), timeh, timeh);
      checkStatus(status);
      if (status) return status;
      }
