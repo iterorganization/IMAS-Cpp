@@ -27,16 +27,16 @@ endif
 endif
 
 ifneq ("no","$(strip $(SYS_WIN))")
-INCDIR= -I$(BLITZ_HOME)/include -I$(IMAS_PREFIX)/include -I../../src
-LIBS= -L$(BLITZ_HOME)/lib -L$(IMAS_PREFIX)/lib -L$(IMAS_PREFIX)/cppinterface/lib
-LIBS+= $(IMAS_PREFIX)/cppinterface/lib/libimas-cpp.lib $(IMAS_PREFIX)/lib/libimas.lib
+INCDIR= -I$(BLITZ_HOME)/include -I$(IMAS_PREFIX)/lowlevel -I../../src
+LIBS= -L$(BLITZ_HOME)/lib -L$(IMAS_PREFIX)/lowlevel -L$(IMAS_PREFIX)/cppinterface/lib
+LIBS+= $(IMAS_PREFIX)/cppinterface/lib/libimas-cpp.lib $(IMAS_PREFIX)/lowlevel/libimas.lib
 LIBS+= $(BLITZ_HOME)/lib/libblitz.a
 BINOUT=TestSuite.exe
 CFLAGS+= -DWIN32
 CXXFLAGS+= -DWIN32
 else
-INCDIR= `pkg-config blitz --cflags` -I$(IMAS_PREFIX)/include -I../../src
-LIBS= -L$(IMAS_PREFIX)/lib -L../../lib
+INCDIR= `pkg-config blitz --cflags` -I$(IMAS_PREFIX)/lowlevel -I../../src
+LIBS= -L$(IMAS_PREFIX)/lowlevel -L../../lib
 LIBS+= -limas-cpp -limas `pkg-config blitz --libs`
 BINOUT=TestSuite
 endif

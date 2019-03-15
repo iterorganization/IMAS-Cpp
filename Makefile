@@ -168,11 +168,11 @@ $(LIB_DIR)/libimas-cpp.a_install: %.a_install:%-$(DD_GIT_DESCRIBE).a | $(libdir)
 
 # Windows dynamic library
 $(LIB_DIR)/libimas-cpp.dll: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
-	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(SO_NUM) -Wl,--out-implib,$@.lib $(OBJ_FILES) $(IDS_OBJ_FILES) $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(SO_NUM) -Wl,--out-implib,$@.lib $^ $(LIBS)
 
 # Windows static library
 $(LIB_DIR)/libimas-cpp.lib: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
-	$(AR) rcvsu $@ $(OBJ_FILES) $(IDS_OBJ_FILES)
+	$(AR) rcvsu $@ $^
 	ranlib $@
 
 $(OBJ_FILES): $(BUILD_DIR)/%.o : $(SRC_DIR)/%.cpp
