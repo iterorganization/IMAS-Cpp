@@ -56,7 +56,7 @@ IdsNs::IDS::IDS(int pulseCtx)
 	this->setPulseCtx(pulseCtx);
 }
 
-// deprecated!
+// Will be deprecated in the future!
 void IdsNs::IDS::setExpIdx(int pulseCtx) 
 {
     this->setPulseCtx(pulseCtx);
@@ -68,7 +68,7 @@ void IdsNs::IDS::setPulseCtx(int pulseCtx)
 <xsl:apply-templates select="IDS" mode="SET_PULSE_CTX"/>
 }
 
-// deprecated!
+// Will be deprecated in the future!
 int IdsNs::IDS::getIdx() 
 {
     return this->getPulseCtx();
