@@ -1,0 +1,15 @@
+ifeq "$(strip $(CC))" "icc"
+CXX=icpc
+CXXFLAGS=-g -O0 -fPIC -shared-intel
+LDFLAGS=-g
+else
+CXX=g++
+CXXFLAGS=-std=c++11 -pthread -g -O0 -fPIC
+LDFLAGS=-g -pthread
+endif
+
+INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src
+LIBS= -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib
+LIBS+= -limas-cpp -limas `pkg-config blitz --libs`
+BINOUT=TestSuite
+
