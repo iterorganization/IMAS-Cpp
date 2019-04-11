@@ -371,6 +371,11 @@ isIdsHomogeneous = ids_properties.homogeneous_time;
    		return 0;
 	}
 
+    if( isIdsHomogeneous &amp;&amp;  ( this->time.size() &lt; 1) )
+    {
+        printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
+        return -1;
+    }
 
 if(iOccurrence &lt; 1)
 sprintf(idsFullName, "%s", idsName);
@@ -431,7 +436,11 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
    		return 0;
 	}
 
-
+    if( isIdsHomogeneous &amp;&amp;  (this->time.size() &lt; 1) )
+    {
+        printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
+        return -1;
+    }
 
 	if(iOccurrence &lt; 1)
 		sprintf(idsFullName, "%s", idsName);
