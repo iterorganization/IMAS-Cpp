@@ -1,0 +1,67 @@
+JAVA = $(JAVA_HOME)/bin/java
+CFLAGS+= -DWIN32
+CXXFLAGS+= -DWIN32
+INCDIR+= -I$(BLITZ_HOME)/include
+LIBS+= $(BLITZ_HOME)/lib/libblitz.a ../lowlevel/libimas.lib
+
+ifneq ("no","$(strip $(IMAS_MDSPLUS))")
+LIBS+= -L$(MDSPLUS_DIR)/lib
+LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
+LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
+endif # IMAS_MDSPLUS
+
+ifneq ("no","$(strip $(IMAS_UDA))")
+LIBS+= -L$(UDA_HOME)/lib
+LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
+LIBS+= $(UDA_HOME)/lib/libportablexdr.a
+LIBS+= -lws2_32 -lssl -lcrypto
+endif # IMAS_UDA
+
+ifneq ("no","$(strip $(IMAS_HDF5))")
+LIBS+= -L$(HDF5_HOME)/lib
+LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
+endif # IMAS_HDF5
+
+# Check existence of the "indent" utility to get a clean C format
+ifeq "$(shell which indent 2> /dev/null)" ""
+BEAUTIFY = echo
+else
+BEAUTIFY = indent -kr --no-tabs -l1000
+endif
+
+TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.lib libimas-cpp.dll)
+
+all: $(SOURCES) $(TARGETS) id_cpp_all
+
+$(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/ids:
+	$(mkdir_p) $@
+
+# Windows dynamic library
+$(LIB_DIR)/libimas-cpp.dll: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(SO_NUM) -Wl,--out-implib,$@.lib $^ $(LIBS)
+
+# Windows static library
+$(LIB_DIR)/libimas-cpp.lib: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+	$(AR) rcvsu $@ $^
+	ranlib $@
+
+install: all pkgconfig_install id_cpp_install
+	$(mkdir_p) $(packagedir)/cppinterface/lib
+	$(mkdir_p) $(packagedir)/cppinterface/include/ids
+	$(mkdir_p) $(packagedir)/blitz/lib
+	# Copy libraries
+	for OBJECT in `find . -type f \( -name "*.lib" -or -name "*.dll" \)`; do \
+		cp $$OBJECT $(packagedir)/cppinterface/lib; \
+	done
+	# Copy Blitz libraries
+	cp $(BLITZ_HOME)/lib/libblitz.a $(packagedir)/blitz/lib
+	# Copy includes
+	cp $(SRC_DIR)/*.h $(packagedir)/cppinterface/include
+	cp $(IDS_SRC_DIR)/*.h $(packagedir)/cppinterface/include/ids
+
+sources_install: $(SOURCES)

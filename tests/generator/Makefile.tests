@@ -1,0 +1,40 @@
+
+# Please do not run make on this file directly.
+ifeq (1,$(words $(MAKEFILE_LIST)))
+  $(error Do not run make on this file directly, use Makefile or Makefile-ext)
+endif
+
+# Require explicit target, do not assume make all
+help:
+	$(error Specify a target to run, e.g. make check)
+
+TESTS = cpp_tests
+GENSOURCES = TestSuite.cpp
+
+.PHONY: check clean clean-src
+all: $(BINOUT)
+sources: $(GENSOURCES)
+sources_install:
+install:
+clean:
+	$(RM) *.log *.o $(BINOUT)
+clean-src: clean
+	$(RM) $(GENSOURCES)
+check test: $(TESTS)
+
+
+# RUN TESTS
+cpp_tests:
+	./$(BINOUT)
+
+#  BUILD
+$(BINOUT): helper.o TestSuite.o
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBDIR) $(LIBS)
+.SUFFIXES:.cpp
+.cpp.o:
+	$(CXX) $(INCDIR) $(CXXFLAGS) -c $< -o $@
+
+#  SOURCE GENERATION
+TestSuite.cpp: %.cpp:%.xsl | $(IDSDEF)
+	xsltproc $< $| > $@
+

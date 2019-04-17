@@ -1,0 +1,39 @@
+ifeq "$(strip $(CC))" "icc"
+CXX=icpc
+CXXFLAGS=-g -O0 -fPIC -shared-intel
+LDFLAGS=-g
+else
+CXX=g++
+CXXFLAGS=-std=c++11 -pthread -g -O2 -Wa,-mbig-obj -fPIC
+LDFLAGS=-g -pthread
+endif
+
+INCDIR= -I$(BLITZ_HOME)/include -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src
+LIBS= -L$(BLITZ_HOME)/lib -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib
+LIBS+= $(UAL_BUILD)/cppinterface/lib/libimas-cpp.lib $(UAL_BUILD)/lowlevel/libimas.lib
+LIBS+= $(BLITZ_HOME)/lib/libblitz.a
+BINOUT=TestSuite.exe
+CFLAGS+= -DWIN32
+CXXFLAGS+= -DWIN32
+
+ifneq ("no","$(strip $(IMAS_MDSPLUS))")
+LIBS+= -L$(MDSPLUS_DIR)/lib
+LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
+LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
+endif
+
+ifneq ("no","$(strip $(IMAS_UDA))")
+LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
+LIBS+= $(UDA_HOME)/lib/libportablexdr.a
+LIBS+= -lws2_32 -lssl -lcrypto
+endif
+
+ifneq ("no","$(strip $(IMAS_HDF5))")
+LIBS+= -L$(HDF5_HOME)/lib
+LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
+endif
