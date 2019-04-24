@@ -457,6 +457,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 		
+        if(ptrData == NULL)
+            return status;
+
 		value = *(double*)ptrData;
 
   		return status;
@@ -473,6 +476,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 
+        if(ptrData == NULL || retSize[0] == 0)
+            return status;
+
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0]);
 
   		return status;
@@ -488,6 +494,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 
+        if(ptrData == NULL || retSize[0] * retSize[1] == 0)
+            return status;
+
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1]);
 
   		return status;
@@ -502,6 +511,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 3, &retSize[0]);
   		if (status != 0)
     			return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] == 0)
+            return status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2]);
 
@@ -519,6 +531,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] == 0)
+            return status;
+
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
 
   		return status;
@@ -534,6 +549,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] == 0)
+            return status;
+
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
 
   		return status;
@@ -548,6 +566,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 6, &retSize[0]);
   		if (status != 0)
     			return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] * retSize[5] == 0)
+            return status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
 
@@ -568,6 +589,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
   		if (status != 0)
     			return status;
+
+        if(ptrData == NULL)
+            return status;
 		
 		value = *(int*)ptrData;
 
@@ -585,6 +609,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 
+        if(ptrData == NULL || retSize[0] == 0)
+            return status;
+
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
 
   		return status;
@@ -600,6 +627,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 
+        if(ptrData == NULL || retSize[0] * retSize[1] == 0)
+            return status;
+
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
 
   		return status;
@@ -614,6 +644,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 3, &retSize[0]);
   		if (status != 0)
     			return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] == 0)
+            return status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2]);
 
@@ -631,6 +664,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] == 0)
+            return status;
+
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
 
   		return status;
@@ -646,6 +682,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		if (status != 0)
     			return status;
 
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] * retSize[5] == 0)
+            return status;
+
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
 
   		return status;
@@ -660,6 +699,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 5, &retSize[0]);
   		if (status != 0)
     			return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] == 0)
+            return status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
 
@@ -678,7 +720,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if (status != 0)
     			return status;
 		
-		if(ptrData != NULL)
+		if(ptrData != NULL && retSize[0] > 0)
 			text = (char*)ptrData;
 		else
 			text = "";
@@ -698,6 +740,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void**)(&ptrData), CHAR_DATA, 2, &retSize[0]);
   		if (status != 0)
     			return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] == 0)
+            return status;        
 
 		numberOfStrings = retSize[0];
 		maxStringSize = retSize[1];
