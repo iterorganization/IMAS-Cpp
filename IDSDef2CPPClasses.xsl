@@ -48,6 +48,7 @@ class IDS
     IDS();
     IDS(int shot, int run, int refShot, int refRun);
     IDS(int idx);
+    void setExpIdx(int idx);  // will be deprecated in the future!
     void setPulseCtx(int idx);
     void setShot(int inShot) {shot = inShot;}
     void setRun(int inRun) {run = inRun;}
@@ -55,6 +56,7 @@ class IDS
     void setRefNum(int inRefRun){refRun = inRefRun;}
     void setTreeName(char *inTreeName){treeName = inTreeName; }
     void setTreeName(string inTreeName){treeName = inTreeName;}
+    int getIdx(); // will be deprecated in the future!
     int getPulseCtx() {return this->pulseCtx;}
     int getShot() {return shot;}
     int getRun() {return run;}

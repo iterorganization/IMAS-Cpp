@@ -56,13 +56,23 @@ IdsNs::IDS::IDS(int pulseCtx)
 	this->setPulseCtx(pulseCtx);
 }
 
+// Will be deprecated in the future!
+void IdsNs::IDS::setExpIdx(int pulseCtx) 
+{
+    this->setPulseCtx(pulseCtx);
+}
+
 void IdsNs::IDS::setPulseCtx(int pulseCtx)
 {
     this->pulseCtx = pulseCtx;
 <xsl:apply-templates select="IDS" mode="SET_PULSE_CTX"/>
 }
 
-
+// Will be deprecated in the future!
+int IdsNs::IDS::getIdx() 
+{
+    return this->getPulseCtx();
+}
 
 
 int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *version)
