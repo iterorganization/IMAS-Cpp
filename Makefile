@@ -123,7 +123,6 @@ test-clean-src:
 	$(MAKE) -C tests/generator clean-src
 
 #----------------------- identifiers ---------------------
-OBJECTCODE=cpp
 include ../Makefile.identifiers
 PC_FILES_ALT = $(ID_cpp_PC_FILES_2)
 
