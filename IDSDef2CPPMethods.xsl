@@ -433,8 +433,6 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	std::string timeBasePath;
 	bool isIdsHomogeneous = false;
 	int arraySize;
-	double sliceTime = -1.0;
-
 
 	if(!connected) 
 		return -1;
@@ -458,10 +456,9 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
 
-	sliceTime = this->time(0);
 
 	// Open put context
-	putSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, sliceTime, UNDEFINED_INTERP);
+	putSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP);
 
 	if(putSliceOpCtx &lt; 0) 
 		return putSliceOpCtx;
