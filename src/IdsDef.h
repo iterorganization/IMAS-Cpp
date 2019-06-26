@@ -4,6 +4,8 @@
 
 #define BZ_THREADSAFE
 #include <blitz/array.h>
+
+#include "UALDef.h"
 using namespace blitz;
 
 #define NON_TIMED    0
@@ -16,7 +18,19 @@ namespace IdsNs {
 class Ids
 {
     protected:
+
         static bool isError(int statusCode, const char *file, const unsigned long line, const char *func);
+
+        /************************************************************************************************************************************************/
+        /*********************************                      COMPLEX NUMBERS CONVERSION                           ************************************/
+        /************************************************************************************************************************************************/
+            
+        static ual_complex_t  convertToUalComplex (std_complex_t  stdComplex);
+        static ual_complex_t * convertArrayToUalComplex (int iSizeofArray, std_complex_t * stdComplexArray);
+        
+        static std_complex_t  convertToStdComplex(ual_complex_t  ualComplex);
+        static std_complex_t * convertArrayToStdComplex(int iSizeofArray, ual_complex_t * ualComplexArray);
+
 
 
         static void setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1);
@@ -25,11 +39,17 @@ class Ids
   
         static void setArray(blitz::Array<double,1>&array,double *arrayPtr, int dim1);
 
+        static void setArray(blitz::Array<std_complex_t,1> &array, ual_complex_t *arrayPtr, int dim1);
+
+
         static void setArray(blitz::Array<int,2>&array,int *arrayPtr, int dim1, int dim2);
 
         static void setArray(blitz::Array<float,2>&array,float *arrayPtr, int dim1, int dim2);
 
         static void setArray(blitz::Array<double,2>&array,double *arrayPtr, int dim1, int dim2);
+
+        static void setArray(blitz::Array<std_complex_t,2> &array, ual_complex_t *arrayPtr, int dim1, int dim2);
+
 
         static void setArray(blitz::Array<int,3>&array,int *arrayPtr, int dim1, int dim2, int dim3);
 
@@ -37,11 +57,16 @@ class Ids
 
         static void setArray(blitz::Array<double,3>&array,double *arrayPtr, int dim1, int dim2, int dim3);
 
+        static void setArray(blitz::Array<std_complex_t,3> &array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3);
+
+
         static void setArray(blitz::Array<int,4>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4);
    
         static void setArray(blitz::Array<float,4>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4);
    
         static void setArray(blitz::Array<double,4>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4);
+
+        static void setArray(blitz::Array<std_complex_t,4> &array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4);
     
 
         static void setArray(blitz::Array<int,5>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
@@ -49,6 +74,8 @@ class Ids
         static void setArray(blitz::Array<float,5>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
      
         static void setArray(blitz::Array<double,5>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
+ 
+        static void setArray(blitz::Array<std_complex_t,5> &array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
    
 
         static void setArray(blitz::Array<int,6>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
@@ -56,6 +83,8 @@ class Ids
         static void setArray(blitz::Array<float,6>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
    
         static void setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
+
+        static void setArray(blitz::Array<std_complex_t,6> &array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
 
     	/************************************************************************************************************************************************/
     	/*********************************                           WRITE DATA                                      ************************************/
@@ -73,7 +102,7 @@ class Ids
  
 	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,5> array);
 
-    	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,6> array);
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<int,6> array);
 
   	/************************************************************************************************************************************************/
 	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, double value);
@@ -88,7 +117,22 @@ class Ids
  
 	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,5> array);
 
-    	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,6> array);
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<double,6> array);
+
+    /************************************************************************************************************************************************/
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, std_complex_t value);
+
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std_complex_t,1> array);
+
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std_complex_t,2> array);
+
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std_complex_t,3> array);
+
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std_complex_t,4> array);
+ 
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std_complex_t,5> array);
+
+    static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std_complex_t,6> array);
 
   	/************************************************************************************************************************************************/
     
@@ -96,9 +140,9 @@ class Ids
 
     	static int writeData(int ctx, std::string fieldPath, std::string timebasePath, const blitz::Array<std::string, 1> text);
 
-    	/************************************************************************************************************************************************/
-    	/*********************************                             READ DATA                                     ************************************/
-    	/************************************************************************************************************************************************/
+    /************************************************************************************************************************************************/
+    /*********************************                             READ DATA                                     ************************************/
+    /************************************************************************************************************************************************/
 	
 	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, double &value);
 	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 1> &array);
@@ -115,6 +159,14 @@ class Ids
 	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 4> &array);
 	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 5> &array);
 	static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 6> &array);
+
+    static int readData(int ctx, std::string fieldPath, std::string timeBasePath, std_complex_t &value);
+    static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 1> &array);
+    static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 2> &array);
+    static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 3> &array);
+    static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 4> &array);
+    static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 5> &array);
+    static int readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 6> &array);
 
       	static int readData(int ctx, std::string fieldPath, std::string timebasePath, std::string& text);
     	static int readData(int ctx, std::string fieldPath, std::string timebasePath, blitz::Array<std::string, 1>& array);

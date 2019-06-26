@@ -174,6 +174,9 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     <xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
       double <xsl:value-of select = "@name"/>;
     </xsl:when>
+    <xsl:when test="@type='cpx_type'  or @data_type='CPX_0D'">
+      std_complex_t <xsl:value-of select = "@name"/>;
+    </xsl:when>
     <xsl:when test="@data_type='flt_1d_type' or @data_type='FLT_1D'">
       Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
@@ -204,6 +207,25 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     <xsl:when test="@data_type='FLT_6D'">
       Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,6<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
+    <xsl:when test="@data_type='cplx_1d_type' or @data_type='CPX_1D'">
+      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+    </xsl:when>
+    <xsl:when test="@data_type='CPX_2D'">
+      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 2<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+    </xsl:when>
+    <xsl:when test="@data_type='CPX_3D'">
+      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 3<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+    </xsl:when>
+    <xsl:when test="@data_type='CPX_4D'">
+      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 4<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+    </xsl:when>
+    <xsl:when test="@data_type='CPX_5D'">
+      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 5<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+    </xsl:when>
+    <xsl:when test="@data_type='CPX_6D'">
+      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 6<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+    </xsl:when>
+
     <!-- structures and arrays of structures are implemented as classes,
          so that we can initialize the fields in the constructor.
 	 Special types complexgrid, complexgrid_scalar and complexgrid_vector are defined above. -->
@@ -267,6 +289,9 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     </xsl:when>
     <xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
       <xsl:value-of select = "@name"/>=EMPTY_DOUBLE;
+    </xsl:when>
+    <xsl:when test="@data_type='cpx_type' or @data_type='CPX_0D'">
+      <xsl:value-of select = "@name"/>=EMPTY_COMPLEX;
     </xsl:when>
   </xsl:choose>
 </xsl:template>

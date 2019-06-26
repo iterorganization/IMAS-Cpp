@@ -4,6 +4,8 @@
 
 #include <blitz/array.h>
 
+#include "UALDef.h"
+
 
 using namespace blitz;
 
@@ -45,6 +47,7 @@ void setValue(int& idsField, bool isReduced);
 
 
 void setValue(double& idsField, bool isReduced);
+void setValue(std_complex_t& idsField, bool isReduced);
 
 
 void setValue(Array<std::string,1>&array, bool isReduced);
@@ -65,6 +68,14 @@ void setValue(Array<double,3>&array, bool isReduced);
 void setValue(Array<double,4>&array, bool isReduced);
 void setValue(Array<double,5>&array, bool isReduced);
 void setValue(Array<double,6>&array, bool isReduced);
+
+void setValue(Array<std_complex_t, 1>&array, bool isReduced);
+void setValue(Array<std_complex_t, 2>&array, bool isReduced);
+void setValue(Array<std_complex_t, 3>&array, bool isReduced);
+void setValue(Array<std_complex_t, 4>&array, bool isReduced);
+void setValue(Array<std_complex_t, 5>&array, bool isReduced);
+void setValue(Array<std_complex_t, 6>&array, bool isReduced);
+
 
 /**********************        Assert array shape        ***********************/
 
@@ -87,6 +98,7 @@ int assertField(int observedValue, const char* fieldPath,  bool sliceMode);
 
 
 int assertField(double observedValue, const char* fieldPath, bool sliceMode);
+int assertField(std_complex_t observedValue, const char* fieldPath, bool sliceMode);
 
 
 int assertField(const blitz::Array<std::string, 1> observedValue, const char* fieldPath, bool sliceMode);
@@ -106,5 +118,12 @@ int assertField(const blitz::Array<double, 4> observedValue, const char*fieldPat
 int assertField(const blitz::Array<double, 5> observedValue, const char*fieldPath, bool sliceMode);
 int assertField(const blitz::Array<double, 6> observedValue, const char*fieldPath, bool sliceMode);
 
+
+int assertField(const blitz::Array<std_complex_t, 1> observedValue, const char*fieldPath, bool sliceMode);
+int assertField(const blitz::Array<std_complex_t, 2> observedValue, const char*fieldPath, bool sliceMode);
+int assertField(const blitz::Array<std_complex_t, 3> observedValue, const char*fieldPath, bool sliceMode);
+int assertField(const blitz::Array<std_complex_t, 4> observedValue, const char*fieldPath, bool sliceMode);
+int assertField(const blitz::Array<std_complex_t, 5> observedValue, const char*fieldPath, bool sliceMode);
+int assertField(const blitz::Array<std_complex_t, 6> observedValue, const char*fieldPath, bool sliceMode);
 #endif // _HELPER
 

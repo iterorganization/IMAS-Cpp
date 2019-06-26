@@ -120,6 +120,15 @@ double getDouble()
 	return (double) (rand() %100) * 1.1;
 }
 
+std_complex_t getComplex() 
+{
+    double dReal =  getDouble() ;
+    double dImaginary =  getDouble();
+
+    return (std_complex_t) (dReal, dImaginary);
+}
+
+
 double* generateDoubleArray(int size)
 {
 	double* array = new double[size];
@@ -129,6 +138,17 @@ double* generateDoubleArray(int size)
 	}
 
 	return array;
+}
+
+std_complex_t* generateComplexArray(int size)
+{
+    std_complex_t* array = new std_complex_t[size];
+    for (int i = 0; i < size; i++)
+    {
+        array[i] = getComplex();
+    }
+
+    return array;
 }
 
 char* getString()
@@ -196,6 +216,11 @@ void setValue(int& idsField, bool isReduced)
 void setValue(double& idsField, bool isReduced)
 {
 	idsField = getDouble();
+}
+
+void setValue(std_complex_t& idsField, bool isReduced)
+{
+    idsField = getComplex();
 }
 
 void setValue(Array<std::string,1>&array, bool isReduced)
@@ -542,6 +567,176 @@ void setValue(Array<double,6>&array, bool isReduced)
 	delete[] arrayPtr;
 }
 
+
+/*******************************************************************************/
+void setValue(Array<std_complex_t, 1> &array, bool isReduced)
+{
+    int size = -1;
+    std_complex_t *arrayPtr = NULL;
+    const blitz::TinyVector<int, 1> *ptrShape;
+
+    if(isReduced)
+    {
+        size = 1;
+        ptrShape = new const blitz::TinyVector<int, 1> (1);
+    }
+    else
+    {
+        size = dim1;
+        ptrShape = new const blitz::TinyVector<int, 1> (dim1);
+    }
+
+    
+    arrayPtr = generateComplexArray(size);
+
+    Array<std_complex_t, 1> newArray(arrayPtr, *ptrShape, duplicateData);
+    array.resize(*ptrShape);
+    array = newArray;
+    delete ptrShape;
+    delete[] arrayPtr;
+}
+
+void setValue(Array<std_complex_t, 2> &array, bool isReduced)
+{
+    int size = -1;
+    std_complex_t *arrayPtr = NULL;
+    const blitz::TinyVector<int, 2> *ptrShape;
+
+    if(isReduced)
+    {
+        size = dim1 * 1;
+        ptrShape = new const blitz::TinyVector<int, 2> (dim1, 1);
+    }
+    else
+    {
+        size = dim1 * dim2;
+        ptrShape = new const blitz::TinyVector<int, 2> (dim1, dim2);
+    }
+
+    
+    arrayPtr = generateComplexArray(size);
+
+    Array<std_complex_t, 2> newArray(arrayPtr, *ptrShape, duplicateData);
+    array.resize(*ptrShape);
+    array = newArray;
+    delete ptrShape;
+    delete[] arrayPtr;
+}
+
+void setValue(Array<std_complex_t, 3> &array, bool isReduced)
+{
+    int size = -1;
+    std_complex_t *arrayPtr = NULL;
+    const blitz::TinyVector<int, 3> *ptrShape;
+
+    if(isReduced)
+    {
+        size = dim1 * dim2 * 1;
+        ptrShape = new const blitz::TinyVector<int, 3> (dim1, dim2, 1);
+    }
+    else
+    {
+        size = dim1 * dim2 * dim3;
+        ptrShape = new const blitz::TinyVector<int, 3> (dim1, dim2, dim3);
+    }
+
+    
+    arrayPtr = generateComplexArray(size);
+
+    Array<std_complex_t, 3> newArray(arrayPtr, *ptrShape, duplicateData);
+    array.resize(*ptrShape);
+    array = newArray;
+    delete ptrShape;
+    delete[] arrayPtr;
+}
+
+
+void setValue(Array<std_complex_t, 4> &array, bool isReduced)
+{
+    int size = -1;
+    std_complex_t *arrayPtr = NULL;
+    const blitz::TinyVector<int, 4> *ptrShape;
+
+    if(isReduced)
+    {
+        size = dim1 * dim2 * dim3 * 1;
+        ptrShape = new const blitz::TinyVector<int, 4> (dim1, dim2, dim3, 1);
+    }
+    else
+    {
+        size = dim1 * dim2 * dim3 * dim4;
+        ptrShape = new const blitz::TinyVector<int, 4> (dim1, dim2, dim3, dim4);
+    }
+
+    
+    arrayPtr = generateComplexArray(size);
+
+    Array<std_complex_t, 4> newArray(arrayPtr, *ptrShape, duplicateData);
+    array.resize(*ptrShape);
+    array = newArray;
+    delete ptrShape;
+    delete[] arrayPtr;
+}
+
+void setValue(Array<std_complex_t, 5> &array, bool isReduced)
+{
+    int size = -1;
+    std_complex_t *arrayPtr = NULL;
+    const blitz::TinyVector<int, 5> *ptrShape;
+
+    if(isReduced)
+    {
+        size = dim1 * dim2 * dim3 * dim4 * 1;
+        ptrShape = new const blitz::TinyVector<int, 5> (dim1, dim2, dim3, dim4, 1);
+    }
+    else
+    {
+        size = dim1 * dim2 * dim3 * dim4 * dim5;
+        ptrShape = new const blitz::TinyVector<int, 5> (dim1, dim2, dim3, dim4, dim5);
+    }
+
+    
+    arrayPtr = generateComplexArray(size);
+
+    Array<std_complex_t, 5> newArray(arrayPtr, *ptrShape, duplicateData);
+    array.resize(*ptrShape);
+    array = newArray;
+    delete ptrShape;
+    delete[] arrayPtr;
+}
+
+void setValue(Array<std_complex_t, 6> &array, bool isReduced)
+{
+    int size = -1;
+    std_complex_t *arrayPtr = NULL;
+    const blitz::TinyVector<int, 6> *ptrShape;
+
+    if(isReduced)
+    {
+        size = dim1 * dim2 * dim3 * dim4 * dim5 * 1;
+        ptrShape = new const blitz::TinyVector<int, 6> (dim1, dim2, dim3, dim4, dim5, 1);
+    }
+    else
+    {
+        size = dim1 * dim2 * dim3 * dim4 * dim5 * dim6;
+        ptrShape = new const blitz::TinyVector<int, 6> (dim1, dim2, dim3, dim4, dim5, dim6);
+    }
+
+    
+    arrayPtr = generateComplexArray(size);
+
+    Array<std_complex_t, 6> newArray(arrayPtr, *ptrShape, duplicateData);
+    array.resize(*ptrShape);
+    array = newArray;
+    delete ptrShape;
+    delete[] arrayPtr;
+}
+
+
+
+
+
+
 /*******************************************************************************/
 /**********************         Field checking           ***********************/
 /*******************************************************************************/
@@ -632,6 +827,19 @@ int assertField(double observedValue, const char* fieldPath, bool sliceMode)
 	}
 	return 0;
 	
+}
+
+int assertField(std_complex_t observedValue, const char* fieldPath, bool sliceMode)
+{
+    std_complex_t expectedValue = getComplex();
+    
+    if(expectedValue != observedValue)
+    {
+        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        return -1;
+    }
+    return 0;
+    
 }
 
 int assertField(const blitz::Array<std::string, 1> observedValue, const char* fieldPath, bool sliceMode)
@@ -856,6 +1064,110 @@ int assertField(const blitz::Array<double, 6> observedValue, const char*fieldPat
 	}
 
 	return 0;
+}
+
+int assertField(const blitz::Array<std_complex_t, 1> observedValue, const char*fieldPath, bool sliceMode)
+{
+    blitz::Array<std_complex_t, 1> expectedValue;
+    setValue(expectedValue, sliceMode);
+
+
+    if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+        return -1;
+
+    if(any(expectedValue != observedValue))
+    {
+        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        return -1;
+    }
+
+    return 0;
+}
+int assertField(const blitz::Array<std_complex_t, 2> observedValue, const char*fieldPath, bool sliceMode)
+{
+    blitz::Array<std_complex_t, 2> expectedValue;
+    setValue(expectedValue, sliceMode);
+
+
+    if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+        return -1;
+
+    if(any(expectedValue != observedValue))
+    {
+        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        return -1;
+    }
+
+    return 0;
+}
+int assertField(const blitz::Array<std_complex_t, 3> observedValue, const char*fieldPath, bool sliceMode)
+{
+    blitz::Array<std_complex_t, 3> expectedValue;
+    setValue(expectedValue, sliceMode);
+
+
+    if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+        return -1;
+
+    if(any(expectedValue != observedValue))
+    {
+        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        return -1;
+    }
+
+    return 0;
+}
+int assertField(const blitz::Array<std_complex_t, 4> observedValue, const char*fieldPath, bool sliceMode)
+{
+    blitz::Array<std_complex_t, 4> expectedValue;
+    setValue(expectedValue, sliceMode);
+
+
+    if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+        return -1;
+
+    if(any(expectedValue != observedValue))
+    {
+        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        return -1;
+    }
+
+    return 0;
+}
+int assertField(const blitz::Array<std_complex_t, 5> observedValue, const char*fieldPath, bool sliceMode)
+{
+    blitz::Array<std_complex_t, 5> expectedValue;
+    setValue(expectedValue, sliceMode);
+
+
+    if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+        return -1;
+
+    if(any(expectedValue != observedValue))
+    {
+        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        return -1;
+    }
+
+    return 0;
+}
+
+int assertField(const blitz::Array<std_complex_t, 6> observedValue, const char*fieldPath, bool sliceMode)
+{
+    blitz::Array<std_complex_t, 6> expectedValue;
+    setValue(expectedValue, sliceMode);
+
+
+    if(assertShape(expectedValue.shape(), observedValue.shape(), fieldPath))
+        return -1;
+
+    if(any(expectedValue != observedValue))
+    {
+        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        return -1;
+    }
+
+    return 0;
 }
 
 #endif // _HELPER_CPP

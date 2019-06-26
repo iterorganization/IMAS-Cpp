@@ -4,6 +4,8 @@
 #include "ual_lowlevel.h"
 #include "UALDef.h"
 
+#include <complex.h>
+
 using namespace blitz;
 using namespace IdsNs;
 
@@ -36,6 +38,17 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
             array.resize(newArray.shape());
             array = newArray;
         }
+
+        void IdsNs::Ids::setArray(blitz::Array<std_complex_t,1>&array, ual_complex_t *arrayPtr, int dim1)
+        {
+            std_complex_t* stdComplexArrayPtr = NULL;
+    
+            stdComplexArrayPtr = convertArrayToStdComplex(dim1, arrayPtr);
+            blitz::Array<std_complex_t,1> newArray(stdComplexArrayPtr, shape(dim1), duplicateData);
+            array.resize(newArray.shape());
+            array = newArray;
+        }
+
         void IdsNs::Ids::setArray(blitz::Array<int,2>&array,int *arrayPtr, int dim1, int dim2)
         {
             blitz::Array<int,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData);
@@ -54,6 +67,17 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
             array.resize(newArray.shape());
             array = newArray;
         }
+
+        void IdsNs::Ids::setArray(blitz::Array<std_complex_t,2>&array, ual_complex_t *arrayPtr, int dim1, int dim2)
+        {
+            std_complex_t* stdComplexArrayPtr = NULL;
+    
+            stdComplexArrayPtr = Ids::convertArrayToStdComplex(dim1*dim2, arrayPtr);
+            blitz::Array<std_complex_t,2> newArray(stdComplexArrayPtr, shape(dim1, dim2), duplicateData);
+            array.resize(newArray.shape());
+            array = newArray;
+        }
+
         void IdsNs::Ids::setArray(blitz::Array<int,3>&array,int *arrayPtr, int dim1, int dim2, int dim3)
         {
             blitz::Array<int,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData);
@@ -69,6 +93,16 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         void IdsNs::Ids::setArray(blitz::Array<double,3>&array,double *arrayPtr, int dim1, int dim2, int dim3)
         {
             blitz::Array<double,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData);
+            array.resize(newArray.shape());
+            array = newArray;
+        }
+
+        void IdsNs::Ids::setArray(blitz::Array<std_complex_t,3>&array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3)
+        {
+            std_complex_t* stdComplexArrayPtr = NULL;
+    
+            stdComplexArrayPtr = Ids::convertArrayToStdComplex(dim1*dim2*dim3, arrayPtr);
+            blitz::Array<std_complex_t,3> newArray(stdComplexArrayPtr, shape(dim1, dim2, dim3), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
@@ -93,6 +127,16 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
             array = newArray;
         }
 
+        void IdsNs::Ids::setArray(blitz::Array<std_complex_t,4>&array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4)
+        {
+            std_complex_t* stdComplexArrayPtr = NULL;
+    
+            stdComplexArrayPtr = Ids::convertArrayToStdComplex(dim1*dim2*dim3*dim4, arrayPtr);
+            blitz::Array<std_complex_t,4> newArray(stdComplexArrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData);
+            array.resize(newArray.shape());
+            array = newArray;
+        }
+
         void IdsNs::Ids::setArray(blitz::Array<int,5>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
             blitz::Array<int,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData);
@@ -112,6 +156,18 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
             array = newArray;
         }
 
+        void IdsNs::Ids::setArray(blitz::Array<std_complex_t,5>&array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
+        {
+            std_complex_t* stdComplexArrayPtr = NULL;
+    
+            stdComplexArrayPtr = Ids::convertArrayToStdComplex(dim1*dim2*dim3*dim4*dim5, arrayPtr);
+
+            blitz::Array<std_complex_t,5> newArray(stdComplexArrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData);
+            array.resize(newArray.shape());
+            array = newArray;
+        }
+
+
         void IdsNs::Ids::setArray(blitz::Array<int,6>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
             blitz::Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData);
@@ -127,6 +183,18 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         void IdsNs::Ids::setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
             blitz::Array<double,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData);
+            array.resize(newArray.shape());
+            array = newArray;
+        }
+
+        void IdsNs::Ids::setArray(blitz::Array<std_complex_t,6>&array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
+        {
+
+            std_complex_t* stdComplexArrayPtr = NULL;
+    
+            stdComplexArrayPtr = Ids::convertArrayToStdComplex(dim1*dim2*dim3*dim4*dim5*dim6, arrayPtr);
+
+            blitz::Array<std_complex_t,6> newArray(stdComplexArrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData);
             array.resize(newArray.shape());
             array = newArray;
         }
@@ -386,6 +454,149 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		return status;
         }
 
+    /************************************************************************************************************************************************/
+    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath,  std_complex_t value)
+    {
+        int status = -1;
+        ual_complex_t ualComplex ;
+        void* ptrData = NULL;
+
+
+
+        if(value == EMPTY_COMPLEX)
+            return 0;
+
+        ualComplex = convertToUalComplex(value);
+        ptrData = (void*) &ualComplex;
+
+
+        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 0, NULL);
+        return status;
+    }
+
+    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 1> array)
+    {
+        int status = -1;
+        void* ptrData = NULL;
+        int arrayOfSizes[1] = { array.extent(0)};
+
+
+        if(array.size() < 1)
+            return 0;
+
+
+        blitz::Array<std_complex_t,1>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
+
+        ptrData = (void*) convertArrayToUalComplex(fortranOrderArray.size(), fortranOrderArray.data());
+
+
+        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, arrayOfSizes);
+        return status;
+    }
+
+
+    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 2> array)
+    {
+        int status = -1;
+        void* ptrData = NULL;
+        int arrayOfSizes[2] = { array.extent(0), array.extent(1)};
+
+
+        if(array.size() < 1)
+            return 0;
+
+
+        blitz::Array<std_complex_t,2>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
+
+        ptrData = (void*) convertArrayToUalComplex(fortranOrderArray.size(), fortranOrderArray.data());
+
+
+        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, arrayOfSizes);
+        return status;
+    }
+
+
+    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 3> array)
+    {
+        int status = -1;
+        void* ptrData = NULL;
+        int arrayOfSizes[3] = { array.extent(0), array.extent(1), array.extent(2)};
+
+
+        if(array.size() < 1)
+            return 0;
+
+
+        blitz::Array<std_complex_t,3>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
+
+        ptrData = (void*) convertArrayToUalComplex(fortranOrderArray.size(), fortranOrderArray.data());
+
+
+        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, arrayOfSizes);
+        return status;
+    }
+
+
+    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 4> array)
+    {
+        int status = -1;
+        void* ptrData = NULL;
+        int arrayOfSizes[4] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3)};
+
+
+        if(array.size() < 1)
+            return 0;
+
+
+        blitz::Array<std_complex_t,4>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
+
+        ptrData = (void*) convertArrayToUalComplex(fortranOrderArray.size(), fortranOrderArray.data());
+
+
+        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, arrayOfSizes);
+        return status;
+    }
+
+    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 5> array)
+    {
+        int status = -1;
+        void* ptrData = NULL;
+        int arrayOfSizes[5] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3), array.extent(4)};
+
+
+        if(array.size() < 1)
+            return 0;
+
+
+        blitz::Array<std_complex_t,5>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
+
+        ptrData = (void*) convertArrayToUalComplex(fortranOrderArray.size(), fortranOrderArray.data());
+
+
+        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, arrayOfSizes);
+        return status;
+    }
+
+    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 6> array)
+    {
+        int status = -1;
+        void* ptrData = NULL;
+        int arrayOfSizes[6] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3), array.extent(4), array.extent(5)};
+
+
+        if(array.size() < 1)
+            return 0;
+
+
+        blitz::Array<std_complex_t,6>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
+
+        ptrData = (void*) convertArrayToUalComplex(fortranOrderArray.size(), fortranOrderArray.data());
+
+
+        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, arrayOfSizes);
+        return status;
+    }
+
 	/************************************************************************************************************************************************/
 
     	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, std::string text)
@@ -575,6 +786,161 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
   		return status;
 	}
 
+
+    /************************************************************************************************************************************************/
+    /************************************************************************************************************************************************/
+    /************************************************************************************************************************************************/
+
+
+  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath,  std_complex_t &value)
+        {
+        int status = 0;
+        int retSize[MAXDIM];
+        ual_complex_t ualComplex;
+        void* ptrData = &ualComplex;
+        
+
+        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 0, &retSize[0]);
+        if (status != 0)
+                return status;
+
+        if(ptrData == NULL)
+        {
+            value = EMPTY_COMPLEX;
+            return status;
+        }
+
+        value = convertToStdComplex(*(ual_complex_t*)ptrData);
+
+        return status;
+    }
+
+  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 1> &array)
+        {
+        int status = 0;
+        int retSize[MAXDIM];
+        void* ptrData = NULL;
+
+        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 1, &retSize[0]);
+        if (status != 0)
+                return status;
+
+        if(ptrData == NULL || retSize[0] == 0)
+        {
+            array.free();
+            return status;
+        }
+
+        IdsNs::Ids::setArray(array, (ual_complex_t*)ptrData, retSize[0]);
+
+        return status;
+    }
+
+
+  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 2> &array)
+        {
+        int status = 0;
+        int retSize[MAXDIM];
+        void* ptrData = NULL;
+
+        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 2, &retSize[0]);
+        if (status != 0)
+                return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1]  == 0)
+        {
+            array.free();
+            return status;
+        }
+
+        IdsNs::Ids::setArray(array, (ual_complex_t*)ptrData, retSize[0], retSize[1]);
+
+        return status;
+    }
+
+  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 3> &array)
+        {
+        int status = 0;
+        int retSize[MAXDIM];
+        void* ptrData = NULL;
+
+        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 3, &retSize[0]);
+        if (status != 0)
+                return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] == 0)
+        {
+            array.free();
+            return status;
+        }
+
+        IdsNs::Ids::setArray(array, (ual_complex_t*)ptrData, retSize[0], retSize[1], retSize[2]);
+
+        return status;
+    }
+
+  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 4> &array)
+        {
+        int status = 0;
+        int retSize[MAXDIM];
+        void* ptrData = NULL;
+
+        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 4, &retSize[0]);
+        if (status != 0)
+                return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] == 0)
+        {
+            array.free();
+            return status;
+        }
+
+        IdsNs::Ids::setArray(array, (ual_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
+
+        return status;
+    }
+
+  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 5> &array)
+        {
+        int status = 0;
+        int retSize[MAXDIM];
+        void* ptrData = NULL;
+
+        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 5, &retSize[0]);
+        if (status != 0)
+                return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] == 0)
+        {
+            array.free();
+            return status;
+        }
+
+        IdsNs::Ids::setArray(array, (ual_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
+
+        return status;
+    }
+
+    int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 6> &array)
+        {
+        int status = 0;
+        int retSize[MAXDIM];
+        void* ptrData = NULL;
+
+        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 6, &retSize[0]);
+        if (status != 0)
+                return status;
+
+        if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] * retSize[5] == 0)
+        {
+            array.free();
+            return status;
+        }
+
+        IdsNs::Ids::setArray(array, (ual_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
+
+        return status;
+    }
 	/************************************************************************************************************************************************/
 	/************************************************************************************************************************************************/
 	/************************************************************************************************************************************************/
@@ -756,7 +1122,60 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 			ptrData = ptrData + maxStringSize;	
 		}
 
-  		return status;
+        return status;
 	}
 
+    /************************************************************************************************************************************************/
+    /************************************************************************************************************************************************/
+    /************************************************************************************************************************************************/
+
+    ual_complex_t  IdsNs::Ids::convertToUalComplex (std_complex_t  stdComplex)
+    {
+        ual_complex_t  ualComplex;
+       
+        double dReal = stdComplex.real();
+        double dImaginary = stdComplex.imag();     
+    
+        ualComplex = {dReal, dImaginary};
+       
+        return ualComplex;
+            
+    }
+    
+    ual_complex_t * IdsNs::Ids::convertArrayToUalComplex (int iSizeofArray, std_complex_t * stdComplexArray)
+    {
+        ual_complex_t *  ualComplexArray = new ual_complex_t [iSizeofArray];
+
+        for(int i = 0; i < iSizeofArray; ++i )
+        {
+            std_complex_t  stdComplex = stdComplexArray[i];
+            ualComplexArray[i] = convertToUalComplex(stdComplex);
+        }
+        
+        return ualComplexArray;
+    }
+    
+    std_complex_t  IdsNs::Ids::convertToStdComplex(ual_complex_t  ualComplex)
+    {
+        double dReal = creal(ualComplex);
+        double dImaginary = cimag(ualComplex);
+        
+        std_complex_t  stdComplex(dReal, dImaginary);
+    
+        return stdComplex;
+    }
+    
+    
+     std_complex_t * IdsNs::Ids::convertArrayToStdComplex(int iSizeofArray, ual_complex_t * ualComplexArray)
+    {
+        std_complex_t* stdComplexArray = new std_complex_t [iSizeofArray];
+       
+        for(int i = 0; i < iSizeofArray; ++i )
+        {
+            ual_complex_t  ualComplex = ualComplexArray[i];
+            stdComplexArray[i] = convertToStdComplex(ualComplex);
+        }
+    
+        return stdComplexArray;
+    }
 

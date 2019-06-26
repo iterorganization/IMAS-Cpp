@@ -694,6 +694,9 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	<xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
 		<xsl:value-of select="translate(@path,'/','.')"/>=EMPTY_DOUBLE;
 	</xsl:when>
+    <xsl:when test="@data_type='cpx_type' or @data_type='CPX_0D'">
+        <xsl:value-of select="translate(@path,'/','.')"/>=EMPTY_COMPLEX;
+    </xsl:when>
 	<!-- Note that this template only initializes scalar field that are at the upper tree level.
 Scalar fields that are inside structures and arrays of structures
 are initialized by the constructors of the respective subclasses.
@@ -742,6 +745,9 @@ See IDSDef2Classes.xsl  -->
         <xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
             <xsl:value-of select = "@name"/> = EMPTY_DOUBLE;
         </xsl:when>
+        <xsl:when test="@data_type='cpx_type' or @data_type='CPX_0D'">
+            <xsl:value-of select = "@name"/> = EMPTY_COMPLEX;
+        </xsl:when>
         <xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
             <xsl:value-of select = "@name"/>.clear();
         </xsl:when>
@@ -750,11 +756,12 @@ See IDSDef2Classes.xsl  -->
         or @data_type='str_1d_type' or @data_type='STR_1D'
         or @data_type='flt_1d_type' or @data_type='FLT_1D'
         or @data_type='int_1d_type' or @data_type='INT_1D'
-        or @data_type='FLT_2D' or @data_type='INT_2D'
-        or @data_type='FLT_3D'  or @data_type='INT_3D'
-        or @data_type='FLT_4D'  or @data_type='INT_4D'
-        or @data_type='FLT_5D'or @data_type='INT_5D'
-        or @data_type='FLT_6D'or @data_type='INT_6D'">
+        or @data_type='cpx_1d_type' or @data_type='CPX_1D'
+        or @data_type='FLT_2D' or @data_type='INT_2D' or @data_type='CPX_2D'
+        or @data_type='FLT_3D' or @data_type='INT_3D' or @data_type='CPX_3D'
+        or @data_type='FLT_4D' or @data_type='INT_4D' or @data_type='CPX_4D'
+        or @data_type='FLT_5D' or @data_type='INT_5D' or @data_type='CPX_5D'
+        or @data_type='FLT_6D' or @data_type='INT_6D' or @data_type='CPX_6D' ">
             <xsl:value-of select = "@name"/>.free();
         </xsl:when>
         <xsl:otherwise>
@@ -842,6 +849,13 @@ See IDSDef2Classes.xsl  -->
 		else
 		os &lt;&lt; <xsl:value-of select="$currentidxpath"/>;
 	</xsl:when>
+    <xsl:when test="@data_type='cpx_type' or @data_type='CPX_0D'">
+        os &lt;&lt; "\n<xsl:value-of select="$currentidxpath"/>: ";
+        if(<xsl:value-of select="$currentidxpath"/> == EMPTY_COMPLEX)
+        os &lt;&lt; "EMPTY";
+        else
+        os &lt;&lt; <xsl:value-of select="$currentidxpath"/>;
+    </xsl:when>
 	<xsl:when test="@data_type='structure'">
 		<xsl:apply-templates select="field" mode="DUMP">
 			<xsl:with-param name="level" select="$level"/>
@@ -1052,11 +1066,13 @@ See IDSDef2Classes.xsl  -->
 		or @data_type='flt_type' or @data_type='FLT_0D' 
 		or @data_type='flt_1d_type' or @data_type='FLT_1D'
 		or @data_type='int_1d_type' or @data_type='INT_1D'
-		or @data_type='FLT_2D' or @data_type='INT_2D'
-		or @data_type='FLT_3D'	or @data_type='INT_3D'
-		or @data_type='FLT_4D'	or @data_type='INT_4D'
-		or @data_type='FLT_5D'or @data_type='INT_5D'
-		or @data_type='FLT_6D'or @data_type='INT_6D'">
+        or @data_type='cpx_type' or @data_type='CPX_0D' 
+        or @data_type='cpx_1d_type' or @data_type='CPX_1D'
+		or @data_type='FLT_2D' or @data_type='INT_2D' or @data_type='CPX_2D'
+		or @data_type='FLT_3D' or @data_type='INT_3D' or @data_type='CPX_3D'
+		or @data_type='FLT_4D' or @data_type='INT_4D' or @data_type='CPX_4D'
+		or @data_type='FLT_5D' or @data_type='INT_5D' or @data_type='CPX_5D'
+		or @data_type='FLT_6D' or @data_type='INT_6D' or @data_type='CPX_6D'">
 		<xsl:choose>
 			<xsl:when test="ancestor::field[@data_type='struct_array']">
 				fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
@@ -1261,11 +1277,13 @@ See IDSDef2Classes.xsl  -->
 		or @data_type='flt_type' or @data_type='FLT_0D' 
 		or @data_type='flt_1d_type' or @data_type='FLT_1D'
 		or @data_type='int_1d_type' or @data_type='INT_1D'
-		or @data_type='FLT_2D' or @data_type='INT_2D'
-		or @data_type='FLT_3D'	or @data_type='INT_3D'
-		or @data_type='FLT_4D'	or @data_type='INT_4D'
-		or @data_type='FLT_5D'or @data_type='INT_5D'
-		or @data_type='FLT_6D'or @data_type='INT_6D'">
+        or @data_type='cpx_type' or @data_type='CPX_0D' 
+        or @data_type='cpx_1d_type' or @data_type='CPX_1D'
+        or @data_type='FLT_2D' or @data_type='INT_2D' or @data_type='CPX_2D'
+        or @data_type='FLT_3D' or @data_type='INT_3D' or @data_type='CPX_3D'
+        or @data_type='FLT_4D' or @data_type='INT_4D' or @data_type='CPX_4D'
+        or @data_type='FLT_5D' or @data_type='INT_5D' or @data_type='CPX_5D'
+        or @data_type='FLT_6D' or @data_type='INT_6D' or @data_type='CPX_6D'">
 		<xsl:choose>
 			<xsl:when test="ancestor::field[@data_type='struct_array']">
 				fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
