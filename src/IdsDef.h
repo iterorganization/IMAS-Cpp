@@ -25,21 +25,13 @@ class Ids
         /*********************************                      COMPLEX NUMBERS CONVERSION                           ************************************/
         /************************************************************************************************************************************************/
             
-        static ual_complex_t  convertToUalComplex (std_complex_t  stdComplex);
-        static ual_complex_t * convertArrayToUalComplex (int iSizeofArray, std_complex_t * stdComplexArray);
-        
-        static std_complex_t  convertToStdComplex(ual_complex_t  ualComplex);
-        static std_complex_t * convertArrayToStdComplex(int iSizeofArray, ual_complex_t * ualComplexArray);
-
-
-
         static void setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1);
         
         static void setArray(blitz::Array<float,1>&array,float *arrayPtr, int dim1);
   
         static void setArray(blitz::Array<double,1>&array,double *arrayPtr, int dim1);
 
-        static void setArray(blitz::Array<std_complex_t,1> &array, ual_complex_t *arrayPtr, int dim1);
+        static void setArray(blitz::Array<std_complex_t,1> &array, std_complex_t *arrayPtr, int dim1);
 
 
         static void setArray(blitz::Array<int,2>&array,int *arrayPtr, int dim1, int dim2);
@@ -48,7 +40,7 @@ class Ids
 
         static void setArray(blitz::Array<double,2>&array,double *arrayPtr, int dim1, int dim2);
 
-        static void setArray(blitz::Array<std_complex_t,2> &array, ual_complex_t *arrayPtr, int dim1, int dim2);
+        static void setArray(blitz::Array<std_complex_t,2> &array, std_complex_t *arrayPtr, int dim1, int dim2);
 
 
         static void setArray(blitz::Array<int,3>&array,int *arrayPtr, int dim1, int dim2, int dim3);
@@ -57,7 +49,7 @@ class Ids
 
         static void setArray(blitz::Array<double,3>&array,double *arrayPtr, int dim1, int dim2, int dim3);
 
-        static void setArray(blitz::Array<std_complex_t,3> &array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3);
+        static void setArray(blitz::Array<std_complex_t,3> &array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3);
 
 
         static void setArray(blitz::Array<int,4>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4);
@@ -66,7 +58,7 @@ class Ids
    
         static void setArray(blitz::Array<double,4>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4);
 
-        static void setArray(blitz::Array<std_complex_t,4> &array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4);
+        static void setArray(blitz::Array<std_complex_t,4> &array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4);
     
 
         static void setArray(blitz::Array<int,5>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
@@ -75,7 +67,7 @@ class Ids
      
         static void setArray(blitz::Array<double,5>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
  
-        static void setArray(blitz::Array<std_complex_t,5> &array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
+        static void setArray(blitz::Array<std_complex_t,5> &array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5);
    
 
         static void setArray(blitz::Array<int,6>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
@@ -84,7 +76,7 @@ class Ids
    
         static void setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
 
-        static void setArray(blitz::Array<std_complex_t,6> &array, ual_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
+        static void setArray(blitz::Array<std_complex_t,6> &array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6);
 
     	/************************************************************************************************************************************************/
     	/*********************************                           WRITE DATA                                      ************************************/

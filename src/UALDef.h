@@ -20,8 +20,6 @@
 
 typedef std::complex < double > std_complex_t;
 
-typedef double _Complex ual_complex_t;
-
  static    const int EMPTY_INT = -999999999;
  static     const float EMPTY_FLOAT = -9.0E35;
  static     const double EMPTY_DOUBLE = -9.0E40;
