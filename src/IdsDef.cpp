@@ -1053,7 +1053,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
     			return status;
 		
 		if(ptrData != NULL && retSize[0] > 0)
-			text = (char*)ptrData;
+			text = std::string((char*)ptrData, retSize[0]);
 		else
 			text = "";
 
