@@ -33,10 +33,19 @@ INCDIR=-I$(SRC_DIR) -I$(IDS_SRC_DIR) -I../lowlevel
 IDSDEF= ../xml/IDSDef.xml
 
 # Check existence of the "indent" utility to get a clean C format
+
+ifneq ($(SYSTEM),MacOS)
 ifeq "$(shell which indent 2> /dev/null)" ""
 BEAUTIFY = echo
 else
 BEAUTIFY = indent -kr --no-tabs -l1000
+endif
+else
+ifeq "$(shell which gindent 2> /dev/null)" ""
+BEAUTIFY = echo
+else
+BEAUTIFY = gindent -kr --no-tabs -l1000
+endif
 endif
 
 # Sets a path where make will search for files
@@ -76,8 +85,16 @@ sources: $(SOURCES) id_cpp_sources
 # Gracefully skip beautify of sources if not newly generated.
 $(GEN_H_FILES): gen_h_files
 	$(if $(wildcard $@~),@echo Correcting indentation of $@ ; $(BEAUTIFY) $@ && $(RM) $@~)
+ifeq ($(SYSTEM),MacOS)
+	$(shell sed -i '' -e 's/: /:/g' $@)
+	$(shell sed -i '' -e 's/:<tab>/:/g' $@ )
+endif
 $(GEN_CPP_FILES): gen_cpp_files
 	$(if $(wildcard $@~),@echo Correcting indentation of $@ ; $(BEAUTIFY) $@ && $(RM) $@~)
+ifeq ($(SYSTEM),MacOS)
+	$(shell sed -i '' -e 's/: /:/g' $@)
+	$(shell sed -i '' -e 's/:<tab>/:/g' $@ )
+endif
 gen_h_files: IDSDef2CPPClasses.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
 	$(if $(call allnewerthan,$(GEN_H_FILES),$^),, xsltproc IDSDef2CPPClasses.xsl $(IDSDEF) && \
 	  touch $(addsuffix ~,$(GEN_H_FILES)) )
