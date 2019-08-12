@@ -83,7 +83,7 @@ gen_h_files: IDSDef2CPPClasses.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
 	  touch $(addsuffix ~,$(GEN_H_FILES)) )
 gen_cpp_files: IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
 	$(if $(call allnewerthan,$(GEN_CPP_FILES),$^),,\
-	  $(JAVA) net.sf.saxon.Transform -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl && \
+	  $(JAVA) net.sf.saxon.Transform -t -warnings:fatal DD_GIT_DESCRIBE=$(DD_GIT_DESCRIBE) UAL_GIT_DESCRIBE=$(UAL_GIT_DESCRIBE) -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl && \
 	  touch $(addsuffix ~,$(GEN_CPP_FILES)) )
 
 #################################################

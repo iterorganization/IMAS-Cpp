@@ -560,6 +560,16 @@
 	(not($staticOnly) and (@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
 
 	<xsl:choose>
+        <xsl:when test="@path='ids_properties/version_put/data_dictionary'">       
+            <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
+        </xsl:when>    
+        <xsl:when test="@path='ids_properties/version_put/access_layer'">          
+            <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
+        </xsl:when>   
+        <xsl:when test="@path='ids_properties/version_put/access_layer_language'">
+            <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
+        </xsl:when>
+
 		<xsl:when test="@name='homogeneous_time'">
 			<xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text>
 		</xsl:when>
@@ -607,6 +617,15 @@
 	(not($staticOnly) and (@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
 
 	<xsl:choose>
+        <xsl:when test="@path='ids_properties/version_put/data_dictionary'">       
+            <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
+        </xsl:when>    
+        <xsl:when test="@path='ids_properties/version_put/access_layer'">          
+            <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
+        </xsl:when>   
+        <xsl:when test="@path='ids_properties/version_put/access_layer_language'">
+            <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
+        </xsl:when>
 		<xsl:when test="@name='homogeneous_time'">
 			<xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="$path"/><xsl:text> = 1;&#10;</xsl:text>
 		</xsl:when>
