@@ -9,6 +9,35 @@
 using namespace blitz;
 using namespace IdsNs;
 
+
+
+int IdsNs::Ids::readIdsTimeMode( int ctx, int& outIdsTimeMode )
+{
+    int idsTimeMode = -1;
+    int status = -1;
+    std::string fieldPath = "ids_properties/homogeneous_time";
+    std::string timeBasePath = "";
+    
+    status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, idsTimeMode);
+    if (status)
+            return status;
+
+    switch(idsTimeMode)
+    {
+        case IDS_TIME_MODE_UNKNOWN:     
+        case IDS_TIME_MODE_HETEROGENEOUS: 
+        case IDS_TIME_MODE_HOMOGENEOUS:   
+        case IDS_TIME_MODE_INDEPENDENT:   
+                outIdsTimeMode = idsTimeMode;
+                break;
+
+        default: 
+             printf("ERROR: time dependency mode (ids_properties/homogeneous_time) set to unknown value!");
+             return -1;
+    }
+    return 0;
+}
+
 bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long line, const char *func)
 {  
             // no error

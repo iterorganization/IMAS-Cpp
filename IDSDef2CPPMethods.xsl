@@ -276,24 +276,6 @@ connected = false;
 <xsl:apply-templates select="field" mode="CONSTRUCTOR"/>
 }
 
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::isHomogeneous(int ctx, bool&amp; isIdsHomogeneous )
-{
-    int homogenousTime = -1;
-	int status = -1;
-	std::string fieldPath = "ids_properties/homogeneous_time";
-	std::string timeBasePath = "";
-	
-    	status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, homogenousTime);
-	if (status)
-        	return status;
-	
-	if(homogenousTime == 1)
-		isIdsHomogeneous = true;
-	else
-		isIdsHomogeneous = false;
-
-	return 0;
-}
 
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get()
@@ -314,7 +296,7 @@ int ctx = -1;
 int aosCtx = -1;
 std::string fieldPath;
 std::string timeBasePath;
-bool isIdsHomogeneous = false;
+int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
 int arraySize;
 
 	if(!connected) 
@@ -337,7 +319,7 @@ int arraySize;
 
 	ctx = getOpCtx;
 
-	status = this->isHomogeneous(ctx,isIdsHomogeneous );
+	status = IdsNs::Ids::readIdsTimeMode(ctx, idsTimeMode );
 	if(status &lt; 0) 
 	{	
 		ual_end_action(ctx);
@@ -369,19 +351,19 @@ int ctx = -1;
 int aosCtx = -1;
 std::string fieldPath;
 std::string timeBasePath;
-bool isIdsHomogeneous = false;
+int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
 int arraySize;
 
 if(!connected) return -1;
 
-isIdsHomogeneous = ids_properties.homogeneous_time;
-	if( isIdsHomogeneous == EMPTY_INT )
+idsTimeMode = ids_properties.homogeneous_time;
+	if (idsTimeMode == IDS_TIME_MODE_UNKNOWN)
 	{
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUT quits with no action.");
    		return 0;
 	}
 
-    if( isIdsHomogeneous == 1 &amp;&amp; this->time.size() &lt; 1 )
+    if( idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp; this->time.size() &lt; 1 )
     {
         printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
         return -1;
@@ -431,20 +413,20 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	int aosCtx = -1;
 	std::string fieldPath;
 	std::string timeBasePath;
-	bool isIdsHomogeneous = false;
+	int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
 	int arraySize;
 
 	if(!connected) 
 		return -1;
 
-	isIdsHomogeneous = ids_properties.homogeneous_time;
-	if( isIdsHomogeneous == EMPTY_INT )
+	idsTimeMode = ids_properties.homogeneous_time;
+	if (idsTimeMode == IDS_TIME_MODE_UNKNOWN) 
 	{
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUTSLICE quits with no action.");
    		return 0;
 	}
 
-    if( isIdsHomogeneous == 1 &amp;&amp;  this->time.size() &lt; 1 )
+    if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp;  this->time.size() &lt; 1 )
     {
         printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
         return -1;
@@ -536,7 +518,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	int aosCtx = -1;
 	std::string fieldPath;
 	std::string timeBasePath;
-	bool isIdsHomogeneous = false;
+	int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
 	int arraySize;
 
 
@@ -560,7 +542,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 
 	ctx = getSliceOpCtx;
 
-	status = this->isHomogeneous(ctx,isIdsHomogeneous );
+	status = this->readIdsTimeMode(ctx, idsTimeMode );
 	if(status &lt; 0) 
 	{	
 		ual_end_action(ctx);
@@ -594,7 +576,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_PUT">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int ctx, bool isIdsHomogeneous)&#xA;</xsl:text>
+<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int ctx, int idsTimeMode)&#xA;</xsl:text>
 {
 	int status = -1;
 	int arraySize = -1;
@@ -616,7 +598,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::putSlice(int ctx, bool isIdsHomogeneous)&#xA;</xsl:text>
+<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::putSlice(int ctx, int idsTimeMode)&#xA;</xsl:text>
 {
 	int status = -1;
 	int arraySize = -1;
@@ -637,7 +619,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_GET">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::get(int ctx, bool isIdsHomogeneous)&#xA;</xsl:text>
+<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::get(int ctx, int idsTimeMode)&#xA;</xsl:text>
 {
 	int status = -1;
 	int arraySize = -1;
@@ -905,7 +887,7 @@ See IDSDef2Classes.xsl  -->
 <!--========== Regular structures ==========-->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
-		status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, isIdsHomogeneous);
+		status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, idsTimeMode);
 		if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 			return status;
 		</xsl:when>
@@ -933,7 +915,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
 					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
@@ -981,7 +963,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
 					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
@@ -1009,7 +991,7 @@ See IDSDef2Classes.xsl  -->
 			<xsl:choose>
 				<xsl:when test="ancestor::field[@data_type='struct_array']">
 					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
-					if (isIdsHomogeneous) 
+					if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
           					timeBasePath = "/time";
        					else
 						timeBasePath = &quot;<xsl:call-template  name="printAosRelativePath"/>/time&quot;;
@@ -1018,7 +1000,7 @@ See IDSDef2Classes.xsl  -->
 				</xsl:when>
   				<xsl:otherwise>
    			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
-					if (isIdsHomogeneous) 
+					if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
           					timeBasePath = "/time";
        					else
 						timeBasePath = &quot;<xsl:value-of select="@path"/>/time&quot;;
@@ -1035,7 +1017,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
 					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
@@ -1083,7 +1065,7 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
-    		if (isIdsHomogeneous) 
+    		if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
 			timeBasePath="/time";
     		else
        			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
@@ -1120,7 +1102,7 @@ See IDSDef2Classes.xsl  -->
 <!--========== Regular structures ==========-->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
-		status = <xsl:value-of select="@name"/>.get(ctx, isIdsHomogeneous);
+		status = <xsl:value-of select="@name"/>.get(ctx, idsTimeMode);
 		if (status != 0)
 			return status;
 		</xsl:when>
@@ -1150,7 +1132,7 @@ See IDSDef2Classes.xsl  -->
 			{	
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
 					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
@@ -1196,7 +1178,7 @@ See IDSDef2Classes.xsl  -->
 			{	
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
 					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
@@ -1223,14 +1205,14 @@ See IDSDef2Classes.xsl  -->
 			<xsl:choose>
 				<xsl:when test="ancestor::field[@data_type='struct_array']">
 					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
-					if (isIdsHomogeneous) 
+					if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
           					timeBasePath = "/time";
        					else
 						timeBasePath = &quot;<xsl:call-template  name="printAosRelativePath"/>/time&quot;;
 				</xsl:when>
   				<xsl:otherwise>
    			 		fieldPath = &quot;<xsl:value-of select="@path"/>&quot;;
-					if (isIdsHomogeneous) 
+					if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS)  
           					timeBasePath = "/time";
        					else
 						timeBasePath = &quot;<xsl:value-of select="@path"/>/time&quot;;
@@ -1247,7 +1229,7 @@ See IDSDef2Classes.xsl  -->
 			{	
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).get(aosCtx, isIdsHomogeneous);
+					status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
 					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(ctx);
@@ -1294,7 +1276,7 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
-    		if (isIdsHomogeneous) 
+    		if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
 			timeBasePath="/time";
     		else
        			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
