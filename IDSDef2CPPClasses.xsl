@@ -134,7 +134,7 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     private:
       int pulseCtx;
       bool connected;
-	int isHomogeneous(int ctx, bool&amp;isIdsHomogeneous );
+
       public:
       void setPulseCtx(int pulseCtx){this->pulseCtx = pulseCtx; connected = true;}
       <xsl:apply-templates select = "field" mode = "DECLARE"/>
