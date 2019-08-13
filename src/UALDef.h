@@ -26,6 +26,10 @@ typedef std::complex < double > std_complex_t;
  static const std_complex_t EMPTY_COMPLEX = std_complex_t(EMPTY_DOUBLE, EMPTY_DOUBLE);
 
 
+ static const int   IDS_TIME_MODE_UNKNOWN       = EMPTY_INT; 
+ static const int   IDS_TIME_MODE_HETEROGENEOUS = 0;
+ static const int   IDS_TIME_MODE_HOMOGENEOUS   = 1;
+ static const int   IDS_TIME_MODE_INDEPENDENT   = 2;
 
 
 //Low level function prototypes
