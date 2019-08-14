@@ -422,13 +422,19 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	idsTimeMode = ids_properties.homogeneous_time;
 	if (idsTimeMode == IDS_TIME_MODE_UNKNOWN) 
 	{
-		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUTSLICE quits with no action.");
+		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUTSLICE quits with no action.\n");
    		return 0;
 	}
 
+    if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT) 
+    {
+        printf("Warning: IDS '<xsl:value-of select="@name"/>' time mode 'independent'. PUTSLICE quits with no action.\n");
+        return 0;
+    }
+
     if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp;  this->time.size() &lt; 1 )
     {
-        printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
+        printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. \n");
         return -1;
     }
 
@@ -1007,7 +1013,7 @@ See IDSDef2Classes.xsl  -->
   				</xsl:otherwise>
 			</xsl:choose>
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
-			if(arraySize > 0)
+			if(arraySize > 0 &amp;&amp; idsTimeMode != IDS_TIME_MODE_INDEPENDENT)
 			{	
 				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
 				if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__))  
@@ -1065,10 +1071,12 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
-    		if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
-			timeBasePath="/time";
-    		else
-       			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
+            if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT)
+            {
+    		    if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
+			        timeBasePath="/time";
+    		    else
+       			    timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
   			</xsl:when>
   			<xsl:otherwise>
     				timeBasePath = "";
@@ -1080,6 +1088,10 @@ See IDSDef2Classes.xsl  -->
 			ual_end_action(ctx);
 			return status;
 		}
+        <xsl:if test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
+            }
+        </xsl:if>
+
 	</xsl:when>
 		<xsl:otherwise>
 			//Doc Put <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
@@ -1202,6 +1214,8 @@ See IDSDef2Classes.xsl  -->
 		</xsl:when>
 		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
 			<xsl:text>/*-----------------------------------------------------------------------------------------*/&#xA;</xsl:text>
+            if (idsTimeMode != IDS_TIME_MODE_INDEPENDENT) 
+            {
 			<xsl:choose>
 				<xsl:when test="ancestor::field[@data_type='struct_array']">
 					fieldPath = &quot;<xsl:call-template  name="printAosRelativePath"/>&quot;;
@@ -1225,24 +1239,27 @@ See IDSDef2Classes.xsl  -->
 				return status;
 			}
 
-			if(aosCtx > 0 &amp;&amp; arraySize > 0)
+			if(aosCtx > 0 )
 			{	
-				<xsl:value-of select="@name"/>.resize(arraySize);
-				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
-					{	
-						ual_end_action(ctx);
-						return status;
-					}
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
-					{	
-						ual_end_action(aosCtx);
-						ual_end_action(ctx);
-						return status;
-					}
-				}
+                if(arraySize > 0)
+                {   
+				    <xsl:value-of select="@name"/>.resize(arraySize);
+				    for( int i = 0; i &lt;arraySize; i++){
+					    status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
+					    if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					    {	
+						    ual_end_action(ctx);
+						    return status;
+					    }
+					    status = ual_iterate_over_arraystruct(aosCtx, 1);
+					    if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					    {	
+						    ual_end_action(aosCtx);
+						    ual_end_action(ctx);
+						    return status;
+					    }
+				    }
+                }
 				status = ual_end_action(aosCtx);
 				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
 				{	
@@ -1250,6 +1267,7 @@ See IDSDef2Classes.xsl  -->
 					return status;
 				}
  			}
+        }
 		</xsl:when>
 
 	<xsl:when test="
@@ -1276,10 +1294,12 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
 		<xsl:choose>
 			<xsl:when test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
-    		if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
-			timeBasePath="/time";
-    		else
-       			timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
+            if (idsTimeMode != IDS_TIME_MODE_INDEPENDENT) 
+            {
+                if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
+			    timeBasePath="/time";
+                else
+                    timeBasePath=&quot;<xsl:value-of select="@timebasepath"/>&quot;;
   			</xsl:when>
   			<xsl:otherwise>
     				timeBasePath = "";
@@ -1291,6 +1311,9 @@ See IDSDef2Classes.xsl  -->
 			ual_end_action(ctx);
 			return status;
 		}
+        <xsl:if test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
+        }
+        </xsl:if>
 	</xsl:when>
 		<xsl:otherwise>
 			//Doc GET <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
