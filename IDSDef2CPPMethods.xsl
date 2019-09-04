@@ -7,6 +7,11 @@
 
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
 
+
+
+<xsl:param name="DD_GIT_DESCRIBE" as="xs:string" required="yes"/>
+<xsl:param name="UAL_GIT_DESCRIBE" as="xs:string" required="yes"/>
+
 <xsl:template match="/IDSs">
 <xsl:result-document href="src/UALMethods.cpp" standalone="yes" method="text">
 
@@ -1047,6 +1052,8 @@ See IDSDef2Classes.xsl  -->
  			}
 		</xsl:when>
 
+
+
 	<xsl:when test="
 		   @data_type='str_type' or @data_type='STR_0D'
 		or @data_type='str_1d_type' or @data_type='STR_1D'
@@ -1082,16 +1089,28 @@ See IDSDef2Classes.xsl  -->
     				timeBasePath = "";
   			</xsl:otherwise>
 		</xsl:choose>
-		status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
-		if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
-		{	
-			ual_end_action(ctx);
-			return status;
-		}
+        <xsl:choose>
+            <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/data_dictionary'">
+                status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$DD_GIT_DESCRIBE"/>");
+            </xsl:when>
+            <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer'">
+                status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$UAL_GIT_DESCRIBE"/>");
+            </xsl:when>
+            <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer_language'">
+                status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "cpp");
+            </xsl:when>
+            <xsl:otherwise>
+	            status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
+            </xsl:otherwise>
+        </xsl:choose>
+        if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+        {   
+            ual_end_action(ctx);
+            return status;
+        }
         <xsl:if test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
             }
         </xsl:if>
-
 	</xsl:when>
 		<xsl:otherwise>
 			//Doc Put <xsl:value-of select="@path"/> : PROBLEM : UNIDENTIFIED TYPE !!! <!-- for comment only -->
