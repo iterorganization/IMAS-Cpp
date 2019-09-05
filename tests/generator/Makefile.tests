@@ -10,6 +10,7 @@ help:
 
 TESTS = cpp_tests
 GENSOURCES = TestSuite.cpp
+TMP_DIR=./tmp
 
 .PHONY: check clean clean-src
 all: $(BINOUT)
@@ -23,10 +24,6 @@ clean-src: clean
 check test: $(TESTS)
 
 
-# RUN TESTS
-cpp_tests:
-	./$(BINOUT)
-
 #  BUILD
 $(BINOUT): helper.o TestSuite.o
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBDIR) $(LIBS)
@@ -38,3 +35,23 @@ $(BINOUT): helper.o TestSuite.o
 TestSuite.cpp: %.cpp:%.xsl | $(IDSDEF)
 	xsltproc $< $| > $@
 
+# RUN TESTS
+# Create dirs as needed
+$(TMP_DIR):
+	$(mkdir_p) $@
+
+# Canned recipe that runs prerequisites as tests and produces TAP-like output
+define run-tests
+	@( \
+	echo 1..$(words $^) \# Tests: $(^F) ;\
+	N=1;for prog in $^ ;do \
+	 ( $(test_ENV) ./$$prog 2>&1 | tee ./$$prog.log ) && \
+	 test 0 -eq $$(grep -c -i error ./$$prog.log ) && \
+	 echo ok $$N - $$prog passed. || echo not ok $$N - $$prog failed. ;\
+	done \
+	) | tee $@.log
+	@test 0 -eq $$(grep -c -i error $@.log) || exit 1
+endef
+
+cpp_tests: $(BINOUT) | $(TMP_DIR)
+	$(run-tests)
