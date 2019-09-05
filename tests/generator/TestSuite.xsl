@@ -20,6 +20,8 @@
 
 <xsl:text>const int TEST_SHOT = 9999;&#10;</xsl:text>
 <xsl:text>const int TEST_RUN = 9999;&#10;</xsl:text>
+
+<xsl:text>const int IDS_TIME_MODE = IDS_TIME_MODE_HOMOGENEOUS;&#10;</xsl:text>
      
 	
 	  
@@ -558,7 +560,10 @@
 	<xsl:if test="(not($dynamicOnly) and ( (@type !='dynamic' or not(@type)) and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])))
 	or
 	(not($staticOnly) and (@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
-
+    <xsl:if test="@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']"> 
+    if(IDS_TIME_MODE != IDS_TIME_MODE_INDEPENDENT)
+    {
+    </xsl:if>
 	<xsl:choose>
         <xsl:when test="@path='ids_properties/version_put/data_dictionary'">       
             <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
@@ -571,7 +576,7 @@
         </xsl:when>
 
 		<xsl:when test="@name='homogeneous_time'">
-			<xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = 1;&#10;</xsl:text>
+			<xsl:text>&#9;&#9;// NOT TESTED: ids.</xsl:text><xsl:value-of select="@path"/><xsl:text> = IDS_TIME_MODE;&#10;</xsl:text>
 		</xsl:when>
 		<xsl:when test="@name='time' and @type='dynamic' and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">
 			<xsl:choose>
@@ -601,6 +606,10 @@
          
 		</xsl:otherwise>
     	</xsl:choose>
+
+    <xsl:if test="@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']"> 
+    }
+    </xsl:if>
   </xsl:if>
    </xsl:template>
 
@@ -616,6 +625,11 @@
 	or
 	(not($staticOnly) and (@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']))"> 
 
+    
+    <xsl:if test="@type='dynamic' or ancestor::field[@type='dynamic' and @data_type='struct_array']"> 
+    if(IDS_TIME_MODE != IDS_TIME_MODE_INDEPENDENT)
+    </xsl:if>
+
 	<xsl:choose>
         <xsl:when test="@path='ids_properties/version_put/data_dictionary'">       
             <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
@@ -627,7 +641,7 @@
             <xsl:text>&#9;&#9;// INFO: Provenance fields are not tested&#10;</xsl:text>
         </xsl:when>
 		<xsl:when test="@name='homogeneous_time'">
-			<xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="$path"/><xsl:text> = 1;&#10;</xsl:text>
+			<xsl:text>&#9;&#9;ids.</xsl:text><xsl:value-of select="$path"/><xsl:text> = IDS_TIME_MODE;&#10;</xsl:text>
 		</xsl:when>
 		<xsl:when test="@name='time' and @type='dynamic' and (@data_type='flt_1d_type' or @data_type='FLT_1D') ">
 			<xsl:choose>
@@ -651,6 +665,7 @@
             		</xsl:choose>
 		</xsl:otherwise>
     	</xsl:choose>
+
   </xsl:if>
    </xsl:template>
 <!--
