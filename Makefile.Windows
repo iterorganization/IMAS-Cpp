@@ -16,10 +16,18 @@ LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
 endif # IMAS_MDSPLUS
 
 ifneq ("no","$(strip $(IMAS_UDA))")
+ifeq ("fat","$(strip $(IMAS_UDA))")
+LIBS+= -L$(UDA_HOME)/lib
+LIBS+= $(UDA_HOME)/lib/libfatuda_cpp.a
+LIBS+= $(UDA_HOME)/lib/libportablexdr.a
+LIBS+= $(PostgresSQL_ROOT)/lib/libpq.a
+LIBS+= -lws2_32 -lssl -lcrypto -lxml2
+else
 LIBS+= -L$(UDA_HOME)/lib
 LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
 LIBS+= $(UDA_HOME)/lib/libportablexdr.a
 LIBS+= -lws2_32 -lssl -lcrypto
+endif
 endif # IMAS_UDA
 
 ifneq ("no","$(strip $(IMAS_HDF5))")
@@ -56,12 +64,12 @@ install: all pkgconfig_install id_cpp_install
 	$(mkdir_p) $(packagedir)/blitz/lib
 	# Copy libraries
 	for OBJECT in `find . -type f \( -name "*.lib" -or -name "*.dll" \)`; do \
-		cp $$OBJECT $(packagedir)/cppinterface/lib; \
+		$(CP) $$OBJECT $(packagedir)/cppinterface/lib; \
 	done
 	# Copy Blitz libraries
-	cp $(BLITZ_HOME)/lib/libblitz.a $(packagedir)/blitz/lib
+	$(CP) $(BLITZ_HOME)/lib/libblitz.a $(packagedir)/blitz/lib
 	# Copy includes
-	cp $(SRC_DIR)/*.h $(packagedir)/cppinterface/include
-	cp $(IDS_SRC_DIR)/*.h $(packagedir)/cppinterface/include/ids
+	$(CP) $(SRC_DIR)/*.h $(packagedir)/cppinterface/include
+	$(CP) $(IDS_SRC_DIR)/*.h $(packagedir)/cppinterface/include/ids
 
 sources_install: $(SOURCES)
