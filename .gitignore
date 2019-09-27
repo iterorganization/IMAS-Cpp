@@ -4,3 +4,5 @@ src/UALClasses.h
 src/UALMethods.cpp
 src/ids/
 imas-cpp.pc
+gen_cpp_files
+gen_h_files
