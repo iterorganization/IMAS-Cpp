@@ -72,4 +72,7 @@ install: all pkgconfig_install id_cpp_install
 	$(CP) $(SRC_DIR)/*.h $(packagedir)/cppinterface/include
 	$(CP) $(IDS_SRC_DIR)/*.h $(packagedir)/cppinterface/include/ids
 
+uninstall: pkgconfig_uninstall id_cpp_uninstall
+
 sources_install: $(SOURCES)
+sources_uninstall:

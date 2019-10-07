@@ -10,7 +10,7 @@ SO_NUM=4
 
 
 ifeq ("no","$(strip $(IMAS_CPP))")
-all sources sources_install install clean clean-src:
+all sources sources_install install uninstall clean clean-src:
 	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 else
 
@@ -62,7 +62,7 @@ OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o UALMethods.o)
 ifneq (,$(wildcard Makefile.$(SYSTEM)))
 include Makefile.$(SYSTEM)
 else
-all sources_install install:
+all sources_install sources_uninstall ssources_uninstall install uninstall:
 	$(error No Makefile.$(SYSTEM) found for this system: $(UNAME_S))
 endif
 

@@ -16,7 +16,9 @@ TMP_DIR=./tmp
 all: $(BINOUT)
 sources: $(GENSOURCES)
 sources_install:
+sources_uninstall:
 install:
+uninstall:
 clean:
 	$(RM) *.log *.o $(BINOUT)
 clean-src: clean

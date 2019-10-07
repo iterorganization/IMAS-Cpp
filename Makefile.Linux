@@ -37,6 +37,14 @@ $(LIB_DIR)/libimas-cpp.a_install: %.a_install:%-$(DD_GIT_DESCRIBE).a | $(libdir)
 	$(INSTALL_DATA) $< $(libdir)
 	$(LN_S) $(<F) $(libdir)/$(*F).a
 
+$(LIB_DIR)/libimas-cpp.a_uninstall: %.a_uninstall
+	-rm -f $(libdir)/$(*F).a
+	-rm -f $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).a
+$(LIB_DIR)/libimas-cpp.so_uninstall: %.so_uninstall
+	-rm -f $(libdir)/$(*F).so
+	-rm -f $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so
+	-rm -f $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so.$(SO_NUM)
+
 #################################################
 #                  INSTALL
 #################################################
@@ -44,7 +52,13 @@ install: all $(LIB_DIR)/libimas-cpp.so_install $(LIB_DIR)/libimas-cpp.a_install 
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
 
+uninstall: $(LIB_DIR)/libimas-cpp.so_uninstall $(LIB_DIR)/libimas-cpp.a_uninstall pkgconfig_uninstall id_cpp_uninstall
+	-rm -rf $(includedir)/$($(wildcard $(SRC_DIR)/*.h):$(SRC_DIR)/%=%)
+	-rm -rf $(includedir)/ids
+
 sources_install: $(SOURCES) id_cpp_sources_install | $(datadir)/src/cppinterface/ids
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.* $(datadir)/src/cppinterface/ids
 	$(INSTALL_DATA) $(SRC_DIR)/*.* $(datadir)/src/cppinterface
 
+sources_uninstall: id_cpp_sources_uninstall
+	-rm -rf $(datadir)/src/cppinterface
