@@ -10,7 +10,7 @@ SO_NUM=4
 
 
 ifeq ("no","$(strip $(IMAS_CPP))")
-all sources sources_install install uninstall clean clean-src:
+all sources sources_install sources_uninstall install uninstall clean clean-src:
 	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 else
 

@@ -37,13 +37,13 @@ $(LIB_DIR)/libimas-cpp.a_install: %.a_install:%-$(DD_GIT_DESCRIBE).a | $(libdir)
 	$(INSTALL_DATA) $< $(libdir)
 	$(LN_S) $(<F) $(libdir)/$(*F).a
 
-$(LIB_DIR)/libimas-cpp.a_uninstall: %.a_uninstall
-	-rm -f $(libdir)/$(*F).a
-	-rm -f $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).a
-$(LIB_DIR)/libimas-cpp.so_uninstall: %.so_uninstall
-	-rm -f $(libdir)/$(*F).so
-	-rm -f $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so
-	-rm -f $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so.$(SO_NUM)
+$(LIB_DIR)/libimas-cpp.a_uninstall:
+	-rm -f $(libdir)/libimas-cpp.a
+	-rm -f $(libdir)/libimas-cpp-$(DD_GIT_DESCRIBE).a
+$(LIB_DIR)/libimas-cpp.so_uninstall:
+	-rm -f $(libdir)/libimas-cpp.so
+	-rm -f $(libdir)/libimas-cpp-$(DD_GIT_DESCRIBE).so
+	-rm -f $(libdir)/libimas-cpp-$(DD_GIT_DESCRIBE).so.$(SO_NUM)
 
 #################################################
 #                  INSTALL
