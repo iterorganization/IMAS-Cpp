@@ -51,7 +51,7 @@ $(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/
 
 # Windows dynamic library
 $(LIB_DIR)/libimas-cpp.dll: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
-	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,-soname,$(@F).$(SO_NUM) -Wl,--out-implib,$@.lib $^ $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,$(SONAME_OPT),$(@F).$(SO_NUM) -Wl,--out-implib,$@.lib $^ $(LIBS)
 
 # Windows static library
 $(LIB_DIR)/libimas-cpp.lib: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)

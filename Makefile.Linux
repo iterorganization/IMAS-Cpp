@@ -18,7 +18,7 @@ $(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/
 
 # Dynamic library
 $(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so.$(SO_NUM): $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
-	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,-soname,$(@F) $^ $(LIBS)
+	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,$(SONAME_OPT),$(@F) $^ $(LIBS)
 $(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so: %:%.$(SO_NUM)
 	$(LN_S) $(<F) $@
 $(LIB_DIR)/libimas-cpp.so:%.so:%-$(DD_GIT_DESCRIBE).so
