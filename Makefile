@@ -16,7 +16,7 @@ else
 
 ifeq "$(strip $(CC))" "icc"
 CXX=icpc
-CXXFLAGS=-g -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
+CXXFLAGS=-g -O3 -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
 LDFLAGS= -g -pthread
 else
 ifneq ($(SYSTEM),MacOS)
@@ -24,7 +24,7 @@ CXX=g++
 else
 CXX=clang++
 endif
-CXXFLAGS=-g -std=c++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
+CXXFLAGS=-g -O3 -std=c++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
 LDFLAGS= -g -fPIC -pthread
 endif
 
