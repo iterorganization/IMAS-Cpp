@@ -247,9 +247,11 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
-		blitz::Array<int,2>  fortranOrderArray ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
-		ptrData = (void*) fortranOrderArray.data();
+        //Changing data order C -> F
+        blitz::Array<int,2>  fortranOrderArray (array.shape(), fortranArray);
+        fortranOrderArray = array;
 
+		ptrData = (void*) fortranOrderArray.data();
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, arrayOfSizes);
   		return status;
         }
@@ -264,7 +266,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
-		blitz::Array<int,3> fortranOrderArray ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+        //Changing data order C -> F
+		blitz::Array<int,3> fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
+
 		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, arrayOfSizes);
@@ -283,7 +288,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
-		blitz::Array<int,4> fortranOrderArray ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+        //Changing data order C -> F
+		blitz::Array<int,4> fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
+
 		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, arrayOfSizes);
@@ -303,7 +311,9 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
-		blitz::Array<int,5> fortranOrderArray  ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+        //Changing data order C -> F
+		blitz::Array<int,5> fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, arrayOfSizes);
@@ -324,8 +334,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
+        //Changing data order C -> F
+		blitz::Array<int,6> fortranOrderArray(array.shape(), fortranArray);
 
-		blitz::Array<int,6> fortranOrderArray ((int*)array.data(), array.shape(), neverDeleteData, fortranArray);
+        fortranOrderArray = array;
 		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, arrayOfSizes);
@@ -368,7 +380,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
-		blitz::Array<double,2> fortranOrderArray ((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+        //Changing data order C -> F
+		blitz::Array<double,2> fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
+
 		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, arrayOfSizes);
@@ -386,7 +401,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
-		blitz::Array<double,3> fortranOrderArray  ((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
+        //Changing data order C -> F
+		blitz::Array<double,3> fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
+
 		ptrData = (void*) fortranOrderArray.data();
 
 		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, arrayOfSizes);
@@ -405,8 +423,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
+        //Changing data order C -> F
+		blitz::Array<double,4> fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-		blitz::Array<double,4> fortranOrderArray ((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
 		ptrData = (void*) fortranOrderArray.data();
 
 
@@ -428,8 +448,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
+        //Changing data order C -> F
+		blitz::Array<double,5> fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-		blitz::Array<double,5> fortranOrderArray((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
 		ptrData = (void*) fortranOrderArray.data();
 
 
@@ -453,8 +475,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		if(array.size() < 1)
 			return 0;
 
+        //Changing data order C -> F
+		blitz::Array<double,6>  fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-		blitz::Array<double,6>  fortranOrderArray ((double*)array.data(), array.shape(), neverDeleteData, fortranArray);
 		ptrData = (void*) fortranOrderArray.data();
 
 
@@ -485,8 +509,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         if(array.size() < 1)
             return 0;
 
+        //Changing data order C -> F
+        blitz::Array<std_complex_t,1>  fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-        blitz::Array<std_complex_t,1>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
         ptrData = (void*) fortranOrderArray.data();
 
 
@@ -505,8 +531,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         if(array.size() < 1)
             return 0;
 
+        //Changing data order C -> F
+        blitz::Array<std_complex_t,2>  fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-        blitz::Array<std_complex_t,2>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
         ptrData = (void*) fortranOrderArray.data();
 
 
@@ -525,8 +553,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         if(array.size() < 1)
             return 0;
 
+        //Changing data order C -> F
+        blitz::Array<std_complex_t,3>  fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-        blitz::Array<std_complex_t,3>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
         ptrData = (void*) fortranOrderArray.data();
 
 
@@ -545,8 +575,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         if(array.size() < 1)
             return 0;
 
+        //Changing data order C -> F
+        blitz::Array<std_complex_t,4>  fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-        blitz::Array<std_complex_t,4>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
         ptrData = (void*) fortranOrderArray.data();
 
 
@@ -564,8 +596,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         if(array.size() < 1)
             return 0;
 
+        //Changing data order C -> F
+        blitz::Array<std_complex_t,5>  fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-        blitz::Array<std_complex_t,5>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
         ptrData = (void*) fortranOrderArray.data();
 
 
@@ -583,8 +617,10 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         if(array.size() < 1)
             return 0;
 
+        //Changing data order C -> F
+        blitz::Array<std_complex_t,6>  fortranOrderArray(array.shape(), fortranArray);
+        fortranOrderArray = array;
 
-        blitz::Array<std_complex_t,6>  fortranOrderArray ((std_complex_t*)array.data(), array.shape(), neverDeleteData, fortranArray);
         ptrData = (void*) fortranOrderArray.data();
 
 
