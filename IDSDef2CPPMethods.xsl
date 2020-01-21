@@ -83,21 +83,21 @@ int IdsNs::IDS::getIdx()
 int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *version)
 {
 	int pulseCtx;
-	int status = -1;
+	al_status_t al_status;
 
-  	pulseCtx = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, user, tokamak, version); 
-  	if (pulseCtx &lt; 0)
+  	al_status = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+  	if (al_status.code &lt; 0)
 	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-    		return pulseCtx;
+		printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
+    	return al_status.code;
 	}
  
 
-    	status = ual_open_pulse(pulseCtx, OPEN_PULSE, "");
-	if(status != 0)
+    al_status = ual_open_pulse(pulseCtx, OPEN_PULSE, "");
+	if(al_status.code != 0)
 	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-		return status;
+		printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_open_pulse", al_status.message);
+		return al_status.code;
 	}
 	this->pulseCtx = pulseCtx;
 	this->connected = true;
@@ -108,22 +108,22 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version)
 {
 	int pulseCtx = -1;
-	int status = 1;
+	al_status_t al_status;
 
-	pulseCtx = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, user, tokamak, version); 
-  	if (pulseCtx &lt; 0)
+	al_status = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+    if (al_status.code &lt; 0)
 	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_begin_pulse_action");
-    		return pulseCtx;
+        printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
+        return al_status.code;
 	}
  
 
 
-	status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, "");
-	if(status != 0)
+	al_status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, "");
+    if(al_status.code != 0)
 	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
-		return status;
+        printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_open_pulse", al_status.message);
+        return al_status.code;
 	}
 
 	this->pulseCtx = pulseCtx;
@@ -135,13 +135,14 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *vers
 
 int IdsNs::IDS::close()
 {
-  	int status = ual_close_pulse(this->pulseCtx, CLOSE_PULSE, "");
-	if(status != 0)
+  	al_status_t al_status = ual_close_pulse(this->pulseCtx, CLOSE_PULSE, "");
+    if(al_status.code != 0)
 	{
-		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_close_pulse");
-		return status;
+		printf("Error opening imas shot %d, run %d: %s\n %s\n", shot, run, "ual_close_pulse", al_status.message);
+        return al_status.code;
 	}
-    	return ual_end_action(this->pulseCtx);
+    ual_end_action(this->pulseCtx);
+    return 0;
 }
 
 
@@ -290,7 +291,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get()
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 {
-int status;
+int status = 0;
+al_status_t al_status;
 char *str;
 char *idsName = "<xsl:value-of select="@name"/>";
 char idsFullName[strlen(idsName)+4];
@@ -317,18 +319,18 @@ int arraySize;
     clear();
 
 	// Open get context
-	getOpCtx = ual_begin_global_action(pulseCtx, idsFullName, READ_OP);
+	al_status = ual_begin_global_action(pulseCtx, idsFullName, READ_OP, &amp;getOpCtx);
 
-	if(getOpCtx &lt; 0) 
-		return getOpCtx;
+	if(al_status.code &lt; 0) 
+		return al_status.code;
 
 	ctx = getOpCtx;
 
-	status = IdsNs::Ids::readIdsTimeMode(ctx, idsTimeMode );
-	if(status &lt; 0) 
+	al_status = IdsNs::Ids::readIdsTimeMode(ctx, idsTimeMode );
+	if(al_status.code &lt; 0) 
 	{	
 		ual_end_action(ctx);
-		return status;
+		return al_status.code;
 	}
 
  	<xsl:apply-templates select="field" mode="GET_SINGLE"/> 
@@ -344,8 +346,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put()
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 {
-
-int status;
+int status = 0;
+    al_status_t al_status;
 char *idsName = "<xsl:value-of select="@name"/>";
 char idsFullName[strlen(idsName)+4];
 
@@ -384,9 +386,9 @@ deleteAll(iOccurrence);
 
 
 	// Open put context
-	putOpCtx = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP);
+	al_status = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP, &amp;putOpCtx);
 
-	if(putOpCtx &lt; 0) return putOpCtx;
+	if(al_status.code &lt; 0) return al_status.code;
 
 
 ctx = putOpCtx;
@@ -407,7 +409,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice()
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 {
-	int status;
+    int status = 0;
+    al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
 	char idsFullName[strlen(idsName)+4];
 
@@ -451,10 +454,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 
 
 	// Open put context
-	putSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP);
+	al_status = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP, &amp;putSliceOpCtx);
 
-	if(putSliceOpCtx &lt; 0) 
-		return putSliceOpCtx;
+	if(al_status.code &lt; 0) 
+		return al_status.code;
 
 	ctx = putSliceOpCtx;
 
@@ -471,7 +474,8 @@ return 0;
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 {
-	int status;
+    int status = 0;
+    al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
 	char idsFullName[strlen(idsName) + 4];
 	int pulseCtx = this->pulseCtx;
@@ -490,10 +494,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
 	// Open put context
-	deleteOpCtx = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP);
+	al_status = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP, &amp;deleteOpCtx);
 
-	if(deleteOpCtx &lt; 0) 
-		return deleteOpCtx;
+	if(al_status.code &lt; 0) 
+		return al_status.code;
 
 	ctx = deleteOpCtx;
 
@@ -518,7 +522,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char 
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, double inTime, char interpolMode)
 {
-	int status;
+    int status = 0;
+    al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
 	char idsFullName[strlen(idsName)+4];
 
@@ -546,18 +551,18 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
     clear();
 
 	// Open put context
-	getSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, READ_OP, inTime, interpolMode);
+	al_status = ual_begin_slice_action(pulseCtx, idsFullName, READ_OP, inTime, interpolMode, &amp;getSliceOpCtx);
 
-	if(getSliceOpCtx &lt; 0) 
-		return getSliceOpCtx;
+	if(al_status.code &lt; 0) 
+		return al_status.code;
 
 	ctx = getSliceOpCtx;
 
-	status = this->readIdsTimeMode(ctx, idsTimeMode );
-	if(status &lt; 0) 
+	al_status = this->readIdsTimeMode(ctx, idsTimeMode );
+	if(al_status.code &lt; 0) 
 	{	
 		ual_end_action(ctx);
-		return status;
+		return al_status.code;
 	}
 
 	<xsl:apply-templates select="field" mode="GET_SINGLE">
@@ -590,6 +595,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int ctx, int idsTimeMode)&#xA;</xsl:text>
 {
 	int status = -1;
+    al_status_t al_status;
 	int arraySize = -1;
 	int aosCtx = -1;
 	std::string fieldPath = "";
@@ -612,6 +618,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::putSlice(int ctx, int idsTimeMode)&#xA;</xsl:text>
 {
 	int status = -1;
+    al_status_t al_status;
 	int arraySize = -1;
 	int aosCtx = -1;
 	std::string fieldPath = "";
@@ -633,6 +640,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::get(int ctx, int idsTimeMode)&#xA;</xsl:text>
 {
 	int status = -1;
+    al_status_t al_status;
 	int arraySize = -1;
 	int aosCtx = -1;
 	std::string fieldPath = "";
@@ -652,6 +660,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::deleteAll(int ctx)&#xA;</xsl:text>
 {
 	int status = -1;
+    al_status_t al_status;
 	std::string fieldPath = "";
 
 	<xsl:apply-templates select="field" mode="DELETE"/>
@@ -711,11 +720,11 @@ See IDSDef2Classes.xsl  -->
 		</xsl:when>
 		<xsl:otherwise>
 			fieldPath = "<xsl:value-of select="@path"/>";
-			status = ual_delete_data(ctx, fieldPath.c_str());
-			if (status != 0)
+			al_status = ual_delete_data(ctx, fieldPath.c_str());
+			if (al_status.code != 0)
 			{	
 				ual_end_action(ctx);
-				return status; 
+				return al_status.code; 
 			}
 		</xsl:otherwise>
 	</xsl:choose>
@@ -899,7 +908,7 @@ See IDSDef2Classes.xsl  -->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
 		status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, idsTimeMode);
-		if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+		if (status &lt; 0)
 			return status;
 		</xsl:when>
 
@@ -918,33 +927,33 @@ See IDSDef2Classes.xsl  -->
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			if(arraySize > 0)
 			{
-				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-				if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__))
+				al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 				{	
 					ual_end_action(ctx);
-					return aosCtx; 
+					return al_status.code; 
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
 						return status; 
 					}
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
+					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
-						return status; 
+						return al_status.code; 
 					}
 				}
-				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
+				al_status = ual_end_action(aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
-					return status; 
+					return al_status.code; 
 				}
 			}
 		</xsl:when>
@@ -966,33 +975,33 @@ See IDSDef2Classes.xsl  -->
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			if(arraySize > 0)
 			{	
-				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-				if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__)) 
+				al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 				{	
 					ual_end_action(ctx);
-					return status;
+					return al_status.code;
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+                    if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
 						return status;
 					}
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
+					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
-						return status;
+						return al_status.code; 
 					}
 				}
-				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+				al_status = ual_end_action(aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 				{	
 					ual_end_action(ctx);
-					return status;
+					return al_status.code; 
 				}
  			}
 		</xsl:when>
@@ -1020,33 +1029,33 @@ See IDSDef2Classes.xsl  -->
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
 			if(arraySize > 0 &amp;&amp; idsTimeMode != IDS_TIME_MODE_INDEPENDENT)
 			{	
-				aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-				if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__))  
+				al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
-					return aosCtx;
+					return al_status.code;
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+                    if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
-						return status;
+                        return status;
 					}
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
+					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
-						return status;
+                        return al_status.code;
 					}
 				}
-				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
+				al_status = ual_end_action(aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
-					return status;
+                    return al_status.code;
 				}
 					 
  			}
@@ -1091,22 +1100,22 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
         <xsl:choose>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/data_dictionary'">
-                status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$DD_GIT_DESCRIBE"/>");
+                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$DD_GIT_DESCRIBE"/>");
             </xsl:when>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer'">
-                status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$UAL_GIT_DESCRIBE"/>");
+                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$UAL_GIT_DESCRIBE"/>");
             </xsl:when>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer_language'">
-                status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "cpp");
+                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "cpp");
             </xsl:when>
             <xsl:otherwise>
-	            status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
+	            al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
             </xsl:otherwise>
         </xsl:choose>
-        if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+        if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
         {   
             ual_end_action(ctx);
-            return status;
+            return al_status.code;
         }
         <xsl:if test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
             }
@@ -1152,11 +1161,11 @@ See IDSDef2Classes.xsl  -->
   				</xsl:otherwise>
 			</xsl:choose>
 			timeBasePath = "";
-			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__)) 
+			al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 			{	
 				ual_end_action(ctx);
-				return aosCtx;
+				return al_status.code;
 			}
 
 			if(aosCtx > 0 &amp;&amp; arraySize > 0)
@@ -1164,24 +1173,24 @@ See IDSDef2Classes.xsl  -->
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+                    if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
-						return status;
+                        return status;
 					}
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
+					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
-						return status;
+                        return al_status.code;
 					}
 				}
-				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
+				al_status = ual_end_action(aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
-					return status;
+                    return al_status.code;
 				}
  			}
 		</xsl:when>
@@ -1198,11 +1207,11 @@ See IDSDef2Classes.xsl  -->
   				</xsl:otherwise>
 			</xsl:choose>
 			timeBasePath = "";
-			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__)) 
+			al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 			{	
 					ual_end_action(ctx);
-					return status;
+                    return al_status.code;
 			}
 
 			if(aosCtx > 0 &amp;&amp; arraySize > 0)
@@ -1210,24 +1219,24 @@ See IDSDef2Classes.xsl  -->
 				<xsl:value-of select="@name"/>.resize(arraySize);
 				for( int i = 0; i &lt;arraySize; i++){
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+                    if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
-						return status;
+                        return status;
 					}
-					status = ual_iterate_over_arraystruct(aosCtx, 1);
-					if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
+					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
 						ual_end_action(aosCtx);
 						ual_end_action(ctx);
-						return status;
+                        return al_status.code;
 					}
 				}
-				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__)) 
+				al_status = ual_end_action(aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 				{	
 					ual_end_action(ctx);
-					return status;
+                    return al_status.code;
 				}
  			}
 		</xsl:when>
@@ -1251,11 +1260,11 @@ See IDSDef2Classes.xsl  -->
 						timeBasePath = &quot;<xsl:value-of select="@path"/>/time&quot;;
   				</xsl:otherwise>
 			</xsl:choose>
-			aosCtx = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize);
-			if (IdsNs::Ids::isError(aosCtx, __FILE__, __LINE__, __func__))  
+			al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 			{	
 				ual_end_action(ctx);
-				return status;
+                return al_status.code;
 			}
 
 			if(aosCtx > 0 )
@@ -1265,25 +1274,25 @@ See IDSDef2Classes.xsl  -->
 				    <xsl:value-of select="@name"/>.resize(arraySize);
 				    for( int i = 0; i &lt;arraySize; i++){
 					    status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
-					    if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					    if (status &lt; 0)
 					    {	
 						    ual_end_action(ctx);
-						    return status;
+                            return status;
 					    }
-					    status = ual_iterate_over_arraystruct(aosCtx, 1);
-					    if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))
+					    al_status = ual_iterate_over_arraystruct(aosCtx, 1);
+					    if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					    {	
 						    ual_end_action(aosCtx);
 						    ual_end_action(ctx);
-						    return status;
+                            return al_status.code;
 					    }
 				    }
                 }
-				status = ual_end_action(aosCtx);
-				if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__))  
+				al_status = ual_end_action(aosCtx);
+				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
-					return status;
+                    return al_status.code;
 				}
  			}
         }
@@ -1324,11 +1333,11 @@ See IDSDef2Classes.xsl  -->
     				timeBasePath = "";
   			</xsl:otherwise>
 		</xsl:choose>
-		status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
-		if (IdsNs::Ids::isError(status, __FILE__, __LINE__, __func__)) 
+		al_status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
+		if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 		{	
 			ual_end_action(ctx);
-			return status;
+            return al_status.code;
 		}
         <xsl:if test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
         }
