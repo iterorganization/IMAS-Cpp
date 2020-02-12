@@ -420,6 +420,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	std::string timeBasePath;
 	int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
 	int arraySize;
+    int storedTimeMode = IDS_TIME_MODE_UNKNOWN;
 
 	if(!connected) 
 		return -1;
@@ -448,8 +449,33 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	else
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
+    /***   Checking homogeneous_time read from file   ***/
+
+    // Open read ctx
+    ctx = ual_begin_global_action(pulseCtx, idsFullName, READ_OP);
+    if(ctx &lt; 0) return ctx;
+
+    status = IdsNs::Ids::readIdsTimeMode(ctx, storedTimeMode );
+    ual_end_action(ctx);
+    if(status &lt; 0) 
+        return status;
+
+    // adding slice to an empty IDS
+    if( storedTimeMode == IDS_TIME_MODE_UNKNOWN)
+    {
+        printf("Warning: Slice is being added to an empty IDS '<xsl:value-of select="@name"/>'. PUT is called to save time independent data.\n");
+        return this->put(iOccurrence);
+    }
+
+    // time mode conflict
+    if( storedTimeMode != idsTimeMode)
+    {
+       printf("ERROR! IDS '<xsl:value-of select="@name"/>': time dependency mode ('%s') differs from value stored in IDS ('%s')!\n", IdsNs::Ids::timeModeToString(idsTimeMode ), IdsNs::Ids::timeModeToString(storedTimeMode));
+       return -1;
+    }
 
 
+    /***   Put slice   ***/
 	// Open put context
 	putSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP);
 
