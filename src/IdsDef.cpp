@@ -38,6 +38,28 @@ int IdsNs::Ids::readIdsTimeMode( int ctx, int& outIdsTimeMode )
     return 0;
 }
 
+char* IdsNs::Ids::timeModeToString( int idsTimeMode )
+{
+
+    switch(idsTimeMode)
+    {
+        case IDS_TIME_MODE_UNKNOWN:     
+                                        return "UNKNOWN";
+        case IDS_TIME_MODE_HETEROGENEOUS: 
+
+                                        return "HETEROGENEOUS";
+        case IDS_TIME_MODE_HOMOGENEOUS:   
+                                        return "HOMOGENEOUS";
+        case IDS_TIME_MODE_INDEPENDENT:   
+                                        return "INDEPENDENT";
+
+        default: 
+                                        return "UNKNOWN";
+
+    }
+    return 0;
+}
+
 bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long line, const char *func)
 {  
             // no error
