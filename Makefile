@@ -14,18 +14,27 @@ all sources sources_install sources_uninstall install uninstall clean clean-src:
 	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 else
 
+## Adding DEBUG=yes to make command to print additional debug info
+DBGFLAGS= -g
+ifeq (${DEBUG},yes)
+DBGFLAGS+= -DDEBUG
+endif
+ifeq (${STOPONEXCEPT},yes)
+DBGFLAGS+= -DSOE
+endif
+
 ifeq "$(strip $(CC))" "icc"
 CXX=icpc
-CXXFLAGS=-g -O0 -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel
-LDFLAGS= -g -pthread
+CXXFLAGS=-O0 -fPIC -Wno-write-strings -Wno-deprecated -pthread -shared-intel ${DBGFLAGS}
+LDFLAGS=-pthread
 else
 ifneq ($(SYSTEM),MacOS)
 CXX=g++
 else
 CXX=clang++
 endif
-CXXFLAGS=-g -O0 -std=c++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread
-LDFLAGS= -g -fPIC -pthread
+CXXFLAGS=-O0 -std=c++11 -D__USE_XOPEN2K8 -fPIC -Wno-write-strings -Wno-deprecated -pthread ${DBGFLAGS}
+LDFLAGS=-fPIC -pthread
 endif
 
 BUILD_DIR:=./build

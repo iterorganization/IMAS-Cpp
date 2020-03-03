@@ -12,6 +12,15 @@ all sources sources_install sources_uninstall install uninstall clean clean-src 
 	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 else
 
+## Adding DEBUG=yes to make command to print additional debug info
+DBGFLAGS= -g
+ifeq (${DEBUG},yes)
+DBGFLAGS+= -DDEBUG
+endif
+ifeq (${STOPONEXCEPT},yes)
+DBGFLAGS+= -DSOE
+endif
+
 # Include OS-specific Makefile, if exists.
 ifneq (,$(wildcard Makefile.$(SYSTEM)))
 include Makefile.$(SYSTEM)

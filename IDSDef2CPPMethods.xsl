@@ -290,23 +290,26 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get()
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 {
-int status;
-char *str;
-char *idsName = "<xsl:value-of select="@name"/>";
-char idsFullName[strlen(idsName)+4];
+	int status;
+	char *str;
+	char *idsName = "<xsl:value-of select="@name"/>";
+	char *idsFullName = new char[strlen(idsName)+4];
 
-int pulseCtx = this->pulseCtx;
-int getOpCtx = -1;
-int ctx = -1;
-int aosCtx = -1;
-std::string fieldPath;
-std::string timeBasePath;
-int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
-int arraySize;
+	int pulseCtx = this->pulseCtx;
+	int getOpCtx = -1;
+	int ctx = -1;
+	int aosCtx = -1;
+	std::string fieldPath;
+	std::string timeBasePath;
+	int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
+	int arraySize;
 
-	if(!connected) 
+	if(!connected)
+	{
+		delete[] idsFullName;
 		return -1;
-
+	}
+	
 	if(iOccurrence &lt; 1)
 		sprintf(idsFullName, "%s", idsName);
 	else
@@ -318,7 +321,8 @@ int arraySize;
 
 	// Open get context
 	getOpCtx = ual_begin_global_action(pulseCtx, idsFullName, READ_OP);
-
+	delete[] idsFullName;
+	
 	if(getOpCtx &lt; 0) 
 		return getOpCtx;
 
@@ -344,60 +348,62 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put()
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 {
+	int status;
+	char *idsName = "<xsl:value-of select="@name"/>";
+	char *idsFullName = new char[strlen(idsName)+4];
 
-int status;
-char *idsName = "<xsl:value-of select="@name"/>";
-char idsFullName[strlen(idsName)+4];
+	int pulseCtx = this->pulseCtx;
+	int putOpCtx = -1;
+	int ctx = -1;
+	int aosCtx = -1;
+	std::string fieldPath;
+	std::string timeBasePath;
+	int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
+	int arraySize;
 
+	if (!connected)
+	{
+		delete[] idsFullName;
+		return -1;
+	}
 
-int pulseCtx = this->pulseCtx;
-int putOpCtx = -1;
-int ctx = -1;
-int aosCtx = -1;
-std::string fieldPath;
-std::string timeBasePath;
-int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
-int arraySize;
-
-if(!connected) return -1;
-
-idsTimeMode = ids_properties.homogeneous_time;
+	idsTimeMode = ids_properties.homogeneous_time;
 	if (idsTimeMode == IDS_TIME_MODE_UNKNOWN)
 	{
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUT quits with no action.");
+		delete[] idsFullName;
    		return 0;
 	}
 
     if( idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp; this->time.size() &lt; 1 )
     {
         printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
+		delete[] idsFullName;
         return -1;
     }
 
-if(iOccurrence &lt; 1)
-sprintf(idsFullName, "%s", idsName);
-else
-sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+	if(iOccurrence &lt; 1)
+	sprintf(idsFullName, "%s", idsName);
+	else
+	sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
-deleteAll(iOccurrence);
-
-
+	deleteAll(iOccurrence);
 
 	// Open put context
 	putOpCtx = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP);
-
+	delete[] idsFullName;
+	
 	if(putOpCtx &lt; 0) return putOpCtx;
 
+	ctx = putOpCtx;
 
-ctx = putOpCtx;
-
-<xsl:apply-templates select="field" mode="PUT_SINGLE">
+	<xsl:apply-templates select="field" mode="PUT_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'no'"/>
 	</xsl:apply-templates>
 
 	ual_end_action(putOpCtx);
 	
-return 0;
+	return 0;
 }
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice()
@@ -409,8 +415,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 {
 	int status;
 	char *idsName = "<xsl:value-of select="@name"/>";
-	char idsFullName[strlen(idsName)+4];
-
+	char *idsFullName = new char[strlen(idsName)+4];
 
 	int pulseCtx = this->pulseCtx;
 	int putSliceOpCtx = -1;
@@ -421,19 +426,24 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
 	int arraySize;
 
-	if(!connected) 
+	if(!connected)
+	{
+		delete[] idsFullName;
 		return -1;
-
+	}
+	
 	idsTimeMode = ids_properties.homogeneous_time;
 	if (idsTimeMode == IDS_TIME_MODE_UNKNOWN) 
 	{
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUTSLICE quits with no action.\n");
+		delete[] idsFullName;
    		return 0;
 	}
 
     if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT) 
     {
         printf("Warning: IDS '<xsl:value-of select="@name"/>' time mode 'independent'. PUTSLICE quits with no action.\n");
+		delete[] idsFullName;
         return 0;
     }
 
@@ -448,10 +458,9 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	else
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
-
-
 	// Open put context
 	putSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP);
+	delete[] idsFullName;
 
 	if(putSliceOpCtx &lt; 0) 
 		return putSliceOpCtx;
@@ -463,8 +472,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	</xsl:apply-templates>
 	ual_end_action(putSliceOpCtx);
 
-
-return 0;
+	return 0;
 }
 
 
@@ -473,7 +481,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 {
 	int status;
 	char *idsName = "<xsl:value-of select="@name"/>";
-	char idsFullName[strlen(idsName) + 4];
+	char *idsFullName = new char[strlen(idsName) + 4];
+	
 	int pulseCtx = this->pulseCtx;
 	int deleteOpCtx = -1;
 	int ctx = -1;
@@ -481,9 +490,11 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 	std::string fieldPath;
 	int arraySize;
 
-	if(!connected) 
+	if(!connected)
+	{
+		delete[] idsFullName;
 		return -1;
-
+	}
 	if(iOccurrence &lt; 1)
 		sprintf(idsFullName, "%s", idsName);
 	else
@@ -491,14 +502,16 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 
 	// Open put context
 	deleteOpCtx = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP);
+	delete[] idsFullName;
 
 	if(deleteOpCtx &lt; 0) 
 		return deleteOpCtx;
 
 	ctx = deleteOpCtx;
 
- <xsl:apply-templates select="field" mode="DELETE"/>  
-return 0;
+	<xsl:apply-templates select="field" mode="DELETE"/>
+	
+	return 0;
 }
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll()
@@ -520,8 +533,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 {
 	int status;
 	char *idsName = "<xsl:value-of select="@name"/>";
-	char idsFullName[strlen(idsName)+4];
-
+	char *idsFullName = new char[strlen(idsName)+4];
 
 	int pulseCtx = this->pulseCtx;
 	int getSliceOpCtx = -1;
@@ -532,21 +544,23 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
 	int arraySize;
 
-
-	if(!connected) 
+	if(!connected)
+	{
+		delete[] idsFullName;
 		return -1;
-
+	}
+	
 	if(iOccurrence &lt; 1)
 		sprintf(idsFullName, "%s", idsName);
 	else
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
-
 	
 	//reset the ids content
     clear();
 
 	// Open put context
 	getSliceOpCtx = ual_begin_slice_action(pulseCtx, idsFullName, READ_OP, inTime, interpolMode);
+	delete[] idsFullName;
 
 	if(getSliceOpCtx &lt; 0) 
 		return getSliceOpCtx;

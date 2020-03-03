@@ -4,13 +4,21 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <complex.h>
+#ifdef __GNUC__
+#  include <complex.h>
+#else
+#  include <iostream>
+#  include <cmath>
+#  include <complex>
+#  include <complex.h>
+#endif
+
 #undef I
 
-#ifdef HAVE_WINDOWS_H
-#define EXPORT __declspec(dllexport)
+#ifdef _WIN32
+#  define EXPORT __declspec(dllexport)
 #else
-#define EXPORT
+#  define EXPORT
 #endif
 
 #define INTERPOLATION 3

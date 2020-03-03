@@ -13,12 +13,22 @@
 
 
 #ifndef _UAL_CLASSES
-
 #define _UAL_CLASSES
 
 #include "UALDef.h"
 
 <xsl:apply-templates select = "IDS" mode = "CLASS_HEADER"/>
+
+#if defined(_WIN32)
+#  define LIBRARY_API __declspec(dllexport)
+#else
+#  define LIBRARY_API
+#endif
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 namespace IdsNs {
 
@@ -36,7 +46,7 @@ void checkObject(void *obj)
     if (!obj) printf("Problem with array of structure allocation\n");
 }
 -->
-class IDS
+class LIBRARY_API IDS
 {
     private:
     int pulseCtx;
@@ -81,7 +91,11 @@ class IDS
     ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const IDS <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 }
 
- #endif
+#ifdef __cplusplus
+}
+#endif
+
+#endif // _UAL_CLASSES
 </exsl:document>
 </xsl:template>
 
@@ -122,14 +136,26 @@ class IDS
 <xsl:template match = "IDS" mode = "CLASS_DEFINITION">
 <exsl:document href="ids/{@name}_IDSBase.h" standalone="yes" method="text">
 #ifndef _IDS_BASE_<xsl:value-of select="@name"/>
-
 #define _IDS_BASE_<xsl:value-of select="@name"/>
 
 #include "IdsDef.h"
+
+#if defined(_WIN32)
+#  define LIBRARY_API __declspec(dllexport)
+#else
+#  define LIBRARY_API
+#endif
+
 namespace IdsNs {
 
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+
 <!--============= Define time-dependent IDSs =============-->
-class <xsl:value-of select="@name"/>_IDSBase:Ids
+class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase:Ids
 {
     private:
       int pulseCtx;
@@ -150,11 +176,16 @@ class <xsl:value-of select="@name"/>_IDSBase:Ids
     int deleteAll();
     int deleteAll(int idx);
     void clear();
-    friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 };
- ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
+
+#ifdef __cplusplus
+}
+#endif
+
+LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const <xsl:value-of select="@name"/>_IDSBase <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 
 }
+
 #endif // _IDS_BASE_<xsl:value-of select="@name"/>
 <xsl:text>&#10;</xsl:text>
    </exsl:document>

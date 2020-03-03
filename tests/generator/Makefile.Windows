@@ -1,11 +1,11 @@
 ifeq "$(strip $(CC))" "icc"
 CXX=icpc
-CXXFLAGS=-g -O0 -fPIC -shared-intel
-LDFLAGS=-g
+CXXFLAGS= -O0 -fPIC -shared-intel ${DBGFLAGS}
+LDFLAGS=
 else
 CXX=g++
-CXXFLAGS=-std=c++11 -pthread -g -O2 -Wa,-mbig-obj -fPIC
-LDFLAGS=-g -pthread
+CXXFLAGS=-std=c++11 -pthread -O2 -Wa,-mbig-obj -fPIC ${DBGFLAGS}
+LDFLAGS=-pthread
 endif
 
 INCDIR= -I$(BLITZ_HOME)/include -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src
