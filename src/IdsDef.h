@@ -22,6 +22,7 @@ class Ids
 
         static int readIdsTimeMode( int ctx, int& outIdsTimeMode );
 
+        static char* timeModeToString( int idsTimeMode );
 
         static bool isError(int statusCode, const char *file, const unsigned long line, const char *func);
 
