@@ -39,6 +39,28 @@ al_status_t IdsNs::Ids::readIdsTimeMode( int ctx, int& outIdsTimeMode )
 }
 
 
+char* IdsNs::Ids::timeModeToString( int idsTimeMode )
+{
+
+    switch(idsTimeMode)
+    {
+        case IDS_TIME_MODE_UNKNOWN:     
+                                        return "UNKNOWN";
+        case IDS_TIME_MODE_HETEROGENEOUS: 
+
+                                        return "HETEROGENEOUS";
+        case IDS_TIME_MODE_HOMOGENEOUS:   
+                                        return "HOMOGENEOUS";
+        case IDS_TIME_MODE_INDEPENDENT:   
+                                        return "INDEPENDENT";
+
+        default: 
+                                        return "UNKNOWN";
+
+    }
+    return 0;
+}
+
 
 al_status_t IdsNs::Ids::okStatus()
 {
@@ -50,7 +72,8 @@ al_status_t IdsNs::Ids::okStatus()
     return al_status;
 }
 
-bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned long line, const char *func)
+
+bool IdsNs::Ids::isError(al_status_t statusCode, const char *file, const unsigned long line, const char *func)
 {  
             // no error
             if (al_status.code > -1)
