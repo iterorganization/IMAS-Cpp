@@ -466,13 +466,14 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     /***   Checking homogeneous_time read from file   ***/
 
     // Open read ctx
-    ctx = ual_begin_global_action(pulseCtx, idsFullName, READ_OP);
-    if(ctx &lt; 0) return ctx;
+    al_status = ual_begin_global_action(pulseCtx, idsFullName, READ_OP, &amp;ctx);
+    if(al_status.code &lt; 0) 
+        return al_status.code;
 
-    status = IdsNs::Ids::readIdsTimeMode(ctx, storedTimeMode );
+    al_status = IdsNs::Ids::readIdsTimeMode(ctx, storedTimeMode );
     ual_end_action(ctx);
-    if(status &lt; 0) 
-        return status;
+    if(al_status.code &lt; 0) 
+        return al_status.code;
 
     // adding slice to an empty IDS
     if( storedTimeMode == IDS_TIME_MODE_UNKNOWN)

@@ -73,7 +73,7 @@ al_status_t IdsNs::Ids::okStatus()
 }
 
 
-bool IdsNs::Ids::isError(al_status_t statusCode, const char *file, const unsigned long line, const char *func)
+bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned long line, const char *func)
 {  
             // no error
             if (al_status.code > -1)
