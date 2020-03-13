@@ -80,7 +80,7 @@ int IdsNs::IDS::getIdx()
 }
 
 
-int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *version)
+int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *version, const char *option/* = nullptr*/)
 {
 	int pulseCtx;
 	int status = -1;
@@ -93,7 +93,7 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 	}
  
 
-    	status = ual_open_pulse(pulseCtx, OPEN_PULSE, "");
+    	status = ual_open_pulse(pulseCtx, OPEN_PULSE, option);
 	if(status != 0)
 	{
 		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");
@@ -105,7 +105,7 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 }
 
 
-int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version)
+int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version, const char *option/* = nullptr*/)
 {
 	int pulseCtx = -1;
 	int status = 1;
@@ -119,7 +119,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *vers
  
 
 
-	status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, "");
+	status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, option);
 	if(status != 0)
 	{
 		printf("Error opening imas shot %d, run %d: %s\n", shot, run, "ual_open_pulse");

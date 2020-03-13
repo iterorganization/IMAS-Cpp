@@ -74,8 +74,8 @@ class LIBRARY_API IDS
     int getRefRun(){return refRun;}
     string getTreeName(){return treeName;}
     bool isConnected(){return connected;}
-    int openEnv(const char *user, const char *tokamak, const char *version);
-    int createEnv(const char *user, const char *tokamak, const char *version);
+    int openEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
+    int createEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
     int close();
     void close(char *name, int shot, int run) {close();}
     int getTime(char *path, Array&lt;double,1&gt; &amp;time);
