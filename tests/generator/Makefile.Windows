@@ -13,8 +13,8 @@ LIBS= -L$(BLITZ_HOME)/lib -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/li
 LIBS+= $(UAL_BUILD)/cppinterface/lib/libimas-cpp.lib $(UAL_BUILD)/lowlevel/libimas.lib
 LIBS+= $(BLITZ_HOME)/lib/libblitz.a
 BINOUT=TestSuite.exe
-CFLAGS+= -DWIN32
-CXXFLAGS+= -DWIN32
+CFLAGS+= -DWIN32 -DBZ_STATIC_LIB
+CXXFLAGS+= -DWIN32 -DBZ_STATIC_LIB
 
 ifneq ("no","$(strip $(IMAS_MDSPLUS))")
 LIBS+= -L$(MDSPLUS_DIR)/lib
@@ -25,15 +25,24 @@ LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
 LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
 LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
 LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
-endif
+endif # IMAS_MDSPLUS
 
 ifneq ("no","$(strip $(IMAS_UDA))")
+ifeq ("fat","$(strip $(IMAS_UDA))")
+LIBS+= -L$(UDA_HOME)/lib
+LIBS+= $(UDA_HOME)/lib/libfatuda_cpp.a
+LIBS+= $(UDA_HOME)/lib/libportablexdr.a
+LIBS+= $(PostgresSQL_ROOT)/lib/libpq.a
+LIBS+= -lws2_32 -lssl -lcrypto -lxml2
+else
+LIBS+= -L$(UDA_HOME)/lib
 LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
 LIBS+= $(UDA_HOME)/lib/libportablexdr.a
 LIBS+= -lws2_32 -lssl -lcrypto
 endif
+endif # IMAS_UDA
 
 ifneq ("no","$(strip $(IMAS_HDF5))")
 LIBS+= -L$(HDF5_HOME)/lib
 LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
-endif
+endif # IMAS_HDF5

@@ -11,16 +11,16 @@ using namespace IdsNs;
 
 
 
-int IdsNs::Ids::readIdsTimeMode( int ctx, int& outIdsTimeMode )
+al_status_t IdsNs::Ids::readIdsTimeMode( int ctx, int& outIdsTimeMode )
 {
     int idsTimeMode = -1;
-    int status = -1;
+    al_status_t al_status;
     std::string fieldPath = "ids_properties/homogeneous_time";
     std::string timeBasePath = "";
     
-    status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, idsTimeMode);
-    if (status)
-            return status;
+    al_status =IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, idsTimeMode);
+    if (al_status.code)
+            return al_status;
 
     switch(idsTimeMode)
     {
@@ -32,11 +32,12 @@ int IdsNs::Ids::readIdsTimeMode( int ctx, int& outIdsTimeMode )
                 break;
 
         default: 
-             printf("ERROR: time dependency mode (ids_properties/homogeneous_time) set to unknown value!");
-             return -1;
+             al_status.code = -1;
+             strncpy(al_status.message, "ERROR: time dependency mode (ids_properties/homogeneous_time) set to unknown value!", MAX_ERR_MSG_LEN);
     }
-    return 0;
+    return al_status;
 }
+
 
 char* IdsNs::Ids::timeModeToString( int idsTimeMode )
 {
@@ -60,14 +61,26 @@ char* IdsNs::Ids::timeModeToString( int idsTimeMode )
     return 0;
 }
 
-bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long line, const char *func)
+
+al_status_t IdsNs::Ids::okStatus()
+{
+    al_status_t al_status;
+
+    al_status.code = 0;
+    strncpy(al_status.message, "", MAX_ERR_MSG_LEN);
+
+    return al_status;
+}
+
+
+bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned long line, const char *func)
 {  
             // no error
-            if (statusCode > -1)
+            if (al_status.code > -1)
                 return false;
 
             // critical error that should be propagated to higher levels
-            printf("ERROR while calling '%s', %s:%d\n", func, file, line);
+            printf("ERROR while calling '%s', %s:%d\n%s\n", func, file, line, al_status.message);
             return true;
 }
 
@@ -234,59 +247,59 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
     	/*********************************                                                                           ************************************/
     	/************************************************************************************************************************************************/
   
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, int value)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, int value)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = (void*) (&value);
 
 		if (value == EMPTY_INT)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
-		status =  ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 0, NULL);
-  		return status;
+		al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 0, NULL);
+        return al_status;
         }
 
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,1> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,1> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = (void*) array.data();
 		int arrayOfSizes[1] = {	array.extent(0)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, arrayOfSizes);
+        return al_status;
         }
 
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,2> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,2> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[2] = {	array.extent(0), 
 					array.extent(1)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
         blitz::Array<int,2>  fortranOrderArray (array.shape(), fortranArray);
         fortranOrderArray = array;
 
 		ptrData = (void*) fortranOrderArray.data();
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, arrayOfSizes);
+        return al_status;
         }
 
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,3> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,3> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[3] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2)};
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<int,3> fortranOrderArray(array.shape(), fortranArray);
@@ -294,13 +307,13 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 
 		ptrData = (void*) fortranOrderArray.data();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, arrayOfSizes);
+        return al_status;
         }
 
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,4> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,4> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[4] = {	array.extent(0), 
 					array.extent(1), 
@@ -308,7 +321,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 					array.extent(3)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<int,4> fortranOrderArray(array.shape(), fortranArray);
@@ -316,13 +329,13 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 
 		ptrData = (void*) fortranOrderArray.data();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, arrayOfSizes);
+        return al_status;
         }
  
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,5> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,5> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[5] = {	array.extent(0), 
 					array.extent(1), 
@@ -331,20 +344,20 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 					array.extent(4)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<int,5> fortranOrderArray(array.shape(), fortranArray);
         fortranOrderArray = array;
 		ptrData = (void*) fortranOrderArray.data();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, arrayOfSizes);
+        return al_status;
         }
 
-    	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,6> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,6> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[6] = {	array.extent(0), 
 					array.extent(1), 
@@ -354,7 +367,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 					array.extent(5)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<int,6> fortranOrderArray(array.shape(), fortranArray);
@@ -362,45 +375,45 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         fortranOrderArray = array;
 		ptrData = (void*) fortranOrderArray.data();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, arrayOfSizes);
+        return al_status;
         }
 
   	/************************************************************************************************************************************************/
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, double value)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, double value)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = (void*) (&value);
 
 		if (value == EMPTY_DOUBLE)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
-		status =  ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 0, NULL);
-  		return status;
+		al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 0, NULL);
+        return al_status;
         }
 
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,1> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,1> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = (void*) array.data();
 		int arrayOfSizes[1] = {	array.extent(0)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, arrayOfSizes);
+        return al_status;
         }
 
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,2> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,2> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[2] = {	array.extent(0), 
 					array.extent(1)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<double,2> fortranOrderArray(array.shape(), fortranArray);
@@ -408,20 +421,20 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 
 		ptrData = (void*) fortranOrderArray.data();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, arrayOfSizes);
+        return al_status;
         }
 
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,3> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,3> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[3] = {	array.extent(0), 
 					array.extent(1), 
 					array.extent(2)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<double,3> fortranOrderArray(array.shape(), fortranArray);
@@ -429,13 +442,13 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 
 		ptrData = (void*) fortranOrderArray.data();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, arrayOfSizes);
+        return al_status;
         }
 
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,4> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,4> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[4] = {	array.extent(0), 
 					array.extent(1), 
@@ -443,7 +456,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 					array.extent(3)};
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<double,4> fortranOrderArray(array.shape(), fortranArray);
@@ -452,13 +465,13 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		ptrData = (void*) fortranOrderArray.data();
 
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, arrayOfSizes);
+        return al_status;
         }
  
-	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,5> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,5> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[5] = {	array.extent(0), 
 					array.extent(1), 
@@ -468,7 +481,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<double,5> fortranOrderArray(array.shape(), fortranArray);
@@ -478,13 +491,13 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 
 
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, arrayOfSizes);
+        return al_status;
         }
 
-    	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,6> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,6> array)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = NULL;
 		int arrayOfSizes[6] = {	array.extent(0), 
 					array.extent(1), 
@@ -495,7 +508,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 
 
 		if(array.size() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
 		blitz::Array<double,6>  fortranOrderArray(array.shape(), fortranArray);
@@ -504,32 +517,32 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		ptrData = (void*) fortranOrderArray.data();
 
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, arrayOfSizes);
+        return al_status;
         }
 
     /************************************************************************************************************************************************/
-    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath,  std_complex_t value)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath,  std_complex_t value)
     {
-        int status = -1;
+        al_status_t al_status;
         void* ptrData = (void*) (&value);
 
         if(value == EMPTY_COMPLEX)
-            return 0;
+            return IdsNs::Ids::okStatus();
 
-        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 0, NULL);
-        return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 0, NULL);
+        return al_status;
     }
 
-    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 1> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 1> array)
     {
-        int status = -1;
+        al_status_t al_status;
         void* ptrData = NULL;
         int arrayOfSizes[1] = { array.extent(0)};
 
 
         if(array.size() < 1)
-            return 0;
+            return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,1>  fortranOrderArray(array.shape(), fortranArray);
@@ -538,20 +551,20 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         ptrData = (void*) fortranOrderArray.data();
 
 
-        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, arrayOfSizes);
-        return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, arrayOfSizes);
+        return al_status;
     }
 
 
-    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 2> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 2> array)
     {
-        int status = -1;
+        al_status_t al_status;
         void* ptrData = NULL;
         int arrayOfSizes[2] = { array.extent(0), array.extent(1)};
 
 
         if(array.size() < 1)
-            return 0;
+            return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,2>  fortranOrderArray(array.shape(), fortranArray);
@@ -560,20 +573,20 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         ptrData = (void*) fortranOrderArray.data();
 
 
-        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, arrayOfSizes);
-        return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, arrayOfSizes);
+        return al_status;
     }
 
 
-    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 3> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 3> array)
     {
-        int status = -1;
+        al_status_t al_status;
         void* ptrData = NULL;
         int arrayOfSizes[3] = { array.extent(0), array.extent(1), array.extent(2)};
 
 
         if(array.size() < 1)
-            return 0;
+            return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,3>  fortranOrderArray(array.shape(), fortranArray);
@@ -582,20 +595,20 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         ptrData = (void*) fortranOrderArray.data();
 
 
-        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, arrayOfSizes);
-        return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, arrayOfSizes);
+        return al_status;
     }
 
 
-    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 4> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 4> array)
     {
-        int status = -1;
+        al_status_t al_status;
         void* ptrData = NULL;
         int arrayOfSizes[4] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3)};
 
 
         if(array.size() < 1)
-            return 0;
+            return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,4>  fortranOrderArray(array.shape(), fortranArray);
@@ -604,19 +617,19 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         ptrData = (void*) fortranOrderArray.data();
 
 
-        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, arrayOfSizes);
-        return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, arrayOfSizes);
+        return al_status;
     }
 
-    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 5> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 5> array)
     {
-        int status = -1;
+        al_status_t al_status;
         void* ptrData = NULL;
         int arrayOfSizes[5] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3), array.extent(4)};
 
 
         if(array.size() < 1)
-            return 0;
+            return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,5>  fortranOrderArray(array.shape(), fortranArray);
@@ -625,19 +638,19 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         ptrData = (void*) fortranOrderArray.data();
 
 
-        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, arrayOfSizes);
-        return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, arrayOfSizes);
+        return al_status;
     }
 
-    int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 6> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 6> array)
     {
-        int status = -1;
+        al_status_t al_status;
         void* ptrData = NULL;
         int arrayOfSizes[6] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3), array.extent(4), array.extent(5)};
 
 
         if(array.size() < 1)
-            return 0;
+            return IdsNs::Ids::okStatus();
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,6>  fortranOrderArray(array.shape(), fortranArray);
@@ -646,27 +659,27 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
         ptrData = (void*) fortranOrderArray.data();
 
 
-        status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, arrayOfSizes);
-        return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, arrayOfSizes);
+        return al_status;
     }
 
 	/************************************************************************************************************************************************/
 
-    	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, std::string text)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, std::string text)
         {
-        	int status = -1;
+        al_status_t al_status;
 		void* ptrData = (void *) (text.c_str());
 		int arrayOfSizes[1] = {	(int)text.size()};
 		if (text.length() < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, arrayOfSizes);
+        return al_status;
         }
 
-    	int IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std::string, 1> text)
+    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std::string, 1> text)
         {
-        	int status = -1;
+        al_status_t al_status;
 		int maxStringSize = -1;
 		int  numberOfStrings = text.extent(0);
 		char* ptrData = NULL;
@@ -675,7 +688,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 		int size;
 
 		if (numberOfStrings < 1)
-			return 0;
+			return IdsNs::Ids::okStatus();
 
 		for(int i=0; i < numberOfStrings; i++)
 		{
@@ -700,8 +713,8 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 			memcpy(ptrData + i * maxStringSize, ptrCString, size);	
 		}
 
-		status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, arrayOfSizes);
-  		return status;
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, arrayOfSizes);
+        return al_status;
         }
 
     	/************************************************************************************************************************************************/
@@ -710,133 +723,133 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
     	/*********************************                                                                           ************************************/
     	/************************************************************************************************************************************************/
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, double &value)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, double &value)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		double retVal = -1;
 		void* ptrData = &retVal;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 0, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 0, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 		
         if(ptrData == NULL)
-            return status;
+            return al_status;
 
 		value = *(double*)ptrData;
 
-  		return status;
+        return al_status;
 	}
 
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 1> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 1> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 1, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 1, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0]);
 
-  		return status;
+        return al_status;
 	}
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 2> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 2> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 2, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 2, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1]);
 
-  		return status;
+        return al_status;
 	}
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 3> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 3> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 3, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 3, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2]);
 
-  		return status;
+        return al_status;
 	}
 	
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 4> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 4> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 4, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 4, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
 
-  		return status;
+        return al_status;
 	}
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 5> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 5> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 5, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 5, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
 
-  		return status;
+        return al_status;
 	}
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 6> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<double, 6> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 6, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 6, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] * retSize[5] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
 
-  		return status;
+        return al_status;
 	}
 
 
@@ -845,323 +858,323 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
     /************************************************************************************************************************************************/
 
 
-  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath,  std_complex_t &value)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath,  std_complex_t &value)
         {
-        int status = 0;
+        al_status_t al_status;
         int retSize[MAXDIM];
         std_complex_t stdComplex;
         void* ptrData = &stdComplex;
         
 
-        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 0, &retSize[0]);
-        if (status != 0)
-                return status;
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 0, &retSize[0]);
+        if (al_status.code != 0)
+                return al_status;
 
         if(ptrData == NULL)
         {
             value = EMPTY_COMPLEX;
-            return status;
+            return al_status;
         }
 
         value = *(std_complex_t*)ptrData;
 
-        return status;
+        return al_status;
     }
 
-  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 1> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 1> &array)
         {
-        int status = 0;
+        al_status_t al_status;
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 1, &retSize[0]);
-        if (status != 0)
-                return status;
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 1, &retSize[0]);
+        if (al_status.code != 0)
+                return al_status;
 
         if(ptrData == NULL || retSize[0] == 0)
         {
             array.free();
-            return status;
+            return al_status;
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0]);
 
-        return status;
+        return al_status;
     }
 
 
-  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 2> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 2> &array)
         {
-        int status = 0;
+        al_status_t al_status;
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 2, &retSize[0]);
-        if (status != 0)
-                return status;
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 2, &retSize[0]);
+        if (al_status.code != 0)
+                return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1]  == 0)
         {
             array.free();
-            return status;
+            return al_status;
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1]);
 
-        return status;
+        return al_status;
     }
 
-  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 3> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 3> &array)
         {
-        int status = 0;
+        al_status_t al_status;
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 3, &retSize[0]);
-        if (status != 0)
-                return status;
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 3, &retSize[0]);
+        if (al_status.code != 0)
+                return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] == 0)
         {
             array.free();
-            return status;
+            return al_status;
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2]);
 
-        return status;
+        return al_status;
     }
 
-  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 4> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 4> &array)
         {
-        int status = 0;
+        al_status_t al_status;
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 4, &retSize[0]);
-        if (status != 0)
-                return status;
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 4, &retSize[0]);
+        if (al_status.code != 0)
+                return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] == 0)
         {
             array.free();
-            return status;
+            return al_status;
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
 
-        return status;
+        return al_status;
     }
 
-  int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 5> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 5> &array)
         {
-        int status = 0;
+        al_status_t al_status;
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 5, &retSize[0]);
-        if (status != 0)
-                return status;
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 5, &retSize[0]);
+        if (al_status.code != 0)
+                return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] == 0)
         {
             array.free();
-            return status;
+            return al_status;
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
 
-        return status;
+        return al_status;
     }
 
-    int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 6> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std_complex_t, 6> &array)
         {
-        int status = 0;
+        al_status_t al_status;
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 6, &retSize[0]);
-        if (status != 0)
-                return status;
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 6, &retSize[0]);
+        if (al_status.code != 0)
+                return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] * retSize[5] == 0)
         {
             array.free();
-            return status;
+            return al_status;
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
 
-        return status;
+        return al_status;
     }
 	/************************************************************************************************************************************************/
 	/************************************************************************************************************************************************/
 	/************************************************************************************************************************************************/
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, int  &value)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, int  &value)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		int retVal = -1;
 		void* ptrData = &retVal;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL)
-            return status;
+            return al_status;
 		
 		value = *(int*)ptrData;
 
-  		return status;
+        return al_status;
 	}
 
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 1> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 1> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 1, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 1, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
 
-  		return status;
+        return al_status;
 	}
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 2> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 2> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 2, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 2, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
 
-  		return status;
+        return al_status;
 	}
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 3> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 3> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 3, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 3, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2]);
 
-  		return status;
+        return al_status;
 	}
 	
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 4> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 4> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 4, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 4, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
 
-  		return status;
+        return al_status;
 	}
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 6> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 6> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 6, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 6, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] * retSize[5] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
 
-  		return status;
+        return al_status;
 	}
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 5> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<int, 5> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 5, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 5, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] == 0)
-            return status;
+            return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
 
-  		return status;
+        return al_status;
 	}
 	/************************************************************************************************************************************************/
 	/************************************************************************************************************************************************/
 	/************************************************************************************************************************************************/
-    	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, std::string& text)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, std::string& text)
         {
-        	int status = -1;
+        al_status_t al_status;
 		int retSize[MAXDIM];	
 		void* ptrData = NULL;
 		
-		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, CHAR_DATA, 1, &retSize[0]);
-		if (status != 0)
-    			return status;
+		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, CHAR_DATA, 1, &retSize[0]);
+		if (al_status.code != 0)
+    			return al_status;
 		
 		if(ptrData != NULL && retSize[0] > 0)
 			text = std::string((char*)ptrData, retSize[0]);
 		else
 			text = "";
 
-  		return status;
+        return al_status;
         }
 
-	int IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std::string, 1> &array)
+    al_status_t IdsNs::Ids::readData(int ctx, std::string fieldPath, std::string timeBasePath, blitz::Array<std::string, 1> &array)
         {
-		int status = 0;
+        al_status_t al_status;
 		int retSize[MAXDIM];
 		char* ptrData = NULL;
 
 		int  numberOfStrings = -1;
 		int maxStringSize = -1;
 
-  		status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void**)(&ptrData), CHAR_DATA, 2, &retSize[0]);
-  		if (status != 0)
-    			return status;
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void**)(&ptrData), CHAR_DATA, 2, &retSize[0]);
+        if (al_status.code != 0)
+    			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] == 0)
-            return status;        
+            return al_status;        
 
 		numberOfStrings = retSize[0];
 		maxStringSize = retSize[1];
@@ -1175,7 +1188,7 @@ bool IdsNs::Ids::isError(int statusCode, const char *file, const unsigned long l
 			ptrData = ptrData + maxStringSize;	
 		}
 
-        return status;
+        return al_status;
 	}
 
     /************************************************************************************************************************************************/
