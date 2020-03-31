@@ -68,7 +68,7 @@ if( BUILD_SHARED_LIBS )
 	  IMPORT_SUFFIX ".dll.lib"
   )
   
-  ExportBinDef( cppinterface-shared ${CMAKE_CURRENT_BINARY_DIR} Imp_ )
+  ExportBinDef( cppinterface-shared ${CMAKE_CURRENT_BINARY_DIR} cppinterface )
 endif()
 
 
@@ -96,7 +96,7 @@ install( FILES ${HEADER_IDS}
 
 if( BUILD_SHARED_LIBS )
   # Extract Release target path to get all dependent libraries for installation
-  #get_target_property( MY_BINARY_LOCATION Imp_cppinterface-shared IMPORTED_LOCATION_RELEASE )
+  #get_target_property( MY_BINARY_LOCATION cppinterface::cppinterface-shared IMPORTED_LOCATION_RELEASE )
   #ListDependencies( ${MY_BINARY_LOCATION} OFF cppinterface-shared_lists )
   
   # Install Blitz runtime libraries
