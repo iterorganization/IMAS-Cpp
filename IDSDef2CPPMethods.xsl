@@ -34,20 +34,22 @@ void checkStatus(int status){}
 
 IdsNs::IDS::IDS()
 {
-treeName = "ids";
-connected = false;
-shot = refShot = run = refRun = -1;
+	treeName = "ids";
+	connected = false;
+	shot = refShot = run = refRun = -1;
+	backend = MDSPLUS_BACKEND;
 }
 
 IdsNs::IDS::IDS(int shot, int run, int refShot, int refRun)
 {
-treeName = "ids";
-connected = false;
-this-&gt; shot = shot;
-this-&gt;run = run;
-this-&gt;refShot = refShot;
-this-&gt;refRun = refRun;
-pulseCtx = -1;
+	treeName = "ids";
+	connected = false;
+	this-&gt; shot = shot;
+	this-&gt;run = run;
+	this-&gt;refShot = refShot;
+	this-&gt;refRun = refRun;
+	pulseCtx = -1;
+	backend = MDSPLUS_BACKEND;
 }
 IdsNs::IDS::IDS(int pulseCtx)
 {
@@ -59,6 +61,7 @@ IdsNs::IDS::IDS(int pulseCtx)
 //this-&gt;refRun = ual_get_run(idx);
 	this->pulseCtx = pulseCtx;
 	this->setPulseCtx(pulseCtx);
+	backend = MDSPLUS_BACKEND;
 }
 
 // Will be deprecated in the future!
@@ -85,7 +88,7 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 	int pulseCtx;
 	al_status_t al_status;
 
-  	al_status = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+  	al_status = ual_begin_pulse_action(this->backend, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
   	if (al_status.code &lt; 0)
 	{
 		printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
@@ -109,7 +112,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *vers
 	int pulseCtx = -1;
 	al_status_t al_status;
 
-	al_status = ual_begin_pulse_action(MDSPLUS_BACKEND, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+	al_status = ual_begin_pulse_action(this->backend, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
     if (al_status.code &lt; 0)
 	{
         printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
@@ -166,6 +169,19 @@ free(doubleArray);
 return status;
 }
 
+string IdsNs::IDS::getDDVersion()
+{
+	string strVersion;
+	char *version = nullptr;
+	al_status_t al_status = ual_read_data_dictionary_version(this->pulseCtx, "", &amp;version);
+	if (al_status.code != 0 &amp;&amp; version)
+	{
+		strVersion = version;
+		free(version);
+	}
+	return strVersion;
+}
+
 IdsNs::IDS::~IDS()
 {
 /*if(expIdx != -1)
@@ -205,7 +221,9 @@ os &lt;&lt;"\nRef Shot: ";
 os &lt;&lt;obj.refShot;
 os &lt;&lt;"\nRef Run: ";
 os &lt;&lt;obj.refRun;
-os &lt;&lt;((obj.connected)?"Connected":"Not Connected");
+os &lt;&lt;"\nBackend: ";
+os &lt;&lt;obj.backend;
+os &lt;&lt;((obj.connected)?"\nConnected":"\nNot Connected");
 return os;
 }
 
@@ -553,6 +571,19 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll()
 void IdsNs::<xsl:value-of select="@name"/>_IDSBase::clear()
 {
 <xsl:apply-templates select="field" mode="RESET"/>
+}
+
+string IdsNs::<xsl:value-of select="@name"/>_IDSBase::getDDVersion()
+{
+	string strVersion;
+	char *version = nullptr;
+	al_status_t al_status = ual_read_data_dictionary_version(this->pulseCtx, "<xsl:value-of select="@name"/>", &amp;version);
+	if (al_status.code != 0 &amp;&amp; version)
+	{
+		strVersion = version;
+		free(version);
+	}
+	return strVersion;
 }
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char interpolMode)

@@ -53,6 +53,7 @@ class LIBRARY_API IDS
     int shot, run, refShot, refRun;
     string treeName;
     bool connected;
+    BACKEND backend;
 
     public:
     IDS();
@@ -66,6 +67,7 @@ class LIBRARY_API IDS
     void setRefNum(int inRefRun){refRun = inRefRun;}
     void setTreeName(char *inTreeName){treeName = inTreeName; }
     void setTreeName(string inTreeName){treeName = inTreeName;}
+    void setBackend(BACKEND inBackend){backend = inBackend;}
     int getIdx(); // will be deprecated in the future!
     int getPulseCtx() {return this->pulseCtx;}
     int getShot() {return shot;}
@@ -73,12 +75,14 @@ class LIBRARY_API IDS
     int getRefShot(){return refShot;}
     int getRefRun(){return refRun;}
     string getTreeName(){return treeName;}
+    BACKEND getBackend(){return backend;}
     bool isConnected(){return connected;}
     int openEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
     int createEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
     int close();
     void close(char *name, int shot, int run) {close();}
     int getTime(char *path, Array&lt;double,1&gt; &amp;time);
+    string getDDVersion();
     ~IDS();
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const IDS <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 
@@ -176,6 +180,7 @@ class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase:Ids
     int deleteAll();
     int deleteAll(int idx);
     void clear();
+    string getDDVersion();
 };
 
 #ifdef __cplusplus
