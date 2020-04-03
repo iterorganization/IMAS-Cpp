@@ -101,7 +101,7 @@ if( BUILD_SHARED_LIBS )
   
   # Install Blitz runtime libraries
   foreach( BLITZ_DLL ${blitz_RUNTIME_LIB} )
-    ResolveDependencyPath( "${BLITZ_DLL}" BLITZ_PATH )
+    ResolveDependencyPath( "${BLITZ_DLL}" BLITZ_PATH "" )
     
     install( FILES ${BLITZ_PATH}
       DESTINATION bin
@@ -109,3 +109,8 @@ if( BUILD_SHARED_LIBS )
   endforeach()
 endif()
 
+
+########################################################################################################################
+# Tests
+
+add_subdirectory( tests/generator )
