@@ -216,9 +216,9 @@
     
 <!--      <xsl:text>&#9;}&#10;</xsl:text>
    
-    -->    
+    -->
     <xsl:text>&#9;std::string strVersion = ids.getDDVersion();&#10;</xsl:text>
-    <xsl:text>&#9;printf("DD Version on </xsl:text><xsl:value-of select="@name"/><xsl:text>: %s\n", strVersion);&#10;</xsl:text>
+    <xsl:text>&#9;printf("DD Version on </xsl:text><xsl:value-of select="@name"/><xsl:text>: %s\n", strVersion.c_str());&#10;</xsl:text>
     
     <xsl:text>&#9;imas.close();&#10;</xsl:text>
 	<xsl:text>}&#10;</xsl:text>
