@@ -176,7 +176,7 @@ string IdsNs::IDS::getDDVersion()
 	al_status_t al_status = ual_read_data_dictionary_version(this->pulseCtx, "", &amp;version);
 	if (al_status.code != 0 &amp;&amp; version)
 	{
-		strVersion = version;
+		strVersion.assign(version);
 		free(version);
 	}
 	return strVersion;
@@ -580,7 +580,7 @@ string IdsNs::<xsl:value-of select="@name"/>_IDSBase::getDDVersion()
 	al_status_t al_status = ual_read_data_dictionary_version(this->pulseCtx, "<xsl:value-of select="@name"/>", &amp;version);
 	if (al_status.code != 0 &amp;&amp; version)
 	{
-		strVersion = version;
+		strVersion.assign(version);
 		free(version);
 	}
 	return strVersion;
