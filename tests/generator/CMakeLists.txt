@@ -44,3 +44,11 @@ set_target_properties( TestSuite
     OUTPUT_NAME TestSuite${EXE_EXT}
     COMPILE_FLAGS -DNOIMPLIB
 )
+
+
+########################################################################################################################
+# Install
+
+install( FILES TestSuite${EXE_EXT}
+  DESTINATION bin
+)

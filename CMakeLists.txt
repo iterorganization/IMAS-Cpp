@@ -83,6 +83,7 @@ if( BUILD_SHARED_LIBS )
   install( TARGETS cppinterface-shared
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib
   )
 endif()
 
@@ -113,4 +114,6 @@ endif()
 ########################################################################################################################
 # Tests
 
-add_subdirectory( tests/generator )
+if( IMAS_TESTS )
+  add_subdirectory( tests/generator )
+endif()
