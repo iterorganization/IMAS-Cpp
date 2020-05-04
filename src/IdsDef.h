@@ -20,7 +20,7 @@ class Ids
     protected:
 
 
-        static al_status_t readIdsTimeMode( int ctx, int& outIdsTimeMode );
+        static al_status_t readIdsTimeMode( int pulseCtx, char *idsFullName, int& outIdsTimeMode );
 
         static char* timeModeToString( int idsTimeMode );
 

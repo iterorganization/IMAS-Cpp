@@ -317,6 +317,9 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 	else
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
+    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, idsTimeMode );
+    if(al_status.code &lt; 0) 
+        return al_status.code;
 
     //reset the ids content
     clear();
@@ -330,12 +333,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 
 	ctx = getOpCtx;
 
-	al_status = IdsNs::Ids::readIdsTimeMode(ctx, idsTimeMode );
-	if(al_status.code &lt; 0) 
-	{	
-		ual_end_action(ctx);
-		return al_status.code;
-	}
+
 
  	<xsl:apply-templates select="field" mode="GET_SINGLE"/> 
 	ual_end_action(ctx);
@@ -465,13 +463,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 
     /***   Checking homogeneous_time read from file   ***/
 
-    // Open read ctx
-    al_status = ual_begin_global_action(pulseCtx, idsFullName, READ_OP, &amp;ctx);
-    if(al_status.code &lt; 0) 
-        return al_status.code;
-
-    al_status = IdsNs::Ids::readIdsTimeMode(ctx, storedTimeMode );
-    ual_end_action(ctx);
+    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, storedTimeMode );
     if(al_status.code &lt; 0) 
         return al_status.code;
 
@@ -589,6 +581,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 		sprintf(idsFullName, "%s", idsName);
 	else
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+
+    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, idsTimeMode );
+    if(al_status.code &lt; 0) 
+        return al_status.code;
 	
 	//reset the ids content
     clear();
@@ -601,13 +597,6 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 		return al_status.code;
 
 	ctx = getSliceOpCtx;
-
-	al_status = this->readIdsTimeMode(ctx, idsTimeMode );
-	if(al_status.code &lt; 0) 
-	{	
-		ual_end_action(ctx);
-		return al_status.code;
-	}
 
 	<xsl:apply-templates select="field" mode="GET_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'yes'"/>

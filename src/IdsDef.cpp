@@ -11,16 +11,26 @@ using namespace IdsNs;
 
 
 
-al_status_t IdsNs::Ids::readIdsTimeMode( int ctx, int& outIdsTimeMode )
+al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, char *idsFullName, int& outIdsTimeMode )
 {
     int idsTimeMode = -1;
     al_status_t al_status;
     std::string fieldPath = "ids_properties/homogeneous_time";
     std::string timeBasePath = "";
+    int opCtx = -1;
     
-    al_status =IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, idsTimeMode);
+
+    // Open get context
+    al_status = ual_begin_global_action(pulseCtx, idsFullName, READ_OP, &opCtx);
+    if(al_status.code < 0) 
+        return al_status;
+
+    al_status =IdsNs::Ids::readData(opCtx, fieldPath, timeBasePath, idsTimeMode);
     if (al_status.code)
-            return al_status;
+    {   
+        ual_end_action(opCtx);
+        return al_status;
+    }
 
     switch(idsTimeMode)
     {
@@ -35,6 +45,8 @@ al_status_t IdsNs::Ids::readIdsTimeMode( int ctx, int& outIdsTimeMode )
              al_status.code = -1;
              strncpy(al_status.message, "ERROR: time dependency mode (ids_properties/homogeneous_time) set to unknown value!", MAX_ERR_MSG_LEN);
     }
+
+    ual_end_action(opCtx);
     return al_status;
 }
 
