@@ -560,6 +560,11 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::clear()
 <xsl:apply-templates select="field" mode="RESET"/>
 }
 
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char interpolMode)
+{
+	return this->getSlice(0, inTime, interpolMode);
+}
+
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, double inTime, char interpolMode)
 {
     int status = 0;
