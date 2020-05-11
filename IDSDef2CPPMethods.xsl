@@ -169,19 +169,6 @@ free(doubleArray);
 return status;
 }
 
-string IdsNs::IDS::getDDVersion()
-{
-	string strVersion;
-	char *version = nullptr;
-	al_status_t al_status = ual_read_data_dictionary_version(this->pulseCtx, "", &amp;version);
-	if (al_status.code != 0 &amp;&amp; version)
-	{
-		strVersion.assign(version);
-		free(version);
-	}
-	return strVersion;
-}
-
 IdsNs::IDS::~IDS()
 {
 /*if(expIdx != -1)
@@ -571,24 +558,6 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll()
 void IdsNs::<xsl:value-of select="@name"/>_IDSBase::clear()
 {
 <xsl:apply-templates select="field" mode="RESET"/>
-}
-
-string IdsNs::<xsl:value-of select="@name"/>_IDSBase::getDDVersion()
-{
-	string strVersion;
-	char *version = nullptr;
-	al_status_t al_status = ual_read_data_dictionary_version(this->pulseCtx, "<xsl:value-of select="@name"/>", &amp;version);
-	if (al_status.code != 0 &amp;&amp; version)
-	{
-		strVersion.assign(version);
-		free(version);
-	}
-	return strVersion;
-}
-
-int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char interpolMode)
-{
-	return this->getSlice(0, inTime, interpolMode);
 }
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, double inTime, char interpolMode)

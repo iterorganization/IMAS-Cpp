@@ -82,7 +82,6 @@ class LIBRARY_API IDS
     int close();
     void close(char *name, int shot, int run) {close();}
     int getTime(char *path, Array&lt;double,1&gt; &amp;time);
-    string getDDVersion();
     ~IDS();
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const IDS <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 
@@ -180,7 +179,6 @@ class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase:Ids
     int deleteAll();
     int deleteAll(int idx);
     void clear();
-    string getDDVersion();
 };
 
 #ifdef __cplusplus
