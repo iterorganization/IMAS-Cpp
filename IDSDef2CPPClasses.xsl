@@ -315,11 +315,8 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 
 <xsl:template match = "field" mode = "CONSTRUCTOR">
   <xsl:choose>
-    <xsl:when test="@data_type='int' or @data_type='INT_0D'">
+    <xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
       <xsl:value-of select = "@name"/>=EMPTY_INT;
-    </xsl:when>
-    <xsl:when test="@name='xs:double'">
-      <xsl:value-of select = "@name"/>=EMPTY_DOUBLE;
     </xsl:when>
     <xsl:when test="@data_type='flt_type' or @data_type='FLT_0D'">
       <xsl:value-of select = "@name"/>=EMPTY_DOUBLE;
