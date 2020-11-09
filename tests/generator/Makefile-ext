@@ -10,8 +10,8 @@ CXXFLAGS=-std=c++11 -pthread -g -O0 -fPIC
 LDFLAGS=-g -pthread
 endif
 
-INCDIR= `pkg-config blitz --cflags` `pkg-config imas-cpp --cflags`
-LIBS= `pkg-config blitz --libs` `pkg-config imas-cpp --libs`
+INCDIR= `pkg-config blitz --cflags` `pkg-config al-cpp --cflags`
+LIBS= `pkg-config blitz --libs` `pkg-config al-cpp --libs`
 BINOUT=TestSuite
 
 include Makefile.tests

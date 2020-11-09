@@ -156,8 +156,8 @@ test-clean-src:
 include ../Makefile.identifiers
 PC_FILES_ALT = $(ID_cpp_PC_FILES_2)
 
-PC_FILES = imas-cpp.pc
-PC_FILES_VAR = imas-cpp-$(DD_GIT_DESCRIBE).pc
+PC_FILES = al-cpp.pc
+PC_FILES_VAR = al-cpp-$(DD_GIT_DESCRIBE).pc
 PC_FILES_VAR_PRE = %$(DD_GIT_DESCRIBE).pc:%DD_VERSION.pc.in
 #----------------------- pkgconfig ---------------------
 include ../Makefile.pkgconfig

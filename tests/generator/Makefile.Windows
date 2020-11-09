@@ -10,7 +10,7 @@ endif
 
 INCDIR= -I$(BLITZ_HOME)/include -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src
 LIBS= -L$(BLITZ_HOME)/lib -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib
-LIBS+= $(UAL_BUILD)/cppinterface/lib/libimas-cpp.lib $(UAL_BUILD)/lowlevel/libimas.lib
+LIBS+= $(UAL_BUILD)/cppinterface/lib/libal-cpp.lib $(UAL_BUILD)/lowlevel/libal.lib
 LIBS+= $(BLITZ_HOME)/lib/libblitz.a
 BINOUT=TestSuite.exe
 CFLAGS+= -DWIN32 -DBZ_STATIC_LIB

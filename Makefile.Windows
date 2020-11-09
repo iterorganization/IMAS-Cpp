@@ -2,7 +2,7 @@ JAVA = $(JAVA_HOME)/bin/java
 CFLAGS+= -DWIN32 -DBZ_STATIC_LIB ${DBGFLAGS}
 CXXFLAGS+= -DWIN32 -DBZ_STATIC_LIB ${DBGFLAGS}
 INCDIR+= -I$(BLITZ_HOME)/include
-LIBS+= $(BLITZ_HOME)/lib/libblitz.a ../lowlevel/libimas.lib
+LIBS+= $(BLITZ_HOME)/lib/libblitz.a ../lowlevel/libal.lib
 
 ifneq ("no","$(strip $(IMAS_MDSPLUS))")
 LIBS+= -L$(MDSPLUS_DIR)/lib
@@ -42,7 +42,7 @@ else
 BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
-TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.lib libimas-cpp.dll)
+TARGETS = $(addprefix $(LIB_DIR)/,libal-cpp.lib libal-cpp.dll)
 
 all: $(SOURCES) $(TARGETS) id_cpp_all
 
@@ -50,11 +50,11 @@ $(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/
 	$(mkdir_p) $@
 
 # Windows dynamic library
-$(LIB_DIR)/libimas-cpp.dll: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+$(LIB_DIR)/libal-cpp.dll: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
 	$(CXX) $(LDFLAGS) -o $@ -shared -Wl,$(SONAME_OPT),$(@F).$(SO_NUM) -Wl,--out-implib,$@.lib $^ $(LIBS)
 
 # Windows static library
-$(LIB_DIR)/libimas-cpp.lib: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+$(LIB_DIR)/libal-cpp.lib: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
 	$(AR) rcvsu $@ $^
 	ranlib $@
 

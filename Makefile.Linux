@@ -1,6 +1,6 @@
 
 INCDIR+= `pkg-config --cflags blitz`
-LIBS+= -L../lowlevel -limas `pkg-config blitz --libs`
+LIBS+= -L../lowlevel -lal `pkg-config blitz --libs`
 
 # Check existence of the "indent" utility to get a clean C format
 ifeq "$(shell which indent 2> /dev/null)" ""
@@ -9,7 +9,7 @@ else
 BEAUTIFY = indent -kr --no-tabs -l1000
 endif
 
-TARGETS = $(addprefix $(LIB_DIR)/,libimas-cpp.so libimas-cpp.a)
+TARGETS = $(addprefix $(LIB_DIR)/,libal-cpp.so libal-cpp.a)
 
 all: $(SOURCES) $(TARGETS) id_cpp_all
 
@@ -17,42 +17,42 @@ $(LIB_DIR) $(BUILD_DIR) $(libdir) $(includedir)/ids $(datadir)/src/cppinterface/
 	$(mkdir_p) $@
 
 # Dynamic library
-$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so.$(SO_NUM): $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+$(LIB_DIR)/libal-cpp-$(DD_GIT_DESCRIBE).so.$(SO_NUM): $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
 	$(CXX) $(LDFLAGS) -o $@ -Wl,-z,defs -shared -Wl,$(SONAME_OPT),$(@F) $^ $(LIBS)
-$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).so: %:%.$(SO_NUM)
+$(LIB_DIR)/libal-cpp-$(DD_GIT_DESCRIBE).so: %:%.$(SO_NUM)
 	$(LN_S) $(<F) $@
-$(LIB_DIR)/libimas-cpp.so:%.so:%-$(DD_GIT_DESCRIBE).so
+$(LIB_DIR)/libal-cpp.so:%.so:%-$(DD_GIT_DESCRIBE).so
 	$(LN_S) $(<F) $@
-$(LIB_DIR)/libimas-cpp.so_install: %.so_install:%-$(DD_GIT_DESCRIBE).so.$(SO_NUM) | $(libdir)
+$(LIB_DIR)/libal-cpp.so_install: %.so_install:%-$(DD_GIT_DESCRIBE).so.$(SO_NUM) | $(libdir)
 	$(INSTALL_DATA) $< $(libdir)
 	$(LN_S) $(<F) $(libdir)/$(*F)-$(DD_GIT_DESCRIBE).so
 	$(LN_S) $(<F) $(libdir)/$(*F).so
 
 # Static library
-$(LIB_DIR)/libimas-cpp-$(DD_GIT_DESCRIBE).a: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
+$(LIB_DIR)/libal-cpp-$(DD_GIT_DESCRIBE).a: $(OBJ_FILES) $(IDS_OBJ_FILES) | $(LIB_DIR)
 	$(AR) rvs $@ $^
-$(LIB_DIR)/libimas-cpp.a:%.a:%-$(DD_GIT_DESCRIBE).a
+$(LIB_DIR)/libal-cpp.a:%.a:%-$(DD_GIT_DESCRIBE).a
 	$(LN_S) $(<F) $@
-$(LIB_DIR)/libimas-cpp.a_install: %.a_install:%-$(DD_GIT_DESCRIBE).a | $(libdir)
+$(LIB_DIR)/libal-cpp.a_install: %.a_install:%-$(DD_GIT_DESCRIBE).a | $(libdir)
 	$(INSTALL_DATA) $< $(libdir)
 	$(LN_S) $(<F) $(libdir)/$(*F).a
 
-$(LIB_DIR)/libimas-cpp.a_uninstall:
-	-rm -f $(libdir)/libimas-cpp.a
-	-rm -f $(libdir)/libimas-cpp-$(DD_GIT_DESCRIBE).a
-$(LIB_DIR)/libimas-cpp.so_uninstall:
-	-rm -f $(libdir)/libimas-cpp.so
-	-rm -f $(libdir)/libimas-cpp-$(DD_GIT_DESCRIBE).so
-	-rm -f $(libdir)/libimas-cpp-$(DD_GIT_DESCRIBE).so.$(SO_NUM)
+$(LIB_DIR)/libal-cpp.a_uninstall:
+	-rm -f $(libdir)/libal-cpp.a
+	-rm -f $(libdir)/libal-cpp-$(DD_GIT_DESCRIBE).a
+$(LIB_DIR)/libal-cpp.so_uninstall:
+	-rm -f $(libdir)/libal-cpp.so
+	-rm -f $(libdir)/libal-cpp-$(DD_GIT_DESCRIBE).so
+	-rm -f $(libdir)/libal-cpp-$(DD_GIT_DESCRIBE).so.$(SO_NUM)
 
 #################################################
 #                  INSTALL
 #################################################
-install: all $(LIB_DIR)/libimas-cpp.so_install $(LIB_DIR)/libimas-cpp.a_install pkgconfig_install id_cpp_install | $(libdir) $(includedir)/ids
+install: all $(LIB_DIR)/libal-cpp.so_install $(LIB_DIR)/libal-cpp.a_install pkgconfig_install id_cpp_install | $(libdir) $(includedir)/ids
 	$(INSTALL_DATA) $(SRC_DIR)/*.h $(includedir)
 	$(INSTALL_DATA) $(IDS_SRC_DIR)/*.h $(includedir)/ids
 
-uninstall: $(LIB_DIR)/libimas-cpp.so_uninstall $(LIB_DIR)/libimas-cpp.a_uninstall pkgconfig_uninstall id_cpp_uninstall
+uninstall: $(LIB_DIR)/libal-cpp.so_uninstall $(LIB_DIR)/libal-cpp.a_uninstall pkgconfig_uninstall id_cpp_uninstall
 	-rm -rf $(includedir)/$($(wildcard $(SRC_DIR)/*.h):$(SRC_DIR)/%=%)
 	-rm -rf $(includedir)/ids
 

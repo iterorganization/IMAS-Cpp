@@ -57,13 +57,13 @@ endif()
 
 set_target_properties( cppinterface-static
   PROPERTIES
-    OUTPUT_NAME libimas-cpp
+    OUTPUT_NAME libal-cpp
 )
 
 if( BUILD_SHARED_LIBS )
   set_target_properties( cppinterface-shared
     PROPERTIES
-      OUTPUT_NAME libimas-cpp
+      OUTPUT_NAME libal-cpp
       VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
 	  IMPORT_SUFFIX ".dll.lib"
   )
