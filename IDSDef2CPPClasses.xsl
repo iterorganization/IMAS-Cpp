@@ -279,8 +279,8 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 
     <xsl:if test="not(ancestor::field[@data_type='struct_array'])">
     int deleteAll(int ctx);
-    void clear();
      </xsl:if> 
+    void clear();
 
 	      } <xsl:value-of select = "@name"/>;
     </xsl:when>
@@ -294,6 +294,7 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 		  };
     int get(int ctx, int idsTimeMode);
     int put(int ctx, int idsTimeMode);
+    void clear();
     <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
     int putSlice(int ctx, int idsTimeMode);
     </xsl:if> 
