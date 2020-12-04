@@ -750,7 +750,6 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		value = *(double*)ptrData;
-
         return al_status;
 	}
 
@@ -769,6 +768,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -787,6 +787,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -805,6 +806,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -824,6 +826,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -842,6 +845,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -860,6 +864,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -910,6 +915,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0]);
+		free(ptrData);
+
 
         return al_status;
     }
@@ -932,6 +939,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1]);
+		free(ptrData);
 
         return al_status;
     }
@@ -953,6 +961,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2]);
+		free(ptrData);
 
         return al_status;
     }
@@ -974,6 +983,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
+		free(ptrData);
 
         return al_status;
     }
@@ -995,6 +1005,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
+		free(ptrData);
 
         return al_status;
     }
@@ -1016,6 +1027,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
+		free(ptrData);
 
         return al_status;
     }
@@ -1057,6 +1069,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -1075,6 +1088,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -1093,6 +1107,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -1112,6 +1127,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -1130,6 +1146,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -1148,6 +1165,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
+		free(ptrData);
 
         return al_status;
 	}
@@ -1165,7 +1183,10 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     			return al_status;
 		
 		if(ptrData != NULL && retSize[0] > 0)
+		{
 			text = std::string((char*)ptrData, retSize[0]);
+			free(ptrData);
+		}
 		else
 			text = "";
 

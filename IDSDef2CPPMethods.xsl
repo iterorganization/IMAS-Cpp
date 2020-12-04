@@ -549,6 +549,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll()
 
 void IdsNs::<xsl:value-of select="@name"/>_IDSBase::clear()
 {
+	int arraySize = -1;
 <xsl:apply-templates select="field" mode="RESET"/>
 }
 
@@ -613,7 +614,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
   <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT_SLICE"/>
 
 <xsl:apply-templates select=".//field[@data_type='structure'] " mode="METHOD_DELETE_ALL"/>
-<xsl:apply-templates select=".//field[@data_type='structure']" mode="METHOD_RESET"/>
+<xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_RESET"/>
 
 
 <xsl:apply-templates select="." mode="DUMP"/>
@@ -706,15 +707,14 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 </xsl:if>
 </xsl:template>
 
-<xsl:template match="field[@data_type='structure']" mode="METHOD_RESET">
-<xsl:if test="not(ancestor::field[@data_type='struct_array'])">
+<xsl:template match="field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_RESET">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
 <xsl:text> void IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::clear()&#xA;</xsl:text>
 {
+	int arraySize = -1;
     <xsl:apply-templates select="field" mode="RESET"/>
 }
-</xsl:if>
 </xsl:template>
 
 <!--=================================================-->
@@ -788,9 +788,14 @@ See IDSDef2Classes.xsl  -->
         <xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
             <xsl:value-of select = "@name"/>.clear();
         </xsl:when>
-        <xsl:when test="
-            @data_type='struct_array'
-        or @data_type='str_1d_type' or @data_type='STR_1D'
+		<xsl:when test="@data_type='struct_array' ">
+			arraySize = <xsl:value-of select = "@name"/>.extent(0);
+			for( int i = 0; i &lt;arraySize; i++){
+				<xsl:value-of select="@name"/>(i).clear();
+			}
+        </xsl:when>
+		<xsl:when test="
+           @data_type='str_1d_type' or @data_type='STR_1D'
         or @data_type='flt_1d_type' or @data_type='FLT_1D'
         or @data_type='int_1d_type' or @data_type='INT_1D'
         or @data_type='cpx_1d_type' or @data_type='CPX_1D'
