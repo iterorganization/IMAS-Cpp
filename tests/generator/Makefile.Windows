@@ -16,7 +16,7 @@ BINOUT=TestSuite.exe
 CFLAGS+= -DWIN32 -DBZ_STATIC_LIB
 CXXFLAGS+= -DWIN32 -DBZ_STATIC_LIB
 
-ifneq ("no","$(strip $(IMAS_MDSPLUS))")
+ifeq ("yes","$(strip $(IMAS_MDSPLUS))")
 LIBS+= -L$(MDSPLUS_DIR)/lib
 LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
 LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
@@ -27,7 +27,7 @@ LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
 LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
 endif # IMAS_MDSPLUS
 
-ifneq ("no","$(strip $(IMAS_UDA))")
+ifeq ("yes","$(strip $(IMAS_UDA))")
 ifeq ("fat","$(strip $(IMAS_UDA))")
 LIBS+= -L$(UDA_HOME)/lib
 LIBS+= $(UDA_HOME)/lib/libfatuda_cpp.a
@@ -42,7 +42,7 @@ LIBS+= -lws2_32 -lssl -lcrypto
 endif
 endif # IMAS_UDA
 
-ifneq ("no","$(strip $(IMAS_HDF5))")
+ifeq ("yes","$(strip $(IMAS_HDF5))")
 LIBS+= -L$(HDF5_HOME)/lib
 LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz
 endif # IMAS_HDF5
