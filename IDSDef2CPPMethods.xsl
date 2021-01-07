@@ -106,6 +106,30 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 	this->setPulseCtx(pulseCtx);
 }
 
+int IdsNs::IDS::openEnvBackend(const char *user, const char *tokamak, const char *version, int backend, const char *option/* = nullptr*/)
+{
+int pulseCtx;
+al_status_t al_status;
+
+al_status = ual_begin_pulse_action(backend, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+if (al_status.code &lt; 0)
+{
+printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
+return al_status.code;
+}
+
+
+al_status = ual_open_pulse(pulseCtx, OPEN_PULSE, "");
+if(al_status.code != 0)
+{
+printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_open_pulse", al_status.message);
+return al_status.code;
+}
+this->pulseCtx = pulseCtx;
+this->connected = true;
+this->setPulseCtx(pulseCtx);
+}
+
 
 int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version, const char *option/* = nullptr*/)
 {
@@ -129,6 +153,33 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *vers
 	this->pulseCtx = pulseCtx;
 	this->connected = true;
 	this->setPulseCtx(pulseCtx);
+
+}
+
+int IdsNs::IDS::createEnvBackend(const char *user, const char *tokamak,const char *version, int backend, const char *option/* = nullptr*/)
+{
+int pulseCtx = -1;
+al_status_t al_status;
+
+al_status = ual_begin_pulse_action(backend, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+if (al_status.code &lt; 0)
+{
+printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
+return al_status.code;
+}
+
+
+
+al_status = ual_open_pulse(pulseCtx, FORCE_CREATE_PULSE, "");
+if(al_status.code != 0)
+{
+printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_open_pulse", al_status.message);
+return al_status.code;
+}
+
+this->pulseCtx = pulseCtx;
+this->connected = true;
+this->setPulseCtx(pulseCtx);
 
 }
 
