@@ -1,4 +1,4 @@
-project( cppinterface )
+project( cppinterface-tests )
 
 include( ListSharedLibDependencies )
 
@@ -39,6 +39,12 @@ target_link_libraries( TestSuite PRIVATE
   ${CPPHLI_LINK}
 )
 
+if( BUILD_SHARED_LIBS )
+  add_dependencies( TestSuite cppinterface-shared )
+else()
+  add_dependencies( TestSuite cppinterface-static )
+endif()
+
 set_target_properties( TestSuite
   PROPERTIES
     OUTPUT_NAME TestSuite${EXE_EXT}
@@ -49,6 +55,6 @@ set_target_properties( TestSuite
 ########################################################################################################################
 # Install
 
-install( FILES TestSuite${EXE_EXT}
+install( TARGETS TestSuite
   DESTINATION bin
 )

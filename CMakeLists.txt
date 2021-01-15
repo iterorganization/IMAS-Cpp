@@ -34,10 +34,11 @@ set( CPPHLI_OBJS
   $<TARGET_OBJECTS:cppinterface-objects>
 )
 
-
 add_library( cppinterface-static STATIC ${CPPHLI_OBJS} )
+add_dependencies( cppinterface-static lowlevel-static )
 if( BUILD_SHARED_LIBS )
   add_library( cppinterface-shared SHARED ${CPPHLI_OBJS} )
+  add_dependencies( cppinterface-shared lowlevel-shared )
 endif()
 
 if( BUILD_SHARED_LIBS )
