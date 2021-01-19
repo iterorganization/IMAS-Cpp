@@ -78,9 +78,7 @@ class LIBRARY_API IDS
     BACKEND getBackend(){return backend;}
     bool isConnected(){return connected;}
     int openEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
-    int openEnvBackend(const char *user, const char *tokamak, const char *version, int backend, const char* option = nullptr);
     int createEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
-    int createEnvBackend(const char *user, const char *tokamak,const char *version, int backend, const char* option = nullptr);
     int close();
     void close(char *name, int shot, int run) {close();}
     int getTime(char *path, Array&lt;double,1&gt; &amp;time);
