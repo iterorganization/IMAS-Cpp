@@ -6,6 +6,7 @@ include( ListSharedLibDependencies )
 ########################################################################################################################
 # Dependencies
 
+find_package( Blitz NO_CMAKE_PATH REQUIRED )
 find_package( Blitz REQUIRED )
 
 
