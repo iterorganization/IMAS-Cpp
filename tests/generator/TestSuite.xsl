@@ -9,6 +9,7 @@
 
 <!--============ Includes   ===========-->
 <xsl:text>#include &lt;stdlib.h>&#10;</xsl:text>
+<xsl:text>#include &lt;string&gt;&#10;</xsl:text>
 <xsl:text>#include &lt;time.h>&#10;</xsl:text>
 <xsl:text>#include "UALClasses.h"&#10;</xsl:text>
 
@@ -77,8 +78,20 @@
 
         <xsl:text> int main(int argc, char** argv){&#10;</xsl:text>
     	<xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>initTime();&#10;</xsl:text>
-
-        <xsl:apply-templates select="child::IDS" mode="test"/>
+		
+		<xsl:text>&#9;&#9;</xsl:text><xsl:text>std::map &lt;std::string, BACKEND&gt; backendIDs { std::make_pair("MDSPLUS_BACKEND", MDSPLUS_BACKEND), 
+                                        std::make_pair("HDF5_BACKEND", HDF5_BACKEND) };&#10;</xsl:text>
+		
+		<xsl:text>&#9;&#9;</xsl:text><xsl:text>BACKEND backendID;&#10;</xsl:text>
+		<xsl:text>&#9;&#9;</xsl:text><xsl:text>auto it = backendIDs.begin();&#10;</xsl:text>
+		<xsl:text>&#9;&#9;</xsl:text><xsl:text>while (it != backendIDs.end())&#10;</xsl:text>
+		<xsl:text>&#9;&#9;{&#10;</xsl:text>
+		<xsl:text>&#9;&#9;backendID = backendIDs[it->first];&#10;</xsl:text>
+		<xsl:text>&#9;&#9;const char* backendName = std::string(it->first).c_str();&#10;</xsl:text>
+		<xsl:text>&#9;&#9;printf("---> Using backend : %s\n", backendName);&#10;</xsl:text>
+		<xsl:apply-templates select="child::IDS" mode="test"/>
+		<xsl:text>&#9;&#9;++it;&#10;</xsl:text>
+		<xsl:text>&#9;&#9;}&#10;</xsl:text>
 
 	<xsl:text>&#9;return finalStatus;&#10;</xsl:text>
         <xsl:text>}&#10;</xsl:text>
@@ -96,11 +109,11 @@
 
  <xsl:template match="IDS" mode="test">
     	<xsl:text>&#9;// </xsl:text><xsl:value-of select="@name"/><xsl:text>&#10;</xsl:text>
-        <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_put();&#10;</xsl:text>
-        <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_get();&#10;</xsl:text>
+        <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_put(backendID);&#10;</xsl:text>
+        <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_get(backendID);&#10;</xsl:text>
 
-        <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice();&#10;</xsl:text>
-        <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice();&#10;</xsl:text>
+        <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice(backendID);&#10;</xsl:text>
+        <xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice(backendID);&#10;</xsl:text>
  
 	<xsl:text>&#10;</xsl:text>
     </xsl:template>
@@ -130,10 +143,11 @@
         <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>//&#9;&#9; PUT </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
         <xsl:text>//====================================================================================&#10;</xsl:text>
-        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_put(){&#10;</xsl:text>
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_put(BACKEND backendID){&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing put() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
+        <xsl:text>&#9;imas.setBackend(backendID);&#10;</xsl:text>
         <xsl:text>&#9;imas.createEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
@@ -158,11 +172,12 @@
         <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>//&#9;&#9; PUT SLICE </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
         <xsl:text>//====================================================================================&#10;</xsl:text>
-        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice() {&#10;</xsl:text>
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_putSlice(BACKEND backendID) {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing putSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
 
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
+        <xsl:text>&#9;imas.setBackend(backendID);&#10;</xsl:text>
         <xsl:text>&#9;imas.createEnv(getUserName(), "test",  getDataVersion());&#10;</xsl:text>
        	<xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
      <!--   <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
@@ -198,11 +213,12 @@
         <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>//&#9;&#9; GET </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
         <xsl:text>//====================================================================================&#10;</xsl:text>
-        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_get() {&#10;</xsl:text>
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_get(BACKEND backendID) {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing get() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
+		<xsl:text>&#9;imas.setBackend(backendID);&#10;</xsl:text>
         <xsl:text>&#9;imas.openEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
  <!--       <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>
@@ -226,7 +242,7 @@
 
    <!-- IDS getSlice()-->
     <xsl:template match="IDS" mode="getSlice">
-        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice()  {&#10;</xsl:text>
+        <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_getSlice(BACKEND backendID)  {&#10;</xsl:text>
         <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>//&#9;&#9; GET SLICE </xsl:text><xsl:value-of select="@name"/> <xsl:text> &#10;</xsl:text>
         <xsl:text>//====================================================================================&#10;</xsl:text>
@@ -234,6 +250,7 @@
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
 	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
+		<xsl:text>&#9;imas.setBackend(backendID);&#10;</xsl:text>
         <xsl:text>&#9;imas.openEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
         <xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
    <!--     <xsl:text>&#9;for (int occurrence = 0; occurrence &lt; </xsl:text><xsl:value-of select="@maxoccur"/><xsl:text> + 1; occurrence++) {&#10;</xsl:text>

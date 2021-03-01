@@ -106,7 +106,6 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 	this->setPulseCtx(pulseCtx);
 }
 
-
 int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version, const char *option/* = nullptr*/)
 {
 	int pulseCtx = -1;
@@ -131,7 +130,6 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *vers
 	this->setPulseCtx(pulseCtx);
 
 }
-
 
 int IdsNs::IDS::close()
 {

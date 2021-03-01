@@ -1,4 +1,4 @@
-project( cppinterface )
+project( cppinterface-tests )
 
 include( ListSharedLibDependencies )
 
@@ -6,7 +6,8 @@ include( ListSharedLibDependencies )
 ########################################################################################################################
 # Dependencies
 
-find_package( blitz REQUIRED )
+find_package( Blitz NO_CMAKE_PATH REQUIRED )
+find_package( Blitz REQUIRED )
 
 
 ########################################################################################################################
@@ -16,7 +17,7 @@ set( SRC_FILES helper.cpp TestSuite.cpp )
 set( HEADER_FILES helper.h TestSuite.h )
 
 include_directories(
-  ${blitz_INCLUDE_DIRS}
+  ${Blitz_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/../../src
   ${CMAKE_SOURCE_DIR}/lowlevel
 )
@@ -25,19 +26,25 @@ include_directories(
 ########################################################################################################################
 # Targets
 
-set( EXE_FLAG WIN32 )
+set( EXE_FLAG  )
 set( EXE_EXT  )
 
 if( BUILD_SHARED_LIBS )
-  set( CPPHLI_LINK ${blitz_LIBRARIES} lowlevel-shared cppinterface-shared )
+  set( CPPHLI_LINK ${Blitz_LIBRARIES} lowlevel-shared cppinterface-shared )
 else()
-  set( CPPHLI_LINK ${blitz_LIBRARIES} lowlevel-static cppinterface-static )
+  set( CPPHLI_LINK ${Blitz_LIBRARIES} lowlevel-static cppinterface-static )
 endif()
 
 add_executable( TestSuite ${EXE_FLAG} ${SRC_FILES} )
 target_link_libraries( TestSuite PRIVATE
   ${CPPHLI_LINK}
 )
+
+if( BUILD_SHARED_LIBS )
+  add_dependencies( TestSuite cppinterface-shared )
+else()
+  add_dependencies( TestSuite cppinterface-static )
+endif()
 
 set_target_properties( TestSuite
   PROPERTIES
@@ -49,6 +56,6 @@ set_target_properties( TestSuite
 ########################################################################################################################
 # Install
 
-install( FILES TestSuite${EXE_EXT}
+install( TARGETS TestSuite
   DESTINATION bin
 )

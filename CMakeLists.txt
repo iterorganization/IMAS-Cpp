@@ -6,7 +6,8 @@ include( ListSharedLibDependencies )
 ########################################################################################################################
 # Dependencies
 
-find_package( blitz REQUIRED )
+find_package( Blitz NO_CMAKE_PATH REQUIRED )
+find_package( Blitz REQUIRED )
 
 
 ########################################################################################################################
@@ -19,7 +20,7 @@ set( HEADER_FILES src/IdsDef.h src/UALDef.h src/UALClasses.h )
 file( GLOB HEADER_IDS src/ids/*.h )
 
 include_directories(
-  ${blitz_INCLUDE_DIRS}
+  ${Blitz_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_SOURCE_DIR}/lowlevel
 )
@@ -34,16 +35,17 @@ set( CPPHLI_OBJS
   $<TARGET_OBJECTS:cppinterface-objects>
 )
 
-
 add_library( cppinterface-static STATIC ${CPPHLI_OBJS} )
+add_dependencies( cppinterface-static lowlevel-static )
 if( BUILD_SHARED_LIBS )
   add_library( cppinterface-shared SHARED ${CPPHLI_OBJS} )
+  add_dependencies( cppinterface-shared lowlevel-shared )
 endif()
 
 if( BUILD_SHARED_LIBS )
-  set( CPPHLI_LINK ${blitz_LIBRARIES} lowlevel-shared )
+  set( CPPHLI_LINK ${Blitz_LIBRARIES} lowlevel-shared )
 else()
-  set( CPPHLI_LINK ${blitz_LIBRARIES} lowlevel-static )
+  set( CPPHLI_LINK ${Blitz_LIBRARIES} lowlevel-static )
 endif()
 
 target_link_libraries( cppinterface-static PRIVATE ${CPPHLI_LINK} )
@@ -101,7 +103,7 @@ if( BUILD_SHARED_LIBS )
   #ListDependencies( ${MY_BINARY_LOCATION} OFF cppinterface-shared_lists )
   
   # Install Blitz runtime libraries
-  foreach( BLITZ_DLL ${blitz_RUNTIME_LIB} )
+  foreach( BLITZ_DLL ${Blitz_RUNTIME_LIB} )
     ResolveDependencyPath( "${BLITZ_DLL}" BLITZ_PATH "" )
     
     install( FILES ${BLITZ_PATH}
