@@ -80,9 +80,8 @@
     	<xsl:text>&#9;&#9;</xsl:text><xsl:value-of select="@name"/><xsl:text>initTime();&#10;</xsl:text>
 		
 		<xsl:text>&#9;&#9;</xsl:text><xsl:text>std::map &lt;std::string, BACKEND&gt; backendIDs {
-                                        std::make_pair("ASCII_BACKEND", ASCII_BACKEND),
                                         std::make_pair("MDSPLUS_BACKEND", MDSPLUS_BACKEND),
-                                        std::make_pair("HDF5_BACKEND", HDF5_BACKEND) };&#10;</xsl:text>
+                                        };&#10;</xsl:text>
 		
 		<xsl:text>&#9;&#9;</xsl:text><xsl:text>BACKEND backendID;&#10;</xsl:text>
 		<xsl:text>&#9;&#9;</xsl:text><xsl:text>auto it = backendIDs.begin();&#10;</xsl:text>
