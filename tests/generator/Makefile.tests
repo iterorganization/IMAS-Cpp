@@ -34,8 +34,10 @@ $(BINOUT): helper.o TestSuite.o
 	$(CXX) $(INCDIR) $(CXXFLAGS) -c $< -o $@
 
 #  SOURCE GENERATION
+.PHONY: TestSuite.cpp
 TestSuite.cpp: %.cpp:%.xsl | $(IDSDEF)
-	xsltproc $< $| > $@
+	xsltproc --stringparam mdsplus_backend $(IMAS_MDSPLUS) --stringparam hdf5_backend $(IMAS_HDF5) --stringparam uda_backend $(IMAS_UDA) \
+		$< $| > $@
 
 # RUN TESTS
 # Create dirs as needed
