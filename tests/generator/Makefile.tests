@@ -36,7 +36,12 @@ $(BINOUT): helper.o TestSuite.o
 #  SOURCE GENERATION
 .PHONY: TestSuite.cpp
 TestSuite.cpp: %.cpp:%.xsl | $(IDSDEF)
-	xsltproc --stringparam mdsplus_backend $(IMAS_MDSPLUS) --stringparam hdf5_backend $(IMAS_HDF5) --stringparam uda_backend $(IMAS_UDA) \
+	xsltproc \
+		--stringparam test_memory_backend not-implemented \
+		--stringparam test_ascii_backend not-implemented \
+		--stringparam test_mdsplus_backend $(IMAS_MDSPLUS) \
+		--stringparam test_hdf5_backend not-implemented \
+		--stringparam test_uda_backend not-implemented \
 		$< $| > $@
 
 # RUN TESTS

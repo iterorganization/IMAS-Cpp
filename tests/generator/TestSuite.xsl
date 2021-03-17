@@ -5,9 +5,10 @@
 
     <!-- test backend flags default values -->
     <xsl:param name="test_memory_backend" select="'no'" />
-    <xsl:param name="test_ascii_backend" select="'yes'" />
+    <xsl:param name="test_ascii_backend" select="'no'" />
     <xsl:param name="test_mdsplus_backend" select="'no'" />
     <xsl:param name="test_hdf5_backend" select="'no'" />
+    <xsl:param name="test_uda_backend" select="'no'" />
 
     <!-- Initial code -->
     <xsl:template match="IDSs">
@@ -90,6 +91,7 @@
         <xsl:if test="$test_ascii_backend='yes'"><xsl:text>&#9;&#9;backendIDs.insert(std::make_pair("ASCII_BACKEND", ASCII_BACKEND));&#10;</xsl:text></xsl:if>
         <xsl:if test="$test_mdsplus_backend='yes'"><xsl:text>&#9;&#9;backendIDs.insert(std::make_pair("MDSPLUS_BACKEND", MDSPLUS_BACKEND));&#10;</xsl:text></xsl:if>
         <xsl:if test="$test_hdf5_backend='yes'"><xsl:text>&#9;&#9;backendIDs.insert(std::make_pair("HDF5_BACKEND", HDF5_BACKEND));&#10;</xsl:text></xsl:if>
+        <xsl:if test="$test_uda_backend='yes'"><xsl:text>&#9;&#9;backendIDs.insert(std::make_pair("UDA_BACKEND", UDA_BACKEND));&#10;</xsl:text></xsl:if>
 		
 		<xsl:text>&#9;&#9;</xsl:text><xsl:text>BACKEND backendID;&#10;</xsl:text>
 		<xsl:text>&#9;&#9;</xsl:text><xsl:text>auto it = backendIDs.begin();&#10;</xsl:text>
