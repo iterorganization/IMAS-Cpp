@@ -802,6 +802,7 @@ See IDSDef2Classes.xsl  -->
         or @data_type='FLT_4D' or @data_type='INT_4D' or @data_type='CPX_4D'
         or @data_type='FLT_5D' or @data_type='INT_5D' or @data_type='CPX_5D'
         or @data_type='FLT_6D' or @data_type='INT_6D' or @data_type='CPX_6D' ">
+	        free( <xsl:value-of select = "@name"/>.data());
             <xsl:value-of select = "@name"/>.free();
         </xsl:when>
         <xsl:otherwise>

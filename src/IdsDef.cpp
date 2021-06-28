@@ -98,160 +98,161 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         void IdsNs::Ids::setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1)
         {
-            blitz::Array<int,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,1> newArray(arrayPtr, shape(dim1), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,1>&array,float *arrayPtr, int dim1)
         {
-            blitz::Array<float,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,1> newArray(arrayPtr, shape(dim1), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,1>&array,double *arrayPtr, int dim1)
         {
-            blitz::Array<double,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,1> newArray(arrayPtr, shape(dim1), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,1>&array, std_complex_t *arrayPtr, int dim1)
         {
-            blitz::Array<std_complex_t,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,1> newArray(arrayPtr, shape(dim1), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,2>&array,int *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<int,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,2> newArray(arrayPtr, shape(dim1, dim2), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,2>&array,float *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<float,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,2> newArray(arrayPtr, shape(dim1, dim2), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,2>&array,double *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<double,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,2> newArray(arrayPtr, shape(dim1, dim2), neverDeleteData, fortranArray);
+            //
+            //array.reference(newArray);
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,2>&array, std_complex_t *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<std_complex_t,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,2> newArray(arrayPtr, shape(dim1, dim2), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,3>&array,int *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<int,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,3> newArray(arrayPtr, shape(dim1, dim2, dim3), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,3>&array,float *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<float,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,3> newArray(arrayPtr, shape(dim1, dim2, dim3), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,3>&array,double *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<double,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,3> newArray(arrayPtr, shape(dim1, dim2, dim3), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,3>&array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<std_complex_t,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,3> newArray(arrayPtr, shape(dim1, dim2, dim3), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
 
         void IdsNs::Ids::setArray(blitz::Array<int,4>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<int,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,4>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<float,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,4>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<double,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,4>&array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<std_complex_t,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,5>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<int,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,5>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<float,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,5>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<double,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,5>&array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<std_complex_t,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
 
         void IdsNs::Ids::setArray(blitz::Array<int,6>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,6>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<float,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<double,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,6>&array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<std_complex_t,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), neverDeleteData, fortranArray);
+            
+            array.reference(newArray);
         }
     	/************************************************************************************************************************************************/
     	/*********************************                                                                           ************************************/
@@ -768,7 +769,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -787,7 +788,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -806,7 +807,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -826,7 +827,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -845,7 +846,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -864,7 +865,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -915,7 +916,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0]);
-		free(ptrData);
+		
 
 
         return al_status;
@@ -939,7 +940,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -961,7 +962,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -983,7 +984,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -1005,7 +1006,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -1027,7 +1028,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -1069,7 +1070,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1088,7 +1089,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1107,7 +1108,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1127,7 +1128,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1146,7 +1147,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1165,7 +1166,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1185,10 +1186,12 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		if(ptrData != NULL && retSize[0] > 0)
 		{
 			text = std::string((char*)ptrData, retSize[0]);
-			free(ptrData);
+			
 		}
 		else
 			text = "";
+
+        free(ptrData);
 
         return al_status;
         }
