@@ -318,8 +318,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, idsTimeMode );
-    if(al_status.code &lt; 0) 
+    if(al_status.code &lt; 0) {
+        printf("GET: error reading homogeneous time for %s IDS: %s\n", idsFullName, al_status.message);
         return al_status.code;
+    }
 
     //reset the ids content
     clear();
@@ -328,8 +330,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 	al_status = ual_begin_global_action(pulseCtx, idsFullName, READ_OP, &amp;getOpCtx);
 	delete[] idsFullName;
 
-	if(al_status.code &lt; 0) 
+	if(al_status.code &lt; 0) {
+        printf("GET: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName, al_status.message);
 		return al_status.code;
+    }
 
 	ctx = getOpCtx;
 
@@ -394,7 +398,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 	al_status = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP, &amp;putOpCtx);
 	delete[] idsFullName;
 
-	if(al_status.code &lt; 0) return al_status.code;
+	if(al_status.code &lt; 0) {
+        printf("PUT: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName, al_status.message);
+        return al_status.code;
+    }
 
 	ctx = putOpCtx;
 
@@ -464,8 +471,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     /***   Checking homogeneous_time read from file   ***/
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, storedTimeMode );
-    if(al_status.code &lt; 0) 
+    if(al_status.code &lt; 0)  {
+        printf("PUT_SLICE: error reading homogeneous time for %s IDS: %s\n", idsFullName, al_status.message);
         return al_status.code;
+    }
 
     // adding slice to an empty IDS
     if( storedTimeMode == IDS_TIME_MODE_UNKNOWN)
@@ -487,8 +496,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	al_status = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP, &amp;putSliceOpCtx);
 	delete[] idsFullName;
 
-	if(al_status.code &lt; 0) 
+	if(al_status.code &lt; 0) {
+        printf("PUT_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsFullName, al_status.message);
 		return al_status.code;
+    }
 
 	ctx = putSliceOpCtx;
 
@@ -530,8 +541,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 	al_status = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP, &amp;deleteOpCtx);
 	delete[] idsFullName;
 
-	if(al_status.code &lt; 0) 
+	if(al_status.code &lt; 0) {
+        printf("DELETE_ALL: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName, al_status.message);
 		return al_status.code;
+    }
 
 	ctx = deleteOpCtx;
 
@@ -584,8 +597,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, idsTimeMode );
-    if(al_status.code &lt; 0) 
+    if(al_status.code &lt; 0) {
+        printf("GET_SLICE: error reading homogeneous time for %s IDS: %s\n", idsFullName, al_status.message);
         return al_status.code;
+    }
 	
 	//reset the ids content
     clear();
@@ -594,8 +609,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	al_status = ual_begin_slice_action(pulseCtx, idsFullName, READ_OP, inTime, interpolMode, &amp;getSliceOpCtx);
 	delete[] idsFullName;
 
-	if(al_status.code &lt; 0) 
+	if(al_status.code &lt; 0) {
+        printf("GET_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsFullName, al_status.message);
 		return al_status.code;
+    }
 
 	ctx = getSliceOpCtx;
 
