@@ -296,7 +296,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
         char *str;
         char *idsName = "<xsl:value-of select="@name"/>";
         char *idsFullName = new char[strlen(idsName)+4];
-
+        std::string idsNameStr = std::string(idsFullName);
         int pulseCtx = this->pulseCtx;
         int getOpCtx = -1;
         int ctx = -1;
@@ -319,7 +319,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, idsTimeMode );
     if(al_status.code &lt; 0) {
-        printf("GET: error reading homogeneous time for %s IDS: %s\n", idsFullName, al_status.message);
+        printf("GET: error reading homogeneous time for %s IDS: %s\n", idsNameStr.c_str(), al_status.message);
         return al_status.code;
     }
 
@@ -331,7 +331,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 	delete[] idsFullName;
 
 	if(al_status.code &lt; 0) {
-        printf("GET: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName, al_status.message);
+        printf("GET: error calling ual_begin_global_action for %s IDS: %s\n", idsNameStr.c_str(), al_status.message);
 		return al_status.code;
     }
 
@@ -356,7 +356,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 	al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
 	char *idsFullName = new char[strlen(idsName)+4];
-
+    std::string idsNameStr = std::string(idsFullName);
 	int pulseCtx = this->pulseCtx;
 	int putOpCtx = -1;
 	int ctx = -1;
@@ -399,7 +399,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 	delete[] idsFullName;
 
 	if(al_status.code &lt; 0) {
-        printf("PUT: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName, al_status.message);
+        printf("PUT: error calling ual_begin_global_action for %s IDS: %s\n", idsNameStr.c_str(), al_status.message);
         return al_status.code;
     }
 
@@ -425,7 +425,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
 	char *idsFullName = new char[strlen(idsName)+4];
-
+    std::string idsNameStr = std::string(idsFullName);
 	int pulseCtx = this->pulseCtx;
 	int putSliceOpCtx = -1;
 	int ctx = -1;
@@ -472,7 +472,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, storedTimeMode );
     if(al_status.code &lt; 0)  {
-        printf("PUT_SLICE: error reading homogeneous time for %s IDS: %s\n", idsFullName, al_status.message);
+        printf("PUT_SLICE: error reading homogeneous time for %s IDS: %s\n", idsNameStr.c_str(), al_status.message);
         return al_status.code;
     }
 
@@ -497,7 +497,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	delete[] idsFullName;
 
 	if(al_status.code &lt; 0) {
-        printf("PUT_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsFullName, al_status.message);
+        printf("PUT_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsNameStr.c_str(), al_status.message);
 		return al_status.code;
     }
 
@@ -519,7 +519,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
     al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
 	char *idsFullName = new char[strlen(idsName) + 4];
-	
+    std::string idsNameStr = std::string(idsFullName);
 	int pulseCtx = this->pulseCtx;
 	int deleteOpCtx = -1;
 	int ctx = -1;
@@ -542,7 +542,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 	delete[] idsFullName;
 
 	if(al_status.code &lt; 0) {
-        printf("DELETE_ALL: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName, al_status.message);
+        printf("DELETE_ALL: error calling ual_begin_global_action for %s IDS: %s\n", idsNameStr.c_str(), al_status.message);
 		return al_status.code;
     }
 
@@ -575,7 +575,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
     al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
 	char *idsFullName = new char[strlen(idsName)+4];
-
+    std::string idsNameStr = std::string(idsFullName);
 	int pulseCtx = this->pulseCtx;
 	int getSliceOpCtx = -1;
 	int ctx = -1;
@@ -598,7 +598,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, idsTimeMode );
     if(al_status.code &lt; 0) {
-        printf("GET_SLICE: error reading homogeneous time for %s IDS: %s\n", idsFullName, al_status.message);
+        printf("GET_SLICE: error reading homogeneous time for %s IDS: %s\n", idsNameStr.c_str(), al_status.message);
         return al_status.code;
     }
 	
@@ -610,7 +610,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	delete[] idsFullName;
 
 	if(al_status.code &lt; 0) {
-        printf("GET_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsFullName, al_status.message);
+        printf("GET_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsNameStr.c_str(), al_status.message);
 		return al_status.code;
     }
 
