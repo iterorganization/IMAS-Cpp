@@ -1187,12 +1187,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		if(ptrData != NULL && retSize[0] > 0)
 		{
 			text = std::string((char*)ptrData, retSize[0]);
+            free(ptrData);
 			
 		}
 		else
 			text = "";
 
-        free(ptrData);
+
 
         return al_status;
         }
