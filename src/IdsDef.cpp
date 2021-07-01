@@ -11,7 +11,7 @@ using namespace IdsNs;
 
 
 
-al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, char *idsFullName, int& outIdsTimeMode )
+al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode )
 {
     int idsTimeMode = -1;
     al_status_t al_status;
