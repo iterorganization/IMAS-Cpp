@@ -769,9 +769,12 @@ See IDSDef2Classes.xsl  -->
 				<xsl:value-of select="@name"/>(i).clear();
 			}
         </xsl:when>
+        <xsl:when test="
+                  @data_type='str_1d_type' or @data_type='STR_1D'">
+          <xsl:value-of select = "@name"/>.free();
+        </xsl:when>
 		<xsl:when test="
-           @data_type='str_1d_type' or @data_type='STR_1D'
-        or @data_type='flt_1d_type' or @data_type='FLT_1D'
+           @data_type='flt_1d_type' or @data_type='FLT_1D'
         or @data_type='int_1d_type' or @data_type='INT_1D'
         or @data_type='cpx_1d_type' or @data_type='CPX_1D'
         or @data_type='FLT_2D' or @data_type='INT_2D' or @data_type='CPX_2D'
