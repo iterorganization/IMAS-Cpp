@@ -744,7 +744,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		double retVal = -1;
 		void* ptrData = &retVal;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 0, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 0, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 		
@@ -762,7 +762,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 1, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 1, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -781,8 +781,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 2, &retSize[0]);
-        if (al_status.code != 0)
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 2, &retSize[0]);
+		if (al_status.code != 0)
     			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] == 0)
@@ -800,7 +800,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 3, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 3, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -820,7 +820,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 4, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 4, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -839,7 +839,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 5, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 5, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -858,7 +858,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 6, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 6, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -885,7 +885,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         void* ptrData = &stdComplex;
         
 
-        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 0, &retSize[0]);
+        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 0, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -906,7 +906,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 1, &retSize[0]);
+        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 1, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -930,7 +930,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 2, &retSize[0]);
+        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 2, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -952,7 +952,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 3, &retSize[0]);
+        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 3, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -974,7 +974,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 4, &retSize[0]);
+        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 4, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -996,7 +996,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 5, &retSize[0]);
+        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 5, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1018,7 +1018,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 6, &retSize[0]);
+        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 6, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1044,7 +1044,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retVal = -1;
 		void* ptrData = &retVal;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1063,7 +1063,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 1, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 1, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1082,7 +1082,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 2, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 2, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1101,7 +1101,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 3, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 3, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1121,7 +1121,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 4, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 4, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1140,7 +1140,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 6, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 6, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1159,7 +1159,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 5, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 5, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1180,7 +1180,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];	
 		void* ptrData = NULL;
 		
-		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, CHAR_DATA, 1, &retSize[0]);
+		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, CHAR_DATA, 1, &retSize[0]);
 		if (al_status.code != 0)
     			return al_status;
 		
@@ -1207,7 +1207,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int  numberOfStrings = -1;
 		int maxStringSize = -1;
 
-  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void**)(&ptrData), CHAR_DATA, 2, &retSize[0]);
+  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void**)(&ptrData), CHAR_DATA, 2, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
