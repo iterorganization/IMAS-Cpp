@@ -1221,11 +1221,14 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		for(int i=0; i < numberOfStrings; i++)
 		{
-			
-			array(i) = ptrData; 	
+			char* res = new char[maxStringSize + 1];
+            for (int i = 0; i < maxStringSize; i++)
+               res[i] = *(ptrData + i);
+            res[maxStringSize] = 0;
+            array(i) = res;
+            free(res);
 			ptrData = ptrData + maxStringSize;	
 		}
-
         return al_status;
 	}
 
