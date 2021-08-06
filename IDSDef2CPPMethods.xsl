@@ -309,7 +309,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 		return -1;
 	
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName.c_str(), idsTimeMode );
     if(al_status.code &lt; 0) {
@@ -373,7 +373,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
     }
 
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 	
 	deleteAll(iOccurrence);
 
@@ -440,7 +440,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     }
 
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 
     /***   Checking homogeneous_time read from file   ***/
 
@@ -503,7 +503,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 		return -1;
         
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 
 	// Open put context
     al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;deleteOpCtx);
@@ -555,7 +555,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 		return -1;
 	
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName.c_str(), idsTimeMode );
     if(al_status.code &lt; 0) {
