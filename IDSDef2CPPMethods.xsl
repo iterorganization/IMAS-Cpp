@@ -82,6 +82,27 @@ int IdsNs::IDS::getIdx()
     return this->getPulseCtx();
 }
 
+int IdsNs::IDS::open(const char *uri)
+{
+    int pulseCtx;
+    al_status_t al_status;
+
+    al_status = ual_begin_uri_action(uri, &amp;pulseCtx); 
+    if (al_status.code &lt; 0)
+    {
+    printf("Error opening URI %s\n%s\n", "ual_begin_uri_action", al_status.message);
+    return al_status.code;
+    }
+    al_status = ual_open_pulse(pulseCtx, OPEN_PULSE, nullptr);
+    if(al_status.code != 0)
+    {
+    printf("Error opening URI %s\n%s\n", "ual_begin_uri_action", al_status.message);
+    return al_status.code;
+    }
+    this->pulseCtx = pulseCtx;
+    this->connected = true;
+    this->setPulseCtx(pulseCtx);
+}
 
 int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *version, const char *option/* = nullptr*/)
 {
