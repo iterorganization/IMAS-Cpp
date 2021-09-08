@@ -108,11 +108,17 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 {
 	int pulseCtx;
 	al_status_t al_status;
-
-  	al_status = ual_begin_pulse_action(this->backend, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+    char* uri;
+    al_status = ual_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, &amp;uri);
+	if (al_status.code &lt; 0)
+	{
+		printf("Error building URI %s\n%s\n", "ual_build_uri_from_legacy_parameters", al_status.message);
+    	return al_status.code;
+	}
+    al_status = ual_begin_uri_action(uri, &amp;pulseCtx); 
   	if (al_status.code &lt; 0)
 	{
-		printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
+		printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_uri_action", al_status.message);
     	return al_status.code;
 	}
 
@@ -132,10 +138,17 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *vers
 	int pulseCtx = -1;
 	al_status_t al_status;
 
-	al_status = ual_begin_pulse_action(this->backend, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+    char* uri;
+    al_status = ual_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, &amp;uri);
+	if (al_status.code &lt; 0)
+	{
+		printf("Error building URI %s\n%s\n", "ual_build_uri_from_legacy_parameters", al_status.message);
+    	return al_status.code;
+	}
+    al_status = ual_begin_uri_action(uri, &amp;pulseCtx); 
     if (al_status.code &lt; 0)
 	{
-        printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
+        printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_uri_action", al_status.message);
         return al_status.code;
 	}
  
