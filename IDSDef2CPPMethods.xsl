@@ -82,12 +82,12 @@ int IdsNs::IDS::getIdx()
     return this->getPulseCtx();
 }
 
-int IdsNs::IDS::open(const char *uri)
+int IdsNs::IDS::open(const char *uri, int mode)
 {
     int pulseCtx;
     al_status_t al_status;
 
-    al_status = ual_begin_dataentry_action(uri, OPEN_PULSE, &amp;pulseCtx);
+    al_status = ual_begin_dataentry_action(uri, mode, &amp;pulseCtx);
     if (al_status.code &lt; 0)
     {
     printf("Error opening URI %s\n%s\n", "ual_begin_dataentry_action", al_status.message);
