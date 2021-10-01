@@ -122,7 +122,7 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 	this->setPulseCtx(pulseCtx);
 }
 
-int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version, const char *option/* = nullptr*/)
+int IdsNs::IDS::createEnv(const char *user, const char *tokamak, const char *version, const char *option/* = nullptr*/)
 {
 	int pulseCtx = -1;
 	al_status_t al_status;
@@ -134,7 +134,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *vers
 		printf("Error building URI %s\n%s\n", "ual_build_uri_from_legacy_parameters", al_status.message);
     	return al_status.code;
 	}
-    al_status = ual_begin_dataentry_action(uri, OPEN_PULSE, &amp;pulseCtx);
+    al_status = ual_begin_dataentry_action(uri, FORCE_CREATE_PULSE, &amp;pulseCtx);
     if (al_status.code &lt; 0)
 	{
     printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_dataentry_action", al_status.message);
