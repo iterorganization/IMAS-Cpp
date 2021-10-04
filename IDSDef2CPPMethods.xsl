@@ -104,7 +104,7 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 	int pulseCtx;
 	al_status_t al_status;
     char* uri;
-    al_status = ual_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, &amp;uri);
+    al_status = ual_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, option, &amp;uri);
 	if (al_status.code &lt; 0)
 	{
 		printf("Error building URI %s\n%s\n", "ual_build_uri_from_legacy_parameters", al_status.message);
@@ -128,7 +128,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak, const char *ver
 	al_status_t al_status;
 
     char* uri;
-    al_status = ual_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, &amp;uri);
+    al_status = ual_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, option, &amp;uri);
 	if (al_status.code &lt; 0)
 	{
 		printf("Error building URI %s\n%s\n", "ual_build_uri_from_legacy_parameters", al_status.message);
