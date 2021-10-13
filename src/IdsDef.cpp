@@ -1218,14 +1218,17 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		maxStringSize = retSize[1];
 
 		array.resize(numberOfStrings);
-
+		
+		char* res = new char[maxStringSize + 1];
+		
 		for(int i=0; i < numberOfStrings; i++)
 		{
-			
-			array(i) = ptrData; 	
+            strncpy(res, ptrData, maxStringSize);
+            res[maxStringSize] = 0;
+            array(i) = res;
 			ptrData = ptrData + maxStringSize;	
 		}
-
+		free(res);
         return al_status;
 	}
 

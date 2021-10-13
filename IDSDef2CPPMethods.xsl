@@ -309,7 +309,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 		return -1;
 	
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName.c_str(), idsTimeMode );
     if(al_status.code &lt; 0) {
@@ -373,7 +373,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
     }
 
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 	
 	deleteAll(iOccurrence);
 
@@ -440,7 +440,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     }
 
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 
     /***   Checking homogeneous_time read from file   ***/
 
@@ -503,7 +503,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 		return -1;
         
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 
 	// Open put context
     al_status = hli_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;deleteOpCtx);
@@ -555,7 +555,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 		return -1;
 	
 	if(iOccurrence &gt;= 1)
-        idsFullName+=std::to_string(iOccurrence);
+        idsFullName += "/" + std::to_string(iOccurrence);
 
     al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName.c_str(), idsTimeMode );
     if(al_status.code &lt; 0) {
@@ -769,9 +769,12 @@ See IDSDef2Classes.xsl  -->
 				<xsl:value-of select="@name"/>(i).clear();
 			}
         </xsl:when>
+        <xsl:when test="
+                  @data_type='str_1d_type' or @data_type='STR_1D'">
+          <xsl:value-of select = "@name"/>.free();
+        </xsl:when>
 		<xsl:when test="
-           @data_type='str_1d_type' or @data_type='STR_1D'
-        or @data_type='flt_1d_type' or @data_type='FLT_1D'
+           @data_type='flt_1d_type' or @data_type='FLT_1D'
         or @data_type='int_1d_type' or @data_type='INT_1D'
         or @data_type='cpx_1d_type' or @data_type='CPX_1D'
         or @data_type='FLT_2D' or @data_type='INT_2D' or @data_type='CPX_2D'
