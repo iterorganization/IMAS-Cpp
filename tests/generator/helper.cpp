@@ -13,7 +13,7 @@ using namespace blitz;
 int finalStatus = 0;
 
 
-
+const int STRING_SIZE = 20;
 
 const int dim1 = DIM_SIZE;
 const int dim2 = DIM_SIZE;
@@ -22,8 +22,8 @@ const int dim4 = DIM_SIZE;
 const int dim5 = DIM_SIZE;
 const int dim6 = DIM_SIZE;
 
-const char* PRINTABLE = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r";
-
+//const char ALPHANUM[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!\"#$%&\'()*+,-./:;<=>?@[\\]^_`{|}~\t\n\r";
+const char ALPHANUM[] = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!";
 
 char* userName = NULL;
 char* dataVersion = NULL;
@@ -128,6 +128,23 @@ std_complex_t getComplex()
     return (std_complex_t) (dReal, dImaginary);
 }
 
+std::string getString(const int str_len)
+{
+    std::string ret_str;
+    int rand_index = -1;
+    int sample_size = sizeof(ALPHANUM);
+
+    ret_str.reserve(str_len);
+
+    for (int i = 0; i < str_len; ++i) 
+    {
+        rand_index = rand() % (sample_size - 1);
+        ret_str += ALPHANUM[rand_index];
+    }
+
+    return ret_str;
+
+}
 
 double* generateDoubleArray(int size)
 {
@@ -151,10 +168,18 @@ std_complex_t* generateComplexArray(int size)
     return array;
 }
 
-char* getString()
+std::string * generateStringArray(int size)
 {
-	return (char*)PRINTABLE;
+    std::string * array = new std::string [size];
+    for (int i = 0; i < size; i++)
+    {
+        array[i] = getString(STRING_SIZE);
+    }
+
+    return array;
 }
+
+
 
 
 /*******************************************************************************/
@@ -204,7 +229,7 @@ int assertTime(const blitz::Array<double, 1> observedValue, const char* fieldPat
 
 void setValue(std::string& idsField, bool isReduced)
 {
-
+    idsField = getString(STRING_SIZE);
 }
 
 void setValue(int& idsField, bool isReduced)
@@ -226,8 +251,8 @@ void setValue(std_complex_t& idsField, bool isReduced)
 void setValue(Array<std::string,1>&array, bool isReduced)
 {
 	int size = -1;
-	int *arrayPtr = NULL;
-/*	
+	std::string *arrayPtr = NULL;
+
 	const blitz::TinyVector<int, 1> *ptrShape;
 
 	if(isReduced)
@@ -242,11 +267,13 @@ void setValue(Array<std::string,1>&array, bool isReduced)
 	}
 
 
-	arrayPtr = generateIntegerArray(size);
-	Array<std::string,1> newArray(arrayPtr, *ptrShape, duplicateData);
+	arrayPtr = generateStringArray(size);
+	Array<std::string, 1> newArray(arrayPtr, *ptrShape, duplicateData);
 	array.resize(*ptrShape);
 	array = newArray;;
-*/
+	delete ptrShape;
+	delete[] arrayPtr;
+
 }
 
 
@@ -799,9 +826,15 @@ int assertShape(const blitz::TinyVector<int, 6> expectedShape, const blitz::Tiny
 	return 0;
 }
 /**********************        Assert field value        ***********************/
-int assertField(std::string&, const char* fieldPath, bool sliceMode)
+int assertField(std::string observedValue, const char* fieldPath, bool sliceMode)
 {
-	char* expectedValue = getString();
+	std::string expectedValue = getString(STRING_SIZE);
+
+	if(expectedValue.compare(observedValue))
+	{
+		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		return -1;
+	}
 	return 0;
 }
 
@@ -841,6 +874,11 @@ int assertField(std_complex_t observedValue, const char* fieldPath, bool sliceMo
     return 0;
     
 }
+
+
+
+int assertField(const blitz::Array<std::string, 1> observedValue, const char* fieldPath, bool sliceMode);
+
 
 int assertField(const blitz::Array<std::string, 1> observedValue, const char* fieldPath, bool sliceMode)
 {

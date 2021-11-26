@@ -9,9 +9,9 @@
 using namespace blitz;
 using namespace IdsNs;
 
+const std::string IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE = "obsolescent";
 
-
-al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, char *idsFullName, int& outIdsTimeMode )
+al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode )
 {
     int idsTimeMode = -1;
     al_status_t al_status;
@@ -84,6 +84,12 @@ al_status_t IdsNs::Ids::okStatus()
     return al_status;
 }
 
+void IdsNs::Ids::warningWritingObsolescentNode(const std::string &idsName, const std::string &fieldPath, const std::string &lifeCycleStatus)
+{
+    if (lifeCycleStatus.compare(IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE) == 0)
+        printf("Warning : while putting IDS %s, the written IDS has non-empty obsolescent node %s. Please consider updating the code to avoid using obsolescent nodes.\n", idsName.c_str(), fieldPath.c_str());
+}
+
 
 bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned long line, const char *func)
 {  
@@ -98,160 +104,162 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         void IdsNs::Ids::setArray(blitz::Array<int,1>&array,int *arrayPtr, int dim1)
         {
-            blitz::Array<int,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,1> newArray(arrayPtr, shape(dim1), neverDeleteData, blitz::ColumnMajorArray<1>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,1>&array,float *arrayPtr, int dim1)
         {
-            blitz::Array<float,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,1> newArray(arrayPtr, shape(dim1), neverDeleteData, blitz::ColumnMajorArray<1>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,1>&array,double *arrayPtr, int dim1)
         {
-            blitz::Array<double,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,1> newArray(arrayPtr, shape(dim1), neverDeleteData, blitz::ColumnMajorArray<1>());
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,1>&array, std_complex_t *arrayPtr, int dim1)
         {
-            blitz::Array<std_complex_t,1> newArray(arrayPtr, shape(dim1), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,1> newArray(arrayPtr, shape(dim1), neverDeleteData, blitz::ColumnMajorArray<1>());
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,2>&array,int *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<int,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,2> newArray(arrayPtr, shape(dim1, dim2), neverDeleteData, blitz::ColumnMajorArray<2>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,2>&array,float *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<float,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,2> newArray(arrayPtr, shape(dim1, dim2), neverDeleteData, blitz::ColumnMajorArray<2>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,2>&array,double *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<double,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,2> newArray(arrayPtr, shape(dim1, dim2), neverDeleteData, blitz::ColumnMajorArray<2>());
+            //
+            //array.reference(newArray);
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,2>&array, std_complex_t *arrayPtr, int dim1, int dim2)
         {
-            blitz::Array<std_complex_t,2> newArray(arrayPtr, shape(dim1, dim2), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,2> newArray(arrayPtr, shape(dim1, dim2), neverDeleteData, blitz::ColumnMajorArray<2>());
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,3>&array,int *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<int,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,3> newArray(arrayPtr, shape(dim1, dim2, dim3), neverDeleteData, blitz::ColumnMajorArray<3>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,3>&array,float *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<float,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,3> newArray(arrayPtr, shape(dim1, dim2, dim3), neverDeleteData, blitz::ColumnMajorArray<3>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,3>&array,double *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<double,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,3> newArray(arrayPtr, shape(dim1, dim2, dim3), neverDeleteData, blitz::ColumnMajorArray<3>());
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,3>&array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3)
         {
-            blitz::Array<std_complex_t,3> newArray(arrayPtr, shape(dim1, dim2, dim3), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,3> newArray(arrayPtr, shape(dim1, dim2, dim3), neverDeleteData, blitz::ColumnMajorArray<3>());
+            
+            array.reference(newArray);
         }
 
 
         void IdsNs::Ids::setArray(blitz::Array<int,4>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<int,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), neverDeleteData, blitz::ColumnMajorArray<4>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,4>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<float,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), neverDeleteData, blitz::ColumnMajorArray<4>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,4>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<double,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), neverDeleteData, blitz::ColumnMajorArray<4>());
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,4>&array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4)
         {
-            blitz::Array<std_complex_t,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,4> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4), neverDeleteData, blitz::ColumnMajorArray<4>());
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<int,5>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<int,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), neverDeleteData, blitz::ColumnMajorArray<5>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,5>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<float,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), neverDeleteData, blitz::ColumnMajorArray<5>());
+            
+            array.reference(newArray);
+
         }
         void IdsNs::Ids::setArray(blitz::Array<double,5>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<double,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), neverDeleteData, blitz::ColumnMajorArray<5>());
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,5>&array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5)
         {
-            blitz::Array<std_complex_t,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,5> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5), neverDeleteData, blitz::ColumnMajorArray<5>());
+            
+            array.reference(newArray);
         }
 
 
         void IdsNs::Ids::setArray(blitz::Array<int,6>&array,int *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<int,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), neverDeleteData, blitz::ColumnMajorArray<6>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<float,6>&array,float *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<float,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<float,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), neverDeleteData, blitz::ColumnMajorArray<6>());
+            
+            array.reference(newArray);
         }
         void IdsNs::Ids::setArray(blitz::Array<double,6>&array,double *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<double,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<double,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), neverDeleteData, blitz::ColumnMajorArray<6>());
+            
+            array.reference(newArray);
         }
 
         void IdsNs::Ids::setArray(blitz::Array<std_complex_t,6>&array, std_complex_t *arrayPtr, int dim1, int dim2, int dim3, int dim4, int dim5, int dim6)
         {
-            blitz::Array<std_complex_t,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), duplicateData, fortranArray);
-            array.resize(newArray.shape());
-            array = newArray;
+            blitz::Array<std_complex_t,6> newArray(arrayPtr, shape(dim1, dim2, dim3, dim4, dim5, dim6), neverDeleteData, blitz::ColumnMajorArray<6>());
+            
+            array.reference(newArray);
         }
     	/************************************************************************************************************************************************/
     	/*********************************                                                                           ************************************/
@@ -259,19 +267,21 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     	/*********************************                                                                           ************************************/
     	/************************************************************************************************************************************************/
   
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, int value)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, int value, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void*) (&value);
 
 		if (value == EMPTY_INT)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
 		al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 0, NULL);
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,1> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,1> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void*) array.data();
@@ -279,12 +289,14 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, arrayOfSizes);
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,2> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,2> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -293,6 +305,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         blitz::Array<int,2>  fortranOrderArray (array.shape(), fortranArray);
@@ -303,7 +317,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,3> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,3> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -312,6 +326,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(2)};
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<int,3> fortranOrderArray(array.shape(), fortranArray);
@@ -323,7 +339,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,4> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,4> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -334,6 +350,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<int,4> fortranOrderArray(array.shape(), fortranArray);
@@ -345,7 +363,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
  
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,5> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,5> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -357,6 +375,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<int,5> fortranOrderArray(array.shape(), fortranArray);
@@ -367,7 +387,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,6> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<int,6> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -380,6 +400,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<int,6> fortranOrderArray(array.shape(), fortranArray);
@@ -392,19 +414,21 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
   	/************************************************************************************************************************************************/
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, double value)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, double value, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void*) (&value);
 
 		if (value == EMPTY_DOUBLE)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
 		al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 0, NULL);
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,1> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,1> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void*) array.data();
@@ -417,7 +441,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,2> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,2> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -426,6 +450,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<double,2> fortranOrderArray(array.shape(), fortranArray);
@@ -437,7 +463,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,3> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,3> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -447,6 +473,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<double,3> fortranOrderArray(array.shape(), fortranArray);
@@ -458,7 +486,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,4> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,4> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -469,6 +497,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<double,4> fortranOrderArray(array.shape(), fortranArray);
@@ -481,7 +511,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
  
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,5> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,5> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -494,6 +524,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<double,5> fortranOrderArray(array.shape(), fortranArray);
@@ -507,7 +539,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,6> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<double,6> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -521,6 +553,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		blitz::Array<double,6>  fortranOrderArray(array.shape(), fortranArray);
@@ -534,19 +568,21 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
     /************************************************************************************************************************************************/
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath,  std_complex_t value)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath,  std_complex_t value, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = (void*) (&value);
 
         if(value == EMPTY_COMPLEX)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 0, NULL);
         return al_status;
     }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 1> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 1> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -555,6 +591,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,1>  fortranOrderArray(array.shape(), fortranArray);
@@ -568,7 +606,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     }
 
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 2> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 2> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -577,6 +615,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,2>  fortranOrderArray(array.shape(), fortranArray);
@@ -590,7 +630,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     }
 
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 3> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 3> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -599,6 +639,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,3>  fortranOrderArray(array.shape(), fortranArray);
@@ -612,7 +654,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     }
 
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 4> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 4> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -621,6 +663,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,4>  fortranOrderArray(array.shape(), fortranArray);
@@ -633,7 +677,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
     }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 5> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 5> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -642,6 +686,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,5>  fortranOrderArray(array.shape(), fortranArray);
@@ -654,7 +700,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
     }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 6> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<std_complex_t, 6> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -663,6 +709,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         blitz::Array<std_complex_t,6>  fortranOrderArray(array.shape(), fortranArray);
@@ -677,19 +725,21 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 	/************************************************************************************************************************************************/
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, std::string text)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, std::string text, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void *) (text.c_str());
 		int arrayOfSizes[1] = {	(int)text.size()};
 		if (text.length() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, arrayOfSizes);
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const blitz::Array<std::string, 1> text)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const blitz::Array<std::string, 1> text, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		int maxStringSize = -1;
@@ -701,6 +751,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if (numberOfStrings < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
 		for(int i=0; i < numberOfStrings; i++)
 		{
@@ -768,7 +820,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -787,7 +839,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -806,7 +858,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -826,7 +878,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -845,7 +897,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -864,7 +916,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (double*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -915,7 +967,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0]);
-		free(ptrData);
+		
 
 
         return al_status;
@@ -939,7 +991,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -961,7 +1013,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -983,7 +1035,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -1005,7 +1057,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -1027,7 +1079,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
         IdsNs::Ids::setArray(array, (std_complex_t*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
-		free(ptrData);
+		
 
         return al_status;
     }
@@ -1069,7 +1121,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1088,7 +1140,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1107,7 +1159,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1127,7 +1179,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1146,7 +1198,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1165,7 +1217,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
-		free(ptrData);
+		
 
         return al_status;
 	}
@@ -1185,10 +1237,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		if(ptrData != NULL && retSize[0] > 0)
 		{
 			text = std::string((char*)ptrData, retSize[0]);
-			free(ptrData);
+            free(ptrData);
+			
 		}
 		else
 			text = "";
+
+
 
         return al_status;
         }
@@ -1213,14 +1268,17 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		maxStringSize = retSize[1];
 
 		array.resize(numberOfStrings);
-
+		
+		char* res = new char[maxStringSize + 1];
+		
 		for(int i=0; i < numberOfStrings; i++)
 		{
-			
-			array(i) = ptrData; 	
+            strncpy(res, ptrData, maxStringSize);
+            res[maxStringSize] = 0;
+            array(i) = res;
 			ptrData = ptrData + maxStringSize;	
 		}
-
+		free(res);
         return al_status;
 	}
 

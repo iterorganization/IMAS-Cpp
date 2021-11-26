@@ -295,8 +295,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
         al_status_t al_status;
         char *str;
         char *idsName = "<xsl:value-of select="@name"/>";
-        char *idsFullName = new char[strlen(idsName)+4];
-
+        std::string idsFullName = std::string(idsName);
         int pulseCtx = this->pulseCtx;
         int getOpCtx = -1;
         int ctx = -1;
@@ -307,33 +306,29 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
         int arraySize;
 
 	if(!connected)
-	{
-		delete[] idsFullName;
 		return -1;
-	}
 	
-	if(iOccurrence &lt; 1)
-		sprintf(idsFullName, "%s", idsName);
-	else
-		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+	if(iOccurrence &gt;= 1)
+        idsFullName += "/" + std::to_string(iOccurrence);
 
-    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, idsTimeMode );
-    if(al_status.code &lt; 0) 
+    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName.c_str(), idsTimeMode );
+    if(al_status.code &lt; 0) {
+        printf("GET: error reading homogeneous time for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
         return al_status.code;
+    }
 
     //reset the ids content
     clear();
 
 	// Open get context
-	al_status = ual_begin_global_action(pulseCtx, idsFullName, READ_OP, &amp;getOpCtx);
-	delete[] idsFullName;
+    al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), READ_OP, &amp;getOpCtx);
 
-	if(al_status.code &lt; 0) 
+	if(al_status.code &lt; 0) {
+        printf("GET: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
+    }
 
 	ctx = getOpCtx;
-
-
 
  	<xsl:apply-templates select="field" mode="GET_SINGLE"/> 
 	ual_end_action(ctx);
@@ -351,8 +346,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 	int status = 0;
 	al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
-	char *idsFullName = new char[strlen(idsName)+4];
-
+    std::string idsFullName = std::string(idsName);
 	int pulseCtx = this->pulseCtx;
 	int putOpCtx = -1;
 	int ctx = -1;
@@ -363,38 +357,33 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 	int arraySize;
 
 	if (!connected)
-	{
-		delete[] idsFullName;
 		return -1;
-	}
 
 	idsTimeMode = ids_properties.homogeneous_time;
 	if (idsTimeMode == IDS_TIME_MODE_UNKNOWN)
 	{
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUT quits with no action.");
-		delete[] idsFullName;
    		return 0;
 	}
 
     if( idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp; this->time.size() &lt; 1 )
     {
         printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
-		delete[] idsFullName;
         return -1;
     }
 
-	if(iOccurrence &lt; 1)
-	sprintf(idsFullName, "%s", idsName);
-	else
-	sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
-
+	if(iOccurrence &gt;= 1)
+        idsFullName += "/" + std::to_string(iOccurrence);
+	
 	deleteAll(iOccurrence);
 
 	// Open put context
-	al_status = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP, &amp;putOpCtx);
-	delete[] idsFullName;
+	al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;putOpCtx);
 
-	if(al_status.code &lt; 0) return al_status.code;
+	if(al_status.code &lt; 0) {
+        printf("PUT: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        return al_status.code;
+    }
 
 	ctx = putOpCtx;
 
@@ -417,8 +406,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     int status = 0;
     al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
-	char *idsFullName = new char[strlen(idsName)+4];
-
+    std::string idsFullName = std::string(idsName);
 	int pulseCtx = this->pulseCtx;
 	int putSliceOpCtx = -1;
 	int ctx = -1;
@@ -430,23 +418,18 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     int storedTimeMode = IDS_TIME_MODE_UNKNOWN;
 
 	if(!connected)
-	{
-		delete[] idsFullName;
 		return -1;
-	}
 	
 	idsTimeMode = ids_properties.homogeneous_time;
 	if (idsTimeMode == IDS_TIME_MODE_UNKNOWN) 
 	{
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUTSLICE quits with no action.\n");
-		delete[] idsFullName;
    		return 0;
 	}
 
     if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT) 
     {
         printf("Warning: IDS '<xsl:value-of select="@name"/>' time mode 'independent'. PUTSLICE quits with no action.\n");
-		delete[] idsFullName;
         return 0;
     }
 
@@ -456,16 +439,16 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
         return -1;
     }
 
-	if(iOccurrence &lt; 1)
-		sprintf(idsFullName, "%s", idsName);
-	else
-		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+	if(iOccurrence &gt;= 1)
+        idsFullName += "/" + std::to_string(iOccurrence);
 
     /***   Checking homogeneous_time read from file   ***/
 
-    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, storedTimeMode );
-    if(al_status.code &lt; 0) 
+    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName.c_str(), storedTimeMode );
+    if(al_status.code &lt; 0)  {
+        printf("PUT_SLICE: error reading homogeneous time for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
         return al_status.code;
+    }
 
     // adding slice to an empty IDS
     if( storedTimeMode == IDS_TIME_MODE_UNKNOWN)
@@ -484,11 +467,12 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 
     /***   Put slice   ***/
 	// Open put context
-	al_status = ual_begin_slice_action(pulseCtx, idsFullName, WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP, &amp;putSliceOpCtx);
-	delete[] idsFullName;
-
-	if(al_status.code &lt; 0) 
+	al_status = ual_begin_slice_action(pulseCtx, idsFullName.c_str(), WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP, &amp;putSliceOpCtx);
+	
+	if(al_status.code &lt; 0) {
+        printf("PUT_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
+    }
 
 	ctx = putSliceOpCtx;
 
@@ -507,8 +491,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
     int status = 0;
     al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
-	char *idsFullName = new char[strlen(idsName) + 4];
-	
+    std::string idsFullName = std::string(idsName);
 	int pulseCtx = this->pulseCtx;
 	int deleteOpCtx = -1;
 	int ctx = -1;
@@ -517,21 +500,18 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 	int arraySize;
 
 	if(!connected)
-	{
-		delete[] idsFullName;
 		return -1;
-	}
-	if(iOccurrence &lt; 1)
-		sprintf(idsFullName, "%s", idsName);
-	else
-		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+        
+	if(iOccurrence &gt;= 1)
+        idsFullName += "/" + std::to_string(iOccurrence);
 
 	// Open put context
-	al_status = ual_begin_global_action(pulseCtx, idsFullName, WRITE_OP, &amp;deleteOpCtx);
-	delete[] idsFullName;
+    al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;deleteOpCtx);
 
-	if(al_status.code &lt; 0) 
+	if(al_status.code &lt; 0) {
+        printf("DELETE_ALL: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
+    }
 
 	ctx = deleteOpCtx;
 
@@ -561,8 +541,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
     int status = 0;
     al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
-	char *idsFullName = new char[strlen(idsName)+4];
-
+    std::string idsFullName = std::string(idsName);
 	int pulseCtx = this->pulseCtx;
 	int getSliceOpCtx = -1;
 	int ctx = -1;
@@ -573,29 +552,27 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	int arraySize;
 
 	if(!connected)
-	{
-		delete[] idsFullName;
 		return -1;
-	}
 	
-	if(iOccurrence &lt; 1)
-		sprintf(idsFullName, "%s", idsName);
-	else
-		sprintf(idsFullName, "%s/%d", idsName, iOccurrence);
+	if(iOccurrence &gt;= 1)
+        idsFullName += "/" + std::to_string(iOccurrence);
 
-    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName, idsTimeMode );
-    if(al_status.code &lt; 0) 
+    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName.c_str(), idsTimeMode );
+    if(al_status.code &lt; 0) {
+        printf("GET_SLICE: error reading homogeneous time for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
         return al_status.code;
+    }
 	
 	//reset the ids content
     clear();
 
 	// Open put context
-	al_status = ual_begin_slice_action(pulseCtx, idsFullName, READ_OP, inTime, interpolMode, &amp;getSliceOpCtx);
-	delete[] idsFullName;
-
-	if(al_status.code &lt; 0) 
+    al_status = ual_begin_slice_action(pulseCtx, idsFullName.c_str(), READ_OP, inTime, interpolMode, &amp;getSliceOpCtx);
+	
+	if(al_status.code &lt; 0) {
+        printf("GET_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
+    }
 
 	ctx = getSliceOpCtx;
 
@@ -626,7 +603,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_PUT">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int ctx, int idsTimeMode)&#xA;</xsl:text>
+    <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int ctx, int idsTimeMode, const std::string &amp;idsFullName)&#xA;</xsl:text>
 {
 	int status = -1;
     al_status_t al_status;
@@ -649,7 +626,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::putSlice(int ctx, int idsTimeMode)&#xA;</xsl:text>
+    <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::putSlice(int ctx, int idsTimeMode, const std::string &amp;idsFullName)&#xA;</xsl:text>
 {
 	int status = -1;
     al_status_t al_status;
@@ -792,9 +769,12 @@ See IDSDef2Classes.xsl  -->
 				<xsl:value-of select="@name"/>(i).clear();
 			}
         </xsl:when>
+        <xsl:when test="
+                  @data_type='str_1d_type' or @data_type='STR_1D'">
+          <xsl:value-of select = "@name"/>.free();
+        </xsl:when>
 		<xsl:when test="
-           @data_type='str_1d_type' or @data_type='STR_1D'
-        or @data_type='flt_1d_type' or @data_type='FLT_1D'
+           @data_type='flt_1d_type' or @data_type='FLT_1D'
         or @data_type='int_1d_type' or @data_type='INT_1D'
         or @data_type='cpx_1d_type' or @data_type='CPX_1D'
         or @data_type='FLT_2D' or @data_type='INT_2D' or @data_type='CPX_2D'
@@ -802,6 +782,7 @@ See IDSDef2Classes.xsl  -->
         or @data_type='FLT_4D' or @data_type='INT_4D' or @data_type='CPX_4D'
         or @data_type='FLT_5D' or @data_type='INT_5D' or @data_type='CPX_5D'
         or @data_type='FLT_6D' or @data_type='INT_6D' or @data_type='CPX_6D' ">
+	        free( <xsl:value-of select = "@name"/>.data());
             <xsl:value-of select = "@name"/>.free();
         </xsl:when>
         <xsl:otherwise>
@@ -945,8 +926,8 @@ See IDSDef2Classes.xsl  -->
 <!--========== Regular structures ==========-->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
-		status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, idsTimeMode);
-		if (status &lt; 0)
+          status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, idsTimeMode, idsFullName);
+		  if (status &lt; 0)
 			return status;
 		</xsl:when>
 
@@ -973,7 +954,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
+                    status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
 					if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
@@ -1021,7 +1002,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
+                    status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
                     if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
@@ -1075,7 +1056,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
+                    status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
                     if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
@@ -1138,16 +1119,16 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
         <xsl:choose>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/data_dictionary'">
-                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$DD_GIT_DESCRIBE"/>");
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "<xsl:value-of select="$DD_GIT_DESCRIBE"/>", "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer'">
-                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$UAL_GIT_DESCRIBE"/>");
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "<xsl:value-of select="$UAL_GIT_DESCRIBE"/>", "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer_language'">
-                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "cpp");
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "cpp", "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:otherwise>
-	            al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>, "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:otherwise>
         </xsl:choose>
         if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))

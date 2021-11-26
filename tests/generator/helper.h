@@ -92,7 +92,7 @@ int assertShape(const blitz::TinyVector<int, 5> expectedShape, const blitz::Tiny
 int assertShape(const blitz::TinyVector<int, 6> expectedShape, const blitz::TinyVector<int, 6> observedShape, const char* fieldPath);
 
 /**********************        Assert field value        ***********************/
-int assertField(std::string&, const char* fieldPath, bool sliceMode);
+int assertField(std::string, const char* fieldPath, bool sliceMode);
 
 int assertField(int observedValue, const char* fieldPath,  bool sliceMode);
 

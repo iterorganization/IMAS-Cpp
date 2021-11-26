@@ -55,11 +55,11 @@ define run-tests
 	echo 1..$(words $^) \# Tests: $(^F) ;\
 	N=1;for prog in $^ ;do \
 	 ( $(test_ENV) ./$$prog 2>&1 | tee ./$$prog.log ) && \
-	 test 0 -eq $$(grep -c -i error ./$$prog.log ) && \
+	 test 0 -eq $$(grep -c -i -w error ./$$prog.log ) && \
 	 echo ok $$N - $$prog passed. || echo not ok $$N - $$prog failed. ;\
 	done \
 	) | tee $@.log
-	@test 0 -eq $$(grep -c -i error $@.log) || exit 1
+	@test 0 -eq $$(grep -c -i -w error $@.log) || exit 1
 endef
 
 cpp_tests: $(BINOUT) | $(TMP_DIR)
