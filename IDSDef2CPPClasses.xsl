@@ -273,9 +273,9 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 		    <xsl:apply-templates select = "field" mode = "CONSTRUCTOR"/>
 		  };
     int get(int ctx, int idsTimeMode);
-    int put(int ctx, int idsTimeMode);
+    int put(int ctx, int idsTimeMode, const std::string &amp;idsFullName);
     <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
-    int putSlice(int ctx, int idsTimeMode);
+    int putSlice(int ctx, int idsTimeMode, const std::string &amp;idsFullName);
      </xsl:if> 
 
     <xsl:if test="not(ancestor::field[@data_type='struct_array'])">
@@ -294,10 +294,10 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 		<xsl:apply-templates select = "field" mode = "CONSTRUCTOR"/>
 		  };
     int get(int ctx, int idsTimeMode);
-    int put(int ctx, int idsTimeMode);
+    int put(int ctx, int idsTimeMode, const std::string &amp;idsFullName);
     void clear();
     <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
-    int putSlice(int ctx, int idsTimeMode);
+    int putSlice(int ctx, int idsTimeMode, const std::string &amp;idsFullName);
     </xsl:if> 
 
 //    int deleteAll(int ctx);
