@@ -145,7 +145,7 @@ int IdsNs::IDS::close()
 
 
 
-int IdsNs::IDS::getTime(char *path, Array&lt;double,1&gt; &amp;time)
+int IdsNs::IDS::getTime(char *path, IMASArray&lt;double,1&gt; &amp;time)
 {
 int retSamples;
 double *doubleArray;
@@ -158,7 +158,7 @@ if(status) return status;
 ////status = getVect1DDouble(expIdx, path, "time", &amp;doubleArray, &amp;dim);
 //checkStatus(status);
 if(!status) {
-Array&lt;double,1&gt; newArray(doubleArray, shape(dim), duplicateData, fortranArray);
+IMASArray&lt;double,1&gt; newArray(doubleArray, shape(dim), duplicateData, fortranArray);
 time.resize(newArray.shape());
 time = newArray;
 free(doubleArray);
@@ -782,7 +782,10 @@ See IDSDef2Classes.xsl  -->
         or @data_type='FLT_4D' or @data_type='INT_4D' or @data_type='CPX_4D'
         or @data_type='FLT_5D' or @data_type='INT_5D' or @data_type='CPX_5D'
         or @data_type='FLT_6D' or @data_type='INT_6D' or @data_type='CPX_6D' ">
-	        free( <xsl:value-of select = "@name"/>.data());
+
+            
+            if (<xsl:value-of select = "@name"/>.getDeletionPolicy() == blitz::neverDeleteData)
+	           free( <xsl:value-of select = "@name"/>.data());
             <xsl:value-of select = "@name"/>.free();
         </xsl:when>
         <xsl:otherwise>
