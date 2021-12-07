@@ -5,7 +5,6 @@
 #include <string.h>
 #include <stdlib.h>
 #ifdef __GNUC__
-#  include <iostream>
 #  include <complex.h>
 #else
 #  include <iostream>
