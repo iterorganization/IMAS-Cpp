@@ -9,7 +9,7 @@
 using namespace blitz;
 using namespace IdsNs;
 
-
+const std::string IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE = "obsolescent";
 
 al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode )
 {
@@ -82,6 +82,12 @@ al_status_t IdsNs::Ids::okStatus()
     strncpy(al_status.message, "", MAX_ERR_MSG_LEN);
 
     return al_status;
+}
+
+void IdsNs::Ids::warningWritingObsolescentNode(const std::string &idsName, const std::string &fieldPath, const std::string &lifeCycleStatus)
+{
+    if (lifeCycleStatus.compare(IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE) == 0)
+        printf("Warning : while putting IDS %s, the written IDS has non-empty obsolescent node %s. Please consider updating the code to avoid using obsolescent nodes.\n", idsName.c_str(), fieldPath.c_str());
 }
 
 
@@ -284,19 +290,21 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     	/*********************************                                                                           ************************************/
     	/************************************************************************************************************************************************/
   
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, int value)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, int value, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void*) (&value);
 
 		if (value == EMPTY_INT)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
 		al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 0, NULL);
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<int,1> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<int,1> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void*) array.data();
@@ -304,12 +312,14 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, arrayOfSizes);
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<int,2> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<int,2> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -318,6 +328,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         IMASArray<int,2>  fortranOrderArray (array.shape(), fortranArray);
@@ -328,7 +340,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<int,3> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<int,3> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -337,6 +350,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(2)};
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<int,3> fortranOrderArray(array.shape(), fortranArray);
@@ -348,7 +363,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<int,4> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<int,4> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -359,6 +375,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<int,4> fortranOrderArray(array.shape(), fortranArray);
@@ -370,7 +388,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
  
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<int,5> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<int,5> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -382,6 +401,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<int,5> fortranOrderArray(array.shape(), fortranArray);
@@ -392,7 +413,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<int,6> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<int,6> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -405,6 +427,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<int,6> fortranOrderArray(array.shape(), fortranArray);
@@ -417,19 +441,22 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
   	/************************************************************************************************************************************************/
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, double value)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, double value, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void*) (&value);
 
 		if (value == EMPTY_DOUBLE)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
 		al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 0, NULL);
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<double,1> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<double,1> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void*) array.data();
@@ -442,7 +469,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<double,2> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<double,2> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -451,6 +479,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<double,2> fortranOrderArray(array.shape(), fortranArray);
@@ -462,7 +492,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<double,3> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<double,3> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -472,6 +503,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<double,3> fortranOrderArray(array.shape(), fortranArray);
@@ -483,7 +516,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<double,4> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<double,4> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -494,6 +528,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<double,4> fortranOrderArray(array.shape(), fortranArray);
@@ -506,7 +542,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
  
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<double,5> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<double,5> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -519,6 +556,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<double,5> fortranOrderArray(array.shape(), fortranArray);
@@ -532,7 +571,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<double,6> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<double,6> array, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = NULL;
@@ -546,6 +586,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
 		IMASArray<double,6>  fortranOrderArray(array.shape(), fortranArray);
@@ -559,19 +601,22 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         }
 
     /************************************************************************************************************************************************/
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath,  std_complex_t value)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath,  std_complex_t value, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = (void*) (&value);
 
         if(value == EMPTY_COMPLEX)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 0, NULL);
         return al_status;
     }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 1> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 1> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -580,6 +625,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         IMASArray<std_complex_t,1>  fortranOrderArray(array.shape(), fortranArray);
@@ -593,7 +640,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     }
 
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 2> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 2> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -602,6 +650,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         IMASArray<std_complex_t,2>  fortranOrderArray(array.shape(), fortranArray);
@@ -615,7 +665,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     }
 
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 3> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 3> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -624,6 +674,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         IMASArray<std_complex_t,3>  fortranOrderArray(array.shape(), fortranArray);
@@ -637,7 +689,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     }
 
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 4> array)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 4> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -646,6 +698,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         IMASArray<std_complex_t,4>  fortranOrderArray(array.shape(), fortranArray);
@@ -658,7 +712,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
     }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 5> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 5> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -667,6 +722,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         IMASArray<std_complex_t,5>  fortranOrderArray(array.shape(), fortranArray);
@@ -679,7 +736,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         return al_status;
     }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 6> array)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<std_complex_t, 6> array, const std::string &lifeCycleStatus)
     {
         al_status_t al_status;
         void* ptrData = NULL;
@@ -688,6 +746,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(array.size() < 1)
             return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         //Changing data order C -> F
         IMASArray<std_complex_t,6>  fortranOrderArray(array.shape(), fortranArray);
@@ -702,19 +762,22 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 	/************************************************************************************************************************************************/
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, std::string text)
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, std::string text, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		void* ptrData = (void *) (text.c_str());
 		int arrayOfSizes[1] = {	(int)text.size()};
 		if (text.length() < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, arrayOfSizes);
         return al_status;
         }
 
-    al_status_t IdsNs::Ids::writeData(int ctx, std::string fieldPath, std::string timeBasePath, const IMASArray<std::string, 1> text)
+
+    al_status_t IdsNs::Ids::writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timeBasePath, const IMASArray<std::string, 1> text, const std::string &lifeCycleStatus)
         {
         al_status_t al_status;
 		int maxStringSize = -1;
@@ -726,6 +789,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if (numberOfStrings < 1)
 			return IdsNs::Ids::okStatus();
+        else
+            IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
 		for(int i=0; i < numberOfStrings; i++)
 		{

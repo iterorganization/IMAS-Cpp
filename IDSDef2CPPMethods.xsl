@@ -603,7 +603,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:template match="field[@data_type='struct_array' or @data_type='structure']" mode="METHOD_PUT">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int ctx, int idsTimeMode)&#xA;</xsl:text>
+    <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::put(int ctx, int idsTimeMode, const std::string &amp;idsFullName)&#xA;</xsl:text>
 {
 	int status = -1;
     al_status_t al_status;
@@ -626,7 +626,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
      <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:call-template name="COMMENT_FIELD"/>
-<xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::putSlice(int ctx, int idsTimeMode)&#xA;</xsl:text>
+    <xsl:text> int IdsNs::</xsl:text> <xsl:value-of select="ancestor::IDS/@name"/>_IDSBase::<xsl:value-of select="fn:replace(@path,'/','::')"/><xsl:text>::putSlice(int ctx, int idsTimeMode, const std::string &amp;idsFullName)&#xA;</xsl:text>
 {
 	int status = -1;
     al_status_t al_status;
@@ -929,8 +929,8 @@ See IDSDef2Classes.xsl  -->
 <!--========== Regular structures ==========-->
     <!-- YB 2014 -->
 		<xsl:when test="@data_type='structure'">
-		status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, idsTimeMode);
-		if (status &lt; 0)
+          status = <xsl:value-of select="@name"/>.<xsl:value-of select="$methodName"/>(ctx, idsTimeMode, idsFullName);
+		  if (status &lt; 0)
 			return status;
 		</xsl:when>
 
@@ -957,7 +957,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
+                    status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
 					if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
@@ -1005,7 +1005,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
+                    status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
                     if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
@@ -1059,7 +1059,7 @@ See IDSDef2Classes.xsl  -->
 				}
 
 				for( int i = 0; i &lt;arraySize; i++){
-					status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode);
+                    status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
                     if (status &lt; 0)
 					{	
 						ual_end_action(ctx);
@@ -1122,16 +1122,16 @@ See IDSDef2Classes.xsl  -->
 		</xsl:choose>
         <xsl:choose>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/data_dictionary'">
-                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$DD_GIT_DESCRIBE"/>");
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "<xsl:value-of select="$DD_GIT_DESCRIBE"/>", "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer'">
-                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "<xsl:value-of select="$UAL_GIT_DESCRIBE"/>");
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "<xsl:value-of select="$UAL_GIT_DESCRIBE"/>", "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer_language'">
-                al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, "cpp");
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "cpp", "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:otherwise>
-	            al_status = IdsNs::Ids::writeData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>, "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:otherwise>
         </xsl:choose>
         if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))

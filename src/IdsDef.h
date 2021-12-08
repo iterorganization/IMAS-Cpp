@@ -15,6 +15,11 @@ using namespace blitz;
 
 
 namespace IdsNs {
+
+struct DataDictionary {
+    static const std::string LIFECYCLE_STATUS_OBSOLETE;
+};
+
 class Ids
 {
     protected:
@@ -23,6 +28,8 @@ class Ids
         static al_status_t readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode );
 
         static char* timeModeToString( int idsTimeMode );
+
+        static void warningWritingObsolescentNode(const std::string &idsName, const std::string &fieldPath, const std::string &lifeCycleStatus);
 
         static bool isError(al_status_t al_status, const char *file, const unsigned long line, const char *func);
         static al_status_t okStatus();
@@ -88,55 +95,55 @@ class Ids
     	/*********************************                           WRITE DATA                                      ************************************/
     	/************************************************************************************************************************************************/
 	
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, int value);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, int value, const std::string &lifeCycleStatus);
 
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<int,1> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<int,1> array, const std::string &lifeCycleStatus);
 
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<int,2> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<int,2> array, const std::string &lifeCycleStatus);
 
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<int,3> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<int,3> array, const std::string &lifeCycleStatus);
 
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<int,4> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<int,4> array, const std::string &lifeCycleStatus);
  
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<int,5> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<int,5> array, const std::string &lifeCycleStatus);
 
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<int,6> array);
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<int,6> array, const std::string &lifeCycleStatus);
 
   	/************************************************************************************************************************************************/
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, double value);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, double value, const std::string &lifeCycleStatus);
 
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<double,1> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<double,1> array, const std::string &lifeCycleStatus);
 
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<double,2> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<double,2> array, const std::string &lifeCycleStatus);
 
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<double,3> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<double,3> array, const std::string &lifeCycleStatus);
 
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<double,4> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<double,4> array, const std::string &lifeCycleStatus);
  
-	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<double,5> array);
+	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<double,5> array, const std::string &lifeCycleStatus);
 
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<double,6> array);
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<double,6> array, const std::string &lifeCycleStatus);
 
     /************************************************************************************************************************************************/
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, std_complex_t value);
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, std_complex_t value, const std::string &lifeCycleStatus);
 
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,1> array);
 
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,2> array);
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,1> array, const std::string &lifeCycleStatus);
 
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,3> array);
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,2> array, const std::string &lifeCycleStatus);
 
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,4> array);
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,3> array, const std::string &lifeCycleStatus);
+
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,4> array, const std::string &lifeCycleStatus);
  
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,5> array);
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,5> array, const std::string &lifeCycleStatus);
 
-    static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,6> array);
+    static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<std_complex_t,6> array, const std::string &lifeCycleStatus);
 
   	/************************************************************************************************************************************************/
     
-      	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, std::string text);
-
-    	static al_status_t writeData(int ctx, std::string fieldPath, std::string timebasePath, const IMASArray<std::string, 1> text);
+   	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, std::string text, const std::string &lifeCycleStatus);
+   	static al_status_t writeData(int ctx, const std::string &idsName, std::string fieldPath, std::string timebasePath, const IMASArray<std::string, 1> text, const std::string &lifeCycleStatus);
 
     /************************************************************************************************************************************************/
     /*********************************                             READ DATA                                     ************************************/
