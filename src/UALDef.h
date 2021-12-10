@@ -50,7 +50,10 @@ typedef std::complex < double > std_complex_t;
 template <typename P_numtype, int N_rank>
 class IMASArray : public blitz::Array<P_numtype, N_rank> 
 {
+    typedef IMASArray<P_numtype, N_rank> T_array;
+
     using  blitz::Array<P_numtype, N_rank>::Array;
+
 
     private:
         blitz::preexistingMemoryPolicy deletionPolicy = blitz::deleteDataWhenDone;
@@ -65,7 +68,7 @@ class IMASArray : public blitz::Array<P_numtype, N_rank>
         }
 
 
-    typedef IMASArray<P_numtype, N_rank> T_array;
+   
 
 
     // Overloading assignment operator to set a proper memory policy
@@ -78,6 +81,13 @@ class IMASArray : public blitz::Array<P_numtype, N_rank>
         returnArray.setDeletionPolicy(blitz::deleteDataWhenDone);
         return returnArray;
     }
+
+    // Overloading assignment operator to be found  
+    blitz::ListInitializationSwitch<blitz::Array<P_numtype, N_rank>> operator=(P_numtype x){
+
+     return blitz::Array<P_numtype, N_rank> ::operator=(x);
+    }
+
 };
 
 
