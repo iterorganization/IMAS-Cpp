@@ -2,8 +2,6 @@
 
 #define _IDS_CLASS
 
-#define BZ_THREADSAFE
-#include <blitz/array.h>
 
 #include "UALDef.h"
 using namespace blitz;

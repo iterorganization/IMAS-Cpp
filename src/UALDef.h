@@ -26,8 +26,9 @@
 #define CLOSEST_SAMPLE 1
 #define PREVIOUS_SAMPLE 2
 
-#include <blitz/memblock.h>
+#define BZ_THREADSAFE
 #include <blitz/array.h>
+#include <blitz/memblock.h>
 #include <stdio.h>
 
 typedef std::complex < double > std_complex_t;
