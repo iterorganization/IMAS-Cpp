@@ -1,0 +1,9 @@
+module use /Applications/libraries/imas_test/etc/modulefiles
+module load IMAS/AL_PLUGINS
+module load blitz/0.10.0-gcc-6.4.0
+setenv UAL_BUILD /Applications/builds/imas/test-installer/installer/src/test/camera_ir/ual/prototype_v3
+setenv AL_PLUGINS /Home/LF218007/therma_vip_tests
+
+
+[LF218007@gemma therma_vip_tests]$ echo $LD_LIBRARY_PATH 
+/work/imas/thermavip_4_imas/librir:/Applications/libraries/blitz/0.10.0/gcc/6.4.0/lib64:/Applications/libraries/imas_test/core/IMAS/AL_PLUGINS/lib:/Applications/libraries/boost/1.76.0/gcc/6.4.0/lib:/Applications/libraries/hdf5/1.12.0/gcc/6.4.0/lib:/Applications/compilers/gcc/6.4.0/lib:/Applications/compilers/gcc/6.4.0/lib64:/opt/Ingres/IngresI0/ingres/lib
