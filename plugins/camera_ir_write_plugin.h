@@ -51,8 +51,6 @@ class Camera_ir_write_plugin: public access_layer_plugin
     int *chunks_buffer; //used for the PUT operation, contains all chunks data
     
     struct Camera_data camera_data;
-
-    void readIdsTimeMode( );
     
     //PUT operation, getting data from the librir server
     void get_camera_data(int shot, int camera_number);
@@ -63,10 +61,11 @@ class Camera_ir_write_plugin: public access_layer_plugin
   public:
     Camera_ir_write_plugin();
     ~Camera_ir_write_plugin();
-    
+   
+    virtual void setParameter(const char* parameter_name, int datatype, int dim, int *size, void *data); 
     virtual void begin_global_action(int pulseCtx, const char* dataobjectname, int mode, int opCtx);
     virtual void begin_slice_action(int pulseCtx, const char* dataobjectname, int mode, double time, int interp, int opCtx);
-    virtual void begin_arraystruct_action(int ctx, int aosctx, const char* fieldPath, const char* timeBasePath, int arraySize);
+    virtual void begin_arraystruct_action(int ctx, int *aosctx, const char* fieldPath, const char* timeBasePath, int *arraySize);
     virtual int read_data(int ctx, const char* fieldPath, const char* timeBasePath, void **data, int datatype, int dim, int *size);
     virtual void write_data(int ctx, const char* fieldPath, const char* timeBasePath, void *data, int datatype, int dim, int *size);
     //virtual al_status_t close_pulse(int pulseCtx, int mode);

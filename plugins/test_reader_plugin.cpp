@@ -11,7 +11,8 @@ void execute() {
 	printf("Reading shot...\n");
         IDS imas = IDS(56927, 0, -1, -1);
         hli_register_plugin("reader");
-        hli_attach_plugin("camera_ir/ids_properties/version_put/access_layer", "reader");
+        hli_bind_plugin("camera_ir/ids_properties/version_put/access_layer", "reader");
+        //hli_bind_plugin("camera_ir/*", "reader");
         imas.setBackend(HDF5_BACKEND);
         imas.openEnv("LF218007", "test", "3");
         IDS::camera_ir ids = imas._camera_ir;

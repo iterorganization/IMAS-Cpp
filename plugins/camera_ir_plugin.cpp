@@ -7,7 +7,7 @@
   #include "simple_logger.h"
   
   Camera_ir_plugin::Camera_ir_plugin()
-  :pulseCtx(-1), ctx(-1), globalContext(-1), aosContext(-1), shot(-1), dataobjectname(), idsTimeMode(-1), occurrence(-1), mode(-1), time(-1), interp(-1), 
+  :pulseCtx(-1), globalContext(-1), aosContext(-1), shot(-1), dataobjectname(), idsTimeMode(-1), occurrence(-1), mode(-1), time(-1), interp(-1), 
   cam(0), chunksCount(0), fileSize(0), chunk_sizes(), chunk_buffers()
   {
   }
@@ -58,7 +58,7 @@
 	  this->pulseCtx = pulseCtx;
 	  this->dataobjectname = std::string(dataobjectname);
 	  this->mode = mode;
-	  this->ctx = opCtx;
+	  //this->ctx = opCtx;
 	  LLenv lle = Lowlevel::getLLenv(pulseCtx);
 	  PulseContext *pctx= dynamic_cast<PulseContext *>(lle.context);
 	  this->shot = pctx->getShot();
@@ -83,15 +83,15 @@
   }
   
   /*Implementation of begin_arraystruct_action*/
-  void Camera_ir_plugin::begin_arraystruct_action(int ctx, int aosctx, const char* fieldPath, const char* timeBasePath, int arraySize) {
+  void Camera_ir_plugin::begin_arraystruct_action(int ctx, int *aosctx, const char* fieldPath, const char* timeBasePath, int *arraySize) {
 	  LOG_DEBUG << "begin_arraystruct_action called for fieldPath=" << fieldPath;		 					 
 	  if (std::string(fieldPath) != "frame") {
 		return;
 	  }
-	  this->ctx = aosctx;
+	  //this->ctx = *aosctx;
 	  LOG_DEBUG << "fieldPath:" << fieldPath;
-	  LOG_DEBUG << "arraySize:" << arraySize;
-	  LOG_DEBUG << "aosctx:" << aosctx;
+	  LOG_DEBUG << "arraySize:" << *arraySize;
+	  LOG_DEBUG << "aosctx:" << *aosctx;
 	  initialize();
   }
   
@@ -257,6 +257,9 @@
 	  al_status_t al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, &retSize[0]);
 	  return al_status.code;
   }
+
+  void Camera_ir_plugin::setParameter(const char* parameter_name, int datatype, int dim, int *size, void *data) {
+  }
   
   /*al_status_t Camera_ir_plugin::close_pulse(int pulseCtx, int mode) {
   al_status_t al_status;
@@ -309,7 +312,7 @@
   int Camera_ir_plugin::getImage(int ctx, const char *field, const char *timebase, void **data, int *size) {
   
 	  LOG_DEBUG << "called...";
-	  this->ctx = ctx;
+	  //this->ctx = ctx;
 	  
 	  if (this->cam <= 0) //camera not opened
 		open_camera_handler();

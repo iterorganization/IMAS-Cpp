@@ -10,18 +10,19 @@ else
 CXX=g++
 CXXFLAGS= -std=c++11 -pthread -O0 -fPIC ${DBGFLAGS}
 #LDFLAGS= -shared -pthread -Wl,--no-undefined
-LDFLAGS= -shared -pthread
+LDFLAGS= -pthread
 endif
 
-INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src -I/work/imas/thermavip_4_imas/librir_2.1.0/librir/include/video_io -I/work/imas/thermavip_4_imas/librir_2.1.0/librir/include/west -I/work/imas/thermavip_4_imas/include
-
+#INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src -I/work/imas/thermavip_4_imas/librir/src -I/work/imas/thermavip_4_imas/librir/src/Tools
+INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src -I/work/imas/thermavip_4_imas/librir
 LIBS= -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib
-LIBS+= -limas-cpp -limas `pkg-config blitz --libs` -L/work/imas/thermavip_4_imas/librir_2.1.0/librir/libs/ -lavcodec -lavfilter -lavutil -lavdevice -lavformat -lswresample -lswscale -lwest
+LIBS+= -limas-cpp -limas `pkg-config blitz --libs` -L/work/imas/thermavip_4_imas/librir -lrir -lavcodec -lavfilter -lavutil -lavdevice -lavformat -lpostproc -lswresample -lswscale
+#LIBS+= -limas-cpp -limas `pkg-config blitz --libs`
+#LIBS+= -limas `pkg-config blitz --libs`
+BINOUT=test_camera_plugin
 
-BINOUT=camera_ir_plugin.so
 
-
-GENSOURCES = camera_ir_plugin.cpp simple_logger.cpp
+GENSOURCES = test_camera_plugin.cpp
 
 .PHONY: clean clean-src
 all: $(BINOUT)
@@ -37,7 +38,7 @@ clean-src: clean
 
 
 #  BUILD
-$(BINOUT): camera_ir_plugin.o simple_logger.o
+$(BINOUT): test_camera_plugin.o
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBDIR) $(LIBS)
         
 .SUFFIXES:.cpp

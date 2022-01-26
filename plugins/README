@@ -1,7 +1,8 @@
-module use /Applications/libraries/imas_test/etc/modulefiles
-module load IMAS/AL_PLUGINS
+module use /Home/LF218007/Zone_Travail/imas_test/etc/modulefiles
+module load IMAS/AL_PLUGINS_V4
 module load blitz/0.10.0-gcc-6.4.0
-setenv UAL_BUILD /Applications/builds/imas/test-installer/installer/src/test/camera_ir/ual/prototype_v3
+
+setenv UAL_BUILD /Applications/builds/imas/test-installer/installer/src/test/camera_ir/ual/prototype_v4
 setenv AL_PLUGINS /Home/LF218007/therma_vip_tests
 
 

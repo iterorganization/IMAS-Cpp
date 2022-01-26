@@ -8,16 +8,15 @@ void execute();
 
 
 void execute() {
-	printf("Reading shot...\n");
+	//printf("Reading shot...\n");
         IDS imas = IDS(56927, 0, -1, -1);
-	//const char* plugin_name= "camera_ir";
-        printf("Attaching plugin %s\n", "camera_ir");
-        hli_register_plugin("camera_ir");
-        hli_bind_plugin("camera_ir/frame/image_raw", "camera_ir");
+        hli_register_plugin("debug");
+        hli_bind_plugin("camera_ir/ids_properties/version_put/access_layer", "debug");
         imas.setBackend(HDF5_BACKEND);
-        imas.openEnv("LF218007", "test", "3");
+        imas.openEnv("LF218007", "test_camera", "3");
         IDS::camera_ir ids = imas._camera_ir;
         ids.get(0);
+        //std::cout << "access_layer=" << ids.ids_properties.version_put.access_layer << std::endl;
         imas.close();
 }
 

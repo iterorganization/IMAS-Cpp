@@ -16,42 +16,8 @@
   Camera_ir_write_plugin::~Camera_ir_write_plugin()
   {
   }
-  
-  void Camera_ir_write_plugin::readIdsTimeMode()
-  {
-      std::string fieldPath = "ids_properties/homogeneous_time";
-      std::string timeBasePath = "";
-      int opCtx = -1;
-      
-      //Opening a global context
-      LOG_DEBUG << "readIdsTimeMode opening context...";
-      al_status_t al_status = ual_begin_global_action(pulseCtx, dataobjectname.c_str(), READ_OP, &opCtx);
-      if(al_status.code < 0 || opCtx < 0)
-          throw UALPluginException("Camera_ir_write_plugin: readIdsTimeMode opening context failed...", LOG); 
-      
-      int size[MAXDIM];
-      int *timeMode = &idsTimeMode;
-      al_status = ual_read_data(opCtx, fieldPath.c_str(), timeBasePath.c_str(), (void**) &timeMode, INTEGER_DATA, 0, size);
-      LOG_DEBUG << "readIdsTimeMode fetched value=" << idsTimeMode;	  		  
-      if (al_status.code < 0)
-      {   
-          ual_end_action(opCtx);
-          throw UALPluginException("Camera_ir_plugin: readIdsTimeMode has failed...", LOG); 
-      }
-      
-      switch(idsTimeMode)
-      {
-      case IDS_TIME_MODE_UNKNOWN:     
-      case IDS_TIME_MODE_HETEROGENEOUS: 
-      case IDS_TIME_MODE_HOMOGENEOUS:   
-      case IDS_TIME_MODE_INDEPENDENT:   
-        break;
-      
-      default: 
-        throw UALPluginException("Camera_ir_plugin: time dependency mode (ids_properties/homogeneous_time) set to unknown value!", LOG); 
-      }
-      
-      ual_end_action(opCtx);
+
+  void Camera_ir_write_plugin::setParameter(const char* parameter_name, int datatype, int dim, int *size, void *data) {
   }
   
   void Camera_ir_write_plugin::begin_global_action(int pulseCtx, const char* dataobjectname, int mode, int opCtx) {
@@ -83,23 +49,24 @@
   }
   
   /*Implementation of begin_arraystruct_action*/
-  void Camera_ir_write_plugin::begin_arraystruct_action(int ctx, int aosctx, const char* fieldPath, const char* timeBasePath, int arraySize) 
+  void Camera_ir_write_plugin::begin_arraystruct_action(int ctx, int *aosctx, const char* fieldPath, const char* timeBasePath, int *arraySize) 
   {
       LOG_DEBUG << "calling begin_arraystruct_action for: " << fieldPath;
       if (std::string(fieldPath) != "frame") {
         return;
       }
       
-      this->ctx = aosctx;
+      this->ctx = *aosctx;
       
       LOG_DEBUG << "fieldPath:" << fieldPath;
-      LOG_DEBUG << "arraySize:" << arraySize;
+      LOG_DEBUG << "arraySize:" << *arraySize;
       LOG_DEBUG << "ctx:" << this->ctx;
-      write_aos_content(ctx, aosctx, fieldPath, timeBasePath);
+      write_aos_content(ctx, *aosctx, fieldPath, timeBasePath);
   }
   
   void Camera_ir_write_plugin::write_data(int ctx, const char* fieldPath, const char* timeBasePath, void *data, int datatype, int dim, int *size) {
       LOG_DEBUG << "calling write_data for: " << fieldPath;
+      
       if (std::string(fieldPath) != "time") {
         return;
       }
@@ -109,32 +76,23 @@
   void Camera_ir_write_plugin::write_aos_content(int ctx, int aosctx, const char* fieldPath, const char* timeBasePath) {
       
       al_status_t al_status;
-      
-      if (idsTimeMode == -1) 
-          readIdsTimeMode();
-      
-      LOG_DEBUG << "idsTimeMode=" << idsTimeMode; 
-      
-      if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT) {
-          LOG_DEBUG << "idsTimeMode is IDS_TIME_MODE_INDEPENDENT, returning"; 
-          return;
-      }
   
       LOG_DEBUG << "plugin called";
       LOG_DEBUG << "shot: " << shot;
       LOG_DEBUG << "fieldPath: " << fieldPath;
       LOG_DEBUG << "timeBasePath: " << timeBasePath;
       LOG_DEBUG << "occurrence: " << occurrence;
-      
       if (camera_data.image_count == 0)  //compressed chunks not yet fetched from the server
         get_camera_data(shot, occurrence); 
-      
-      
+     
+      idsTimeMode = 1; //setting homogeneous time to 1
       if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
         timeBasePath = "/time";
       else
         timeBasePath = "frame/time";
-      
+
+      LOG_DEBUG << "idsTimeMode=" << idsTimeMode; 
+      //LOG_DEBUG << "timeBasePath=" << timeBasePath;    
       bool pluginIsContextOwner = false;
       
       int arraySize = camera_data.image_count;
@@ -199,8 +157,6 @@
   
   void Camera_ir_write_plugin::write_time_vector(int ctx, const char* fieldPath, const char* timeBasePath) {
 
-      if (idsTimeMode == -1)
-          readIdsTimeMode();
       
       LOG_DEBUG << "idsTimeMode=" << idsTimeMode; 
       
@@ -218,7 +174,7 @@
       if (camera_data.image_count == 0) { //compressed chunks not yet fetched from the server
         get_camera_data(shot, occurrence); 
       }
-      
+      idsTimeMode = 1; 
       if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
         timeBasePath = "/time";
       else

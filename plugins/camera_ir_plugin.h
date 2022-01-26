@@ -87,7 +87,7 @@ class Camera_ir_plugin: public access_layer_plugin
   
   private:
     int pulseCtx;
-    int ctx;
+    //int ctx;
     int globalContext;
     int aosContext;
     int shot;
@@ -148,10 +148,11 @@ class Camera_ir_plugin: public access_layer_plugin
     int fileSize;
     std::map <int, int> chunk_sizes;  //key = chunk index, value = chunk size
     std::map <int, uint8_t*> chunk_buffers; //key = chunk index, value = chunk buffer
-    
+  
+    virtual void setParameter(const char* parameter_name, int datatype, int dim, int *size, void *data);  
     virtual void begin_global_action(int pulseCtx, const char* dataobjectname, int mode, int opCtx);
     virtual void begin_slice_action(int pulseCtx, const char* dataobjectname, int mode, double time, int interp, int opCtx);
-    virtual void begin_arraystruct_action(int ctx, int aosctx, const char* fieldPath, const char* timeBasePath, int arraySize);
+    virtual void begin_arraystruct_action(int ctx, int *aosctx, const char* fieldPath, const char* timeBasePath, int *arraySize);
     virtual int read_data(int ctx, const char* fieldPath, const char* timeBasePath, void **data, int datatype, int dim, int *size);
     virtual void write_data(int ctx, const char* fieldPath, const char* timeBasePath, void *data, int datatype, int dim, int *size);
     //virtual al_status_t close_pulse(int pulseCtx, int mode);
