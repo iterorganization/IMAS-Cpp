@@ -944,8 +944,7 @@ See IDSDef2Classes.xsl  -->
 			</xsl:choose>
 			timeBasePath = "";
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
-			if(arraySize > 0)
-			{
+
 				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 				{	
@@ -974,7 +973,7 @@ See IDSDef2Classes.xsl  -->
 					ual_end_action(ctx);
 					return al_status.code; 
 				}
-			}
+			
 		</xsl:when>
  		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">
 		
@@ -992,8 +991,7 @@ See IDSDef2Classes.xsl  -->
 			</xsl:choose>
 			timeBasePath = "";
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
-			if(arraySize > 0)
-			{	
+
 				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 				{	
@@ -1022,7 +1020,6 @@ See IDSDef2Classes.xsl  -->
 					ual_end_action(ctx);
 					return al_status.code; 
 				}
- 			}
 		</xsl:when>
 		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
 
@@ -1046,7 +1043,7 @@ See IDSDef2Classes.xsl  -->
   				</xsl:otherwise>
 			</xsl:choose>
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
-			if(arraySize > 0 &amp;&amp; idsTimeMode != IDS_TIME_MODE_INDEPENDENT)
+			if(idsTimeMode != IDS_TIME_MODE_INDEPENDENT)
 			{	
 				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
