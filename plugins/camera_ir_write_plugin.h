@@ -48,7 +48,7 @@ class Camera_ir_write_plugin: public access_layer_plugin
     double time;
     int interp;
     
-    int *chunks_buffer; //used for the PUT operation, contains all chunks data
+    double *chunks_buffer; //used for the PUT operation, contains all chunks data
     
     struct Camera_data camera_data;
     

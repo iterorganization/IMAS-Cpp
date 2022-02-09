@@ -4,7 +4,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "simple_logger.h"
-
+//#include <boost/log/trivial.hpp>
 #include <iostream>
 #include <iomanip>
 #include <ctime>
@@ -43,7 +43,7 @@ void IMAS3121_plugin::begin_global_action(int pulseCtx, const char* dataobjectna
 }
 
 void IMAS3121_plugin::begin_slice_action(int pulseCtx, const char* dataobjectname, int mode, double time, int interp, int opCtx) {
-    LOG_DEBUG;
+    //LOG_DEBUG;
     this->time = time;
     this->interp = interp;
     begin_global_action(pulseCtx, dataobjectname, mode, opCtx);
@@ -62,6 +62,7 @@ int IMAS3121_plugin::read_data(int ctx, const char* fieldPath, const char* timeB
 
 void IMAS3121_plugin::write_data(int ctx, const char* fieldPath, const char* timeBasePath, void *data, int datatype, int dim, int *size) {
     LOG_DEBUG << "Patching creation_date... ";
+    //BOOST_LOG_TRIVIAL(debug) << "testing...";
     auto t = std::time(nullptr);
     auto tm = *std::localtime(&t);
     std::ostringstream oss;

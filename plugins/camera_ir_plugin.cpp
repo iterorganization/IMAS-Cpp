@@ -8,7 +8,7 @@
   
   Camera_ir_plugin::Camera_ir_plugin()
   :pulseCtx(-1), globalContext(-1), aosContext(-1), shot(-1), dataobjectname(), idsTimeMode(-1), occurrence(-1), mode(-1), time(-1), interp(-1), 
-  cam(0), chunksCount(0), fileSize(0), chunk_sizes(), chunk_buffers()
+  cam(0), chunksCount(0), fileSize(0), chunk_size(0), chunk_buffers()
   {
   }
   
@@ -136,15 +136,20 @@
 		LOG_DEBUG << "data is empty for chunk=" << chunk;
 		return 0;
 	  }
+
 	  LOG_DEBUG << "current size of chunk_buffers=" << (int) chunk_buffers.size();
-	  int *data_int = (int*) data;
-	  uint8_t* chunk_buffer = (uint8_t*) malloc(sizeof(uint8_t) *  size[1]);
+	  double *data_double = (double*) data;
+	  int n = size[1] * sizeof(double);
+	    
+	  uint8_t* chunk_buffer = (uint8_t*) malloc(n);
 	  
-	  for (int i = 0; i < size[1]; i++)
-		chunk_buffer[i] = (uint8_t) data_int[i];
+	  LOG_DEBUG << "chunk_buffer size=" << n;
+
+	  memcpy(chunk_buffer, data_double, n);
 	  
 	  this->chunk_buffers[chunk] = chunk_buffer;
-	  this->chunk_sizes[chunk] = size[1];
+	  this->chunk_size = n;
+          
 	  return 0;
   }
   
@@ -166,7 +171,7 @@
 		  
 		  void* compressedData = NULL;
 		  int retSize[MAXDIM];
-		  std::string fieldPath = "image_raw";
+		  std::string fieldPath = "surface_temperature";
 		  std::string timeBasePath = "";
 		  LOG_DEBUG << "checking index =" << actx->getIndex();
 		  //reading the chunk from the pulse file
@@ -176,8 +181,10 @@
 			  return status;
 		  }
 		  LOG_DEBUG << "readData for chunk:" << chunk << ", OK";
-
-		  LOG_DEBUG << "chunk=" << chunk << " has size=" << retSize[1];
+		  
+		  LOG_DEBUG << "retSize[0]=" << retSize[0];
+		  LOG_DEBUG << "retSize[1]=" << retSize[1];
+		  LOG_DEBUG << "chunk=" << chunk << " has size(bytes)=" << retSize[1] * sizeof(double);
 		  
 		  //storing the chunk in memory
 		  status = putChunkInRAM(chunk, compressedData, retSize);
@@ -208,7 +215,7 @@
 		return 0; //No data
 	  }
 	  
-	  if (std::string(fieldPath) == "image_raw") {
+	  if (std::string(fieldPath) == "surface_temperature") {
 		  LOG_DEBUG << "shot:" << shot;
 		  LOG_DEBUG << "fieldPath:" << fieldPath;
 		  LOG_DEBUG << "timeBasePath:" << timeBasePath;
@@ -254,7 +261,7 @@
   
   int Camera_ir_plugin::readData(int ctx, std::string fieldPath, std::string timeBasePath, void** ptrData, int *retSize)
   {
-	  al_status_t al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, &retSize[0]);
+	  al_status_t al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, &retSize[0]);
 	  return al_status.code;
   }
 
@@ -293,19 +300,15 @@
 	  
 	  fileSize = 0;
 	  
-	  check(0);  //get the first chunk
-	  if (chunksCount > 1) {
+	  if (chunksCount) {
 		  check(chunksCount - 1); //get the last chunk;
-		  LOG_DEBUG << "this->chunk_sizes[0]=" << this->chunk_sizes[0];
-		  LOG_DEBUG << "this->chunk_sizes[chunksCount - 1]=" << this->chunk_sizes[chunksCount - 1];
-		  fileSize = (chunksCount - 1)*this->chunk_sizes[0] + this->chunk_sizes[chunksCount - 1];
+		  memcpy(&fileSize, this->chunk_buffers[chunksCount - 1] + this->chunk_size - sizeof(double), sizeof(fileSize));
 	  }
 	  else {
-		  fileSize = this->chunk_sizes[0];
+		  fileSize = 0;
 	  }
 	  LOG_DEBUG << "fileSize=" << fileSize;
 	  LOG_DEBUG << "chunksCount=" << chunksCount;
-	  LOG_DEBUG << "chunkSize=" << chunk_sizes[0];
   }
   
   /*This function uncompress the image data stored in the buffer object*/ 
@@ -376,21 +379,21 @@
 	  get_image_size(this->cam, &w, &h);
 	  std::vector<unsigned short> pixels;
 	  pixels.resize(w*h);
-	  int calibration = 0; //TODO
+	  int calibration = 0;
 	  LOG_DEBUG << "calling load_image at pos=" << pos << " with camera handler=" << this->cam;
 	  int status = load_image(this->cam, pos, calibration, pixels.data());  //Getting the image
 	  if (status < 0) {
 		  LOG_ERROR << "error loading image for pos:" << pos;
 		  return status;
 	  }
-	  *data = (int*) malloc(sizeof(int)*w*h);
+	  *data = (double*) malloc(sizeof(double)*w*h);
 	  
 	  //Lets's transpose the buffer
 	  int index = 0;
-	  int* v = (int*) *data;
+	  double* v = (double*) *data;
 	  for (int row = 0; row < h; row++) {
 		  for (int col = 0; col < w; col++) {
-			  v[h*col + row] = (int) pixels[index];
+			  v[h*col + row] = (double) pixels[index];
 			  index++;
 		  }
 	  }
@@ -427,7 +430,7 @@
 	  *fileSize_ = (int64_t) plugin->fileSize;
 	  
 	  if (*chunkCount_ > 0) {
-		  *chunkSize_ = (int64_t) plugin->chunk_sizes[0]; //size of a chunk in bytes
+		  *chunkSize_ = (int64_t) plugin->chunk_size; //size of a chunk in bytes
 		  LOG_DEBUG << "fileInfos_from_cam, getting chunkCount =" << (int) *chunkCount_;
 		  LOG_DEBUG << "fileInfos_from_cam, getting chunkSize =" << (int) *chunkSize_; 
 		  LOG_DEBUG << "fileInfos_from_cam, getting fileSize =" << (int) *fileSize_;
@@ -446,12 +449,12 @@
 	  }
 	  LOG_DEBUG << "reading buffer for chunk:" << (int) chunk;
 	  
-	  int chunk_size = plugin->chunk_sizes[chunk];
+	  int chunk_size = plugin->chunk_size;
 	  LOG_DEBUG << "chunk_size:" << chunk_size;
-	  LOG_DEBUG << "camera->chunk_buffers size:" << (int) plugin->chunk_buffers.size();
+	  //LOG_DEBUG << "camera->chunk_buffers size:" << (int) plugin->chunk_buffers.size();
 	  
 	  memcpy(buf, (uint8_t *) plugin->chunk_buffers[chunk], chunk_size);
-	  LOG_DEBUG << "chunk_buffers.size():", (int) plugin->chunk_buffers.size();
+	  LOG_DEBUG << "chunk_buffers.size():" << (int) plugin->chunk_buffers.size();
 	  LOG_DEBUG << "returning chunk:" << (int) chunk;
 	  return chunk_size;
   }

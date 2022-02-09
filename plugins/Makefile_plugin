@@ -1,6 +1,6 @@
 #Adding DEBUG=yes to make command to print additional debug info
 DBGFLAGS= -g
-DBGFLAGS+= -DDEBUG
+DBGFLAGS+= -DDEBUG -DBOOST_ALL_DYN_LINK
 
 ifeq "$(strip $(CC))" "icc"
 CXX=icpc
@@ -15,8 +15,11 @@ endif
 
 INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src -I/work/imas/thermavip_4_imas/librir_2.1.0/librir/include/video_io -I/work/imas/thermavip_4_imas/librir_2.1.0/librir/include/west -I/work/imas/thermavip_4_imas/include
 
-LIBS= -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib
-LIBS+= -limas-cpp -limas `pkg-config blitz --libs` -L/work/imas/thermavip_4_imas/librir_2.1.0/librir/libs/ -lavcodec -lavfilter -lavutil -lavdevice -lavformat -lswresample -lswscale -lwest
+#LIBS= -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib
+#LIBS+= -limas-cpp -limas `pkg-config blitz --libs` -L/work/imas/thermavip_4_imas/librir_2.1.0/librir/libs/ -lavcodec -lavfilter -lavutil -lavdevice -lavformat -lswresample -lswscale -lwest
+
+LIBS= -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib  -L$(BOOST_LIB) -lboost_log -lboost_thread
+LIBS+= -limas-cpp -limas `pkg-config blitz --libs` -L/work/imas/thermavip_4_imas/librir_2.1.0/librir/libs/ -lvideo_io -lwest
 
 BINOUT=camera_ir_plugin.so
 

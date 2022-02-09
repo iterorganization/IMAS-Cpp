@@ -146,7 +146,8 @@ class Camera_ir_plugin: public access_layer_plugin
     
     int chunksCount;
     int fileSize;
-    std::map <int, int> chunk_sizes;  //key = chunk index, value = chunk size
+    //std::map <int, int> chunk_sizes;  //key = chunk index, value = chunk size
+    int chunk_size;
     std::map <int, uint8_t*> chunk_buffers; //key = chunk index, value = chunk buffer
   
     virtual void setParameter(const char* parameter_name, int datatype, int dim, int *size, void *data);  

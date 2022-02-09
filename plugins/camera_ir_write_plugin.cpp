@@ -82,7 +82,7 @@
       LOG_DEBUG << "fieldPath: " << fieldPath;
       LOG_DEBUG << "timeBasePath: " << timeBasePath;
       LOG_DEBUG << "occurrence: " << occurrence;
-      if (camera_data.image_count == 0)  //compressed chunks not yet fetched from the server
+      //if (camera_data.image_count == 0)  //compressed chunks not yet fetched from the server
         get_camera_data(shot, occurrence); 
      
       idsTimeMode = 1; //setting homogeneous time to 1
@@ -94,8 +94,9 @@
       LOG_DEBUG << "idsTimeMode=" << idsTimeMode; 
       //LOG_DEBUG << "timeBasePath=" << timeBasePath;    
       bool pluginIsContextOwner = false;
-      
+    
       int arraySize = camera_data.image_count;
+         
       LOG_DEBUG << "arraySize=" << arraySize;
       int aosCtx = -1;
       
@@ -113,20 +114,35 @@
           }
       }
       LOG_DEBUG << "aosCtx=" << aosCtx;
-      int increment = 0;
+    
+      int full_double_count_per_chunk = (int) camera_data.chunk_size/sizeof(double);
+      
+      int shapes[2] = { 1, full_double_count_per_chunk };
+         
+      chunks_buffer = new double[shapes[1]];
+
       for (int i = 0; i < arraySize; i++) {
-          int current_chunk_size = camera_data.chunk_size;
+          
+          int to_copy = camera_data.chunk_size;
+          
           if (i == arraySize - 1) {
-            current_chunk_size = camera_data.remaining_size;
+              to_copy = camera_data.buffer_size % camera_data.chunk_size;
           }
-          int shapes[2] = { 1, current_chunk_size };
-          al_status = ual_write_data(aosCtx, "image_raw", "", chunks_buffer+increment, INTEGER_DATA, 2, shapes);
+              
+          memcpy(chunks_buffer, camera_data.buffer + i*camera_data.chunk_size, to_copy);
+          
+          if (i == arraySize - 1) {
+              memcpy(chunks_buffer + full_double_count_per_chunk - 1, &camera_data.buffer_size, sizeof(camera_data.buffer_size));
+          }
+
+          al_status = ual_write_data(aosCtx, "surface_temperature", "", chunks_buffer, DOUBLE_DATA, 2, shapes);
           if (al_status.code < 0)  
           {	
               LOG_DEBUG << "an error has occurred in write_aos_content(), calling ual_write_data()";
               ual_end_action(aosCtx); //plugin is owner of the AOS context
               throw UALPluginException("Camera_ir_plugin: error calling ual_write_data", LOG);
           }
+          
           int64_t time_in_ns;
           int s = get_image_time(camera_data.camera_handler, i, &time_in_ns);
           if (s == 0) {
@@ -139,7 +155,6 @@
                   throw UALPluginException("Camera_ir_plugin: error calling ual_iterate_over_arraystruct", LOG);
               }
           }
-          increment += current_chunk_size;
           al_status = ual_iterate_over_arraystruct(aosCtx, 1);
           if (al_status.code < 0)  
           {	
@@ -149,7 +164,7 @@
           }
       }
       ual_end_action(aosCtx);
-      free(chunks_buffer);
+      delete[](chunks_buffer);
       if (camera_data.camera_handler != -1)
         close_camera(camera_data.camera_handler);
       LOG_DEBUG << "returning from write_aos_content";
@@ -171,9 +186,9 @@
       LOG_DEBUG << "timeBasePath: " << timeBasePath;
       LOG_DEBUG << "occurrence: " << occurrence;
       
-      if (camera_data.image_count == 0) { //compressed chunks not yet fetched from the server
+      //if (camera_data.image_count == 0) { //compressed chunks not yet fetched from the server
         get_camera_data(shot, occurrence); 
-      }
+      //}
       idsTimeMode = 1; 
       if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
         timeBasePath = "/time";
@@ -192,18 +207,18 @@
       int cameras_count = get_camera_count(shot);
       LOG_DEBUG << "shot=" << shot;
       LOG_DEBUG << "cameras_count=" << cameras_count;
-      std::vector<std::string> cameras;
-      
+      //std::vector<std::string> cameras;
+      char id[200]; 
       for (int i = 0; i < cameras_count; ++i) {
           if (camera_number != i)
             continue;
-          char id[200];
+          //char id[200];
           char name[200];
           int exists;
           LOG_DEBUG << "called";
           int cr = get_camera_infos(shot, i, id, name, &exists);
           if (cr == 0) {
-              cameras.push_back(id);
+              //cameras.push_back(id);
               LOG_DEBUG << "calling open_camera for id=" << id;
               camera_data.camera_handler = open_camera(shot, id);
               LOG_DEBUG << "end of calling open_camera for id=" << id;
@@ -218,7 +233,9 @@
       //for (int i = 0; i < (int) cameras.size(); i++) {
       LOG_DEBUG << "getting buffer for camera: " << camera_number;
       char s[256];
-      strcpy(s, cameras[camera_number].c_str());
+      LOG_DEBUG << "camera=" << id;
+      //strcpy(s, cameras[camera_number].c_str());
+      strcpy(s, id);
       char* token = strtok(s,"/");
       token = strtok(NULL, "/");
       char acquisition_unit[10];
@@ -252,34 +269,30 @@
           int64_t time;
           get_image_time(camera_data.camera_handler, j, &time);
           times.push_back(time*1.E-9); //setting time in seconds
-          //if (j < 5)
-          //LOG_DEBUG << "time[" << j << "]=" << times[j];
-          //if (j == camera_data.image_count -1)
-          //LOG_DEBUG << "last time written[" << camera_data.image_count -1 << "]=" << times[camera_data.image_count -1];
       }
       
       LOG_DEBUG << "setting times";
       camera_data.times = times;
-      camera_data.chunk_size =  (int) floor( (float)camera_data.buffer_size/(float)camera_data.image_count );
-      camera_data.remaining_size = camera_data.buffer_size % camera_data.image_count;
+      
+      camera_data.chunk_size =  (int) camera_data.buffer_size/camera_data.image_count;
+      
+      int remaining_size = camera_data.buffer_size % camera_data.image_count;
+      
+      if (remaining_size != 0)
+         camera_data.chunk_size += 1;
+         
+      if (camera_data.chunk_size % sizeof(double))
+          camera_data.chunk_size = (camera_data.chunk_size/sizeof(double))*sizeof(double) + sizeof(double);
+          
+      if (camera_data.buffer_size % camera_data.chunk_size < sizeof(size_t) )
+         camera_data.chunk_size += sizeof(double);
+      
       LOG_DEBUG << "buffer_size =" << camera_data.buffer_size;
       
-      if (camera_data.remaining_size != 0)
-        camera_data.image_count++;
-        
-      //close_camera(camera_data.camera_handler);
       LOG_DEBUG << "image_count=" << camera_data.image_count;
       LOG_DEBUG << "chunk_size=" << camera_data.chunk_size;
       LOG_DEBUG << "remaning_size=" << camera_data.remaining_size;
       
-      
-      chunks_buffer = new int[camera_data.buffer_size];
-      //Converting unint_8 buffer to int buffer //TODO
-      //int *buffer = new int[camera_data->buffer_size/4 + 1];
-      for (int i = 0; i < camera_data.buffer_size; i++) {
-        chunks_buffer[i] = (camera_data.buffer)[i];
-      }
-      //memcpy(buffer, camera_data->buffer, camera_data->buffer_size);
   }
   
   int Camera_ir_write_plugin::read_data(int ctx, const char* fieldPath, const char* timeBasePath, void **data, int datatype, int dim, int *size)
