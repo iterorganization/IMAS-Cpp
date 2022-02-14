@@ -1,0 +1,45 @@
+#Adding DEBUG=yes to make command to print additional debug info
+DBGFLAGS= -g
+DBGFLAGS+= -DDEBUG -DBOOST_ALL_DYN_LINK
+#DBGFLAGS+= -DDEBUG
+
+ifeq "$(strip $(CC))" "icc"
+CXX=icpc
+CXXFLAGS= -O0 -fPIC -shared-intel ${DBGFLAGS}
+LDFLAGS=
+else
+CXX=g++
+CXXFLAGS= -std=c++11 -pthread -O0 -fPIC ${DBGFLAGS}
+LDFLAGS= -shared -pthread
+#LDFLAGS= -shared -pthread -Wl,--no-undefined
+endif
+
+INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel
+LIBS= -L$(UAL_BUILD)/lowlevel -L$(BOOST_LIB)
+LIBS+= -limas `pkg-config blitz --libs` -lboost_log -lboost_thread
+#LIBS+= -limas `pkg-config blitz --libs`
+BINOUT=imas3121_plugin.so
+
+GENSOURCES = imas3121_plugin.cpp simple_logger.cpp
+
+.PHONY: clean clean-src
+all: $(BINOUT)
+sources: $(GENSOURCES)
+sources_install:
+sources_uninstall:
+install:
+uninstall:
+clean:
+	$(RM) *.log *.o $(BINOUT)
+clean-src: clean
+	$(RM) $(GENSOURCES)
+
+
+#  BUILD
+$(BINOUT): imas3121_plugin.o simple_logger.o
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBDIR) $(LIBS)
+        
+.SUFFIXES:.cpp
+.cpp.o:
+	$(CXX) $(INCDIR) $(CXXFLAGS) -c $< -o $@
+
