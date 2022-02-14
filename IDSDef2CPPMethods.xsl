@@ -37,7 +37,7 @@ IdsNs::IDS::IDS()
 	treeName = "ids";
 	connected = false;
 	shot = refShot = run = refRun = -1;
-	backend = MDSPLUS_BACKEND;
+	backend = defaultBackend();
 }
 
 IdsNs::IDS::IDS(int shot, int run, int refShot, int refRun)
@@ -49,7 +49,7 @@ IdsNs::IDS::IDS(int shot, int run, int refShot, int refRun)
 	this-&gt;refShot = refShot;
 	this-&gt;refRun = refRun;
 	pulseCtx = -1;
-	backend = MDSPLUS_BACKEND;
+	backend = defaultBackend();
 }
 IdsNs::IDS::IDS(int pulseCtx)
 {
@@ -61,7 +61,20 @@ IdsNs::IDS::IDS(int pulseCtx)
 //this-&gt;refRun = ual_get_run(idx);
 	this->pulseCtx = pulseCtx;
 	this->setPulseCtx(pulseCtx);
-	backend = MDSPLUS_BACKEND;
+	backend = defaultBackend();
+}
+
+BACKEND IdsNs::IDS::defaultBackend() 
+{
+   BACKEND backend = MDSPLUS_BACKEND;
+   char* backend_value;
+   backend_value = getenv("IMAS_AL_BACKEND");
+   if (backend_value != NULL) {
+      int backendID = atoi(backend_value);
+      if (backendID == BACKEND::HDF5_BACKEND)
+           backend = HDF5_BACKEND;
+   }
+   return backend;
 }
 
 // Will be deprecated in the future!

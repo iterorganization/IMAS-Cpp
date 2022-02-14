@@ -54,6 +54,7 @@ class LIBRARY_API IDS
     string treeName;
     bool connected;
     BACKEND backend;
+    BACKEND defaultBackend();
 
     public:
     IDS();
