@@ -1,0 +1,43 @@
+#Adding DEBUG=yes to make command to print additional debug info
+DBGFLAGS= -g
+DBGFLAGS+= -DDEBUG
+
+ifeq "$(strip $(CC))" "icc"
+CXX=icpc
+CXXFLAGS= -O0 -fPIC -shared-intel ${DBGFLAGS}
+LDFLAGS=
+else
+CXX=g++
+CXXFLAGS= -std=c++11 -pthread -O0 -fPIC ${DBGFLAGS}
+#LDFLAGS= -shared -pthread -Wl,--no-undefined
+LDFLAGS= -shared -pthread
+endif
+
+INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel
+LIBS= -L$(UAL_BUILD)/lowlevel
+LIBS+= -limas `pkg-config blitz --libs`
+BINOUT=partial_get_plugin.so
+
+GENSOURCES = partial_get_plugin.cpp simple_logger.cpp
+
+.PHONY: clean clean-src
+all: $(BINOUT)
+sources: $(GENSOURCES)
+sources_install:
+sources_uninstall:
+install:
+uninstall:
+clean:
+	$(RM) *.log *.o $(BINOUT)
+clean-src: clean
+	$(RM) $(GENSOURCES)
+
+
+#  BUILD
+$(BINOUT): partial_get_plugin.o simple_logger.o
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBDIR) $(LIBS)
+        
+.SUFFIXES:.cpp
+.cpp.o:
+	$(CXX) $(INCDIR) $(CXXFLAGS) -c $< -o $@
+
