@@ -86,6 +86,15 @@ al_status_t IdsNs::Ids::okStatus()
 
 void IdsNs::Ids::warningWritingObsolescentNode(const std::string &idsName, const std::string &fieldPath, const std::string &lifeCycleStatus)
 {
+	char* imas_obsolescent_nodes_warning_var = getenv("IMAS_OBSOLESCENT_NODES_WARNING");
+	bool ignore_obsolescent_node_warning = false;
+	if (imas_obsolescent_nodes_warning_var != NULL) {
+	   int v = atoi(imas_obsolescent_nodes_warning_var);
+	   if (v == 0)
+	      ignore_obsolescent_node_warning = true;
+	}
+	if (ignore_obsolescent_node_warning)
+	   return;
     if (lifeCycleStatus.compare(IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE) == 0)
         printf("Warning : while putting IDS %s, the written IDS has non-empty obsolescent node %s. Please consider updating the code to avoid using obsolescent nodes.\n", idsName.c_str(), fieldPath.c_str());
 }
