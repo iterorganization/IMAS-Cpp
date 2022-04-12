@@ -13,6 +13,7 @@
 #  include <complex.h>
 #endif
 
+
 #undef I
 
 #ifdef _WIN32
@@ -25,6 +26,10 @@
 #define CLOSEST_SAMPLE 1
 #define PREVIOUS_SAMPLE 2
 
+#define BZ_THREADSAFE
+#include <blitz/array.h>
+#include <blitz/memblock.h>
+#include <stdio.h>
 
 typedef std::complex < double > std_complex_t;
 
@@ -38,6 +43,53 @@ typedef std::complex < double > std_complex_t;
  static const int   IDS_TIME_MODE_HETEROGENEOUS = 0;
  static const int   IDS_TIME_MODE_HOMOGENEOUS   = 1;
  static const int   IDS_TIME_MODE_INDEPENDENT   = 2;
+
+
+// Overloading blitz::Array class to get knowledge about memory policy 
+// it is essential to have this knowledge to decide 
+// if data should be freed manually or automatically by blitz 
+template <typename P_numtype, int N_rank>
+class IMASArray : public blitz::Array<P_numtype, N_rank> 
+{
+    typedef IMASArray<P_numtype, N_rank> T_array;
+
+    using  blitz::Array<P_numtype, N_rank>::Array;
+
+
+    private:
+        blitz::preexistingMemoryPolicy deletionPolicy = blitz::deleteDataWhenDone;
+
+    public:
+        blitz::preexistingMemoryPolicy getDeletionPolicy(){
+            return this->deletionPolicy;
+        }
+
+        void setDeletionPolicy(blitz::preexistingMemoryPolicy deletionPolicy){
+            this->deletionPolicy = deletionPolicy;
+        }
+
+
+   
+
+
+    // Overloading assignment operator to set a proper memory policy
+    // (original operator copies everything including policy flag,
+    // that may be inproper for given array
+    T_array & operator=(T_array const &x )
+    {
+        T_array& returnArray =  (T_array &)blitz::Array<P_numtype, N_rank>::operator=(x);
+
+        returnArray.setDeletionPolicy(blitz::deleteDataWhenDone);
+        return returnArray;
+    }
+
+    // Overloading assignment operator to be found  
+    blitz::ListInitializationSwitch<blitz::Array<P_numtype, N_rank>> operator=(P_numtype x){
+
+     return blitz::Array<P_numtype, N_rank> ::operator=(x);
+    }
+
+};
 
 
 //Low level function prototypes

@@ -82,7 +82,7 @@ class LIBRARY_API IDS
     int createEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
     int close();
     void close(char *name, int shot, int run) {close();}
-    int getTime(char *path, Array&lt;double,1&gt; &amp;time);
+    int getTime(char *path, IMASArray&lt;double,1&gt; &amp;time);
     ~IDS();
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const IDS <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
 
@@ -213,52 +213,52 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
       std_complex_t <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='flt_1d_type' or @data_type='FLT_1D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='int_1d_type' or @data_type='INT_1D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>int,1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>int,1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='str_1d_type' or @data_type='STR_1D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std::string,1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std::string,1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='FLT_2D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,2<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,2<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='INT_2D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>int,2<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>int,2<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='FLT_3D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,3<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,3<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='INT_3D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>int,3<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>int,3<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
    <xsl:when test="@data_type='FLT_4D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,4<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,4<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
    <xsl:when test="@data_type='FLT_5D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,5<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,5<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='FLT_6D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,6<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>double,6<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='cplx_1d_type' or @data_type='CPX_1D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 1<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='CPX_2D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 2<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 2<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='CPX_3D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 3<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 3<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='CPX_4D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 4<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 4<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='CPX_5D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 5<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 5<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
     <xsl:when test="@data_type='CPX_6D'">
-      Array<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 6<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
+      IMASArray<xsl:text disable-output-escaping = "yes">&lt;</xsl:text>std_complex_t, 6<xsl:text disable-output-escaping = "yes">&gt;</xsl:text> <xsl:value-of select = "@name"/>;
     </xsl:when>
 
     <!-- structures and arrays of structures are implemented as classes,
@@ -302,7 +302,7 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 
 //    int deleteAll(int ctx);
 	      };
-	      Array&lt;class <xsl:value-of select = "@name"/>,1&gt; <xsl:value-of select = "@name"/>;
+	      IMASArray&lt;class <xsl:value-of select = "@name"/>,1&gt; <xsl:value-of select = "@name"/>;
     </xsl:when>
 	<xsl:otherwise>
     <xsl:message terminate="yes">
