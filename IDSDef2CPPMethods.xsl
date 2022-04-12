@@ -466,12 +466,9 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     // adding slice to an empty IDS
     if( storedTimeMode == IDS_TIME_MODE_UNKNOWN)
     {
-        printf("Warning: Slice is being added to an empty IDS '<xsl:value-of select="@name"/>'. PUT is called to save time independent data.\n");
         return this->put(iOccurrence);
     }
-
-    // time mode conflict
-    if( storedTimeMode != idsTimeMode)
+    else if( storedTimeMode != idsTimeMode)    // time mode conflict
     {
        printf("ERROR! IDS '<xsl:value-of select="@name"/>': time dependency mode ('%s') differs from value stored in IDS ('%s')!\n", IdsNs::Ids::timeModeToString(idsTimeMode ), IdsNs::Ids::timeModeToString(storedTimeMode));
        return -1;
