@@ -25,7 +25,7 @@ class Ids
         virtual ~Ids() = default;
 
         // serialization
-        int default_serializer_protocol() const { return ASCII_SERIALIZER_PROTOCOL; };
+        static int default_serializer_protocol() { return ASCII_SERIALIZER_PROTOCOL; };
         std::string serialize(int protocol=ASCII_SERIALIZER_PROTOCOL, int idx=0);
 
         // virtual functions defined in subclasses
