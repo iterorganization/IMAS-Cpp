@@ -158,14 +158,9 @@ extern "C" {
 
 
 <!--============= Define time-dependent IDSs =============-->
-class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase:Ids
+class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase : public Ids
 {
-    private:
-      int pulseCtx;
-      bool connected;
-
-      public:
-      void setPulseCtx(int pulseCtx){this->pulseCtx = pulseCtx; connected = true;}
+    public:
       <xsl:apply-templates select = "field" mode = "DECLARE"/>
       <xsl:value-of select="@name"/>_IDSBase();
     int get();

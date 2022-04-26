@@ -278,7 +278,6 @@ using namespace IdsNs;
 
 IdsNs::<xsl:value-of select="@name"/>_IDSBase::<xsl:value-of select="@name"/>_IDSBase()
 {
-connected = false;
 <xsl:apply-templates select="field" mode="CONSTRUCTOR"/>
 }
 

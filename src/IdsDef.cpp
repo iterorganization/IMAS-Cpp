@@ -5,11 +5,83 @@
 #include "UALDef.h"
 
 #include <complex.h>
+#include <fstream>
 
 using namespace blitz;
 using namespace IdsNs;
 
 const std::string IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE = "obsolescent";
+
+namespace {
+std::string generate_tmp_file(std::string folder)
+{
+    // TODO generate a random file name and test for existence
+    return folder + "imas_serialize_random123";
+}
+}
+
+std::string IdsNs::Ids::serialize(int protocol, int iOccurrance)
+{
+    if( protocol == ASCII_SERIALIZER_PROTOCOL )
+    {
+        al_status_t al_status;
+        int _pulseCtx;
+        // overwrite pulse context, so we can use the logic in put for putting to the ascii backend
+        al_status = ual_begin_pulse_action(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", &_pulseCtx);
+        // TODO: check if al_status.code is ok
+
+        // specify the -fullpath option to the ASCII backend
+        std::string tmpfile = generate_tmp_file("/dev/shm/"); // create a random non-existent file in the /dev/shm/ directory
+        std::string options = "-fullpath " + tmpfile;
+        al_status = ual_open_pulse(_pulseCtx, CREATE_PULSE, options.c_str());
+        // TODO: check if al_status.code is ok
+
+        // store state and overwrite so we use the ASCII backend in this->put
+        auto _connected_stored = this->connected;
+        auto _pulseCtx_stored = this->pulseCtx;
+        this->pulseCtx = _pulseCtx;
+        this->connected = true;
+        if( this->put(iOccurrance) < 0 ) {
+            // TODO: report error
+        }
+        // restore state
+        this->pulseCtx = _pulseCtx_stored;
+        this->connected = _connected_stored;
+
+        // cleanup
+        al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
+        // TODO: check if al_status.code is ok
+        al_status = ual_end_action(_pulseCtx);
+        // TODO: check if al_status.code is ok
+
+        // read contents of tmpfile
+        std::ifstream ifstream(tmpfile, std::ios::in | std::ios::binary);
+        if(!ifstream)
+        {
+            printf("SERIALIZE: Error while opening ASCII serialized file");
+            return "";
+        }
+
+        std::string data;
+        ifstream.seekg(0, std::ios::end);
+        data.resize(ifstream.tellg());  // reserve memory for reading in the full file
+        ifstream.seekg(0, std::ios::beg);
+        ifstream.read(&data[0], data.size());
+        ifstream.close();
+        if(ifstream.bad() || ifstream.fail())
+        {
+            printf("SERIALIZE: I/O error while reading");
+        }
+        // TODO erase file
+        return data;
+    }
+    else
+    {
+        printf("ERROR: unrecognized protocol");
+   		return "";
+    }
+}
+
 
 al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode )
 {

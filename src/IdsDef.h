@@ -20,8 +20,32 @@ struct DataDictionary {
 
 class Ids
 {
-    protected:
+    public:
+        Ids() { connected = false; }
+        virtual ~Ids() = default;
 
+        // serialization
+        int default_serializer_protocol() const { return ASCII_SERIALIZER_PROTOCOL; };
+        std::string serialize(int protocol=ASCII_SERIALIZER_PROTOCOL, int idx=0);
+
+        // virtual functions defined in subclasses
+        virtual int get() = 0;
+        virtual int get(int idx) = 0;
+        virtual int put() = 0;
+        virtual int put(int idx) = 0;
+        virtual int getSlice(double inTime, char interpolMode) = 0;
+        virtual int getSlice(int idx, double inTime, char interpolMode) = 0;
+        virtual int putSlice() = 0;
+        virtual int putSlice(int idx) = 0;
+        virtual int deleteAll() = 0;
+        virtual int deleteAll(int idx) = 0;
+        virtual void clear() = 0;
+        
+        void setPulseCtx(int pulseCtx){this->pulseCtx = pulseCtx; connected = true;}
+
+    protected:
+        int pulseCtx;
+        bool connected;
 
         static al_status_t readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode );
 
