@@ -464,6 +464,8 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if(array.size() < 1)
 			return IdsNs::Ids::okStatus();
+		else
+		    IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
         al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, arrayOfSizes);
         return al_status;

@@ -1,5 +1,5 @@
 Name: al-cpp
 Version: __DD_GIT_DESCRIBE__-__UAL_GIT_DESCRIBE__
 Description: IMAS Access Layer C++ Libraries
-URL: https://portal.iter.org/departments/POP/Pages/IM-Users-and-Developers.aspx
+URL: https://imas.iter.org
 Requires: al-cpp-__DD_GIT_DESCRIBE__
