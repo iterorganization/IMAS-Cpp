@@ -26,7 +26,8 @@ class Ids
 
         // serialization
         static int default_serializer_protocol() { return ASCII_SERIALIZER_PROTOCOL; };
-        std::string serialize(int protocol=ASCII_SERIALIZER_PROTOCOL, int idx=0);
+        std::string serialize(int protocol=ASCII_SERIALIZER_PROTOCOL);
+        int deserialize(std::string &data, int protocol);
 
         // virtual functions defined in subclasses
         virtual int get() = 0;

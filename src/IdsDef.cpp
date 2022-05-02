@@ -20,7 +20,7 @@ std::string generate_tmp_file(std::string folder)
 }
 }
 
-std::string IdsNs::Ids::serialize(int protocol, int iOccurrance)
+std::string IdsNs::Ids::serialize(int protocol)
 {
     if( protocol == ASCII_SERIALIZER_PROTOCOL )
     {
@@ -41,7 +41,7 @@ std::string IdsNs::Ids::serialize(int protocol, int iOccurrance)
         auto _pulseCtx_stored = this->pulseCtx;
         this->pulseCtx = _pulseCtx;
         this->connected = true;
-        if( this->put(iOccurrance) < 0 ) {
+        if( this->put() < 0 ) {
             // TODO: report error
         }
         // restore state
@@ -77,10 +77,72 @@ std::string IdsNs::Ids::serialize(int protocol, int iOccurrance)
     }
     else
     {
-        printf("ERROR: unrecognized protocol");
+        printf("ERROR: unrecognized serialization protocol");
    		return "";
     }
 }
+
+int IdsNs::Ids::deserialize(std::string &data, int protocol)
+{
+    if( protocol == ASCII_SERIALIZER_PROTOCOL )
+    {
+
+        // specify the -fullpath option to the ASCII backend
+        std::string tmpfile = generate_tmp_file("/dev/shm/"); // create a random non-existent file in the /dev/shm/ directory
+        std::string options = "-fullpath " + tmpfile;
+
+        // write data to tmpfile
+        std::ofstream ofstream(tmpfile, std::ios::out | std::ios::binary);
+        if(!ofstream)
+        {
+            printf("SERIALIZE: Error while opening ASCII file");
+            return -1;
+        }
+
+        ofstream << data;
+        ofstream.close();
+        if(ofstream.bad() || ofstream.fail())
+        {
+            printf("SERIALIZE: I/O error while writing");
+        }
+
+        al_status_t al_status;
+        int _pulseCtx;
+        // overwrite pulse context, so we can use the logic in get for putting to the ascii backend
+        al_status = ual_begin_pulse_action(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", &_pulseCtx);
+        // TODO: check if al_status.code is ok
+
+        al_status = ual_open_pulse(_pulseCtx, CREATE_PULSE, options.c_str());
+        // TODO: check if al_status.code is ok
+
+        // store state and overwrite so we use the ASCII backend in this->get
+        auto _connected_stored = this->connected;
+        auto _pulseCtx_stored = this->pulseCtx;
+        this->pulseCtx = _pulseCtx;
+        this->connected = true;
+        if( this->get() < 0 ) {
+            // TODO: report error
+        }
+        // restore state
+        this->pulseCtx = _pulseCtx_stored;
+        this->connected = _connected_stored;
+
+        // cleanup
+        al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
+        // TODO: check if al_status.code is ok
+        al_status = ual_end_action(_pulseCtx);
+        // TODO: check if al_status.code is ok
+        
+        // TODO erase file
+        return 0;
+    }
+    else
+    {
+        printf("ERROR: unrecognized serialization protocol");
+   		return -1;
+    }
+}
+
 
 
 al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode )
