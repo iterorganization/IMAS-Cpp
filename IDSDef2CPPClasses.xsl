@@ -55,7 +55,8 @@ class LIBRARY_API IDS
     bool connected;
     BACKEND backend;
     BACKEND defaultBackend();
-
+    BACKEND fallbackBackend();
+    
     public:
     IDS();
     IDS(int shot, int run, int refShot, int refRun);

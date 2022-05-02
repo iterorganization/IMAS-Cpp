@@ -61,18 +61,29 @@ IdsNs::IDS::IDS(int pulseCtx)
 //this-&gt;refRun = ual_get_run(idx);
 	this->pulseCtx = pulseCtx;
 	this->setPulseCtx(pulseCtx);
-	backend = defaultBackend();
+	int defbackend;
+	ual_get_backendID(pulseCtx,&amp;defbackend);
+	backend = static_cast&lt;BACKEND&gt;(defbackend);
 }
 
 BACKEND IdsNs::IDS::defaultBackend() 
 {
    BACKEND backend = MDSPLUS_BACKEND;
    char* backend_value;
-   backend_value = getenv("IMAS_AL_BACKEND");
+   backend_value = getenv("IMAS_AL_DEFAULT_BACKEND");
    if (backend_value != NULL) {
       int backendID = atoi(backend_value);
-      if (backendID == BACKEND::HDF5_BACKEND)
-           backend = HDF5_BACKEND;
+   }
+   return backend;
+}
+
+BACKEND IdsNs::IDS::fallbackBackend() 
+{
+   BACKEND backend = NO_BACKEND;
+   char* backend_value;
+   backend_value = getenv("IMAS_AL_FALLBACK_BACKEND");
+   if (backend_value != NULL) {
+      int backendID = atoi(backend_value);
    }
    return backend;
 }
@@ -105,18 +116,35 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
   	if (al_status.code &lt; 0)
 	{
 		printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
-    	return al_status.code;
+    		return al_status.code;
 	}
 
-    al_status = ual_open_pulse(pulseCtx, OPEN_PULSE, option);
+	al_status = ual_open_pulse(pulseCtx, OPEN_PULSE, option);
 	if(al_status.code != 0)
 	{
-		printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_open_pulse", al_status.message);
-		return al_status.code;
+	        BACKEND fallback = this->fallbackBackend();
+		if (fallback != NO_BACKEND)
+  		{
+		        printf("WARNING: the pulse file is not available with backend %d, now attempting to access it with the fallback backend %d\n",this->backend,fallback);
+		        this->backend = fallback;
+			al_status = ual_begin_pulse_action(this->backend, this->shot, this->run, user, tokamak, version, &amp;pulseCtx); 
+  			if (al_status.code &lt; 0)
+			{
+		                printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_pulse_action", al_status.message);
+    				return al_status.code;
+			}
+			al_status = ual_open_pulse(pulseCtx, OPEN_PULSE, option);
+			if(al_status.code != 0)
+			{
+			        printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_open_pulse", al_status.message);
+				return al_status.code;
+			}
+		}
 	}
 	this->pulseCtx = pulseCtx;
 	this->connected = true;
 	this->setPulseCtx(pulseCtx);
+	return al_status.code;
 }
 
 int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *version, const char *option/* = nullptr*/)
@@ -141,7 +169,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak,const char *vers
 	this->pulseCtx = pulseCtx;
 	this->connected = true;
 	this->setPulseCtx(pulseCtx);
-
+	return al_status.code;
 }
 
 int IdsNs::IDS::close()
