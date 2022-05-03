@@ -512,6 +512,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 	ctx = deleteOpCtx;
 
 	<xsl:apply-templates select="field" mode="DELETE"/>
+
+	ual_end_action(ctx);
 	
 	return 0;
 }
