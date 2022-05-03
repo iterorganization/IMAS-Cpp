@@ -73,6 +73,7 @@ BACKEND IdsNs::IDS::defaultBackend()
    backend_value = getenv("IMAS_AL_DEFAULT_BACKEND");
    if (backend_value != NULL) {
       int backendID = atoi(backend_value);
+      backend = static_cast&lt;BACKEND&gt;(backendID);
    }
    return backend;
 }
@@ -84,6 +85,7 @@ BACKEND IdsNs::IDS::fallbackBackend()
    backend_value = getenv("IMAS_AL_FALLBACK_BACKEND");
    if (backend_value != NULL) {
       int backendID = atoi(backend_value);
+      backend = static_cast&lt;BACKEND&gt;(backendID);
    }
    return backend;
 }
