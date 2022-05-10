@@ -6,6 +6,8 @@
 
 #include <complex.h>
 #include <fstream>
+#include <random>
+#include <cstdio>
 
 using namespace blitz;
 using namespace IdsNs;
@@ -13,10 +15,45 @@ using namespace IdsNs;
 const std::string IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE = "obsolescent";
 
 namespace {
-std::string generate_tmp_file(std::string folder)
+
+// On Windows, use the current working directory as temporary directory (since /dev/shm does not exist).
+// On any recent Linux (2.6 or later according to Wikipedia [1]) the /dev/shm folder exists for shared memory.
+// Since glibc assumes this to exist anyway [2], we will as well.
+// [1] https://en.wikipedia.org/wiki/Shared_memory
+// [2] https://www.kernel.org/doc/Documentation/filesystems/tmpfs.txt
+#define MAX_TMP_FILES 1000
+#if defined(_WIN32)
+#  define SERIALIZE_TEMPORARY_DIRECTORY
+#else
+#  define SERIALIZE_TEMPORARY_DIRECTORY "/dev/shm/"
+#endif
+
+std::string generate_tmp_file()
 {
-    // TODO generate a random file name and test for existence
-    return folder + "imas_serialize_random123";
+    // Follow same approach as the Python standard library in generating a random temporary file
+    std::string const fs_safe_characters = "abcdefghijklmnopqrstuvwxyz0123456789_";
+    std::random_device rd;  // Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+    std::uniform_int_distribution<> distrib(0, fs_safe_characters.size()-1);
+
+    std::ofstream stream;
+    for( int i=0; i<MAX_TMP_FILES; i++)
+    {
+        // generate new random file name
+        std::string fname = SERIALIZE_TEMPORARY_DIRECTORY "al_serialize_";
+        for(int j=0; j<8; j++)
+            fname.push_back(fs_safe_characters.at(distrib(gen)));
+        // test if we are allowed to create this file
+        stream.open(fname);
+        bool success = stream.good();
+        stream.close();
+        // remove the file
+        std::remove(fname.c_str());
+        if(success)
+            return fname;
+    }
+
+    return "";
 }
 }
 
@@ -26,33 +63,50 @@ std::string IdsNs::Ids::serialize(int protocol)
     {
         al_status_t al_status;
         int _pulseCtx;
-        // overwrite pulse context, so we can use the logic in put for putting to the ascii backend
+
+        std::string tmpfile = generate_tmp_file(); // create a random non-existent file in the /dev/shm/ directory
+        if(tmpfile.empty())
+        {
+            printf("SERIALIZE: Error generating ASCII serialization filename\n");
+            return "";
+        }
+
+        // create a new pulse context, so we can use the logic in put for putting to the ascii backend
         al_status = ual_begin_pulse_action(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", &_pulseCtx);
-        // TODO: check if al_status.code is ok
+        if(al_status.code != 0)
+        {
+            printf("SERIALIZE: Error opening ASCII backend - ual_begin_pulse_action\n%s\n", al_status.message);
+            return "";
+        }
 
         // specify the -fullpath option to the ASCII backend
-        std::string tmpfile = generate_tmp_file("/dev/shm/"); // create a random non-existent file in the /dev/shm/ directory
         std::string options = "-fullpath " + tmpfile;
         al_status = ual_open_pulse(_pulseCtx, CREATE_PULSE, options.c_str());
-        // TODO: check if al_status.code is ok
+        if(al_status.code != 0)
+        {
+            printf("SERIALIZE: Error opening ASCII backend - ual_open_pulse\n%s\n", al_status.message);
+            ual_end_action(_pulseCtx);
+            return "";
+        }
 
         // store state and overwrite so we use the ASCII backend in this->put
         auto _connected_stored = this->connected;
         auto _pulseCtx_stored = this->pulseCtx;
         this->pulseCtx = _pulseCtx;
         this->connected = true;
-        if( this->put() < 0 ) {
-            // TODO: report error
-        }
+        int put_ret = this->put();
         // restore state
         this->pulseCtx = _pulseCtx_stored;
         this->connected = _connected_stored;
 
         // cleanup
-        al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
-        // TODO: check if al_status.code is ok
-        al_status = ual_end_action(_pulseCtx);
-        // TODO: check if al_status.code is ok
+        ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
+        ual_end_action(_pulseCtx);
+
+        if( put_ret < 0 ) {
+            printf("SERIALIZE: Error putting data");
+            return "";
+        }
 
         // read contents of tmpfile
         std::ifstream ifstream(tmpfile, std::ios::in | std::ios::binary);
@@ -68,11 +122,12 @@ std::string IdsNs::Ids::serialize(int protocol)
         ifstream.seekg(0, std::ios::beg);
         ifstream.read(&data[0], data.size());
         ifstream.close();
+        std::remove(tmpfile.c_str()); // remove tmpfile from disk
         if(ifstream.bad() || ifstream.fail())
         {
             printf("SERIALIZE: I/O error while reading");
+            return "";
         }
-        // TODO erase file
         return data;
     }
     else
@@ -88,14 +143,19 @@ int IdsNs::Ids::deserialize(std::string &data, int protocol)
     {
 
         // specify the -fullpath option to the ASCII backend
-        std::string tmpfile = generate_tmp_file("/dev/shm/"); // create a random non-existent file in the /dev/shm/ directory
+        std::string tmpfile = generate_tmp_file();
+        if(tmpfile.empty())
+        {
+            printf("DESERIALIZE: Error generating ASCII serialization filename\n");
+            return -1;
+        }
         std::string options = "-fullpath " + tmpfile;
 
         // write data to tmpfile
         std::ofstream ofstream(tmpfile, std::ios::out | std::ios::binary);
         if(!ofstream)
         {
-            printf("SERIALIZE: Error while opening ASCII file");
+            printf("DESERIALIZE: Error while opening ASCII file");
             return -1;
         }
 
@@ -103,37 +163,49 @@ int IdsNs::Ids::deserialize(std::string &data, int protocol)
         ofstream.close();
         if(ofstream.bad() || ofstream.fail())
         {
-            printf("SERIALIZE: I/O error while writing");
+            printf("DESERIALIZE: I/O error while writing");
+            std::remove(tmpfile.c_str());
+            return -1;
         }
 
         al_status_t al_status;
         int _pulseCtx;
         // overwrite pulse context, so we can use the logic in get for putting to the ascii backend
         al_status = ual_begin_pulse_action(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", &_pulseCtx);
-        // TODO: check if al_status.code is ok
-
+        if(al_status.code != 0)
+        {
+            printf("DESERIALIZE: Error opening ASCII backend - ual_begin_pulse_action\n%s\n", al_status.message);
+            return -1;
+        }
+        
         al_status = ual_open_pulse(_pulseCtx, CREATE_PULSE, options.c_str());
-        // TODO: check if al_status.code is ok
+        if(al_status.code != 0)
+        {
+            printf("DESERIALIZE: Error opening ASCII backend - ual_open_pulse\n%s\n", al_status.message);
+            ual_end_action(_pulseCtx);
+            return -1;
+        }
 
         // store state and overwrite so we use the ASCII backend in this->get
         auto _connected_stored = this->connected;
         auto _pulseCtx_stored = this->pulseCtx;
         this->pulseCtx = _pulseCtx;
         this->connected = true;
-        if( this->get() < 0 ) {
-            // TODO: report error
-        }
+        int get_ret = this->get();
         // restore state
         this->pulseCtx = _pulseCtx_stored;
         this->connected = _connected_stored;
 
         // cleanup
         al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
-        // TODO: check if al_status.code is ok
         al_status = ual_end_action(_pulseCtx);
-        // TODO: check if al_status.code is ok
-        
-        // TODO erase file
+        std::remove(tmpfile.c_str());
+
+        if( get_ret < 0 ) {
+            printf("DESERIALIZE: Error getting data");
+            return -1;
+        }
+
         return 0;
     }
     else
