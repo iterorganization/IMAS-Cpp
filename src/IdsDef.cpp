@@ -16,16 +16,16 @@ const std::string IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE = "obsolescen
 
 namespace {
 
-// On Windows, use the current working directory as temporary directory (since /dev/shm does not exist).
+#define MAX_TMP_FILES 1000
 // On any recent Linux (2.6 or later according to Wikipedia [1]) the /dev/shm folder exists for shared memory.
 // Since glibc assumes this to exist anyway [2], we will as well.
 // [1] https://en.wikipedia.org/wiki/Shared_memory
 // [2] https://www.kernel.org/doc/Documentation/filesystems/tmpfs.txt
-#define MAX_TMP_FILES 1000
-#if defined(_WIN32)
-#  define SERIALIZE_TEMPORARY_DIRECTORY
-#else
+// On non-Linux, use the current working directory as temporary directory (since /dev/shm does not exist).
+#if defined(__linux__) || defined(__linux) || defined(linux)
 #  define SERIALIZE_TEMPORARY_DIRECTORY "/dev/shm/"
+#else
+#  define SERIALIZE_TEMPORARY_DIRECTORY
 #endif
 
 std::string generate_tmp_file()
@@ -64,7 +64,7 @@ std::string IdsNs::Ids::serialize(int protocol)
         al_status_t al_status;
         int _pulseCtx;
 
-        std::string tmpfile = generate_tmp_file(); // create a random non-existent file in the /dev/shm/ directory
+        std::string tmpfile = generate_tmp_file();
         if(tmpfile.empty())
         {
             printf("SERIALIZE: Error generating ASCII serialization filename\n");
@@ -141,7 +141,6 @@ int IdsNs::Ids::deserialize(std::string &data, int protocol)
 {
     if( protocol == ASCII_SERIALIZER_PROTOCOL )
     {
-
         // specify the -fullpath option to the ASCII backend
         std::string tmpfile = generate_tmp_file();
         if(tmpfile.empty())
