@@ -91,7 +91,7 @@ void IdsNs::Ids::warningWritingObsolescentNode(const std::string &idsName, const
 	if (disable_obsolescent_warning_var != NULL) {
 	   disable_obsolescent_warning = atoi(disable_obsolescent_warning_var);
 	}
-	if (imas_disable_obsolescent_warning == 1)
+	if (disable_obsolescent_warning == 1)
 	   return;
     if (lifeCycleStatus.compare(IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE) == 0)
         printf("Warning : while putting IDS %s, the written IDS has non-empty obsolescent node %s. Please consider updating the code to avoid using obsolescent nodes.\n", idsName.c_str(), fieldPath.c_str());
