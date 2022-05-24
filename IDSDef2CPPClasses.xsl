@@ -54,7 +54,9 @@ class LIBRARY_API IDS
     string treeName;
     bool connected;
     BACKEND backend;
-
+    BACKEND defaultBackend();
+    BACKEND fallbackBackend();
+    
     public:
     IDS();
     IDS(int shot, int run, int refShot, int refRun);
