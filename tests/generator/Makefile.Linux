@@ -10,6 +10,6 @@ endif
 
 INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src
 LIBS= -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib
-LIBS+= -limas-cpp -limas `pkg-config blitz --libs`
+LIBS+= -lal-cpp -lal `pkg-config blitz --libs`
 BINOUT=TestSuite
 

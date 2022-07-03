@@ -7,7 +7,7 @@ UAL_BUILD=../../..
 $(warning UAL_BUILD variable unset, probably not running 'make ual_test' from the Installer. Assuming UAL_BUILD=$(UAL_BUILD).)
 endif
 
-ifeq ("no","$(strip $(IMAS_CPP))")
+ifneq ("yes","$(strip $(IMAS_CPP))")
 all sources sources_install sources_uninstall install uninstall clean clean-src check test:
 	$(warning "Ignoring cppinterface (IMAS_CPP=no).")
 else

@@ -37,7 +37,7 @@ IdsNs::IDS::IDS()
 	treeName = "ids";
 	connected = false;
 	shot = refShot = run = refRun = -1;
-	backend = MDSPLUS_BACKEND;
+	backend = defaultBackend();
 }
 
 IdsNs::IDS::IDS(int shot, int run, int refShot, int refRun)
@@ -49,7 +49,7 @@ IdsNs::IDS::IDS(int shot, int run, int refShot, int refRun)
 	this-&gt;refShot = refShot;
 	this-&gt;refRun = refRun;
 	pulseCtx = -1;
-	backend = MDSPLUS_BACKEND;
+	backend = defaultBackend();
 }
 IdsNs::IDS::IDS(int pulseCtx)
 {
@@ -61,7 +61,33 @@ IdsNs::IDS::IDS(int pulseCtx)
 //this-&gt;refRun = ual_get_run(idx);
 	this->pulseCtx = pulseCtx;
 	this->setPulseCtx(pulseCtx);
-	backend = MDSPLUS_BACKEND;
+	int defbackend;
+	ual_get_backendID(pulseCtx,&amp;defbackend);
+	backend = static_cast&lt;BACKEND&gt;(defbackend);
+}
+
+BACKEND IdsNs::IDS::defaultBackend() 
+{
+   BACKEND backend = MDSPLUS_BACKEND;
+   char* backend_value;
+   backend_value = getenv("IMAS_AL_DEFAULT_BACKEND");
+   if (backend_value != NULL) {
+      int backendID = atoi(backend_value);
+      backend = static_cast&lt;BACKEND&gt;(backendID);
+   }
+   return backend;
+}
+
+BACKEND IdsNs::IDS::fallbackBackend() 
+{
+   BACKEND backend = NO_BACKEND;
+   char* backend_value;
+   backend_value = getenv("IMAS_AL_FALLBACK_BACKEND");
+   if (backend_value != NULL) {
+      int backendID = atoi(backend_value);
+      backend = static_cast&lt;BACKEND&gt;(backendID);
+   }
+   return backend;
 }
 
 // Will be deprecated in the future!
@@ -101,25 +127,41 @@ int IdsNs::IDS::open(const char *uri, int mode)
 
 int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *version, const char *option/* = nullptr*/)
 {
-	int pulseCtx;
-	al_status_t al_status;
+    int pulseCtx;
+    al_status_t al_status;
     char* uri;
     al_status = ual_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, option, &amp;uri);
-	if (al_status.code &lt; 0)
-	{
-		printf("Error building URI %s\n%s\n", "ual_build_uri_from_legacy_parameters", al_status.message);
+    if (al_status.code != 0)
+    {
+        printf("Error building URI %s\n%s\n", "ual_build_uri_from_legacy_parameters", al_status.message);
     	return al_status.code;
-	}
+    }
     al_status = ual_begin_dataentry_action(uri, OPEN_PULSE, &amp;pulseCtx);
-  	if (al_status.code &lt; 0)
-	{
-    printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_dataentry_action", al_status.message);
-    	return al_status.code;
+    if (al_status.code != 0)
+    {
+        BACKEND fallback = this->fallbackBackend();
+	if (fallback != NO_BACKEND)
+  	{
+	    printf("WARNING: the pulse file is not available with backend %d, now attempting to access it with the fallback backend %d\n",this->backend,fallback);
+	    this->backend = fallback;
+	    al_status = ual_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, option, &amp;uri);
+	    if (al_status.code != 0)
+	    {
+                printf("Error building URI %s\n%s\n", "ual_build_uri_from_legacy_parameters", al_status.message);
+    		return al_status.code;
+	    }
+	    al_status = ual_begin_dataentry_action(uri, OPEN_PULSE, &amp;pulseCtx);
 	}
-
-	this->pulseCtx = pulseCtx;
-	this->connected = true;
-	this->setPulseCtx(pulseCtx);
+	if (al_status.code != 0)
+	{
+            printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "ual_begin_dataentry_action", al_status.message);
+	    return al_status.code;
+	}
+    }
+    this->pulseCtx = pulseCtx;
+    this->connected = true;
+    this->setPulseCtx(pulseCtx);
+    return al_status.code;
 }
 
 int IdsNs::IDS::create(const char *uri, int mode)
@@ -161,7 +203,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak, const char *ver
 	this->pulseCtx = pulseCtx;
 	this->connected = true;
 	this->setPulseCtx(pulseCtx);
-
+	return al_status.code;
 }
 
 int IdsNs::IDS::close()
@@ -546,6 +588,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 	ctx = deleteOpCtx;
 
 	<xsl:apply-templates select="field" mode="DELETE"/>
+
+	ual_end_action(ctx);
 	
 	return 0;
 }

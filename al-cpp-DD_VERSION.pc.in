@@ -1,0 +1,12 @@
+prefix=__PREFIX__
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: al-cpp-__DD_GIT_DESCRIBE__
+Version: __UAL_GIT_DESCRIBE__
+Description: IMAS Access Layer C++ Libraries
+URL: https://portal.iter.org/departments/POP/Pages/IM-Users-and-Developers.aspx
+Requires: al-lowlevel = __UAL_GIT_DESCRIBE__ blitz
+Cflags: -I${includedir}
+Libs: -L${libdir} -lal-cpp-__DD_GIT_DESCRIBE__ -Wl,--defsym,AL_VER___AL_SAFE_DESCRIBE__=0 -Wl,--defsym,DD_VER___DD_SAFE_DESCRIBE__=0 -Wl,-rpath,${libdir}
