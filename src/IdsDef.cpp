@@ -118,9 +118,11 @@ std::string IdsNs::Ids::serialize(int protocol)
 
         std::string data;
         ifstream.seekg(0, std::ios::end);
-        data.resize(ifstream.tellg());  // reserve memory for reading in the full file
+        std::size_t fsize = ifstream.tellg();
+        data.resize(fsize + 1);  // reserve memory for reading in the full file
+        data[0] = static_cast<char>(ASCII_SERIALIZER_PROTOCOL);
         ifstream.seekg(0, std::ios::beg);
-        ifstream.read(&data[0], data.size());
+        ifstream.read(&data[1], data.size()-1);
         ifstream.close();
         std::remove(tmpfile.c_str()); // remove tmpfile from disk
         if(ifstream.bad() || ifstream.fail())
@@ -137,8 +139,15 @@ std::string IdsNs::Ids::serialize(int protocol)
     }
 }
 
-int IdsNs::Ids::deserialize(std::string &data, int protocol)
+int IdsNs::Ids::deserialize(std::string &data)
 {
+    // first byte of the data contains the protocol
+    if( data.size() <= 1 )
+    {
+        printf("ERROR: not enough data provided");
+   		return -1;
+    }
+    int protocol = static_cast<int>(data[0]);
     if( protocol == ASCII_SERIALIZER_PROTOCOL )
     {
         // specify the -fullpath option to the ASCII backend
@@ -158,7 +167,7 @@ int IdsNs::Ids::deserialize(std::string &data, int protocol)
             return -1;
         }
 
-        ofstream << data;
+        ofstream.write(&data[1], data.size()-1);
         ofstream.close();
         if(ofstream.bad() || ofstream.fail())
         {
