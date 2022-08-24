@@ -5,11 +5,225 @@
 #include "UALDef.h"
 
 #include <complex.h>
+#include <fstream>
+#include <random>
+#include <cstdio>
 
 using namespace blitz;
 using namespace IdsNs;
 
 const std::string IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE = "obsolescent";
+
+namespace {
+
+#define MAX_TMP_FILES 1000
+// On any recent Linux (2.6 or later according to Wikipedia [1]) the /dev/shm folder exists for shared memory.
+// Since glibc assumes this to exist anyway [2], we will as well.
+// [1] https://en.wikipedia.org/wiki/Shared_memory
+// [2] https://www.kernel.org/doc/Documentation/filesystems/tmpfs.txt
+// On non-Linux, use the current working directory as temporary directory (since /dev/shm does not exist).
+#if defined(__linux__) || defined(__linux) || defined(linux)
+#  define SERIALIZE_TEMPORARY_DIRECTORY "/dev/shm/"
+#else
+#  define SERIALIZE_TEMPORARY_DIRECTORY
+#endif
+
+std::string generate_tmp_file()
+{
+    // Follow same approach as the Python standard library in generating a random temporary file
+    std::string const fs_safe_characters = "abcdefghijklmnopqrstuvwxyz0123456789_";
+    std::random_device rd;  // Will be used to obtain a seed for the random number engine
+    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
+    std::uniform_int_distribution<> distrib(0, fs_safe_characters.size()-1);
+
+    std::ofstream stream;
+    for( int i=0; i<MAX_TMP_FILES; i++)
+    {
+        // generate new random file name
+        std::string fname = SERIALIZE_TEMPORARY_DIRECTORY "al_serialize_";
+        for(int j=0; j<8; j++)
+            fname.push_back(fs_safe_characters.at(distrib(gen)));
+        // test if we are allowed to create this file
+        stream.open(fname);
+        bool success = stream.good();
+        stream.close();
+        // remove the file
+        std::remove(fname.c_str());
+        if(success)
+            return fname;
+    }
+
+    return "";
+}
+}
+
+std::string IdsNs::Ids::serialize(int protocol)
+{
+    if( protocol == ASCII_SERIALIZER_PROTOCOL )
+    {
+        al_status_t al_status;
+        int _pulseCtx;
+
+        std::string tmpfile = generate_tmp_file();
+        if(tmpfile.empty())
+        {
+            printf("SERIALIZE: Error generating ASCII serialization filename\n");
+            return "";
+        }
+
+        // create a new pulse context, so we can use the logic in put for putting to the ascii backend
+        al_status = ual_begin_pulse_action(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", &_pulseCtx);
+        if(al_status.code != 0)
+        {
+            printf("SERIALIZE: Error opening ASCII backend - ual_begin_pulse_action\n%s\n", al_status.message);
+            return "";
+        }
+
+        // specify the -fullpath option to the ASCII backend
+        std::string options = "-fullpath " + tmpfile;
+        al_status = ual_open_pulse(_pulseCtx, CREATE_PULSE, options.c_str());
+        if(al_status.code != 0)
+        {
+            printf("SERIALIZE: Error opening ASCII backend - ual_open_pulse\n%s\n", al_status.message);
+            ual_end_action(_pulseCtx);
+            return "";
+        }
+
+        // store state and overwrite so we use the ASCII backend in this->put
+        auto _connected_stored = this->connected;
+        auto _pulseCtx_stored = this->pulseCtx;
+        this->pulseCtx = _pulseCtx;
+        this->connected = true;
+        int put_ret = this->put();
+        // restore state
+        this->pulseCtx = _pulseCtx_stored;
+        this->connected = _connected_stored;
+
+        // cleanup
+        ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
+        ual_end_action(_pulseCtx);
+
+        if( put_ret < 0 ) {
+            printf("SERIALIZE: Error putting data");
+            return "";
+        }
+
+        // read contents of tmpfile
+        std::ifstream ifstream(tmpfile, std::ios::in | std::ios::binary);
+        if(!ifstream)
+        {
+            printf("SERIALIZE: Error while opening ASCII serialized file");
+            return "";
+        }
+
+        std::string data;
+        ifstream.seekg(0, std::ios::end);
+        std::size_t fsize = ifstream.tellg();
+        data.resize(fsize + 1);  // reserve memory for reading in the full file
+        data[0] = static_cast<char>(ASCII_SERIALIZER_PROTOCOL);
+        ifstream.seekg(0, std::ios::beg);
+        ifstream.read(&data[1], data.size()-1);
+        ifstream.close();
+        std::remove(tmpfile.c_str()); // remove tmpfile from disk
+        if(ifstream.bad() || ifstream.fail())
+        {
+            printf("SERIALIZE: I/O error while reading");
+            return "";
+        }
+        return data;
+    }
+    else
+    {
+        printf("ERROR: unrecognized serialization protocol");
+   		return "";
+    }
+}
+
+int IdsNs::Ids::deserialize(std::string &data)
+{
+    // first byte of the data contains the protocol
+    if( data.size() <= 1 )
+    {
+        printf("ERROR: not enough data provided");
+   		return -1;
+    }
+    int protocol = static_cast<int>(data[0]);
+    if( protocol == ASCII_SERIALIZER_PROTOCOL )
+    {
+        // specify the -fullpath option to the ASCII backend
+        std::string tmpfile = generate_tmp_file();
+        if(tmpfile.empty())
+        {
+            printf("DESERIALIZE: Error generating ASCII serialization filename\n");
+            return -1;
+        }
+        std::string options = "-fullpath " + tmpfile;
+
+        // write data to tmpfile
+        std::ofstream ofstream(tmpfile, std::ios::out | std::ios::binary);
+        if(!ofstream)
+        {
+            printf("DESERIALIZE: Error while opening ASCII file");
+            return -1;
+        }
+
+        ofstream.write(&data[1], data.size()-1);
+        ofstream.close();
+        if(ofstream.bad() || ofstream.fail())
+        {
+            printf("DESERIALIZE: I/O error while writing");
+            std::remove(tmpfile.c_str());
+            return -1;
+        }
+
+        al_status_t al_status;
+        int _pulseCtx;
+        // overwrite pulse context, so we can use the logic in get for putting to the ascii backend
+        al_status = ual_begin_pulse_action(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", &_pulseCtx);
+        if(al_status.code != 0)
+        {
+            printf("DESERIALIZE: Error opening ASCII backend - ual_begin_pulse_action\n%s\n", al_status.message);
+            return -1;
+        }
+        
+        al_status = ual_open_pulse(_pulseCtx, CREATE_PULSE, options.c_str());
+        if(al_status.code != 0)
+        {
+            printf("DESERIALIZE: Error opening ASCII backend - ual_open_pulse\n%s\n", al_status.message);
+            ual_end_action(_pulseCtx);
+            return -1;
+        }
+
+        // store state and overwrite so we use the ASCII backend in this->get
+        auto _connected_stored = this->connected;
+        auto _pulseCtx_stored = this->pulseCtx;
+        this->pulseCtx = _pulseCtx;
+        this->connected = true;
+        int get_ret = this->get();
+        // restore state
+        this->pulseCtx = _pulseCtx_stored;
+        this->connected = _connected_stored;
+
+        // cleanup
+        al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
+        al_status = ual_end_action(_pulseCtx);
+        std::remove(tmpfile.c_str());
+
+        if( get_ret < 0 ) {
+            printf("DESERIALIZE: Error getting data");
+            return -1;
+        }
+
+        return 0;
+    }
+    else
+    {
+        printf("ERROR: unrecognized serialization protocol");
+   		return -1;
+    }
+}
+
+
 
 al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode )
 {
@@ -86,14 +300,12 @@ al_status_t IdsNs::Ids::okStatus()
 
 void IdsNs::Ids::warningWritingObsolescentNode(const std::string &idsName, const std::string &fieldPath, const std::string &lifeCycleStatus)
 {
-	char* imas_disable_obsolescent_warnings_var = getenv("IMAS_DISABLE_OBSOLESCENT_WARNINGS");
-	bool imas_disable_obsolescent_warnings = false;
-	if (imas_disable_obsolescent_warnings_var != NULL) {
-	   int v = atoi(imas_disable_obsolescent_warnings_var);
-	   if (v == 0)
-	      imas_disable_obsolescent_warnings = true;
+	char* disable_obsolescent_warning_var = getenv("IMAS_AL_DISABLE_OBSOLESCENT_WARNING");
+	int disable_obsolescent_warning = 0;
+	if (disable_obsolescent_warning_var != NULL) {
+	   disable_obsolescent_warning = atoi(disable_obsolescent_warning_var);
 	}
-	if (imas_disable_obsolescent_warnings)
+	if (disable_obsolescent_warning == 1)
 	   return;
     if (lifeCycleStatus.compare(IdsNs::DataDictionary::LIFECYCLE_STATUS_OBSOLETE) == 0)
         printf("Warning : while putting IDS %s, the written IDS has non-empty obsolescent node %s. Please consider updating the code to avoid using obsolescent nodes.\n", idsName.c_str(), fieldPath.c_str());
