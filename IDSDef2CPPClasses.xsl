@@ -162,27 +162,22 @@ extern "C" {
 
 
 <!--============= Define time-dependent IDSs =============-->
-class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase:Ids
+class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase : public Ids
 {
-    private:
-      int pulseCtx;
-      bool connected;
-
-      public:
-      void setPulseCtx(int pulseCtx){this->pulseCtx = pulseCtx; connected = true;}
+    public:
       <xsl:apply-templates select = "field" mode = "DECLARE"/>
       <xsl:value-of select="@name"/>_IDSBase();
-    int get();
-    int get(int idx);
-    int put();
-    int put(int idx);
-    int getSlice(double inTime, char interpolMode);
-    int getSlice(int idx, double inTime, char interpolMode);
-    int putSlice();
-    int putSlice(int idx);
-    int deleteAll();
-    int deleteAll(int idx);
-    void clear();
+    int get() override;
+    int get(int idx) override;
+    int put() override;
+    int put(int idx) override;
+    int getSlice(double inTime, char interpolMode) override;
+    int getSlice(int idx, double inTime, char interpolMode) override;
+    int putSlice() override;
+    int putSlice(int idx) override;
+    int deleteAll() override;
+    int deleteAll(int idx) override;
+    void clear() override;
 };
 
 #ifdef __cplusplus
