@@ -63,7 +63,7 @@ std::string IdsNs::Ids::serialize(int protocol)
     {
         al_status_t al_status;
         int _pulseCtx;
-
+	char *uri;
         std::string tmpfile = generate_tmp_file();
         if(tmpfile.empty())
         {
@@ -71,21 +71,15 @@ std::string IdsNs::Ids::serialize(int protocol)
             return "";
         }
 
-        // create a new pulse context, so we can use the logic in put for putting to the ascii backend
-        al_status = ual_begin_pulse_action(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", &_pulseCtx);
-        if(al_status.code != 0)
-        {
-            printf("SERIALIZE: Error opening ASCII backend - ual_begin_pulse_action\n%s\n", al_status.message);
-            return "";
-        }
-
         // specify the -fullpath option to the ASCII backend
         std::string options = "-fullpath " + tmpfile;
-        al_status = ual_open_pulse(_pulseCtx, CREATE_PULSE, options.c_str());
+
+        // create a new pulse context, so we can use the logic in put for putting to the ascii backend
+	ual_build_uri_from_legacy_parameters(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", options.c_str(), &uri);
+        al_status = ual_begin_dataentry_action(uri, CREATE_PULSE, &_pulseCtx);
         if(al_status.code != 0)
         {
-            printf("SERIALIZE: Error opening ASCII backend - ual_open_pulse\n%s\n", al_status.message);
-            ual_end_action(_pulseCtx);
+            printf("SERIALIZE: Error opening ASCII backend - ual_begin_dataentry_action\n%s\n", al_status.message);
             return "";
         }
 
@@ -176,20 +170,16 @@ int IdsNs::Ids::deserialize(std::string &data)
             return -1;
         }
 
+	char *uri;
         al_status_t al_status;
         int _pulseCtx;
         // overwrite pulse context, so we can use the logic in get for putting to the ascii backend
-        al_status = ual_begin_pulse_action(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", &_pulseCtx);
+	ual_build_uri_from_legacy_parameters(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", options.c_str(), &uri);
+        al_status = ual_begin_dataentry_action(uri, CREATE_PULSE, &_pulseCtx);
+
         if(al_status.code != 0)
         {
-            printf("DESERIALIZE: Error opening ASCII backend - ual_begin_pulse_action\n%s\n", al_status.message);
-            return -1;
-        }
-        
-        al_status = ual_open_pulse(_pulseCtx, CREATE_PULSE, options.c_str());
-        if(al_status.code != 0)
-        {
-            printf("DESERIALIZE: Error opening ASCII backend - ual_open_pulse\n%s\n", al_status.message);
+            printf("DESERIALIZE: Error opening ASCII backend - ual_begin_dataentry_action\n%s\n", al_status.message);
             ual_end_action(_pulseCtx);
             return -1;
         }
