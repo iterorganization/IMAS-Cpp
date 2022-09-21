@@ -395,10 +395,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
     clear();
 
 	// Open get context
-    al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), READ_OP, &amp;getOpCtx);
+    al_status = hli_begin_global_action(pulseCtx, idsFullName.c_str(), READ_OP, &amp;getOpCtx);
 
 	if(al_status.code &lt; 0) {
-        printf("GET: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        printf("GET: error calling hli_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
     }
 
@@ -452,10 +452,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 	deleteAll(iOccurrence);
 
 	// Open put context
-	al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;putOpCtx);
+	al_status = hli_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;putOpCtx);
 
 	if(al_status.code &lt; 0) {
-        printf("PUT: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        printf("PUT: error calling hli_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
         return al_status.code;
     }
 
@@ -538,10 +538,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 
     /***   Put slice   ***/
 	// Open put context
-	al_status = ual_begin_slice_action(pulseCtx, idsFullName.c_str(), WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP, &amp;putSliceOpCtx);
+	al_status = hli_begin_slice_action(pulseCtx, idsFullName.c_str(), WRITE_OP, UNDEFINED_TIME, UNDEFINED_INTERP, &amp;putSliceOpCtx);
 	
 	if(al_status.code &lt; 0) {
-        printf("PUT_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        printf("PUT_SLICE: error calling hli_begin_slice_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
     }
 
@@ -577,10 +577,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
         idsFullName += "/" + std::to_string(iOccurrence);
 
 	// Open put context
-    al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;deleteOpCtx);
+    al_status = hli_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;deleteOpCtx);
 
 	if(al_status.code &lt; 0) {
-        printf("DELETE_ALL: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        printf("DELETE_ALL: error calling hli_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
     }
 
@@ -640,10 +640,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
     clear();
 
 	// Open put context
-    al_status = ual_begin_slice_action(pulseCtx, idsFullName.c_str(), READ_OP, inTime, interpolMode, &amp;getSliceOpCtx);
+    al_status = hli_begin_slice_action(pulseCtx, idsFullName.c_str(), READ_OP, inTime, interpolMode, &amp;getSliceOpCtx);
 	
 	if(al_status.code &lt; 0) {
-        printf("GET_SLICE: error calling ual_begin_slice_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        printf("GET_SLICE: error calling hli_begin_slice_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
     }
 
@@ -1020,9 +1020,8 @@ See IDSDef2Classes.xsl  -->
 			</xsl:choose>
 			timeBasePath = "";
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
-			if(arraySize > 0)
-			{
-				al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+
+				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 				{	
 					ual_end_action(ctx);
@@ -1050,7 +1049,7 @@ See IDSDef2Classes.xsl  -->
 					ual_end_action(ctx);
 					return al_status.code; 
 				}
-			}
+			
 		</xsl:when>
  		<xsl:when  test="@data_type='struct_array' and @maxoccur='unbounded' and (@type!='dynamic' or not(@type))">
 		
@@ -1068,9 +1067,8 @@ See IDSDef2Classes.xsl  -->
 			</xsl:choose>
 			timeBasePath = "";
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
-			if(arraySize > 0)
-			{	
-				al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+
+				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 				{	
 					ual_end_action(ctx);
@@ -1098,7 +1096,6 @@ See IDSDef2Classes.xsl  -->
 					ual_end_action(ctx);
 					return al_status.code; 
 				}
- 			}
 		</xsl:when>
 		<xsl:when test="@data_type='struct_array' and @maxoccur='unbounded' and @type='dynamic'">
 
@@ -1122,9 +1119,9 @@ See IDSDef2Classes.xsl  -->
   				</xsl:otherwise>
 			</xsl:choose>
 			arraySize = <xsl:value-of select = "@name"/>.extent(0);
-			if(arraySize > 0 &amp;&amp; idsTimeMode != IDS_TIME_MODE_INDEPENDENT)
+			if(idsTimeMode != IDS_TIME_MODE_INDEPENDENT)
 			{	
-				al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
 					ual_end_action(ctx);
@@ -1256,7 +1253,7 @@ See IDSDef2Classes.xsl  -->
   				</xsl:otherwise>
 			</xsl:choose>
 			timeBasePath = "";
-			al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+			al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 			{	
 				ual_end_action(ctx);
@@ -1302,7 +1299,7 @@ See IDSDef2Classes.xsl  -->
   				</xsl:otherwise>
 			</xsl:choose>
 			timeBasePath = "";
-			al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+			al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 			{	
 					ual_end_action(ctx);
@@ -1355,7 +1352,7 @@ See IDSDef2Classes.xsl  -->
 						timeBasePath = &quot;<xsl:value-of select="@path"/>/time&quot;;
   				</xsl:otherwise>
 			</xsl:choose>
-			al_status = ual_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
+			al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 			{	
 				ual_end_action(ctx);
