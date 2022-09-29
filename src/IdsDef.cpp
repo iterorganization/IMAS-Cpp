@@ -63,7 +63,6 @@ std::string IdsNs::Ids::serialize(int protocol)
     {
         al_status_t al_status;
         int _pulseCtx;
-	char *uri;
         std::string tmpfile = generate_tmp_file();
         if(tmpfile.empty())
         {
@@ -71,12 +70,8 @@ std::string IdsNs::Ids::serialize(int protocol)
             return "";
         }
 
-        // specify the -fullpath option to the ASCII backend
-        std::string options = "-fullpath " + tmpfile;
-
-        // create a new pulse context, so we can use the logic in put for putting to the ascii backend
-	ual_build_uri_from_legacy_parameters(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", options.c_str(), &uri);
-        al_status = ual_begin_dataentry_action(uri, CREATE_PULSE, &_pulseCtx);
+	std::string uri = "imas:ascii?path=/dev/null;options=fullpath="+tmpfile;
+        al_status = ual_begin_dataentry_action(uri.c_str(), CREATE_PULSE, &_pulseCtx);
         if(al_status.code != 0)
         {
             printf("SERIALIZE: Error opening ASCII backend - ual_begin_dataentry_action\n%s\n", al_status.message);
@@ -151,7 +146,6 @@ int IdsNs::Ids::deserialize(std::string &data)
             printf("DESERIALIZE: Error generating ASCII serialization filename\n");
             return -1;
         }
-        std::string options = "-fullpath " + tmpfile;
 
         // write data to tmpfile
         std::ofstream ofstream(tmpfile, std::ios::out | std::ios::binary);
@@ -170,12 +164,11 @@ int IdsNs::Ids::deserialize(std::string &data)
             return -1;
         }
 
-	char *uri;
+	std::string uri = "imas:ascii?path=/dev/null;options=fullpath="+tmpfile;
         al_status_t al_status;
         int _pulseCtx;
         // overwrite pulse context, so we can use the logic in get for putting to the ascii backend
-	ual_build_uri_from_legacy_parameters(ASCII_BACKEND, 0, 0, "serialize", "serialize", "3", options.c_str(), &uri);
-        al_status = ual_begin_dataentry_action(uri, CREATE_PULSE, &_pulseCtx);
+        al_status = ual_begin_dataentry_action(uri.c_str(), CREATE_PULSE, &_pulseCtx);
 
         if(al_status.code != 0)
         {
