@@ -95,7 +95,7 @@ std::string IdsNs::Ids::serialize(int protocol)
 
         // cleanup
         ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
-        ual_end_action(_pulseCtx);
+        hli_end_action(_pulseCtx);
 
         if( put_ret < 0 ) {
             printf("SERIALIZE: Error putting data");
@@ -180,7 +180,7 @@ int IdsNs::Ids::deserialize(std::string &data)
         if(al_status.code != 0)
         {
             printf("DESERIALIZE: Error opening ASCII backend - ual_begin_dataentry_action\n%s\n", al_status.message);
-            ual_end_action(_pulseCtx);
+            hli_end_action(_pulseCtx);
             return -1;
         }
 
@@ -196,7 +196,7 @@ int IdsNs::Ids::deserialize(std::string &data)
 
         // cleanup
         al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
-        al_status = ual_end_action(_pulseCtx);
+        al_status = hli_end_action(_pulseCtx);
         std::remove(tmpfile.c_str());
 
         if( get_ret < 0 ) {
@@ -225,14 +225,14 @@ al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, 
     
 
     // Open get context
-    al_status = ual_begin_global_action(pulseCtx, idsFullName, READ_OP, &opCtx);
+    al_status = hli_begin_global_action(pulseCtx, idsFullName, READ_OP, &opCtx);
     if(al_status.code < 0) 
         return al_status;
 
     al_status =IdsNs::Ids::readData(opCtx, fieldPath, timeBasePath, idsTimeMode);
     if (al_status.code)
     {   
-        ual_end_action(opCtx);
+        hli_end_action(opCtx);
         return al_status;
     }
 
@@ -250,7 +250,7 @@ al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, 
              strncpy(al_status.message, "ERROR: time dependency mode (ids_properties/homogeneous_time) set to unknown value!", MAX_ERR_MSG_LEN);
     }
 
-    ual_end_action(opCtx);
+    hli_end_action(opCtx);
     return al_status;
 }
 

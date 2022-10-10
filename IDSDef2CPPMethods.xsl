@@ -214,7 +214,7 @@ int IdsNs::IDS::close()
 		printf("Error opening imas shot %d, run %d: %s\n %s\n", shot, run, "ual_close_pulse", al_status.message);
         return al_status.code;
 	}
-    ual_end_action(this->pulseCtx);
+    hli_end_action(this->pulseCtx);
     return 0;
 }
 
@@ -405,7 +405,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
 	ctx = getOpCtx;
 
  	<xsl:apply-templates select="field" mode="GET_SINGLE"/> 
-	ual_end_action(ctx);
+	hli_end_action(ctx);
 	
 	return 0;
 }
@@ -465,7 +465,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 		<xsl:with-param name="dynamic_only" select="'no'"/>
 	</xsl:apply-templates>
 
-	ual_end_action(putOpCtx);
+	hli_end_action(putOpCtx);
 	
 	return 0;
 }
@@ -550,7 +550,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	<xsl:apply-templates select="field" mode="PUT_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'yes'"/>
 	</xsl:apply-templates>
-	ual_end_action(putSliceOpCtx);
+	hli_end_action(putSliceOpCtx);
 
 	return 0;
 }
@@ -588,7 +588,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 
 	<xsl:apply-templates select="field" mode="DELETE"/>
 
-	ual_end_action(ctx);
+	hli_end_action(ctx);
 	
 	return 0;
 }
@@ -652,7 +652,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	<xsl:apply-templates select="field" mode="GET_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'yes'"/>
 	</xsl:apply-templates>
-	ual_end_action(getSliceOpCtx);
+	hli_end_action(getSliceOpCtx);
 
 	return 0;
 }
@@ -806,7 +806,7 @@ See IDSDef2Classes.xsl  -->
 			al_status = ual_delete_data(ctx, fieldPath.c_str());
 			if (al_status.code != 0)
 			{	
-				ual_end_action(ctx);
+				hli_end_action(ctx);
 				return al_status.code; 
 			}
 		</xsl:otherwise>
@@ -1024,7 +1024,7 @@ See IDSDef2Classes.xsl  -->
 				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
 					return al_status.code; 
 				}
 
@@ -1032,21 +1032,21 @@ See IDSDef2Classes.xsl  -->
                     status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
 					if (status &lt; 0)
 					{	
-						ual_end_action(ctx);
+						hli_end_action(ctx);
 						return status; 
 					}
 					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
-						ual_end_action(aosCtx);
-						ual_end_action(ctx);
+						hli_end_action(aosCtx);
+						hli_end_action(ctx);
 						return al_status.code; 
 					}
 				}
-				al_status = ual_end_action(aosCtx);
+				al_status = hli_end_action(aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
 					return al_status.code; 
 				}
 			
@@ -1071,7 +1071,7 @@ See IDSDef2Classes.xsl  -->
 				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
 					return al_status.code;
 				}
 
@@ -1079,21 +1079,21 @@ See IDSDef2Classes.xsl  -->
                     status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
                     if (status &lt; 0)
 					{	
-						ual_end_action(ctx);
+						hli_end_action(ctx);
 						return status;
 					}
 					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
-						ual_end_action(aosCtx);
-						ual_end_action(ctx);
+						hli_end_action(aosCtx);
+						hli_end_action(ctx);
 						return al_status.code; 
 					}
 				}
-				al_status = ual_end_action(aosCtx);
+				al_status = hli_end_action(aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
 					return al_status.code; 
 				}
 		</xsl:when>
@@ -1124,7 +1124,7 @@ See IDSDef2Classes.xsl  -->
 				al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
 					return al_status.code;
 				}
 
@@ -1132,21 +1132,21 @@ See IDSDef2Classes.xsl  -->
                     status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
                     if (status &lt; 0)
 					{	
-						ual_end_action(ctx);
+						hli_end_action(ctx);
                         return status;
 					}
 					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
-						ual_end_action(aosCtx);
-						ual_end_action(ctx);
+						hli_end_action(aosCtx);
+						hli_end_action(ctx);
                         return al_status.code;
 					}
 				}
-				al_status = ual_end_action(aosCtx);
+				al_status = hli_end_action(aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
                     return al_status.code;
 				}
 					 
@@ -1206,7 +1206,7 @@ See IDSDef2Classes.xsl  -->
         </xsl:choose>
         if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
         {   
-            ual_end_action(ctx);
+            hli_end_action(ctx);
             return al_status.code;
         }
         <xsl:if test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
@@ -1256,7 +1256,7 @@ See IDSDef2Classes.xsl  -->
 			al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 			{	
-				ual_end_action(ctx);
+				hli_end_action(ctx);
 				return al_status.code;
 			}
 
@@ -1267,21 +1267,21 @@ See IDSDef2Classes.xsl  -->
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
                     if (status &lt; 0)
 					{	
-						ual_end_action(ctx);
+						hli_end_action(ctx);
                         return status;
 					}
 					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
-						ual_end_action(aosCtx);
-						ual_end_action(ctx);
+						hli_end_action(aosCtx);
+						hli_end_action(ctx);
                         return al_status.code;
 					}
 				}
-				al_status = ual_end_action(aosCtx);
+				al_status = hli_end_action(aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
                     return al_status.code;
 				}
  			}
@@ -1302,7 +1302,7 @@ See IDSDef2Classes.xsl  -->
 			al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 			{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
                     return al_status.code;
 			}
 
@@ -1313,21 +1313,21 @@ See IDSDef2Classes.xsl  -->
 					status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
                     if (status &lt; 0)
 					{	
-						ual_end_action(ctx);
+						hli_end_action(ctx);
                         return status;
 					}
 					al_status = ual_iterate_over_arraystruct(aosCtx, 1);
 					if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					{	
-						ual_end_action(aosCtx);
-						ual_end_action(ctx);
+						hli_end_action(aosCtx);
+						hli_end_action(ctx);
                         return al_status.code;
 					}
 				}
-				al_status = ual_end_action(aosCtx);
+				al_status = hli_end_action(aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
                     return al_status.code;
 				}
  			}
@@ -1355,7 +1355,7 @@ See IDSDef2Classes.xsl  -->
 			al_status = hli_begin_arraystruct_action(ctx, fieldPath.c_str(), timeBasePath.c_str(), &amp;arraySize, &amp;aosCtx);
 			if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 			{	
-				ual_end_action(ctx);
+				hli_end_action(ctx);
                 return al_status.code;
 			}
 
@@ -1368,22 +1368,22 @@ See IDSDef2Classes.xsl  -->
 					    status = <xsl:value-of select="@name"/>(i).get(aosCtx, idsTimeMode);
 					    if (status &lt; 0)
 					    {	
-						    ual_end_action(ctx);
+						    hli_end_action(ctx);
                             return status;
 					    }
 					    al_status = ual_iterate_over_arraystruct(aosCtx, 1);
 					    if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))
 					    {	
-						    ual_end_action(aosCtx);
-						    ual_end_action(ctx);
+						    hli_end_action(aosCtx);
+						    hli_end_action(ctx);
                             return al_status.code;
 					    }
 				    }
                 }
-				al_status = ual_end_action(aosCtx);
+				al_status = hli_end_action(aosCtx);
 				if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__))  
 				{	
-					ual_end_action(ctx);
+					hli_end_action(ctx);
                     return al_status.code;
 				}
  			}
@@ -1428,7 +1428,7 @@ See IDSDef2Classes.xsl  -->
 		al_status = IdsNs::Ids::readData(ctx, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>);
 		if (IdsNs::Ids::isError(al_status, __FILE__, __LINE__, __func__)) 
 		{	
-			ual_end_action(ctx);
+			hli_end_action(ctx);
             return al_status.code;
 		}
         <xsl:if test="@type='dynamic' and not(ancestor::field[@type='dynamic' and @data_type='struct_array'])">
