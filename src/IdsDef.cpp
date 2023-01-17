@@ -218,7 +218,7 @@ al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, 
     
 
     // Open get context
-    al_status = ual_begin_global_action(pulseCtx, idsFullName, READ_OP, &opCtx);
+    al_status = ual_begin_global_action(pulseCtx, idsFullName, "", READ_OP, &opCtx);
     if(al_status.code < 0) 
         return al_status;
 

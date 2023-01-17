@@ -395,7 +395,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
     clear();
 
 	// Open get context
-    al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), READ_OP, &amp;getOpCtx);
+    al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), "", READ_OP, &amp;getOpCtx);
 
 	if(al_status.code &lt; 0) {
         printf("GET: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
@@ -452,7 +452,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 	deleteAll(iOccurrence);
 
 	// Open put context
-	al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;putOpCtx);
+	al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), "", WRITE_OP, &amp;putOpCtx);
 
 	if(al_status.code &lt; 0) {
         printf("PUT: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
@@ -577,7 +577,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
         idsFullName += "/" + std::to_string(iOccurrence);
 
 	// Open put context
-    al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), WRITE_OP, &amp;deleteOpCtx);
+    al_status = ual_begin_global_action(pulseCtx, idsFullName.c_str(), "", WRITE_OP, &amp;deleteOpCtx);
 
 	if(al_status.code &lt; 0) {
         printf("DELETE_ALL: error calling ual_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
