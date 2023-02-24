@@ -403,8 +403,17 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
     }
 
 	ctx = getOpCtx;
-
- 	<xsl:apply-templates select="field" mode="GET_SINGLE"/> 
+        al_status = hli_bind_readback_plugins(ctx); //binding readback plugins just before the get() operation
+        if(al_status.code &lt; 0) {
+            printf("GET: error calling hli_bind_readback_plugins for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        }
+ 	<xsl:apply-templates select="field" mode="GET_SINGLE"/>
+	al_status = hli_unbind_readback_plugins(ctx); //unbinding readback plugins just after the get() operation
+        if(al_status.code &lt; 0) {
+            printf("GET: error calling hli_unbind_readback_plugins for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        } 
 	hli_end_action(ctx);
 	
 	return 0;
@@ -465,6 +474,11 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 		<xsl:with-param name="dynamic_only" select="'no'"/>
 	</xsl:apply-templates>
 
+        al_status = hli_write_plugins_metadata(ctx); //writing plugins metadata just after the put() operation
+        if(al_status.code &lt; 0) {
+        printf("PUT_SLICE: error calling hli_write_plugins_metadata for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        }
 	hli_end_action(putOpCtx);
 	
 	return 0;
@@ -546,12 +560,17 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
     }
 
 	ctx = putSliceOpCtx;
-
+	
 	<xsl:apply-templates select="field" mode="PUT_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'yes'"/>
 	</xsl:apply-templates>
-	hli_end_action(putSliceOpCtx);
-
+	
+	al_status = hli_write_plugins_metadata(ctx); //writing plugins metadata just after the putSlice() operation
+        if(al_status.code &lt; 0) {
+        printf("PUT_SLICE: error calling hli_write_plugins_metadata for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        }
+        hli_end_action(putSliceOpCtx);
 	return 0;
 }
 
@@ -648,10 +667,19 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
     }
 
 	ctx = getSliceOpCtx;
-
+	al_status = hli_bind_readback_plugins(ctx); //binding readback plugins just before the get_slice() operation
+        if(al_status.code &lt; 0) {
+            printf("GET_SLICE: error calling hli_bind_readback_plugins for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        }
 	<xsl:apply-templates select="field" mode="GET_SINGLE">
 		<xsl:with-param name="dynamic_only" select="'yes'"/>
 	</xsl:apply-templates>
+	al_status = hli_unbind_readback_plugins(ctx); //unbinding readback plugins just after the get_slice() operation
+        if(al_status.code &lt; 0) {
+            printf("GET: error calling hli_unbind_readback_plugins for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        } 
 	hli_end_action(getSliceOpCtx);
 
 	return 0;
