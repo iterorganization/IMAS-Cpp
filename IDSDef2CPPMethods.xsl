@@ -476,7 +476,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 
         al_status = hli_write_plugins_metadata(ctx); //writing plugins metadata just after the put() operation
         if(al_status.code &lt; 0) {
-        printf("PUT_SLICE: error calling hli_write_plugins_metadata for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        printf("PUT: error calling hli_write_plugins_metadata for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return al_status.code;
         }
 	hli_end_action(putOpCtx);
