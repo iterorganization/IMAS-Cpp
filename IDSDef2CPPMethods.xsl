@@ -869,6 +869,7 @@ See IDSDef2Classes.xsl  -->
 			for( int i = 0; i &lt;arraySize; i++){
 				<xsl:value-of select="@name"/>(i).clear();
 			}
+            <xsl:value-of select = "@name"/>.free();
         </xsl:when>
         <xsl:when test="
                   @data_type='str_1d_type' or @data_type='STR_1D'">
