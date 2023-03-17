@@ -1411,12 +1411,15 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
   		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 1, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
-
+     
         if(ptrData == NULL || retSize[0] == 0)
+        {
+            array.free();
             return al_status;
+        }
 
-        free(ptrData);
-		//IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
+
+	IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
 		
 
         return al_status;
@@ -1432,8 +1435,12 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         if (al_status.code != 0)
     			return al_status;
 
-        if(ptrData == NULL || retSize[0] * retSize[1] == 0)
+
+       if(ptrData == NULL || retSize[0] * retSize[1] == 0)
+        {
+            array.free();
             return al_status;
+        }
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1]);
 		
@@ -1452,7 +1459,10 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] == 0)
+            {
+            array.free();
             return al_status;
+        }
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2]);
 		
@@ -1472,7 +1482,10 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] == 0)
+            {
+            array.free();
             return al_status;
+        }
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3]);
 		
@@ -1491,7 +1504,10 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] * retSize[5] == 0)
+            {
+            array.free();
             return al_status;
+        }
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4], retSize[5]);
 		
@@ -1510,7 +1526,10 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
     			return al_status;
 
         if(ptrData == NULL || retSize[0] * retSize[1] * retSize[2] * retSize[3] * retSize[4] == 0)
+            {
+            array.free();
             return al_status;
+        }
 
 		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0], retSize[1], retSize[2], retSize[3], retSize[4]);
 		
