@@ -774,7 +774,7 @@ int assertShape(const blitz::TinyVector<int, 1> expectedShape, const blitz::Tiny
 {
 	if(any(expectedShape != observedShape))
 	{
-		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -784,7 +784,7 @@ int assertShape(const blitz::TinyVector<int, 2> expectedShape, const blitz::Tiny
 {
 	if(any(expectedShape != observedShape))
 	{
-		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -793,7 +793,7 @@ int assertShape(const blitz::TinyVector<int, 3> expectedShape, const blitz::Tiny
 {
 	if(any(expectedShape != observedShape))
 	{
-		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -802,7 +802,7 @@ int assertShape(const blitz::TinyVector<int, 4> expectedShape, const blitz::Tiny
 {
 	if(any(expectedShape != observedShape))
 	{
-		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -811,7 +811,7 @@ int assertShape(const blitz::TinyVector<int, 5> expectedShape, const blitz::Tiny
 {
 	if(any(expectedShape != observedShape))
 	{
-		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -820,7 +820,7 @@ int assertShape(const blitz::TinyVector<int, 6> expectedShape, const blitz::Tiny
 {
 	if(any(expectedShape != observedShape))
 	{
-		std::cerr <<  fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different shapes, observed=" << observedShape << ", expected=" << expectedShape<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -832,7 +832,7 @@ int assertField(std::string observedValue, const char* fieldPath, bool sliceMode
 
 	if(expectedValue.compare(observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -843,7 +843,7 @@ int assertField(int observedValue, const char* fieldPath,  bool sliceMode)
 	int expectedValue = getInteger();
 	if(expectedValue != observedValue)
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -855,7 +855,7 @@ int assertField(double observedValue, const char* fieldPath, bool sliceMode)
 	
 	if(expectedValue != observedValue)
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr << "Error: " <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -868,7 +868,7 @@ int assertField(std_complex_t observedValue, const char* fieldPath, bool sliceMo
     
     if(expectedValue != observedValue)
     {
-        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
         return -1;
     }
     return 0;
@@ -891,7 +891,7 @@ int assertField(const blitz::Array<std::string, 1> observedValue, const char* fi
 	
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -908,7 +908,7 @@ int assertField(const blitz::Array<int, 1> observedValue, const char* fieldPath,
 	
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -924,7 +924,7 @@ int assertField(const blitz::Array<int, 2> observedValue, const char* fieldPath,
 	
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -941,7 +941,7 @@ int assertField(const blitz::Array<int, 3> observedValue, const char* fieldPath,
 	
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -958,7 +958,7 @@ int assertField(const blitz::Array<int, 4> observedValue, const char* fieldPath,
 	
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -976,7 +976,7 @@ int assertField(const blitz::Array<int, 5> observedValue, const char* fieldPath,
 	
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -994,7 +994,7 @@ int assertField(const blitz::Array<int, 6> observedValue, const char* fieldPath,
 	
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 	return 0;
@@ -1011,7 +1011,7 @@ int assertField(const blitz::Array<double, 1> observedValue, const char*fieldPat
 
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 
@@ -1029,7 +1029,7 @@ int assertField(const blitz::Array<double, 2> observedValue, const char*fieldPat
 
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 
@@ -1046,7 +1046,7 @@ int assertField(const blitz::Array<double, 3> observedValue, const char*fieldPat
 
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 
@@ -1063,7 +1063,7 @@ int assertField(const blitz::Array<double, 4> observedValue, const char*fieldPat
 
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 
@@ -1080,7 +1080,7 @@ int assertField(const blitz::Array<double, 5> observedValue, const char*fieldPat
 
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 
@@ -1097,7 +1097,7 @@ int assertField(const blitz::Array<double, 6> observedValue, const char*fieldPat
 
 	if(any(expectedValue != observedValue))
 	{
-		std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+		std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
 		return -1;
 	}
 
@@ -1115,7 +1115,7 @@ int assertField(const blitz::Array<std_complex_t, 1> observedValue, const char*f
 
     if(any(expectedValue != observedValue))
     {
-        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
         return -1;
     }
 
@@ -1132,7 +1132,7 @@ int assertField(const blitz::Array<std_complex_t, 2> observedValue, const char*f
 
     if(any(expectedValue != observedValue))
     {
-        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
         return -1;
     }
 
@@ -1149,7 +1149,7 @@ int assertField(const blitz::Array<std_complex_t, 3> observedValue, const char*f
 
     if(any(expectedValue != observedValue))
     {
-        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
         return -1;
     }
 
@@ -1166,7 +1166,7 @@ int assertField(const blitz::Array<std_complex_t, 4> observedValue, const char*f
 
     if(any(expectedValue != observedValue))
     {
-        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
         return -1;
     }
 
@@ -1183,7 +1183,7 @@ int assertField(const blitz::Array<std_complex_t, 5> observedValue, const char*f
 
     if(any(expectedValue != observedValue))
     {
-        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
         return -1;
     }
 
@@ -1201,7 +1201,7 @@ int assertField(const blitz::Array<std_complex_t, 6> observedValue, const char*f
 
     if(any(expectedValue != observedValue))
     {
-        std::cerr <<  fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
+        std::cerr <<  "Error: " << fieldPath << " : different values, observed=" << observedValue << ", expected=" << expectedValue<<std::endl;
         return -1;
     }
 
