@@ -1399,7 +1399,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             return al_status;
 
         free(ptrData);
-		//IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
+		IdsNs::Ids::setArray(array, (int*)ptrData, retSize[0]);
 		
 
         return al_status;
