@@ -89,7 +89,7 @@ std::string IdsNs::Ids::serialize(int protocol)
         this->connected = _connected_stored;
 
         // cleanup
-        ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
+        ual_close_pulse(_pulseCtx, CLOSE_PULSE);
         hli_end_action(_pulseCtx);
 
         if( put_ret < 0 ) {
@@ -188,7 +188,7 @@ int IdsNs::Ids::deserialize(std::string &data)
         this->connected = _connected_stored;
 
         // cleanup
-        al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE, "");
+        al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE);
         al_status = hli_end_action(_pulseCtx);
         std::remove(tmpfile.c_str());
 

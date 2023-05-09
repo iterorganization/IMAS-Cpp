@@ -208,7 +208,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak, const char *ver
 
 int IdsNs::IDS::close()
 {
-  	al_status_t al_status = ual_close_pulse(this->pulseCtx, CLOSE_PULSE, "");
+  	al_status_t al_status = ual_close_pulse(this->pulseCtx, CLOSE_PULSE);
     if(al_status.code != 0)
 	{
 		printf("Error opening imas shot %d, run %d: %s\n %s\n", shot, run, "ual_close_pulse", al_status.message);
