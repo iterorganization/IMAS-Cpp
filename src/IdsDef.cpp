@@ -90,7 +90,7 @@ std::string IdsNs::Ids::serialize(int protocol)
 
         // cleanup
         ual_close_pulse(_pulseCtx, CLOSE_PULSE);
-        hli_end_action(_pulseCtx);
+        ual_end_action(_pulseCtx);
 
         if( put_ret < 0 ) {
             printf("SERIALIZE: Error putting data");
@@ -173,7 +173,7 @@ int IdsNs::Ids::deserialize(std::string &data)
         if(al_status.code != 0)
         {
             printf("DESERIALIZE: Error opening ASCII backend - ual_begin_dataentry_action\n%s\n", al_status.message);
-            hli_end_action(_pulseCtx);
+            ual_end_action(_pulseCtx);
             return -1;
         }
 
@@ -189,7 +189,7 @@ int IdsNs::Ids::deserialize(std::string &data)
 
         // cleanup
         al_status = ual_close_pulse(_pulseCtx, CLOSE_PULSE);
-        al_status = hli_end_action(_pulseCtx);
+        al_status = ual_end_action(_pulseCtx);
         std::remove(tmpfile.c_str());
 
         if( get_ret < 0 ) {
@@ -218,14 +218,14 @@ al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, 
     
 
     // Open get context
-    al_status = hli_begin_global_action(pulseCtx, idsFullName, "", READ_OP, &opCtx);
+    al_status = ual_begin_global_action(pulseCtx, idsFullName, "", READ_OP, &opCtx);
     if(al_status.code < 0) 
         return al_status;
 
     al_status =IdsNs::Ids::readData(opCtx, fieldPath, timeBasePath, idsTimeMode);
     if (al_status.code)
     {   
-        hli_end_action(opCtx);
+        ual_end_action(opCtx);
         return al_status;
     }
 
@@ -243,7 +243,7 @@ al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, 
              strncpy(al_status.message, "ERROR: time dependency mode (ids_properties/homogeneous_time) set to unknown value!", MAX_ERR_MSG_LEN);
     }
 
-    hli_end_action(opCtx);
+    ual_end_action(opCtx);
     return al_status;
 }
 
@@ -501,10 +501,10 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if (value != EMPTY_INT) {
             IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 0, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 0, NULL);
 		}
 		else {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, INTEGER_DATA, 0, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, INTEGER_DATA, 0, NULL);
 		}
         return al_status;
         }
@@ -516,13 +516,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int arrayOfSizes[1] = {	array.extent(0)};
 
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, NULL);
             return al_status;
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
             
-		al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, arrayOfSizes);
+		al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, arrayOfSizes);
 			
         return al_status;
         }
@@ -535,7 +535,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(1)};
 
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, NULL);
             return al_status;
 		}
 		
@@ -546,7 +546,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         fortranOrderArray = array;
 
 		ptrData = (void*) fortranOrderArray.data();
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, arrayOfSizes);
         return al_status;
         }
 
@@ -560,7 +560,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(2)};
 					
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, NULL);
             return al_status;
 		}
 			
@@ -572,7 +572,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		ptrData = (void*) fortranOrderArray.data();
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, arrayOfSizes);
         return al_status;
         }
 
@@ -587,7 +587,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(3)};
 
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, NULL);
             return al_status;
 		}
 		
@@ -599,7 +599,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		ptrData = (void*) fortranOrderArray.data();
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, arrayOfSizes);
         return al_status;
         }
  
@@ -615,7 +615,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(4)};
 
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, NULL);
             return al_status;
 		}
 		
@@ -626,7 +626,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         fortranOrderArray = array;
 		ptrData = (void*) fortranOrderArray.data();
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, arrayOfSizes);
         return al_status;
         }
 
@@ -644,7 +644,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, NULL);
             return al_status;
 		}
 		
@@ -656,7 +656,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         fortranOrderArray = array;
 		ptrData = (void*) fortranOrderArray.data();
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, arrayOfSizes);
         return al_status;
         }
 
@@ -668,10 +668,10 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		if (value != EMPTY_DOUBLE) {
             IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
-            al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 0, NULL);
+            al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 0, NULL);
         }
         
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, INTEGER_DATA, 0, NULL);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, INTEGER_DATA, 0, NULL);
         return al_status;
         }
 
@@ -683,13 +683,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int arrayOfSizes[1] = {	array.extent(0)};
 
 		if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, NULL);
             return al_status;
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
         
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, arrayOfSizes);
         return al_status;
         }
 
@@ -702,7 +702,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(1)};
 
         if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, NULL);
             return al_status;
 		}
 
@@ -714,7 +714,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		ptrData = (void*) fortranOrderArray.data();
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, arrayOfSizes);
         return al_status;
         }
 
@@ -728,7 +728,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(2)};
 
 		if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, NULL);
             return al_status;
 		}
 		
@@ -740,7 +740,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		ptrData = (void*) fortranOrderArray.data();
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, arrayOfSizes);
         return al_status;
         }
 
@@ -755,7 +755,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(3)};
 
 		if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, NULL);
             return al_status;
 		}
 		
@@ -768,7 +768,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		ptrData = (void*) fortranOrderArray.data();
 
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, arrayOfSizes);
         return al_status;
         }
  
@@ -784,7 +784,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(4)};
 
 		if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, NULL);
             return al_status;
 		}
 		
@@ -796,7 +796,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		ptrData = (void*) fortranOrderArray.data();
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, arrayOfSizes);
         return al_status;
         }
 
@@ -813,7 +813,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(5)};
 
 		if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, NULL);
             return al_status;
 		}
 		
@@ -826,7 +826,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		ptrData = (void*) fortranOrderArray.data();
 
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, arrayOfSizes);
         return al_status;
         }
 
@@ -838,9 +838,9 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
         if(value != EMPTY_COMPLEX) {
             IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
-            al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 0, NULL);
+            al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 0, NULL);
         }
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, COMPLEX_DATA, 0, NULL);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, COMPLEX_DATA, 0, NULL);
         return al_status;
     }
 
@@ -852,7 +852,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[1] = { array.extent(0)};
 
         if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, NULL);
             return al_status;
 		}
 		
@@ -865,7 +865,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         ptrData = (void*) fortranOrderArray.data();
 
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, arrayOfSizes);
         return al_status;
     }
 
@@ -878,7 +878,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[2] = { array.extent(0), array.extent(1)};
 
         if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, NULL);
             return al_status;
 		}
 		
@@ -891,7 +891,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         ptrData = (void*) fortranOrderArray.data();
 
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, arrayOfSizes);
         return al_status;
     }
 
@@ -903,7 +903,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[3] = { array.extent(0), array.extent(1), array.extent(2)};
 
         if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, NULL);
             return al_status;
 		}
 		
@@ -916,7 +916,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         ptrData = (void*) fortranOrderArray.data();
 
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, arrayOfSizes);
         return al_status;
     }
 
@@ -928,7 +928,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[4] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3)};
 
         if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, NULL);
             return al_status;
 		}
 		
@@ -941,7 +941,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         ptrData = (void*) fortranOrderArray.data();
 
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, arrayOfSizes);
         return al_status;
     }
 
@@ -953,7 +953,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[5] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3), array.extent(4)};
 
         if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, NULL);
             return al_status;
 		}
 		
@@ -966,7 +966,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         ptrData = (void*) fortranOrderArray.data();
 
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, arrayOfSizes);
         return al_status;
     }
 
@@ -978,7 +978,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[6] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3), array.extent(4), array.extent(5)};
 
 		if(array.size() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, NULL);
             return al_status;
 		}
 		
@@ -991,7 +991,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         ptrData = (void*) fortranOrderArray.data();
 
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, arrayOfSizes);
         return al_status;
     }
 
@@ -1004,13 +1004,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int arrayOfSizes[1] = {	(int)text.size()};
 
         if (text.length() < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, NULL);
             return al_status;
 		}
         
 	    IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, arrayOfSizes);
         return al_status;
         }
 
@@ -1026,7 +1026,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int size;
 
 		if (numberOfStrings < 1) {
-			al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, NULL);
+			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, NULL);
 			return al_status;
 		}
 			
@@ -1055,7 +1055,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 			memcpy(ptrData + i * maxStringSize, ptrCString, size);	
 		}
 
-        al_status = hli_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, arrayOfSizes);
+        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, arrayOfSizes);
         return al_status;
         }
 
@@ -1072,7 +1072,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		double retVal = -1;
 		void* ptrData = &retVal;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 0, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 0, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 		
@@ -1090,7 +1090,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 1, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 1, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1111,7 +1111,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 2, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 2, &retSize[0]);
 		if (al_status.code != 0)
     			return al_status;
 
@@ -1133,7 +1133,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 3, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 3, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1156,7 +1156,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 4, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 4, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1178,7 +1178,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 5, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 5, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1200,7 +1200,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 6, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, DOUBLE_DATA, 6, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1230,7 +1230,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         void* ptrData = &stdComplex;
         
 
-        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 0, &retSize[0]);
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 0, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1251,7 +1251,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 1, &retSize[0]);
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 1, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1275,7 +1275,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 2, &retSize[0]);
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 2, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1297,7 +1297,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 3, &retSize[0]);
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 3, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1319,7 +1319,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 4, &retSize[0]);
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 4, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1341,7 +1341,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 5, &retSize[0]);
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 5, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1363,7 +1363,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int retSize[MAXDIM];
         void* ptrData = NULL;
 
-        al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 6, &retSize[0]);
+        al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, COMPLEX_DATA, 6, &retSize[0]);
         if (al_status.code != 0)
                 return al_status;
 
@@ -1389,7 +1389,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retVal = -1;
 		void* ptrData = &retVal;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 0, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1408,7 +1408,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 1, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 1, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
      
@@ -1431,7 +1431,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 2, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 2, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1454,7 +1454,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 3, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 3, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1477,7 +1477,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 4, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 4, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1499,7 +1499,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 6, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 6, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1521,7 +1521,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];
 		void* ptrData = NULL;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 5, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, INTEGER_DATA, 5, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
@@ -1545,7 +1545,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int retSize[MAXDIM];	
 		void* ptrData = NULL;
 		
-		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, CHAR_DATA, 1, &retSize[0]);
+		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), &ptrData, CHAR_DATA, 1, &retSize[0]);
 		if (al_status.code != 0)
     			return al_status;
 		
@@ -1572,7 +1572,7 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int  numberOfStrings = -1;
 		int maxStringSize = -1;
 
-  		al_status = hli_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void**)(&ptrData), CHAR_DATA, 2, &retSize[0]);
+  		al_status = ual_read_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void**)(&ptrData), CHAR_DATA, 2, &retSize[0]);
         if (al_status.code != 0)
     			return al_status;
 
