@@ -1,0 +1,42 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create an empty core_profiles IDS
+    IdsNs::IDS::core_profiles core_profiles;
+    core_profiles.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
+    core_profiles.time.resize(2);
+    core_profiles.profiles_1d.resize(2);
+    for (int i = 0; i < 2; i++) {
+        core_profiles.time(i) = i + 1.0;
+        core_profiles.profiles_1d(i).grid.rho_tor_norm.resize(5);
+        core_profiles.profiles_1d(i).j_total.resize(5);
+        for (int j = 0; j < 5; j++) {
+            core_profiles.profiles_1d(i).grid.rho_tor_norm(j) = 0.25 * j;
+            core_profiles.profiles_1d(i).j_total(j) = 0.25 * j + i;
+        }
+    }
+
+    // Create a new IDS
+    IdsNs::IDS::core_profiles core_profiles_copy;
+    // Create memory backend Data Entry and associate the core_profiles IDSs
+    IdsNs::IDS ids;
+    ids.create("imas:memory?path=/", FORCE_CREATE_PULSE);
+    core_profiles.setPulseCtx(ids.getPulseCtx());
+    core_profiles_copy.setPulseCtx(ids.getPulseCtx());
+    // Copy the IDS through the memory backend
+    core_profiles.put();
+    core_profiles_copy.get();
+
+    // Adjust some data
+    core_profiles_copy.profiles_1d(0).j_total *= 2.0;
+
+    // Verify that we didn't change the original IDS
+    // -> [ 0 0.5 1 1.5 2 ]
+    std::cout << core_profiles_copy.profiles_1d(0).j_total << std::endl;
+    // -> [ 0 0.25 0.5 0.75 1 ]
+    std::cout << core_profiles.profiles_1d(0).j_total << std::endl;
+
+    return 0;
+}

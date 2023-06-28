@@ -1,0 +1,38 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create the database entry
+    IdsNs::IDS ids;
+    ids.create("imas:hdf5?path=my-data", FORCE_CREATE_PULSE);
+
+    // Create an empty core_profiles IDS
+    IdsNs::IDS::core_profiles core_profiles;
+    // Set the mandatory ids_properties.homogeneous_time field
+    core_profiles.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
+    // Continue filling the core_profiles IDS with static values here
+    // ...
+
+    // Associate the core_profiles IDS with our data entry
+    core_profiles.setPulseCtx(ids.getPulseCtx());
+    // Allocate time array
+    core_profiles.time.resize(1);
+
+    // Example time integration loop:
+    double t = 0.0;
+    double t_stop = 60.0;
+    double dt = 0.1;
+    while (t < t_stop)
+    {
+        core_profiles.time = t;
+        // Fill your time-dependent data in the core_profiles IDS here
+        // ...
+
+        // Append the current time slice to the data stored on disk
+        core_profiles.putSlice();
+        t += dt;
+    }
+
+    return 0;
+}

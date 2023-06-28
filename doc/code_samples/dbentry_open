@@ -1,0 +1,18 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create a new IDS object
+    IdsNs::IDS ids;
+    // Open the database entry by providing an IMAS URI
+    ids.open("imas:mdsplus?user=public;shot=131024;run=41;database=ITER?version=3", OPEN_PULSE);
+
+    // Alternatively, we can create an IDS providing legacy
+    // arguments: (shot, run, 0, 0)
+    IdsNs::IDS legacy(131024, 24, 0, 0);
+    // And open with the openEnv method
+    legacy.openEnv("public", "test", "3");
+
+    return 0;
+}

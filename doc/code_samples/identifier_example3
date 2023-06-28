@@ -1,0 +1,18 @@
+// Include the Access Layer
+#include "UALClasses.h"
+// And the required identifiers header(s)
+#include "poloidal_plane_coordinates_identifier.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    IdsNs::IDS::equilibrium equilibrium;
+    equilibrium.time_slice.resize(1);
+    equilibrium.time_slice(0).profiles_2d.resize(1);
+    equilibrium.time_slice(0).profiles_2d(0).grid_type.index = rectangular;
+    equilibrium.time_slice(0).profiles_2d(0).grid_type.name =
+        poloidal_plane_coordinates_identifier_get_type_name(rectangular);
+    equilibrium.time_slice(0).profiles_2d(0).grid_type.description =
+        poloidal_plane_coordinates_identifier_get_type_description(rectangular);
+
+    return 0;
+}

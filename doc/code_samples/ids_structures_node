@@ -1,0 +1,15 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create an empty core_profiles IDS
+    IdsNs::IDS::core_profiles core_profiles;
+    // core_profiles/ids_properties is a structure, which has multiple child
+    // nodes. One of the child nodes is homogeneous time:
+    std::cout << core_profiles.ids_properties.homogeneous_time << std::endl;
+    // Since we created an empty IDS, this will output "-999999999": the default
+    // value for integers.
+
+    return 0;
+}
