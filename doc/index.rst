@@ -39,6 +39,7 @@ different programming language:
    use_ids
    imas_uri
    identifiers
+   conf
 
 .. toctree::
    :maxdepth: 3
