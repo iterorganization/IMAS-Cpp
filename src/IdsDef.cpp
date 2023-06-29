@@ -71,7 +71,7 @@ std::string IdsNs::Ids::serialize(int protocol)
             return "";
         }
         std::string filename = tmpfile.substr(tmpfile.find_last_of("/\\") + 1);
-	    std::string uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";options=filename="+filename;
+	    std::string uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
 
         al_status = ual_begin_dataentry_action(uri.c_str(), CREATE_PULSE, &_pulseCtx);
         if(al_status.code != 0)
@@ -167,7 +167,7 @@ int IdsNs::Ids::deserialize(std::string &data)
             return -1;
         }
 
-	std::string uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";options=filename="+filename;
+	std::string uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
         al_status_t al_status;
         int _pulseCtx;
         // overwrite pulse context, so we can use the logic in get for putting to the ascii backend
