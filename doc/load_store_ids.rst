@@ -17,12 +17,12 @@
 .. |dbentry| replace:: the :cpp:class:`IdsNs::IDS` class
 .. |dbentry_open| replace:: :cpp:func:`IdsNs::IDS::open`, :cpp:func:`IdsNs::IDS::openEnv` (legacy)
 .. |dbentry_get| replace:: :cpp:func:`IdsNs::Ids::get`
-.. |dbentry_getslice| replace:: :cpp:func:`IdsNs::Ids::get_slice`
+.. |dbentry_getslice| replace:: :cpp:func:`IdsNs::Ids::getSlice`
 .. |CLOSEST_INTERP| replace:: :c:macro:`CLOSEST_SAMPLE`
 .. |PREVIOUS_INTERP| replace:: :c:macro:`PREVIOUS_SAMPLE`
 .. |LINEAR_INTERP| replace:: :c:macro:`INTERPOLATION`
 
 .. |dbentry_create| replace:: :cpp:func:`IdsNs::IDS::create`, :cpp:func:`IdsNs::IDS::createEnv` (legacy)
 .. |dbentry_put| replace:: :cpp:func:`IdsNs::Ids::put`
-.. |dbentry_put_slice| replace:: :cpp:func:`IdsNs::Ids::put_slice`
+.. |dbentry_put_slice| replace:: :cpp:func:`IdsNs::Ids::putSlice`
 

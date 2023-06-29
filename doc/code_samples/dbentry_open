@@ -14,5 +14,10 @@ int main(int argc, char *argv[]) {
     // And open with the openEnv method
     legacy.openEnv("public", "test", "3");
 
+    // Use setBackend to use a different backend than MDS+
+    IdsNs::IDS legacy2(1, 1, 0, 0);
+    legacy2.setBackend(MEMORY_BACKEND);
+    legacy.openEnv("public", "test", "3");
+
     return 0;
 }

@@ -119,7 +119,8 @@ html_theme_options = {
 }
 
 object_description_options = [
-    (".*parameter", dict(include_in_toc=False)),
+    (".*", dict(include_fields_in_toc=False)),
+    (".*Param", dict(include_in_toc=False)),
 ]
 
 html_static_path = ["../../doc_common/static"]

@@ -45,7 +45,9 @@ different programming language:
    :maxdepth: 3
    :caption: API documentation
 
-   api
+   api_dbentry
+   api_ids
+   api_constants
 
 Indices and tables
 ==================
