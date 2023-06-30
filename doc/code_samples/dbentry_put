@@ -17,10 +17,10 @@ int main(int argc, char *argv[]) {
     // Associate the pf_active IDS with our data entry
     pf_active.setPulseCtx(ids.getPulseCtx());
     // And store it
-    pf_active.put()
+    pf_active.put();
 
     // Alternatively, store the pf_active IDS as occurrence 1
-    pf_active.put(1)
+    pf_active.put(1);
 
     return 0;
 }

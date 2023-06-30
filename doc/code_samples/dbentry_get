@@ -9,10 +9,10 @@ int main(int argc, char *argv[]) {
     ids.open("imas:mdsplus?user=public;shot=131024;run=41;database=ITER?version=3", OPEN_PULSE);
 
     // Load the core_profiles IDS, occurrence 0
-    ids._core_profiles.get()
+    ids._core_profiles.get();
     // Load the core_profiles IDS, occurrence 1, beware
     // that this overwrites the contents of occurrence 0!
-    ids._core_profiles.get(1)
+    ids._core_profiles.get(1);
 
     return 0;
 }

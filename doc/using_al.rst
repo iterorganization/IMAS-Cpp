@@ -18,7 +18,7 @@ follows:
 
 .. code-block:: bash
 
-    gcc `pkg-config --libs --cflags al-cpp` -pthread imas_hello_world.cpp -o imas_hello_world
+    g++ `pkg-config --libs --cflags al-cpp` -pthread imas_hello_world.cpp -o imas_hello_world
 
 We use ``pkg-config`` to output the required libraries and compiler flags to use
 the C++ Access Layer. Feel free to use a different compiler than gcc, and/or add

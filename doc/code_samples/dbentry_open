@@ -8,16 +8,16 @@ int main(int argc, char *argv[]) {
     // Open the database entry by providing an IMAS URI
     ids.open("imas:mdsplus?user=public;shot=131024;run=41;database=ITER?version=3", OPEN_PULSE);
 
-    // Alternatively, we can create an IDS providing legacy
+    // Alternatively, we can open an IDS providing legacy
     // arguments: (shot, run, 0, 0)
     IdsNs::IDS legacy(131024, 24, 0, 0);
     // And open with the openEnv method
-    legacy.openEnv("public", "test", "3");
+    legacy.openEnv("public", "ITER", "3");
 
     // Use setBackend to use a different backend than MDS+
     IdsNs::IDS legacy2(1, 1, 0, 0);
     legacy2.setBackend(MEMORY_BACKEND);
-    legacy.openEnv("public", "test", "3");
+    legacy.openEnv("public", "ITER", "3");
 
     return 0;
 }
