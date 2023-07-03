@@ -29,7 +29,7 @@
 .. |str_1D_default| replace:: an empty :ref:`Blitz++` ``Array``
 .. |int_default| replace:: :code:`-999_999_999`, :cpp:expr:`EMPTY_INT`
 .. |double_default| replace:: :code:`-9e40`, :cpp:expr:`EMPTY_DOUBLE`
-.. |complex_default| replace:: :code:`-9e40-9e40j`, :cpp:expr:`EMPTY_COMPLEX`
+.. |complex_default| replace:: :code:`-9e40 -9e40i`, :cpp:expr:`EMPTY_COMPLEX`
 .. |ND_default| replace:: an empty :ref:`Blitz++` ``Array``
 
 .. |isFieldValid| replace:: \ .. no equivalent in C++ API
