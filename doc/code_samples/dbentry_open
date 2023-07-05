@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
 
     // Alternatively, we can open an IDS providing legacy
     // arguments: (shot, run, 0, 0)
-    IdsNs::IDS legacy(131024, 24, 0, 0);
+    IdsNs::IDS legacy(131024, 41, 0, 0);
     // And open with the openEnv method
     legacy.openEnv("public", "ITER", "3");
 
