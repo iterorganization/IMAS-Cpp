@@ -2,7 +2,7 @@
 #
 
 # check that requirements are fulfilled
-requirements_warnings := $(shell pip freeze -r requirements.txt 2>&1 >/dev/null | grep WARNING)
+requirements_warnings := $(shell pip freeze -r ../../doc_common/requirements.txt 2>&1 >/dev/null | grep WARNING)
 ifneq ($(requirements_warnings), )
 $(info $(requirements_warnings))
 $(info Requirements can be installed with pip:)
