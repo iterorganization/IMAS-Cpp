@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     IdsNs::IDS::core_profiles core_profiles_copy;
     // Create memory backend Data Entry and associate the core_profiles IDSs
     IdsNs::IDS ids;
-    ids.create("imas:memory?path=/", FORCE_CREATE_PULSE);
+    ids.open("imas:memory?path=/", FORCE_CREATE_PULSE);
     core_profiles.setPulseCtx(ids.getPulseCtx());
     core_profiles_copy.setPulseCtx(ids.getPulseCtx());
     // Copy the IDS through the memory backend

@@ -22,7 +22,7 @@
 .. |PREVIOUS_INTERP| replace:: :c:macro:`PREVIOUS_SAMPLE`
 .. |LINEAR_INTERP| replace:: :c:macro:`INTERPOLATION`
 
-.. |dbentry_create| replace:: :cpp:func:`IdsNs::IDS::create`, :cpp:func:`IdsNs::IDS::createEnv` (legacy)
+.. |dbentry_create| replace:: :cpp:func:`IdsNs::IDS::open`, :cpp:func:`IdsNs::IDS::createEnv` (legacy)
 .. |dbentry_put| replace:: :cpp:func:`IdsNs::Ids::put`
 .. |dbentry_put_slice| replace:: :cpp:func:`IdsNs::Ids::putSlice`
 

@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
     // Create a new IDS object
     IdsNs::IDS ids;
     // Create the database entry by providing an IMAS URI
-    ids.create("imas:hdf5?path=my-data", FORCE_CREATE_PULSE);
+    ids.open("imas:hdf5?path=my-data", FORCE_CREATE_PULSE);
 
     return 0;
 }

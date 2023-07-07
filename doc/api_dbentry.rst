@@ -12,7 +12,7 @@ Data entry (``IdsNs::IDS``) API
     Class modeling Data Entries.
 
     Existing Data entries can be opened (see :cpp:func:`open` and
-    :cpp:func:`openEnv`) and new ones created (see :cpp:func:`create` and
+    :cpp:func:`openEnv`) and new ones created (see :cpp:func:`open` and
     :cpp:func:`createEnv`).
 
     All available IDSs are member classes in the scope of this class, e.g.
@@ -20,8 +20,8 @@ Data entry (``IdsNs::IDS``) API
 
     .. cpp:function:: IDS()
 
-        Constructor to use with :ref:`Data entry URIs`. Use :cpp:func:`open` or
-        :cpp:func:`create` afterwards to open or create the Data Entry.
+        Constructor to use with :ref:`Data entry URIs`. Use :cpp:func:`open`
+        afterwards to open or create the Data Entry.
 
     .. cpp:function:: IDS(int shot, int run, int refShot, int refRun)
 
@@ -36,10 +36,12 @@ Data entry (``IdsNs::IDS``) API
 
     .. cpp:function:: int open(const char *uri, int mode)
 
-        Open the Data Entry at the provided URI.
+        Open or create the Data Entry at the provided URI.
 
         :param uri: :ref:`Data entry URI <Data entry URIs>`
-        :param mode: One of :cpp:expr:`OPEN_PULSE`, :cpp:expr:`FORCE_OPEN_PULSE`
+        :param mode: One of :cpp:expr:`OPEN_PULSE`,
+            :cpp:expr:`FORCE_OPEN_PULSE`, :cpp:expr:`CREATE_PULSE` or
+            :cpp:expr:`FORCE_CREATE_PULSE`.
         :returns: Status code: ``0`` on success, ``<0`` on failure.
         :example: See :ref:`Open an existing IMAS Database Entry`.
 
@@ -55,15 +57,6 @@ Data entry (``IdsNs::IDS``) API
         :param option: Options to pass to the backend
         :returns: Status code: ``0`` on success, ``<0`` on failure
         :example: See :ref:`Open an existing IMAS Database Entry`.
-
-    .. cpp:function:: int create(const char *uri, int mode)
-
-        Create the Data Entry at the provided URI.
-
-        :param uri: :ref:`Data entry URI <Data entry URIs>`
-        :param mode: One of :cpp:expr:`CREATE_PULSE`, :cpp:expr:`FORCE_CREATE_PULSE`
-        :returns: Status code: ``0`` on success, ``<0`` on failure
-        :example: See :ref:`Create a new IMAS Database Entry`.
 
     .. cpp:function:: int createEnv(const char *user, const char *tokamak, const char *version, const char *option)
 

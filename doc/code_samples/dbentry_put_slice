@@ -5,7 +5,7 @@
 int main(int argc, char *argv[]) {
     // Create the database entry
     IdsNs::IDS ids;
-    ids.create("imas:hdf5?path=my-data", FORCE_CREATE_PULSE);
+    ids.open("imas:hdf5?path=my-data", FORCE_CREATE_PULSE);
 
     // Create an empty core_profiles IDS
     IdsNs::IDS::core_profiles core_profiles;
