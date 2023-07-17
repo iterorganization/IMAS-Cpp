@@ -30,7 +30,7 @@ IDSDEF = $(UAL_BUILD)/xml/IDSDef.xml
 ids_path = $(realpath $(UAL_BUILD)/models/mdsplus)
 
 # Test environment (mimics loaded imas environment), write ids to tmp dir
-test_ENV = AL_PLUGINS=$(UAL_BUILD)/plugins LD_LIBRARY_PATH=$(UAL_BUILD)/cppinterface/lib:$(UAL_BUILD)/lowlevel:$$LD_LIBRARY_PATH ids_path="$$PWD/tmp;$(ids_path)"
+test_ENV = IMAS_AL_PLUGINS=$(UAL_BUILD)/plugins LD_LIBRARY_PATH=$(UAL_BUILD)/cppinterface/lib:$(UAL_BUILD)/lowlevel:$$LD_LIBRARY_PATH ids_path="$$PWD/tmp;$(ids_path)"
 
 include Makefile.tests
 endif # IMAS_CPP
