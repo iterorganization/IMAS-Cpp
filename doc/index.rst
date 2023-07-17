@@ -15,9 +15,12 @@ programming language.
 
    - `Python High Level Interface
      <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/python/latest.html>`_
-   - `Fortran High Level Interface <https://user.iter.org/default.aspx?uid=YSQENW>`_
-   - `Java High Level Interface <https://user.iter.org/default.aspx?uid=YSQENW>`_
-   - `MATLAB High Level Interface <https://user.iter.org/default.aspx?uid=YSQENW>`_
+   - `Fortran High Level Interface
+     <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/fortran/latest.html>`_
+   - `Java High Level Interface
+     <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/java/latest.html>`_
+   - `MATLAB High Level Interface
+     <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/matlab/latest.html>`_
 
 .. todo::
 
