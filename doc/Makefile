@@ -6,7 +6,7 @@ requirements_warnings := $(shell pip freeze -r ../../doc_common/requirements.txt
 ifneq ($(requirements_warnings), )
 $(info $(requirements_warnings))
 $(info Requirements can be installed with pip:)
-$(info $$ pip install -r $(shell readlink -f requirements.txt))
+$(info $$ pip install -r $(shell readlink -f ../../doc_common/requirements.txt))
 $(error Missing python packages for building the documentation.)
 endif
 
