@@ -507,7 +507,11 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 0, NULL);
 		}
 		else {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, INTEGER_DATA, 0, NULL);
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS)
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, INTEGER_DATA, 0, NULL);
+            else
+                return IdsNs::Ids::okStatus();
 		}
         return al_status;
         }
@@ -519,8 +523,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int arrayOfSizes[1] = {	array.extent(0)};
 
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 1, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -538,8 +547,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(1)};
 
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 2, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -563,8 +577,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(2)};
 					
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 3, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 			
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -590,8 +609,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(3)};
 
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 4, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -618,8 +642,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(4)};
 
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 5, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -647,8 +676,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 
 		
 		if(array.size() < 1) { //NO DATA, LL is called in case of existing bound plugins
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, INTEGER_DATA, 6, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -673,8 +707,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
             al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 0, NULL);
         }
-        
-        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, INTEGER_DATA, 0, NULL);
+        else {
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS)
+               al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, INTEGER_DATA, 0, NULL);
+            else
+                return IdsNs::Ids::okStatus();
+        }
         return al_status;
         }
 
@@ -686,8 +725,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int arrayOfSizes[1] = {	array.extent(0)};
 
 		if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 1, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -705,8 +749,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(1)};
 
         if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 2, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -731,8 +780,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(2)};
 
 		if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, NULL);
-            return al_status;
+             bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 3, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -758,8 +812,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(3)};
 
 		if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 4, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -787,8 +846,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(4)};
 
 		if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 5, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -816,8 +880,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 					array.extent(5)};
 
 		if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, DOUBLE_DATA, 6, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -843,7 +912,11 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
             al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 0, NULL);
         }
-        al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, COMPLEX_DATA, 0, NULL);
+        else {
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS)
+                al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), NULL, COMPLEX_DATA, 0, NULL);
+        }
         return al_status;
     }
 
@@ -855,8 +928,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[1] = { array.extent(0)};
 
         if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 1, NULL);
+                return al_status;
+            }
+             else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -881,8 +959,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[2] = { array.extent(0), array.extent(1)};
 
         if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 2, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -906,8 +989,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[3] = { array.extent(0), array.extent(1), array.extent(2)};
 
         if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 3, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -931,8 +1019,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[4] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3)};
 
         if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 4, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -956,8 +1049,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[5] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3), array.extent(4)};
 
         if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 5, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -981,8 +1079,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
         int arrayOfSizes[6] = { array.extent(0), array.extent(1), array.extent(2), array.extent(3), array.extent(4), array.extent(5)};
 
 		if(array.size() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, COMPLEX_DATA, 6, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 		
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -1007,8 +1110,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int arrayOfSizes[1] = {	(int)text.size()};
 
         if (text.length() < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, NULL);
-            return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), ptrData, CHAR_DATA, 1, NULL);
+                return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
         
 	    IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
@@ -1029,8 +1137,13 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
 		int size;
 
 		if (numberOfStrings < 1) {
-			al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, NULL);
-			return al_status;
+            bool IMAS_AL_ENABLE_PLUGINS = (std::getenv("IMAS_AL_ENABLE_PLUGINS") == nullptr);
+            if (IMAS_AL_ENABLE_PLUGINS) {
+			    al_status = ual_write_data(ctx, fieldPath.c_str(), timeBasePath.c_str(), (void*)ptrData, CHAR_DATA, 2, NULL);
+			    return al_status;
+            }
+            else
+                return IdsNs::Ids::okStatus();
 		}
 			
         IdsNs::Ids::warningWritingObsolescentNode(idsName, fieldPath, lifeCycleStatus);
