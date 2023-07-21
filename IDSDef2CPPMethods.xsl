@@ -164,23 +164,6 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
     return al_status.code;
 }
 
-int IdsNs::IDS::create(const char *uri, int mode)
-{
-    int pulseCtx;
-    al_status_t al_status;
-
-    al_status = ual_begin_dataentry_action(uri, mode, &amp;pulseCtx);
-    if (al_status.code &lt; 0)
-    {
-    printf("Error creating URI %s\n%s\n", "ual_begin_dataentry_action", al_status.message);
-    return al_status.code;
-    }
-
-    this->pulseCtx = pulseCtx;
-    this->connected = true;
-    this->setPulseCtx(pulseCtx);
-}
-
 int IdsNs::IDS::createEnv(const char *user, const char *tokamak, const char *version, const char *option/* = nullptr*/)
 {
 	int pulseCtx = -1;
