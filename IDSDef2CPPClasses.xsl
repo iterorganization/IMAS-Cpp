@@ -39,6 +39,14 @@ typedef struct {
 } codeparam_t;
 
 
+// Version info
+// HLI version, currently this is the same as the lowlevel version (see getUALVersion())
+extern const std::string al_cpp_version;
+extern const int al_cpp_major_version, al_cpp_minor_version, al_cpp_patch_version;
+// DD version
+extern const std::string al_dd_version;
+extern const int al_dd_major_version, al_dd_minor_version, al_dd_patch_version;
+
 <!--
 inline
 void checkObject(void *obj)
