@@ -1,13 +1,14 @@
 # Minimal makefile for Sphinx documentation
 #
-
 # check that requirements are fulfilled
 requirements_warnings := $(shell pip freeze -r ../../doc_common/requirements.txt 2>&1 >/dev/null | grep WARNING)
+
+requirements:
 ifneq ($(requirements_warnings), )
-$(info $(requirements_warnings))
-$(info Requirements can be installed with pip:)
-$(info $$ pip install -r $(shell readlink -f ../../doc_common/requirements.txt))
-$(error Missing python packages for building the documentation.)
+	$(info $(requirements_warnings))
+	$(info Requirements can be installed with pip:)
+	$(info $$ pip install -r $(shell readlink -f ../../doc_common/requirements.txt))
+	$(error Missing python packages for building the documentation.)
 endif
 
 # You can set these variables from the command line, and also
@@ -21,9 +22,12 @@ BUILDDIR      = _build
 help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
-.PHONY: help Makefile
+.PHONY: help Makefile requirements
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-%: Makefile
+%: Makefile requirements
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+clean: Makefile
+	rm -rf _build
