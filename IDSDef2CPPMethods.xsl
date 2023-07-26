@@ -123,6 +123,7 @@ int IdsNs::IDS::open(const char *uri, int mode)
     this->pulseCtx = pulseCtx;
     this->connected = true;
     this->setPulseCtx(pulseCtx);
+   	return al_status.code;
 }
 
 int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *version, const char *option/* = nullptr*/)
