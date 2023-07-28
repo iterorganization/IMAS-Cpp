@@ -1,10 +1,10 @@
-# This Makefile expects you've got UAL already built (using the installer), but not yet installed, so we're testing the current build.
+# This Makefile expects you've got AL already built (using the installer), but not yet installed, so we're testing the current build.
 
 include ../../../Makefile.common
 
-ifeq (,$(UAL_BUILD))
-UAL_BUILD=../../..
-$(warning UAL_BUILD variable unset, probably not running 'make ual_test' from the Installer. Assuming UAL_BUILD=$(UAL_BUILD).)
+ifeq (,$(AL_BUILD))
+AL_BUILD=../../..
+$(warning AL_BUILD variable unset, probably not running 'make al_test' from the Installer. Assuming AL_BUILD=$(AL_BUILD).)
 endif
 
 ifneq ("yes","$(strip $(IMAS_CPP))")
@@ -26,11 +26,11 @@ ifneq (,$(wildcard Makefile.$(SYSTEM)))
 include Makefile.$(SYSTEM)
 endif
 
-IDSDEF = $(UAL_BUILD)/xml/IDSDef.xml
-ids_path = $(realpath $(UAL_BUILD)/models/mdsplus)
+IDSDEF = $(AL_BUILD)/xml/IDSDef.xml
+ids_path = $(realpath $(AL_BUILD)/models/mdsplus)
 
 # Test environment (mimics loaded imas environment), write ids to tmp dir
-test_ENV = IMAS_AL_PLUGINS=$(UAL_BUILD)/plugins LD_LIBRARY_PATH=$(UAL_BUILD)/cppinterface/lib:$(UAL_BUILD)/lowlevel:$$LD_LIBRARY_PATH ids_path="$$PWD/tmp;$(ids_path)"
+test_ENV = IMAS_AL_PLUGINS=$(AL_BUILD)/plugins LD_LIBRARY_PATH=$(AL_BUILD)/cppinterface/lib:$(AL_BUILD)/lowlevel:$$LD_LIBRARY_PATH ids_path="$$PWD/tmp;$(ids_path)"
 
 include Makefile.tests
 endif # IMAS_CPP

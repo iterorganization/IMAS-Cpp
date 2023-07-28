@@ -1,5 +1,5 @@
-#ifndef UALDEF_
-#define UALDEF_
+#ifndef ALDEF_
+#define ALDEF_
 #include <string>
 #include <stdio.h>
 #include <string.h>
@@ -94,7 +94,7 @@ class IMASArray : public blitz::Array<P_numtype, N_rank>
 
 //Low level function prototypes
 //extern "C" {
-#include <ual_lowlevel.h>
+#include <al_lowlevel.h>
  //}
 
 

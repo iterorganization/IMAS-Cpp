@@ -9,13 +9,13 @@
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
 
  <xsl:template match = "/IDSs">
- <exsl:document href="src/UALClasses.h" standalone="yes" method="text">
+ <exsl:document href="src/ALClasses.h" standalone="yes" method="text">
 
 
-#ifndef _UAL_CLASSES
-#define _UAL_CLASSES
+#ifndef _AL_CLASSES
+#define _AL_CLASSES
 
-#include "UALDef.h"
+#include "ALDef.h"
 
 <xsl:apply-templates select = "IDS" mode = "CLASS_HEADER"/>
 
@@ -101,7 +101,7 @@ class LIBRARY_API IDS
 }
 #endif
 
-#endif // _UAL_CLASSES
+#endif // _AL_CLASSES
 </exsl:document>
 </xsl:template>
 

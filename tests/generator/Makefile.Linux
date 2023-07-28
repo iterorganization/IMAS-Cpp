@@ -8,8 +8,8 @@ CXXFLAGS= -std=c++11 -pthread -O0 -fPIC ${DBGFLAGS}
 LDFLAGS= -pthread
 endif
 
-INCDIR= `pkg-config blitz --cflags` -I$(UAL_BUILD)/lowlevel -I$(UAL_BUILD)/cppinterface/src
-LIBS= -L$(UAL_BUILD)/lowlevel -L$(UAL_BUILD)/cppinterface/lib
+INCDIR= `pkg-config blitz --cflags` -I$(AL_BUILD)/lowlevel -I$(AL_BUILD)/cppinterface/src
+LIBS= -L$(AL_BUILD)/lowlevel -L$(AL_BUILD)/cppinterface/lib
 LIBS+= -lal-cpp -lal `pkg-config blitz --libs`
 BINOUT=TestSuite
 

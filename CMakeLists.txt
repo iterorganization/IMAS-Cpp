@@ -13,10 +13,10 @@ find_package( Blitz REQUIRED )
 ########################################################################################################################
 # Sources
 
-set( SRC_FILES src/IdsDef.cpp src/UALMethods.cpp )
+set( SRC_FILES src/IdsDef.cpp src/ALMethods.cpp )
 file( GLOB SRC_IDS src/ids/*.cpp )
 
-set( HEADER_FILES src/IdsDef.h src/UALDef.h src/UALClasses.h )
+set( HEADER_FILES src/IdsDef.h src/ALDef.h src/ALClasses.h )
 file( GLOB HEADER_IDS src/ids/*.h )
 
 include_directories(

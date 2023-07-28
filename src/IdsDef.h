@@ -3,7 +3,7 @@
 #define _IDS_CLASS
 
 
-#include "UALDef.h"
+#include "ALDef.h"
 using namespace blitz;
 
 #define NON_TIMED    0

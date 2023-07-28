@@ -70,15 +70,15 @@ IDS_H_FILES = $(addsuffix _IDSBase.h,$(IDSNAMES))
 IDS_CPP_FILES = $(IDS_H_FILES:.h=.cpp)
 
 # Generated sources (excluding static sources)
-GEN_H_FILES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_H_FILES)) $(SRC_DIR)/UALClasses.h
-GEN_CPP_FILES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_CPP_FILES)) $(SRC_DIR)/UALMethods.cpp
+GEN_H_FILES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_H_FILES)) $(SRC_DIR)/ALClasses.h
+GEN_CPP_FILES = $(addprefix $(IDS_SRC_DIR)/,$(IDS_CPP_FILES)) $(SRC_DIR)/ALMethods.cpp
 GENSOURCES = $(GEN_H_FILES) $(GEN_CPP_FILES)
 # Add static sources
-SOURCES = $(GENSOURCES) $(addprefix $(SRC_DIR)/,IdsDef.cpp  IdsDef.h  UALDef.h)
+SOURCES = $(GENSOURCES) $(addprefix $(SRC_DIR)/,IdsDef.cpp  IdsDef.h  ALDef.h)
 
 # Compiled objects
 IDS_OBJ_FILES = $(addprefix $(BUILD_DIR)/,$(IDS_CPP_FILES:.cpp=.o))
-OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o UALMethods.o)
+OBJ_FILES = $(addprefix $(BUILD_DIR)/,IdsDef.o ALMethods.o)
 
 # Include OS-specific Makefile, if exists.
 ifneq (,$(wildcard Makefile.$(SYSTEM)))
@@ -113,7 +113,7 @@ gen_h_files: IDSDef2CPPClasses.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
 	  touch $(addsuffix ~,$(GEN_H_FILES)) )
 gen_cpp_files: IDSDef2CPPMethods.xsl $(IDSDEF) | saxonicajar $(BUILD_DIR)
 	$(if $(call allnewerthan,$(GEN_CPP_FILES),$^),,\
-	  $(SAXON) -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl DD_GIT_DESCRIBE=$(DD_GIT_DESCRIBE) UAL_GIT_DESCRIBE=$(UAL_GIT_DESCRIBE) && \
+	  $(SAXON) -t -warnings:fatal -s:$(IDSDEF) -xsl:IDSDef2CPPMethods.xsl DD_GIT_DESCRIBE=$(DD_GIT_DESCRIBE) AL_GIT_DESCRIBE=$(AL_GIT_DESCRIBE) && \
 	  touch $(addsuffix ~,$(GEN_CPP_FILES)) )
 
 #################################################
