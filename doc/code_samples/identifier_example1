@@ -1,0 +1,14 @@
+// Include the Access Layer
+#include "UALClasses.h"
+// And the required identifiers header(s)
+#include "coordinate_identifier.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Print index and description of phi
+    // Note: phi is a macro defined in coordinate_identifier.h
+    std::cout << phi << std::endl;
+    std::cout << coordinate_identifier_get_type_description(phi) << std::endl;
+
+    return 0;
+}

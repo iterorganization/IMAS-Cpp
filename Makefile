@@ -152,6 +152,15 @@ test-clean:
 test-clean-src:
 	$(MAKE) -C tests/generator clean-src
 
+#----------------------- documentation -------------------
+
+.PHONY: docs clean-docs
+docs:
+	$(MAKE) -C doc html
+
+clean-docs:
+	$(MAKE) -C doc clean
+
 #----------------------- identifiers ---------------------
 include ../Makefile.identifiers
 PC_FILES_ALT = $(ID_cpp_PC_FILES_2)

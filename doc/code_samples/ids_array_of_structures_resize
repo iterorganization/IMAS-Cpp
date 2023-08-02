@@ -1,0 +1,27 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create an empty interferometer IDS
+    IdsNs::IDS::interferometer interferometer;
+
+    // interferometer/channel is an array of structures, add some data
+    interferometer.channel.resize(1);
+    std::cout << interferometer.channel.size() << std::endl; // -> 1
+    interferometer.channel(0).name = "test";
+
+    // Resize again. This will destroy the data that we just stored!
+    interferometer.channel.resize(2);
+    std::cout << interferometer.channel(0).name << std::endl; // -> <empty>
+    interferometer.channel(0).name = "test";
+    interferometer.channel(1).name = "test2";
+
+    // Resize, preserving existing data
+    interferometer.channel.resizeAndPreserve(3);
+    std::cout << interferometer.channel(0).name << std::endl; // -> test
+    std::cout << interferometer.channel(1).name << std::endl; // -> test2
+    std::cout << interferometer.channel(2).name << std::endl; // -> <empty>
+
+    return 0;
+}

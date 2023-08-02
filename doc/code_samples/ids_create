@@ -1,0 +1,17 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create an empty core_profiles IDS
+    IdsNs::IDS::core_profiles empty_core_profiles;
+    // This outputs -999999999 (default INT_0D value)
+    std::cout << empty_core_profiles.ids_properties.homogeneous_time << std::endl;
+
+    // Create an empty equilibrium IDS
+    IdsNs::IDS::equilibrium empty_equilibrium;
+    // This outputs 0 (default size of array of structure)
+    std::cout << empty_equilibrium.time_slice.size() << std::endl;
+
+    return 0;
+}

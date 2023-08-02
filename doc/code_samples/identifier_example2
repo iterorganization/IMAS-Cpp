@@ -1,0 +1,17 @@
+// Include the Access Layer
+#include "UALClasses.h"
+// And the required identifiers header(s)
+#include "core_source_identifier.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    IdsNs::IDS::core_sources core_sources;
+    core_sources.source.resize(1);
+    core_sources.source(0).identifier.index = nbi;
+    core_sources.source(0).identifier.name =
+        core_source_identifier_get_type_name(nbi);
+    core_sources.source(0).identifier.description =
+        core_source_identifier_get_type_description(nbi);
+
+    return 0;
+}
