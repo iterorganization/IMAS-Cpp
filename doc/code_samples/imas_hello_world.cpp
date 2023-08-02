@@ -1,5 +1,5 @@
 // Include the Access Layer
-#include "UALClasses.h"
+#include "ALClasses.h"
 #include <iostream>
 
 // The Access Layer declares types in the IdsNs namespace. For brevity of
@@ -9,7 +9,7 @@ using namespace IdsNs;
 
 int main(int argc, char *argv[]) {
     std::cout << "Hello world!" << std::endl;
-    std::cout << "Using access layer version: " << UAL_VERSION;
+    std::cout << "Using access layer version: " << AL_VERSION;
     std::cout << " with data dictionary version: " << DD_VERSION << std::endl;
 
     return 0;
