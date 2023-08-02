@@ -1,0 +1,21 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create an empty core_profiles IDS
+    IdsNs::IDS::core_profiles core_profiles;
+    // core_profiles/profiles_1d is an array of structures
+    std::cout << core_profiles.profiles_1d.size() << std::endl;  // -> 0
+    // It currently has no elements, so let's add one
+    core_profiles.profiles_1d.resize(1);
+    std::cout << core_profiles.profiles_1d.size() << std::endl;  // -> 1
+    // Use parentheses to get a specific structure from the array, then we can
+    // address child nodes as usual (for example, the average ion temperature,
+    // which is an empty data array):
+    std::cout << core_profiles.profiles_1d(0).t_i_average << std::endl;
+    // -> (0,-1)
+    //    [ ]
+
+    return 0;
+}

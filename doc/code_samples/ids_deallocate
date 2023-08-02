@@ -1,0 +1,17 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    { // Enter a new scope
+        // Create an empty magnetics IDS
+        IdsNs::IDS::magnetics magnetics;
+        // Use the IDS ...
+
+        // We are done with the IDS, it will be cleaned up when exiting the
+        // scope where it is declared:
+    }
+    // The magnetics IDS is cleaned up now
+
+    return 0;
+}

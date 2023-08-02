@@ -1,0 +1,26 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create the database entry
+    IdsNs::IDS ids;
+    ids.open("imas:hdf5?path=my-data", FORCE_CREATE_PULSE);
+
+    // Create an empty pf_active IDS
+    IdsNs::IDS::pf_active pf_active;
+    // Set the mandatory ids_properties.homogeneous_time field
+    pf_active.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
+    // Continue filling the pf_active IDS here
+    // ...
+
+    // Associate the pf_active IDS with our data entry
+    pf_active.setPulseCtx(ids.getPulseCtx());
+    // And store it
+    pf_active.put();
+
+    // Alternatively, store the pf_active IDS as occurrence 1
+    pf_active.put(1);
+
+    return 0;
+}

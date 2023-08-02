@@ -1,0 +1,20 @@
+// Include the Access Layer
+#include "UALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+    // Create an empty core_profiles IDS
+    IdsNs::IDS::core_profiles core_profiles;
+    // core_profiles/time is a FLT_1D data node:
+    std::cout << core_profiles.time << std::endl;
+    // -> (0,-1)
+    //    [ ]
+    // We can assign values to it:
+    core_profiles.time.resize(3);
+    core_profiles.time = 0.5, 1.0, 1.5;
+    std::cout << core_profiles.time << std::endl;
+    // -> (0,2)
+    //    [ 0.5 1 1.5 ]
+
+    return 0;
+}
