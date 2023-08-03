@@ -17,9 +17,9 @@
 <xsl:variable name="DD_MINOR" as="xs:int" select="xs:int(replace($DD_GIT_DESCRIBE, $version_regex, '$2'))"/>
 <xsl:variable name="DD_PATCH" as="xs:int" select="xs:int(replace($DD_GIT_DESCRIBE, $version_regex, '$3'))"/>
 
-<xsl:variable name="HLI_MAJOR" as="xs:int" select="xs:int(replace($UAL_GIT_DESCRIBE, $version_regex, '$1'))"/>
-<xsl:variable name="HLI_MINOR" as="xs:int" select="xs:int(replace($UAL_GIT_DESCRIBE, $version_regex, '$2'))"/>
-<xsl:variable name="HLI_PATCH" as="xs:int" select="xs:int(replace($UAL_GIT_DESCRIBE, $version_regex, '$3'))"/>
+<xsl:variable name="HLI_MAJOR" as="xs:int" select="xs:int(replace($AL_GIT_DESCRIBE, $version_regex, '$1'))"/>
+<xsl:variable name="HLI_MINOR" as="xs:int" select="xs:int(replace($AL_GIT_DESCRIBE, $version_regex, '$2'))"/>
+<xsl:variable name="HLI_PATCH" as="xs:int" select="xs:int(replace($AL_GIT_DESCRIBE, $version_regex, '$3'))"/>
 
 <xsl:template match="/IDSs">
 <xsl:result-document href="src/ALMethods.cpp" standalone="yes" method="text">
@@ -41,7 +41,7 @@ void checkStatus(int status){}
 #endif
 -->
 
-const std::string IdsNs::al_cpp_version = "<xsl:value-of select="$UAL_GIT_DESCRIBE"/>";
+const std::string IdsNs::al_cpp_version = "<xsl:value-of select="AL_GIT_DESCRIBE"/>";
 const int IdsNs::al_cpp_major_version = <xsl:value-of select="$HLI_MAJOR"/>;
 const int IdsNs::al_cpp_minor_version = <xsl:value-of select="$HLI_MINOR"/>;
 const int IdsNs::al_cpp_patch_version = <xsl:value-of select="$HLI_PATCH"/>;
