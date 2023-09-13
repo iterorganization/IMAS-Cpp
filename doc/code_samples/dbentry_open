@@ -6,10 +6,10 @@ int main(int argc, char *argv[]) {
     // Create a new IDS object
     IdsNs::IDS ids;
     // Open the database entry by providing an IMAS URI
-    ids.open("imas:mdsplus?user=public;shot=131024;run=41;database=ITER?version=3", OPEN_PULSE);
+    ids.open("imas:mdsplus?user=public;pulse=131024;run=41;database=ITER?version=3", OPEN_PULSE);
 
     // Alternatively, we can open an IDS providing legacy
-    // arguments: (shot, run, 0, 0)
+    // arguments: (pulse, run, 0, 0)
     IdsNs::IDS legacy(131024, 41, 0, 0);
     // And open with the openEnv method
     legacy.openEnv("public", "ITER", "3");

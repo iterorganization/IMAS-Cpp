@@ -23,15 +23,15 @@ Data entry (``IdsNs::IDS``) API
         Constructor to use with :ref:`Data entry URIs`. Use :cpp:func:`open`
         afterwards to open or create the Data Entry.
 
-    .. cpp:function:: IDS(int shot, int run, int refShot, int refRun)
+    .. cpp:function:: IDS(int pulse, int run, int refPulse, int refRun)
 
         Constructor when not using :ref:`Data entry URIs`. Use
         :cpp:func:`openEnv` or :cpp:func:`createEnv` afterwards to open or
         create the Data Entry.
 
-        :param shot: Shot number.
+        :param pulse: Pulse number.
         :param run: Run number.
-        :param refShot: Legacy parameter, value is ignored.
+        :param refPulse: Legacy parameter, value is ignored.
         :param refRun: Legacy parameter, value is ignored.
 
     .. cpp:function:: int open(const char *uri, int mode)
@@ -47,7 +47,7 @@ Data entry (``IdsNs::IDS``) API
 
     .. cpp:function:: int openEnv(const char *user, const char *tokamak, const char *version, const char *option)
 
-        Open the Data Entry defined by ``shot``, ``run`` (see
+        Open the Data Entry defined by ``pulse``, ``run`` (see
         :cpp:func:`IDS::IDS() <void IDS::IDS(int,int,int,int)>`)
         and the provided parameters.
 
@@ -60,7 +60,7 @@ Data entry (``IdsNs::IDS``) API
 
     .. cpp:function:: int createEnv(const char *user, const char *tokamak, const char *version, const char *option)
 
-        Create the Data Entry defined by ``shot``, ``run`` (see
+        Create the Data Entry defined by ``pulse``, ``run`` (see
         :cpp:func:`IDS::IDS() <void IDS::IDS(int,int,int,int)>`)
         and the provided parameters.
 

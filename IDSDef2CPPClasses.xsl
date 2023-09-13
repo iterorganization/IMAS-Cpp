@@ -50,7 +50,7 @@ class LIBRARY_API IDS
 {
     private:
     int pulseCtx;
-    int shot, run, refShot, refRun;
+    int pulse, run, refPulse, refRun;
     string treeName;
     bool connected;
     BACKEND backend;
@@ -59,22 +59,22 @@ class LIBRARY_API IDS
     
     public:
     IDS();
-    IDS(int shot, int run, int refShot, int refRun);
+    IDS(int pulse, int run, int refPulse, int refRun);
     IDS(int idx);
     void setExpIdx(int idx);  // will be deprecated in the future!
     void setPulseCtx(int idx);
-    void setShot(int inShot) {shot = inShot;}
+    void setShot(int inPulse) {pulse = inPulse;}
     void setRun(int inRun) {run = inRun;}
-    void setRefShot(int inRefShot){refShot = inRefShot;}
+    void setRefShot(int inRefPulse){refPulse = inRefPulse;}
     void setRefNum(int inRefRun){refRun = inRefRun;}
     void setTreeName(char *inTreeName){treeName = inTreeName; }
     void setTreeName(string inTreeName){treeName = inTreeName;}
     void setBackend(BACKEND inBackend){backend = inBackend;}
     int getIdx(); // will be deprecated in the future!
     int getPulseCtx() {return this->pulseCtx;}
-    int getShot() {return shot;}
+    int getShot() {return pulse;}
     int getRun() {return run;}
-    int getRefShot(){return refShot;}
+    int getRefShot(){return refPulse;}
     int getRefRun(){return refRun;}
     string getTreeName(){return treeName;}
     BACKEND getBackend(){return backend;}
@@ -83,7 +83,7 @@ class LIBRARY_API IDS
     int openEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
     int createEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
     int close();
-    void close(char *name, int shot, int run) {close();}
+    void close(char *name, int pulse, int run) {close();}
     int getTime(char *path, IMASArray&lt;double,1&gt; &amp;time);
     ~IDS();
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const IDS <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);

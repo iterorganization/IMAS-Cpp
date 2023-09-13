@@ -26,7 +26,7 @@
 <xsl:text>int randseed = (int)time(NULL);&#10;</xsl:text>
 <xsl:text>&#10;</xsl:text>
 
-<xsl:text>const int TEST_SHOT = 9999;&#10;</xsl:text>
+<xsl:text>const int TEST_PULSE = 9999;&#10;</xsl:text>
 <xsl:text>const int TEST_RUN = 9999;&#10;</xsl:text>
 
 <xsl:text>const int IDS_TIME_MODE = IDS_TIME_MODE_HOMOGENEOUS;&#10;</xsl:text>
@@ -156,7 +156,7 @@
         <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_put(BACKEND backendID){&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing put() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
-	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
+	<xsl:text>&#9;IDS imas = IDS(  TEST_PULSE, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
         <xsl:text>&#9;imas.setBackend(backendID);&#10;</xsl:text>
         <xsl:text>&#9;imas.createEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
@@ -187,7 +187,7 @@
         <xsl:text>&#9;printf("Testing putSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
 
-	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
+	<xsl:text>&#9;IDS imas = IDS(  TEST_PULSE, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;imas.setBackend(backendID);&#10;</xsl:text>
         <xsl:text>&#9;imas.createEnv(getUserName(), "test",  getDataVersion());&#10;</xsl:text>
        	<xsl:text>&#9;IDS::</xsl:text><xsl:value-of select="@name"/><xsl:text> ids = imas._</xsl:text><xsl:value-of select="@name"/><xsl:text>;&#10;</xsl:text>
@@ -227,7 +227,7 @@
         <xsl:text>void </xsl:text><xsl:value-of select="@name"/><xsl:text>_get(BACKEND backendID) {&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing get() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
-	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
+	<xsl:text>&#9;IDS imas = IDS(  TEST_PULSE, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
 		<xsl:text>&#9;imas.setBackend(backendID);&#10;</xsl:text>
         <xsl:text>&#9;imas.openEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
@@ -259,7 +259,7 @@
         <xsl:text>//====================================================================================&#10;</xsl:text>
         <xsl:text>&#9;printf("Testing getSlice() on </xsl:text><xsl:value-of select="@name"/><xsl:text>\n");&#10;</xsl:text>
         <xsl:text>&#9;int status = 0;&#10;</xsl:text>
-	<xsl:text>&#9;IDS imas = IDS(  TEST_SHOT, TEST_RUN, -1, -1);&#10;</xsl:text>
+	<xsl:text>&#9;IDS imas = IDS(  TEST_PULSE, TEST_RUN, -1, -1);&#10;</xsl:text>
         <xsl:text>&#9;srand(randseed);&#10;</xsl:text>
 		<xsl:text>&#9;imas.setBackend(backendID);&#10;</xsl:text>
         <xsl:text>&#9;imas.openEnv(getUserName(), "test", getDataVersion());&#10;</xsl:text>
