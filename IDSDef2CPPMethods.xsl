@@ -253,7 +253,7 @@ ostream &amp;IdsNs::operator &lt;&lt; (ostream &amp;os, const IDS &amp;obj)
 {
 os &lt;&lt; "TreeName: ";
 os &lt;&lt; obj.treeName;
-os &lt;&lt; "\pulse: ";
+os &lt;&lt; "\nPulse: ";
 os &lt;&lt;obj.pulse;
 os &lt;&lt;"\nRun: ";
 os &lt;&lt;obj.run;
