@@ -428,7 +428,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUT quits with no action.");
    		return 0;
 	}
-    <xsl:if test="@data_type='static'">
+    <xsl:if test="@type='constant'">
     if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
     {
         printf("ERROR: Static IDS '<xsl:value-of select="@name"/>' must have 'ids_properties/homogeneous_time' property set to IDS_TIME_MODE_INDEPENDENT. ");
@@ -502,7 +502,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
         return 0;
     }
 
-    <xsl:if test="@data_type='static'">
+    <xsl:if test="@type='constant'">
     if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
     {
         printf("ERROR: Static IDS '<xsl:value-of select="@name"/>' must have 'ids_properties/homogeneous_time' property set to IDS_TIME_MODE_INDEPENDENT. ");
@@ -614,7 +614,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, double inTime, char interpolMode)
 {
 <xsl:choose>
-  <xsl:when test="@type='static'">
+  <xsl:when test="@type='constant'">
     // for static IDSes only GET method is called
 	return this->get(iOccurrence);
   </xsl:when>
