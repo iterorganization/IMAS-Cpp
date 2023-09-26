@@ -428,12 +428,13 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUT quits with no action.");
    		return 0;
 	}
-
-    if( idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp; this->time.size() &lt; 1 )
+    <xsl:if test="@data_type='static'">
+    if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
     {
-        printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
+        printf("ERROR: Static IDS '<xsl:value-of select="@name"/>' must have 'ids_properties/homogeneous_time' property set to IDS_TIME_MODE_INDEPENDENT. ");
         return -1;
     }
+    </xsl:if>
 
 	if(iOccurrence &gt;= 1)
         idsFullName += "/" + std::to_string(iOccurrence);
@@ -501,11 +502,13 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
         return 0;
     }
 
-    if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp;  this->time.size() &lt; 1 )
+    <xsl:if test="@data_type='static'">
+    if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
     {
-        printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. \n");
+        printf("ERROR: Static IDS '<xsl:value-of select="@name"/>' must have 'ids_properties/homogeneous_time' property set to IDS_TIME_MODE_INDEPENDENT. ");
         return -1;
     }
+    </xsl:if>
 
 	if(iOccurrence &gt;= 1)
         idsFullName += "/" + std::to_string(iOccurrence);
@@ -610,6 +613,12 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char 
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, double inTime, char interpolMode)
 {
+<xsl:choose>
+  <xsl:when test="@type='static'">
+    // for static IDSes only GET method is called
+	return this->get(iOccurrence);
+  </xsl:when>
+  <xsl:otherwise>
     int status = 0;
     al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
@@ -663,6 +672,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	al_end_action(getSliceOpCtx);
 
 	return 0;
+  </xsl:otherwise>
+</xsl:choose>
 }
  <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT"/> 
 <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_GET"/> 
