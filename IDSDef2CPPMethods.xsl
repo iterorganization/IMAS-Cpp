@@ -337,10 +337,25 @@ IdsNs::<xsl:value-of select="@name"/>_IDSBase::<xsl:value-of select="@name"/>_ID
 }
 
 
-
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get()
 {
 	return this->get(0);
+}
+
+bool IdsNs::<xsl:value-of select="@name"/>_IDSBase::isDefined()
+{
+    int idsTimeMode = this->ids_properties.homogeneous_time;
+
+	if (idsTimeMode == IDS_TIME_MODE_HETEROGENEOUS) 
+        return true;
+
+	if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
+        return true;
+
+	if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT) 
+        return true;
+
+	return false;
 }
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)

@@ -177,6 +177,7 @@ class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase : public Ids
     int deleteAll() override;
     int deleteAll(int idx) override;
     void clear() override;
+    bool isDefined() override;
 };
 
 #ifdef __cplusplus
