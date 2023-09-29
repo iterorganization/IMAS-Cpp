@@ -197,6 +197,7 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 
 <xsl:template match = "field" mode = "DECLARE">
   <xsl:choose>
+
     <xsl:when test="@data_type='str_type' or @data_type='STR_0D'">
       std::string <xsl:value-of select = "@name"/>;
     </xsl:when>
@@ -314,6 +315,17 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 
 <xsl:template match = "field" mode = "CONSTRUCTOR">
   <xsl:choose>
+    <!-- Special handling of ids_properties/homogeneous_time -->
+    <xsl:when test="@path='ids_properties/homogeneous_time'">
+        <xsl:choose>
+            <xsl:when test="ancestor::IDS/@type='constant'">
+    <xsl:value-of select = "@name"/> = IDS_TIME_MODE_INDEPENDENT;
+            </xsl:when>
+            <xsl:otherwise>
+    <xsl:value-of select = "@name"/> = IDS_TIME_MODE_UNKNOWN;
+            </xsl:otherwise>
+        </xsl:choose>
+   </xsl:when>
     <xsl:when test="@data_type='int_type' or @data_type='INT_0D'">
       <xsl:value-of select = "@name"/>=EMPTY_INT;
     </xsl:when>

@@ -840,6 +840,17 @@ See IDSDef2Classes.xsl  -->
 <xsl:template match="field" mode="RESET">
     <xsl:call-template name="COMMENT_FIELD"/>
     <xsl:choose>
+        <!-- Special handling of ids_properties/homogeneous_time -->
+        <xsl:when test="@path='ids_properties/homogeneous_time'">
+            <xsl:choose>
+                <xsl:when test="ancestor::IDS/@type='constant'">
+            <xsl:value-of select = "@name"/> = IDS_TIME_MODE_INDEPENDENT;
+                </xsl:when>
+                <xsl:otherwise>
+            <xsl:value-of select = "@name"/> = IDS_TIME_MODE_UNKNOWN;
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:when>
         <xsl:when test="@data_type='structure'">
             <xsl:value-of select="@name"/>.clear();
         </xsl:when>
