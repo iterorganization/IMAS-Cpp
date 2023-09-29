@@ -35,12 +35,21 @@ std::string generate_tmp_file()
     std::random_device rd;  // Will be used to obtain a seed for the random number engine
     std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
     std::uniform_int_distribution<> distrib(0, fs_safe_characters.size()-1);
-
+    std::string fname;
     std::ofstream stream;
     for( int i=0; i<MAX_TMP_FILES; i++)
     {
         // generate new random file name
-        std::string fname = SERIALIZE_TEMPORARY_DIRECTORY "al_serialize_";
+        const char* ASCII_SERIALIZER_TMP_DIR = std::getenv("ASCII_SERIALIZER_TMP_DIR");
+        if(ASCII_SERIALIZER_TMP_DIR != nullptr)
+        {
+            fname = std::string(ASCII_SERIALIZER_TMP_DIR) + "al_serialize_";
+        }
+        else
+        {
+            fname = SERIALIZE_TEMPORARY_DIRECTORY "al_serialize_";    
+        }
+        
         for(int j=0; j<8; j++)
             fname.push_back(fs_safe_characters.at(distrib(gen)));
         // test if we are allowed to create this file
@@ -63,15 +72,24 @@ std::string IdsNs::Ids::serialize(int protocol)
     {
         al_status_t al_status;
         int _pulseCtx;
+        std::string uri = "";
         std::string tmpfile = generate_tmp_file();
-        
         if(tmpfile.empty())
         {
             printf("SERIALIZE: Error generating ASCII serialization filename\n");
             return "";
         }
         std::string filename = tmpfile.substr(tmpfile.find_last_of("/\\") + 1);
-	    std::string uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
+        if(std::getenv("ASCII_SERIALIZER_TMP_DIR") != nullptr)
+        {
+            const char* ASCII_SERIALIZER_TMP_DIR = std::getenv("ASCII_SERIALIZER_TMP_DIR");
+            uri = "imas:ascii?path="+std::string(ASCII_SERIALIZER_TMP_DIR)+";filename="+filename;
+        }
+        else
+        {
+             uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
+        }
+	    
 
         al_status = al_begin_dataentry_action(uri.c_str(), CREATE_PULSE, &_pulseCtx);
         if(al_status.code != 0)
@@ -133,6 +151,7 @@ std::string IdsNs::Ids::serialize(int protocol)
 int IdsNs::Ids::deserialize(std::string &data)
 {
     // first byte of the data contains the protocol
+    std::string uri;
     if( data.size() <= 1 )
     {
         printf("ERROR: not enough data provided");
@@ -166,8 +185,16 @@ int IdsNs::Ids::deserialize(std::string &data)
             std::remove(tmpfile.c_str());
             return -1;
         }
-
-	std::string uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
+        if(std::getenv("ASCII_SERIALIZER_TMP_DIR") != nullptr)
+        {
+            const char* ASCII_SERIALIZER_TMP_DIR = std::getenv("ASCII_SERIALIZER_TMP_DIR");
+            uri = "imas:ascii?path="+std::string(ASCII_SERIALIZER_TMP_DIR)+";filename="+filename;
+        }
+        else
+        {
+             uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
+        }
+//	std::string uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
         al_status_t al_status;
         int _pulseCtx;
         // overwrite pulse context, so we can use the logic in get for putting to the ascii backend
