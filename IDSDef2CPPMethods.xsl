@@ -428,16 +428,18 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 		printf("Warning: IDS <xsl:value-of select="@name"/> is found to be EMPTY (homogeneous_time undefined). PUT quits with no action.");
    		return 0;
 	}
-    <xsl:if test="@type='constant'">
-    if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
-    {
-        printf("ERROR: Static IDS '<xsl:value-of select="@name"/>' must have 'ids_properties/homogeneous_time' property set to IDS_TIME_MODE_INDEPENDENT. ");
-        return -1;
-    }
-    </xsl:if>
 
 	if(iOccurrence &gt;= 1)
         idsFullName += "/" + std::to_string(iOccurrence);
+
+    <xsl:if test="@type='constant'">
+    if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
+    {
+        ids_properties.homogeneous_time = IDS_TIME_MODE_INDEPENDENT;
+        idsTimeMode = IDS_TIME_MODE_INDEPENDENT;
+        printf("AL warning: ids_properties/homogeneous_time has been set to IDS_TIME_MODE_INDEPENDENT for the constant IDS '%s', please check the program which has filled this IDS since this is the mandatory value for a constant IDS.", idsFullName.c_str());
+    }
+    </xsl:if>
 	
 	deleteAll(iOccurrence);
 
@@ -496,22 +498,23 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
    		return 0;
 	}
 
+	if(iOccurrence &gt;= 1)
+        idsFullName += "/" + std::to_string(iOccurrence);
+
+    <xsl:if test="@type='constant'">
+    if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
+    {
+        ids_properties.homogeneous_time = IDS_TIME_MODE_INDEPENDENT;
+        idsTimeMode = IDS_TIME_MODE_INDEPENDENT;
+        printf("AL warning: ids_properties/homogeneous_time has been set to IDS_TIME_MODE_INDEPENDENT for the constant IDS '%s', please check the program which has filled this IDS since this is the mandatory value for a constant IDS.", idsFullName.c_str());
+    }
+    </xsl:if>
+
     if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT) 
     {
         printf("Warning: IDS '<xsl:value-of select="@name"/>' time mode 'independent'. PUTSLICE quits with no action.\n");
         return 0;
     }
-
-    <xsl:if test="@type='constant'">
-    if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
-    {
-        printf("ERROR: Static IDS '<xsl:value-of select="@name"/>' must have 'ids_properties/homogeneous_time' property set to IDS_TIME_MODE_INDEPENDENT. ");
-        return -1;
-    }
-    </xsl:if>
-
-	if(iOccurrence &gt;= 1)
-        idsFullName += "/" + std::to_string(iOccurrence);
 
     /***   Checking homogeneous_time read from file   ***/
 
@@ -840,17 +843,6 @@ See IDSDef2Classes.xsl  -->
 <xsl:template match="field" mode="RESET">
     <xsl:call-template name="COMMENT_FIELD"/>
     <xsl:choose>
-        <!-- Special handling of ids_properties/homogeneous_time -->
-        <xsl:when test="@path='ids_properties/homogeneous_time'">
-            <xsl:choose>
-                <xsl:when test="ancestor::IDS/@type='constant'">
-            <xsl:value-of select = "@name"/> = IDS_TIME_MODE_INDEPENDENT;
-                </xsl:when>
-                <xsl:otherwise>
-            <xsl:value-of select = "@name"/> = IDS_TIME_MODE_UNKNOWN;
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:when>
         <xsl:when test="@data_type='structure'">
             <xsl:value-of select="@name"/>.clear();
         </xsl:when>
