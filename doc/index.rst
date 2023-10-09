@@ -40,6 +40,7 @@ programming language.
    imas_uri
    identifiers
    conf
+   plugins
 
 .. toctree::
    :maxdepth: 3
