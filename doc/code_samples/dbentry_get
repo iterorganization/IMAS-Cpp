@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
     // Create a new IDS object
     IdsNs::IDS ids;
     // Open the database entry by providing an IMAS URI
-    ids.open("imas:mdsplus?user=public;shot=131024;run=41;database=ITER?version=3", OPEN_PULSE);
+    ids.open("imas:mdsplus?user=public;pulse=131024;run=41;database=ITER?version=3", OPEN_PULSE);
 
     // Load the core_profiles IDS, occurrence 0
     ids._core_profiles.get();

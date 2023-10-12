@@ -41,6 +41,8 @@ class Ids
         virtual int deleteAll() = 0;
         virtual int deleteAll(int idx) = 0;
         virtual void clear() = 0;
+        virtual bool isDefined() = 0;
+
         
         void setPulseCtx(int pulseCtx){this->pulseCtx = pulseCtx; connected = true;}
 

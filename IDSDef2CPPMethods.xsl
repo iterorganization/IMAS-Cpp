@@ -55,17 +55,17 @@ IdsNs::IDS::IDS()
 {
 	treeName = "ids";
 	connected = false;
-	shot = refShot = run = refRun = -1;
+	pulse = refPulse = run = refRun = -1;
 	backend = defaultBackend();
 }
 
-IdsNs::IDS::IDS(int shot, int run, int refShot, int refRun)
+IdsNs::IDS::IDS(int pulse, int run, int refPulse, int refRun)
 {
 	treeName = "ids";
 	connected = false;
-	this-&gt; shot = shot;
+	this-&gt; pulse = pulse;
 	this-&gt;run = run;
-	this-&gt;refShot = refShot;
+	this-&gt;refPulse = refPulse;
 	this-&gt;refRun = refRun;
 	pulseCtx = -1;
 	backend = defaultBackend();
@@ -146,7 +146,7 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
     int pulseCtx;
     al_status_t al_status;
     char* uri;
-    al_status = al_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, option, &amp;uri);
+    al_status = al_build_uri_from_legacy_parameters(this->backend, this->pulse, this->run, user, tokamak, version, option, &amp;uri);
     if (al_status.code != 0)
     {
         printf("Error building URI %s\n%s\n", "al_build_uri_from_legacy_parameters", al_status.message);
@@ -160,7 +160,7 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
   	{
 	    printf("WARNING: the pulse file is not available with backend %d, now attempting to access it with the fallback backend %d\n",this->backend,fallback);
 	    this->backend = fallback;
-	    al_status = al_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, option, &amp;uri);
+	    al_status = al_build_uri_from_legacy_parameters(this->backend, this->pulse, this->run, user, tokamak, version, option, &amp;uri);
 	    if (al_status.code != 0)
 	    {
                 printf("Error building URI %s\n%s\n", "al_build_uri_from_legacy_parameters", al_status.message);
@@ -170,7 +170,7 @@ int IdsNs::IDS::openEnv(const char *user, const char *tokamak, const char *versi
 	}
 	if (al_status.code != 0)
 	{
-            printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "al_begin_dataentry_action", al_status.message);
+            printf("Error opening imas pulse %d, run %d: %s\n%s\n", pulse, run, "al_begin_dataentry_action", al_status.message);
 	    return al_status.code;
 	}
     }
@@ -186,7 +186,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak, const char *ver
 	al_status_t al_status;
 
     char* uri;
-    al_status = al_build_uri_from_legacy_parameters(this->backend, this->shot, this->run, user, tokamak, version, option, &amp;uri);
+    al_status = al_build_uri_from_legacy_parameters(this->backend, this->pulse, this->run, user, tokamak, version, option, &amp;uri);
 	if (al_status.code &lt; 0)
 	{
 		printf("Error building URI %s\n%s\n", "al_build_uri_from_legacy_parameters", al_status.message);
@@ -195,7 +195,7 @@ int IdsNs::IDS::createEnv(const char *user, const char *tokamak, const char *ver
     al_status = al_begin_dataentry_action(uri, FORCE_CREATE_PULSE, &amp;pulseCtx);
     if (al_status.code &lt; 0)
 	{
-    printf("Error opening imas shot %d, run %d: %s\n%s\n", shot, run, "al_begin_dataentry_action", al_status.message);
+    printf("Error opening imas pulse %d, run %d: %s\n%s\n", pulse, run, "al_begin_dataentry_action", al_status.message);
         return al_status.code;
 	}
 
@@ -210,7 +210,7 @@ int IdsNs::IDS::close()
   	al_status_t al_status = al_close_pulse(this->pulseCtx, CLOSE_PULSE);
     if(al_status.code != 0)
 	{
-		printf("Error opening imas shot %d, run %d: %s\n %s\n", shot, run, "al_close_pulse", al_status.message);
+		printf("Error opening imas pulse %d, run %d: %s\n %s\n", pulse, run, "al_close_pulse", al_status.message);
         return al_status.code;
 	}
     al_end_action(this->pulseCtx);
@@ -272,12 +272,12 @@ ostream &amp;IdsNs::operator &lt;&lt; (ostream &amp;os, const IDS &amp;obj)
 {
 os &lt;&lt; "TreeName: ";
 os &lt;&lt; obj.treeName;
-os &lt;&lt; "\nShot: ";
-os &lt;&lt;obj.shot;
+os &lt;&lt; "\nPulse: ";
+os &lt;&lt;obj.pulse;
 os &lt;&lt;"\nRun: ";
 os &lt;&lt;obj.run;
-os &lt;&lt;"\nRef Shot: ";
-os &lt;&lt;obj.refShot;
+os &lt;&lt;"\nRef pulse: ";
+os &lt;&lt;obj.refPulse;
 os &lt;&lt;"\nRef Run: ";
 os &lt;&lt;obj.refRun;
 os &lt;&lt;"\nBackend: ";
@@ -356,10 +356,25 @@ IdsNs::<xsl:value-of select="@name"/>_IDSBase::<xsl:value-of select="@name"/>_ID
 }
 
 
-
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get()
 {
 	return this->get(0);
+}
+
+bool IdsNs::<xsl:value-of select="@name"/>_IDSBase::isDefined()
+{
+    int idsTimeMode = this->ids_properties.homogeneous_time;
+
+	if (idsTimeMode == IDS_TIME_MODE_HETEROGENEOUS) 
+        return true;
+
+	if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS) 
+        return true;
+
+	if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT) 
+        return true;
+
+	return false;
 }
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
@@ -448,14 +463,17 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
    		return 0;
 	}
 
-    if( idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp; this->time.size() &lt; 1 )
-    {
-        printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. ");
-        return -1;
-    }
-
 	if(iOccurrence &gt;= 1)
         idsFullName += "/" + std::to_string(iOccurrence);
+
+    <xsl:if test="@type='constant'">
+    if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
+    {
+        ids_properties.homogeneous_time = IDS_TIME_MODE_INDEPENDENT;
+        idsTimeMode = IDS_TIME_MODE_INDEPENDENT;
+        printf("AL warning: ids_properties/homogeneous_time has been set to IDS_TIME_MODE_INDEPENDENT for the constant IDS '%s', please check the program which has filled this IDS since this is the mandatory value for a constant IDS.", idsFullName.c_str());
+    }
+    </xsl:if>
 	
 	deleteAll(iOccurrence);
 
@@ -514,20 +532,23 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
    		return 0;
 	}
 
+	if(iOccurrence &gt;= 1)
+        idsFullName += "/" + std::to_string(iOccurrence);
+
+    <xsl:if test="@type='constant'">
+    if( idsTimeMode != IDS_TIME_MODE_INDEPENDENT )
+    {
+        ids_properties.homogeneous_time = IDS_TIME_MODE_INDEPENDENT;
+        idsTimeMode = IDS_TIME_MODE_INDEPENDENT;
+        printf("AL warning: ids_properties/homogeneous_time has been set to IDS_TIME_MODE_INDEPENDENT for the constant IDS '%s', please check the program which has filled this IDS since this is the mandatory value for a constant IDS.", idsFullName.c_str());
+    }
+    </xsl:if>
+
     if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT) 
     {
         printf("Warning: IDS '<xsl:value-of select="@name"/>' time mode 'independent'. PUTSLICE quits with no action.\n");
         return 0;
     }
-
-    if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp;  this->time.size() &lt; 1 )
-    {
-        printf("ERROR: Time vector of homogeneous IDS '<xsl:value-of select="@name"/>' cannot be EMPTY. \n");
-        return -1;
-    }
-
-	if(iOccurrence &gt;= 1)
-        idsFullName += "/" + std::to_string(iOccurrence);
 
     /***   Checking homogeneous_time read from file   ***/
 
@@ -629,6 +650,12 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(double inTime, char 
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, double inTime, char interpolMode)
 {
+<xsl:choose>
+  <xsl:when test="@type='constant'">
+    // for static IDSes only GET method is called
+	return this->get(iOccurrence);
+  </xsl:when>
+  <xsl:otherwise>
     int status = 0;
     al_status_t al_status;
 	char *idsName = "<xsl:value-of select="@name"/>";
@@ -682,6 +709,8 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
 	al_end_action(getSliceOpCtx);
 
 	return 0;
+  </xsl:otherwise>
+</xsl:choose>
 }
  <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_PUT"/> 
 <xsl:apply-templates select=".//field[@data_type='structure' or @data_type='struct_array']" mode="METHOD_GET"/> 

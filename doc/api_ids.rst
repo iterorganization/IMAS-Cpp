@@ -145,3 +145,22 @@ IDS (``IdsNs::Ids``) API
         :example: .. literalinclude:: code_samples/dbentry_put_slice
 
 
+
+    .. cpp:function:: bool isDefined()
+
+        Verifies if given IDS is 'defined' by checking if its field `ids_properties.homogeneous_time` is set
+
+        :returns: Boolean value :code:`true` if `ids_properties.homogeneous_time` is set, :code:`false` otherwise
+        :example:
+            .. code-block:: c++
+
+                IdsNs::IDS::core_profiles ids;
+                bool isDefined = false;
+
+
+                isDefined = ids.isDefined(); // false
+
+                ids.ids_properties.homogeneous_time = IDS_TIME_MODE_HETEROGENEOUS; 
+
+                isDefined = ids.isDefined(); // true
+
