@@ -127,3 +127,49 @@ Data entry open/create modes
     opens it at the same time.
 
 
+Version constants
+-----------------
+
+.. cpp:function:: const char * getALVersion()
+
+    Get the Access Layer low-level version.
+
+    Returns the version (C) string of the low-level component of the Access
+    Layer, for example ``"5.1.0"``.
+
+.. cpp:var:: std::string al_cpp_version
+
+    Get the version string of the C++ Access Layer library, for
+    example ``"5.1.0"``.
+
+.. cpp:var:: int al_cpp_major_version
+    
+    Get the major version of the C++ Access Layer library, for example ``5``.
+
+.. cpp:var:: int al_cpp_minor_version
+    
+    Get the minor version of the C++ Access Layer library, for example ``1``.
+    
+.. cpp:var:: int al_cpp_patch_version
+
+    Get the patch version of the C++ Access Layer library, for example ``0``.
+
+.. cpp:var:: std::string al_dd_version
+
+    Get the version string of the Data Dictionary definitions that are used, for
+    example ``"3.39.0"``.
+
+.. cpp:var:: int al_dd_major_version
+
+    Get the major version of the Data Dictionary definitions that are used, for
+    example ``3``.
+
+.. cpp:var:: int al_dd_minor_version
+
+    Get the minor version of the Data Dictionary definitions that are used, for
+    example ``39``.
+
+.. cpp:var:: int al_dd_patch_version
+
+    Get the patch version of the Data Dictionary definitions that are used, for
+    example ``0``.

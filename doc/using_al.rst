@@ -12,13 +12,14 @@ to print the version of the access layer and data dictionary.
 .. literalinclude:: code_samples/imas_hello_world.cpp
     :caption: ``imas_hello_world.cpp``
 
+.. seealso:: :ref:`Version constants`
 
 If you save this as a file ``imas_hello_world.cpp``, you can compile it as
 follows:
 
 .. code-block:: bash
 
-    g++ `pkg-config --libs --cflags al-cpp` -pthread imas_hello_world.cpp -o imas_hello_world
+    g++ imas_hello_world.cpp `pkg-config --libs --cflags al-cpp` -pthread -o imas_hello_world
 
 We use ``pkg-config`` to output the required libraries and compiler flags to use
 the C++ Access Layer. Feel free to use a different compiler than gcc, and/or add
@@ -31,7 +32,10 @@ was compiled for you. When you execute it, the result is:
 
     $ ./imas_hello_world
     Hello world!
-    Using access layer version: 4.11.4 with data dictionary version: 3.38.1
+    Access Layer version info:
+      Low level version: 5.0.0
+      Data Dictionary version: 3.39.0
+      C++ HLI version: 5.0.0
 
 
 Congratulations if this runs successfully! You have included the C++ Access

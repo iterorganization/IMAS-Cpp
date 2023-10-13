@@ -9,8 +9,10 @@ using namespace IdsNs;
 
 int main(int argc, char *argv[]) {
     std::cout << "Hello world!" << std::endl;
-    std::cout << "Using access layer version: " << AL_VERSION;
-    std::cout << " with data dictionary version: " << DD_VERSION << std::endl;
+    std::cout << "Access Layer version info:" << std::endl;
+    std::cout << "  Low level version: " << getALVersion() << std::endl;
+    std::cout << "  Data Dictionary version: " << al_dd_version << std::endl;
+    std::cout << "  C++ HLI version: " << al_cpp_version << std::endl;
 
     return 0;
 }
