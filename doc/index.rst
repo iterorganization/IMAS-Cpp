@@ -49,6 +49,7 @@ programming language.
    api_dbentry
    api_ids
    api_constants
+   api_plugin
 
 Indices and tables
 ==================
