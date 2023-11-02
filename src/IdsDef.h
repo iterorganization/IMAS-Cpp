@@ -18,6 +18,21 @@ struct DataDictionary {
     static const std::string LIFECYCLE_STATUS_OBSOLETE;
 };
 
+class ValidationException : public std::exception
+{
+public:
+    ValidationException(void)  {};
+    ValidationException(const ValidationException &ex) = default;
+    ValidationException(std::string errormsg) {msg = errormsg;};
+    virtual ~ValidationException(void)  {};
+    std::string get_message(void) const throw() {return msg;};
+    virtual const char* what() const throw() {return msg.c_str();}
+
+    private:
+    mutable std::string msg;
+};
+
+
 class Ids
 {
     public:

@@ -186,6 +186,7 @@ class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase : public Ids
     int deleteAll(int idx) override;
     void clear() override;
     bool isDefined() override;
+    void validate() const;
 };
 
 #ifdef __cplusplus
@@ -285,6 +286,8 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
     int putSlice(int ctx, int idsTimeMode, const std::string &amp;idsFullName);
      </xsl:if> 
 
+    void validate(int idsTimeMode, int idsTimeSize) const;
+
     <xsl:if test="not(ancestor::field[@data_type='struct_array'])">
     int deleteAll(int ctx);
      </xsl:if> 
@@ -306,6 +309,8 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
     <xsl:if test="descendant-or-self::field[@type='dynamic'] or ancestor::field[@type='dynamic' and @data_type='struct_array']">
     int putSlice(int ctx, int idsTimeMode, const std::string &amp;idsFullName);
     </xsl:if> 
+
+    void validate(int idsTimeMode, int idsTimeSize) const;
 
 //    int deleteAll(int ctx);
 	      };
