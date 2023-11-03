@@ -839,7 +839,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
     <xsl:if test="contains(@coordinate1,'/time')">
     if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
         if(arraySize != idsTimeSize) {
-          throw ValidationException("array size of <xsl:value-of select="@path"/> wrong dimension. ");
+          throw ValidationException("array size of <xsl:value-of select="@path"/> wrong dimension ("+std::to_string(arraySize)+"). Must be the size of root time ("+std::to_string(idsTimeSize)+")");
         }
     }
     <xsl:variable name="coord" select="@coordinate1"/>
@@ -848,7 +848,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
     @data_type='CPX_0D')]/@path"/>
     <xsl:if test=".//field[@path_doc=$coord and (@data_type='flt_type' or @data_type='FLT_0D')]">
     if (idsTimeMode == IDS_TIME_MODE_HETEROGENEOUS ) {
-        for (int itime = 1; itime&lt;arraySize;itime++) {
+        for (int itime = 0; itime&lt;arraySize;itime++) {
         if (!(this-><xsl:value-of select="@name"/>(itime).time != EMPTY_DOUBLE)) { 
           throw ValidationException("Time coordinate of <xsl:value-of select="@name"/> wrong. ids.<xsl:value-of select="@name"/>(itime).time is invalid.");
         }
@@ -858,7 +858,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
     </xsl:if>
     <xsl:if test="not(contains(@coordinate1,'/time'))">
     if (arraySize != this-><xsl:value-of select="@coordinate1"/>.extent(0)) {
-      throw ValidationException("array size of <xsl:value-of select="@path"/> wrong dimension. Must be the size of <xsl:value-of select="@coordinate1"/>.");
+		throw ValidationException("array size of <xsl:value-of select="@path"/> wrong dimension ("+std::to_string(arraySize)+"). Must be the size of <xsl:value-of select="@coordinate1"/> ("+std::to_string(this-><xsl:value-of select="@coordinate1"/>.extent(0))+")");
     }
     </xsl:if>
 		}
@@ -1483,6 +1483,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
           check = true;
           error = true;
           i = 0;
+          <xsl:apply-templates select="." mode="check-target-indices"><xsl:with-param name="coord" select="$coord"/><xsl:with-param name="relativepathdoc" select="$root"/></xsl:apply-templates>
           <xsl:apply-templates select="." mode="possible-coordinates"><xsl:with-param name="coord" select="$coord"/><xsl:with-param name="relativepathdoc" select="$root"/><xsl:with-param name="self" select="concat($string,@name)"/></xsl:apply-templates>
           if (i&gt;1) { 
             throw ValidationException("Coordinate consistency error for <xsl:value-of select="@path"/> (dimension <xsl:value-of select="number($dimension)"/>). Exactly one of the coordinate must be verified. (<xsl:value-of select="$coord"/>)");
@@ -1504,18 +1505,18 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
               <xsl:with-param name="self" select="concat($string,@name)"/>
             </xsl:apply-templates>
           if (error) { 
-            throw ValidationException("Wrong dimension <xsl:value-of select="number($dimension)"/> for <xsl:value-of select="@path"/>. (<xsl:value-of select="$coord"/>)");
+            throw ValidationException("Wrong dimension <xsl:value-of select="number($dimension)"/> for <xsl:value-of select="@path"/> ("+std::to_string(arraySize)+"). (Must be the size of <xsl:value-of select="$coord"/>)");
           }
       <xsl:if test="@type='dynamic' and contains($coord,'/time')">
         }
         if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
           if(arraySize != idsTimeSize) {
-            throw ValidationException("arraySize of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/>.");
+            throw ValidationException("size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/> ("+std::to_string(arraySize)+"). Must be the size of root time ("+std::to_string(idsTimeSize)+")");
           }
         }
         if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT ) {
           if(arraySize != 0) {
-            throw ValidationException("arraySize of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/>.");
+            throw ValidationException("size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/>.");
           }
         }
         </xsl:if>
@@ -1527,11 +1528,11 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
       if (arraySize != 0) {
       if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
         if(arraySize != idsTimeSize) {
-          throw ValidationException("arraySize of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)+1"/>.");
+          throw ValidationException("size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)+1"/> ("+std::to_string(arraySize)+"). Must be the size of root time ("+std::to_string(idsTimeSize)+")");
         }
       }
       if (idsTimeMode == IDS_TIME_MODE_HETEROGENEOUS ) {
-        for (int itime = 1; itime&lt;arraySize;itime++) {
+        for (int itime = 0; itime&lt;arraySize;itime++) {
             if (!(this-><xsl:value-of select="@name"/>(itime).time != EMPTY_DOUBLE)) { 
               throw ValidationException("Time coordinate of <xsl:value-of select="@name"/> wrong. ids.<xsl:value-of select="@name"/>(itime).time is invalid.");
             }
@@ -1552,16 +1553,17 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
             <xsl:value-of select="replace(substring-before(substring-after($coord,$relativepathdoc),' OR'),'/','.')"/>
           </xsl:if>
           <xsl:if test="$relativepathdoc='/'">
-            <xsl:if test="ancestor::IDS/@name='amns_data'">
-              <xsl:value-of select="replace(concat(substring-before(substring-before($coord,' OR'),'process(i1)/coordinate_index'),'this->process(i1)/coordinate_index', substring-after(substring-before($coord,' OR'),'process(i1)/coordinate_index')),'/','.')"/>
-            </xsl:if>
-            <xsl:if test="not(ancestor::IDS/@name='amns_data')">
               <xsl:value-of select="replace(substring-before($coord,' OR'),'/','.')"/>
-            </xsl:if>
           </xsl:if>
-      </xsl:variable>
+        </xsl:variable>
+        <xsl:variable name="resolved_target">
+        <xsl:apply-templates select="." mode="resolve_indices">
+          <xsl:with-param name="target" select="$target"/>
+          <xsl:with-param name="string-resolved" select="''"/>
+        </xsl:apply-templates>
+        </xsl:variable>
       <xsl:if test="not(contains(substring-before($coord,' OR'),'1...'))">
-          if (this-><xsl:value-of select="$target"/>.extent(0) != 0) i = i + 1;
+          if (this-><xsl:value-of select="$resolved_target"/>.extent(0) != 0) i = i + 1;
       </xsl:if>
       <xsl:apply-templates select="." mode="possible-coordinates">
         <xsl:with-param name="coord" select="substring-after($coord,' OR')"/>
@@ -1570,21 +1572,22 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
       </xsl:apply-templates>
       </xsl:if>
       <xsl:if test="not(contains($coord,' OR'))">
-      <xsl:variable name="target">
-          <xsl:if test="not($relativepathdoc='/')">
-            <xsl:value-of select="replace(substring-after($coord,$relativepathdoc),'/','.')"/>
-          </xsl:if>
-          <xsl:if test="$relativepathdoc='/'">
-            <xsl:if test="ancestor::IDS/@name='amns_data'">
-              <xsl:value-of select="replace(concat(substring-before($coord,'process(i1)/coordinate_index'),'this->process(i1)/coordinate_index', substring-after($coord,'process(i1)/coordinate_index')),'/','.')"/>
-            </xsl:if>
-            <xsl:if test="not(ancestor::IDS/@name='amns_data')">
-              <xsl:value-of select="replace($coord,'/','.')"/>
-            </xsl:if>
-          </xsl:if>
+       <xsl:variable name="target">
+        <xsl:if test="not($relativepathdoc='/')">
+          <xsl:value-of select="replace(substring-after($coord,$relativepathdoc),'/','.')"/>
+        </xsl:if>
+        <xsl:if test="$relativepathdoc='/'">
+            <xsl:value-of select="replace($coord,'/','.')"/>
+        </xsl:if>
+      </xsl:variable>
+      <xsl:variable name="resolved_target">
+      <xsl:apply-templates select="." mode="resolve_indices">
+        <xsl:with-param name="target" select="$target"/>
+        <xsl:with-param name="string-resolved" select="''"/>
+      </xsl:apply-templates>
       </xsl:variable>
       <xsl:if test="not(contains($coord,'1...'))">
-			if (this-><xsl:value-of select="$target"/>.extent(0) != 0) i = i + 1;
+			if (this-><xsl:value-of select="$resolved_target"/>.extent(0) != 0) i = i + 1;
       </xsl:if>
           if (i!=1) { 
             check = false;
@@ -1602,11 +1605,14 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
           </xsl:apply-templates>
         </xsl:variable>
         <xsl:variable name="resolved_indexstr">
-        <xsl:if test="matches($indexstr, '^[0-9]+$') or matches($indexstr, '^itime|i[1-9]$')">
+        <xsl:if test="matches($indexstr, '^[0-9]+$')">
+          <xsl:value-of select="number($indexstr)-1"/>
+        </xsl:if>
+        <xsl:if test="matches($indexstr, '^itime|i[1-9]$')">
           <xsl:value-of select="$indexstr"/>
         </xsl:if>
         <xsl:if test="not(matches($indexstr, '^[0-9]+$') or matches($indexstr, '^itime|i[1-9]$'))">
-          <xsl:value-of select="concat('this->',$indexstr)"/>
+          <xsl:value-of select="concat('this->',$indexstr,'-1')"/>
         </xsl:if>
         </xsl:variable>
         <xsl:apply-templates select="." mode="resolve_indices">
@@ -1844,7 +1850,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
           arraySize = this-><xsl:value-of select = "@name"/>.extent(<xsl:value-of select="number($dimension)"/>);
           if (arraySize != 0) {
             if (arraySize != <xsl:value-of select = "substring-after($coord,'1...')"/>) {
-              throw ValidationException("array_size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/>. Must be <xsl:value-of select = "substring-after($coord,'1...')"/>.");
+              throw ValidationException("size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/> ("+std::to_string(arraySize)+"). Must be <xsl:value-of select = "substring-after($coord,'1...')"/>.");
             }
           }
         </xsl:if>
@@ -2626,6 +2632,95 @@ See IDSDef2Classes.xsl  -->
 	<xsl:variable name="elementPath" select="@path"/>
 
 	<xsl:value-of select="replace($elementPath,concat($AoSPath,'/'),'')"/>
+</xsl:template>
+
+<xsl:template match='field' mode="check-target-indices">
+      <xsl:param name="coord"/>
+      <xsl:param name="relativepathdoc"/>
+      <xsl:if test="contains($coord,' OR')">
+        <xsl:variable name="target">
+          <xsl:if test="not($relativepathdoc='/')">
+            <xsl:value-of select="replace(substring-before(substring-after($coord,$relativepathdoc),' OR'),'/','.')"/>
+          </xsl:if>
+          <xsl:if test="$relativepathdoc='/'">
+              <xsl:value-of select="replace(substring-before($coord,' OR'),'/','.')"/>
+          </xsl:if>
+        </xsl:variable>
+        <xsl:apply-templates select="." mode="check_indices">
+            <xsl:with-param name="target" select="$target"/>
+            <xsl:with-param name="string-resolved" select="''"/>
+            <xsl:with-param name="string-error" select="''"/>
+        </xsl:apply-templates>
+      <xsl:apply-templates select="." mode="check-target-indices">
+        <xsl:with-param name="coord" select="substring-after($coord,' OR')"/>
+        <xsl:with-param name="relativepathdoc" select="$relativepathdoc"/>
+      </xsl:apply-templates>
+      </xsl:if>
+      <xsl:if test="not(contains($coord,' OR'))">
+      <xsl:variable name="target">
+        <xsl:if test="not($relativepathdoc='/')">
+          <xsl:value-of select="replace(substring-after($coord,$relativepathdoc),'/','.')"/>
+        </xsl:if>
+        <xsl:if test="$relativepathdoc='/'">
+            <xsl:value-of select="replace($coord,'/','.')"/>
+        </xsl:if>
+      </xsl:variable>
+      <xsl:apply-templates select="." mode="check_indices">
+            <xsl:with-param name="target" select="$target"/>
+            <xsl:with-param name="string-resolved" select="''"/>
+            <xsl:with-param name="string-error" select="''"/>
+        </xsl:apply-templates>
+      </xsl:if>
+      </xsl:template>
+
+      <xsl:template match='field' mode="check_indices">
+      <xsl:param name="target"/>
+      <xsl:param name="string-resolved"/>
+      <xsl:param name="string-error"/>
+      <xsl:if test="contains($target,'(')">
+        <xsl:variable name="indexstr">
+          <xsl:apply-templates select="." mode="get_indices">
+            <xsl:with-param name="target" select="$target"/>
+          </xsl:apply-templates>
+        </xsl:variable>
+        <xsl:variable name="resolved_indexstr">
+        <xsl:if test="matches($indexstr, '^[0-9]+$')">
+          <xsl:value-of select="$indexstr"/>
+        </xsl:if>
+        <xsl:if test="matches($indexstr, '^itime|i[1-9]$')">
+          <xsl:value-of select="''"/>
+        </xsl:if>
+        <xsl:if test="not(matches($indexstr, '^[0-9]+$')) and not(matches($indexstr, '^itime|i[1-9]$'))">
+          <xsl:value-of select="concat('this->',$indexstr)"/>
+        </xsl:if>
+	</xsl:variable>
+  <xsl:variable name="indexid_str">
+    <xsl:if test="starts-with($target,'.')">  <xsl:value-of select="substring-before(substring-after($target,'.'),'(')"/>_id </xsl:if>
+    <xsl:if test="not(starts-with($target,'.'))">  <xsl:value-of select="substring-before($target,'(')"/>_id </xsl:if>
+  </xsl:variable>
+   <xsl:if test="$resolved_indexstr != ''">
+	  <xsl:if test="not(matches($resolved_indexstr, '^[0-9]+$'))">
+          if (<xsl:value-of select="$resolved_indexstr"/>==EMPTY_INT) {
+            throw ValidationException("<xsl:value-of select="replace(replace($resolved_indexstr,'\(','(&quot;+std::to_string('),'\)',')+&quot;)')"/> is not valid ("+std::to_string(EMPTY_INT)+").");
+          }
+          </xsl:if>
+          std::string <xsl:value-of select="$indexid_str"/> =
+          <xsl:if test="matches($indexstr, '^[0-9]+$')">
+            std::to_string(<xsl:value-of select="$resolved_indexstr"/>-1);
+          </xsl:if>
+          <xsl:if test="not(matches($indexstr, '^[0-9]+$')) and not(matches($indexstr, '^itime|i[1-9]$'))">
+            std::to_string(<xsl:value-of select="$resolved_indexstr"/>-1);
+          </xsl:if>
+	        if (<xsl:value-of select="concat('this->',$string-resolved,substring-before($target,'('))"/>.extent(0)&lt;=<xsl:value-of select="$resolved_indexstr"/>-1) { 
+            throw ValidationException("<xsl:value-of select="concat($string-error,replace(replace(concat(substring-before($target,concat($indexstr,')')), concat($indexid_str,')') ),'\(','(&quot;+'),'\)','+&quot;)'))"/> is not allocated.");
+          }
+        </xsl:if>
+        <xsl:apply-templates select="." mode="check_indices">
+            <xsl:with-param name="target" select="substring-after($target,concat($indexstr,')'))"/>
+            <xsl:with-param name="string-resolved" select="concat($string-resolved,substring-before($target,concat($indexstr,')')), concat(concat($resolved_indexstr,'-1'),')') )"/>
+            <xsl:with-param name="string-error" select="concat($string-error,replace(replace(concat(substring-before($target,concat($indexstr,')')), concat($indexid_str,')') ),'\(','(&quot;+'),'\)','+&quot;)'))"/>
+          </xsl:apply-templates>
+      </xsl:if>      
 </xsl:template>
 
 
