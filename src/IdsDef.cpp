@@ -40,10 +40,10 @@ std::string generate_tmp_file()
     for( int i=0; i<MAX_TMP_FILES; i++)
     {
         // generate new random file name
-        const char* ASCII_SERIALIZER_TMP_DIR = std::getenv("ASCII_SERIALIZER_TMP_DIR");
-        if(ASCII_SERIALIZER_TMP_DIR != nullptr)
+        const char* IMAS_AL_SERIALIZER_TMP_DIR = std::getenv("IMAS_AL_SERIALIZER_TMP_DIR");
+        if(IMAS_AL_SERIALIZER_TMP_DIR != nullptr)
         {
-            fname = std::string(ASCII_SERIALIZER_TMP_DIR) + "al_serialize_";
+            fname = std::string(IMAS_AL_SERIALIZER_TMP_DIR) + "al_serialize_";
         }
         else
         {
@@ -80,10 +80,10 @@ std::string IdsNs::Ids::serialize(int protocol)
             return "";
         }
         std::string filename = tmpfile.substr(tmpfile.find_last_of("/\\") + 1);
-        if(std::getenv("ASCII_SERIALIZER_TMP_DIR") != nullptr)
+        if(std::getenv("IMAS_AL_SERIALIZER_TMP_DIR") != nullptr)
         {
-            const char* ASCII_SERIALIZER_TMP_DIR = std::getenv("ASCII_SERIALIZER_TMP_DIR");
-            uri = "imas:ascii?path="+std::string(ASCII_SERIALIZER_TMP_DIR)+";filename="+filename;
+            const char* IMAS_AL_SERIALIZER_TMP_DIR = std::getenv("IMAS_AL_SERIALIZER_TMP_DIR");
+            uri = "imas:ascii?path="+std::string(IMAS_AL_SERIALIZER_TMP_DIR)+";filename="+filename;
         }
         else
         {
@@ -185,10 +185,10 @@ int IdsNs::Ids::deserialize(std::string &data)
             std::remove(tmpfile.c_str());
             return -1;
         }
-        if(std::getenv("ASCII_SERIALIZER_TMP_DIR") != nullptr)
+        if(std::getenv("IMAS_AL_SERIALIZER_TMP_DIR") != nullptr)
         {
-            const char* ASCII_SERIALIZER_TMP_DIR = std::getenv("ASCII_SERIALIZER_TMP_DIR");
-            uri = "imas:ascii?path="+std::string(ASCII_SERIALIZER_TMP_DIR)+";filename="+filename;
+            const char* IMAS_AL_SERIALIZER_TMP_DIR = std::getenv("IMAS_AL_SERIALIZER_TMP_DIR");
+            uri = "imas:ascii?path="+std::string(IMAS_AL_SERIALIZER_TMP_DIR)+";filename="+filename;
         }
         else
         {
