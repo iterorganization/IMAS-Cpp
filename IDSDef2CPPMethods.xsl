@@ -1085,6 +1085,9 @@ See IDSDef2Classes.xsl  -->
 					return al_status.code; 
 				}
 
+				if(aosCtx&gt;0 &amp;&amp; arraySize&gt;0 &amp;&amp; <xsl:value-of select="@name"/>.size() == 0)
+					<xsl:value-of select="@name"/>.resize(arraySize);
+
 				for( int i = 0; i &lt;arraySize; i++){
                     status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
 					if (status &lt; 0)
@@ -1131,6 +1134,9 @@ See IDSDef2Classes.xsl  -->
 					al_end_action(ctx);
 					return al_status.code;
 				}
+
+				if(aosCtx&gt;0 &amp;&amp; arraySize&gt;0 &amp;&amp; <xsl:value-of select="@name"/>.size() == 0)
+					<xsl:value-of select="@name"/>.resize(arraySize);
 
 				for( int i = 0; i &lt;arraySize; i++){
                     status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
@@ -1184,6 +1190,9 @@ See IDSDef2Classes.xsl  -->
 					al_end_action(ctx);
 					return al_status.code;
 				}
+
+				if(aosCtx&gt;0 &amp;&amp; arraySize&gt;0 &amp;&amp; <xsl:value-of select="@name"/>.size() == 0)
+					<xsl:value-of select="@name"/>.resize(arraySize);
 
 				for( int i = 0; i &lt;arraySize; i++){
                     status = <xsl:value-of select="@name"/>(i).<xsl:value-of select="$methodName"/>(aosCtx, idsTimeMode, idsFullName);
