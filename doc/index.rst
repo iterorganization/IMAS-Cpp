@@ -40,6 +40,7 @@ programming language.
    imas_uri
    identifiers
    conf
+   plugins
 
 .. toctree::
    :maxdepth: 3
@@ -48,6 +49,7 @@ programming language.
    api_dbentry
    api_ids
    api_constants
+   api_plugin
 
 Indices and tables
 ==================
