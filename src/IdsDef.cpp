@@ -278,7 +278,7 @@ al_status_t IdsNs::Ids::readIdsTimeMode( int pulseCtx, const char *idsFullName, 
 }
 
 
-char* IdsNs::Ids::timeModeToString( int idsTimeMode )
+const char* IdsNs::Ids::timeModeToString( int idsTimeMode )
 {
 
     switch(idsTimeMode)

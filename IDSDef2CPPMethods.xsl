@@ -382,7 +382,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::get(int iOccurrence)
         int status = 0;
         al_status_t al_status;
         char *str;
-        char *idsName = "<xsl:value-of select="@name"/>";
+        const char *idsName = "<xsl:value-of select="@name"/>";
         std::string idsFullName = std::string(idsName);
         int pulseCtx = this->pulseCtx;
         int getOpCtx = -1;
@@ -442,7 +442,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::put(int iOccurrence)
 {
 	int status = 0;
 	al_status_t al_status;
-	char *idsName = "<xsl:value-of select="@name"/>";
+	const char *idsName = "<xsl:value-of select="@name"/>";
     std::string idsFullName = std::string(idsName);
 	int pulseCtx = this->pulseCtx;
 	int putOpCtx = -1;
@@ -510,7 +510,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 {
     int status = 0;
     al_status_t al_status;
-	char *idsName = "<xsl:value-of select="@name"/>";
+	const char *idsName = "<xsl:value-of select="@name"/>";
     std::string idsFullName = std::string(idsName);
 	int pulseCtx = this->pulseCtx;
 	int putSliceOpCtx = -1;
@@ -600,7 +600,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)
 {
     int status = 0;
     al_status_t al_status;
-	char *idsName = "<xsl:value-of select="@name"/>";
+	const char *idsName = "<xsl:value-of select="@name"/>";
     std::string idsFullName = std::string(idsName);
 	int pulseCtx = this->pulseCtx;
 	int deleteOpCtx = -1;
@@ -658,7 +658,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSlice(int iOccurrence, dou
   <xsl:otherwise>
     int status = 0;
     al_status_t al_status;
-	char *idsName = "<xsl:value-of select="@name"/>";
+	const char *idsName = "<xsl:value-of select="@name"/>";
     std::string idsFullName = std::string(idsName);
 	int pulseCtx = this->pulseCtx;
 	int getSliceOpCtx = -1;
