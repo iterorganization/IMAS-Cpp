@@ -52,7 +52,7 @@ class Ids
 
         static al_status_t readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode );
 
-        static char* timeModeToString( int idsTimeMode );
+        static const char* timeModeToString( int idsTimeMode );
 
         static void warningWritingObsolescentNode(const std::string &idsName, const std::string &fieldPath, const std::string &lifeCycleStatus);
 

@@ -36,15 +36,15 @@
       <xsl:value-of select="$name"/>
       <xsl:text> {&#xA;</xsl:text>
       <xsl:text>  int type_index;&#xA;</xsl:text>
-      <xsl:text>  char* type_name;&#xA;</xsl:text>
-      <xsl:text>  char* type_description;&#xA;</xsl:text>
+      <xsl:text>  const char* type_name;&#xA;</xsl:text>
+      <xsl:text>  const char* type_description;&#xA;</xsl:text>
       <xsl:text>#if defined(__cplusplus)&#xA;</xsl:text>
       <xsl:text>  imas_</xsl:text>
       <xsl:value-of select="$name"/>
       <xsl:text>  get_all(int idx);&#xA;</xsl:text>
-      <xsl:text>  int get_type_index(char* name);&#xA;</xsl:text>
-      <xsl:text>  char* get_type_name(int idx);&#xA;</xsl:text>
-      <xsl:text>  char* get_type_description(int idx);&#xA;</xsl:text>
+      <xsl:text>  int get_type_index(const char* name);&#xA;</xsl:text>
+      <xsl:text>  const char* get_type_name(int idx);&#xA;</xsl:text>
+      <xsl:text>  const char* get_type_description(int idx);&#xA;</xsl:text>
       <xsl:text>#endif //defined(__cplusplus);&#xA;</xsl:text>
       <xsl:text>}&#xA;</xsl:text>
       <xsl:value-of select="$name"/>
@@ -60,11 +60,11 @@
       <xsl:text>_get_all(int idx);&#xA;</xsl:text>
       <xsl:text>int </xsl:text>
       <xsl:value-of select="$name"/>
-      <xsl:text>_get_type_index(char* name);&#xA;</xsl:text>
-      <xsl:text>char* </xsl:text>
+      <xsl:text>_get_type_index(const char* name);&#xA;</xsl:text>
+      <xsl:text>const char* </xsl:text>
       <xsl:value-of select="$name"/>
       <xsl:text>_get_type_name(int idx);&#xA;</xsl:text>
-      <xsl:text>char* </xsl:text>
+      <xsl:text>const char* </xsl:text>
       <xsl:value-of select="$name"/>
       <xsl:text>_get_type_description(int idx);&#xA;</xsl:text>
 
@@ -123,7 +123,7 @@
       <xsl:text>// Function returning the VALUE of the type with name NAME.&#xA;</xsl:text>
       <xsl:text>int </xsl:text>
       <xsl:value-of select="$name"/>
-      <xsl:text>::get_type_index(char* name) {&#xA;</xsl:text>
+      <xsl:text>::get_type_index(const char* name) {&#xA;</xsl:text>
       <xsl:text>  int type_index=-999999999;&#xA;</xsl:text>
       <xsl:for-each select="int[@name]">
         <xsl:text>  if(strcmp(name, "</xsl:text>
@@ -140,40 +140,38 @@
     <!-- Translation from VALUE to NAME -->
     <xsl:if test="int!='' and */@unique='yes'">
       <xsl:text>// Function returning the NAME of the type with index IDX.&#xA;</xsl:text>
-      <xsl:text>char* </xsl:text>
+      <xsl:text>const char* </xsl:text>
       <xsl:value-of select="$name"/>
       <xsl:text>::get_type_name(int idx) {&#xA;</xsl:text>
-      <xsl:text>  char* type_name = "";&#xA;</xsl:text>
       <xsl:text>  switch(idx) {&#xA;</xsl:text>
       <xsl:for-each select="int[@name]">
         <xsl:text>    case (</xsl:text>
         <xsl:value-of select="."/>    
         <xsl:text>):&#xA;</xsl:text>
-        <xsl:text>      type_name="</xsl:text>
+        <xsl:text>      return "</xsl:text>
         <xsl:value-of select="@name"/>    
         <xsl:text>";&#xA;      break;&#xA;</xsl:text>
       </xsl:for-each>
-      <xsl:text>  }&#xA;  return type_name;&#xA;</xsl:text>
+      <xsl:text>  }&#xA;</xsl:text>
       <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
 
     <!-- Translation from VALUE to DESCRIPTION -->
     <xsl:if test="int!='' and */@unique='yes'">
       <xsl:text>// Function returning the DESCRIPTION of the type with index IDX.&#xA;</xsl:text>
-      <xsl:text>char* </xsl:text>
+      <xsl:text>const char* </xsl:text>
       <xsl:value-of select="$name"/>
       <xsl:text>::get_type_description(int idx) {&#xA;</xsl:text>
-      <xsl:text>  char* type_description = "";&#xA;</xsl:text>
       <xsl:text>  switch(idx) {&#xA;</xsl:text>
       <xsl:for-each select="*[@unique]">
         <xsl:text>    case (</xsl:text>
         <xsl:value-of select="."/>    
         <xsl:text>):&#xA;</xsl:text>
-        <xsl:text>      type_description="</xsl:text>
+        <xsl:text>      return "</xsl:text>
         <xsl:value-of select="@description"/>    
         <xsl:text>";&#xA;      break;&#xA;</xsl:text>
       </xsl:for-each>
-      <xsl:text>  }&#xA;  return type_description;&#xA;</xsl:text>
+      <xsl:text>  }&#xA;</xsl:text>
       <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
  
@@ -194,7 +192,7 @@
     <xsl:if test="int!='' and */@name!=''">
     <xsl:text>int </xsl:text>
     <xsl:value-of select="$name"/>
-    <xsl:text>_get_type_index(char* name) {&#xA;</xsl:text>
+    <xsl:text>_get_type_index(const char* name) {&#xA;</xsl:text>
     <xsl:text>  </xsl:text>
     <xsl:value-of select="$name"/>
     <xsl:text>  type_struct;&#xA;</xsl:text>
@@ -203,7 +201,7 @@
     </xsl:if>
  
     <xsl:if test="int!='' and */@unique='yes'">
-    <xsl:text>char* </xsl:text>
+    <xsl:text>const char* </xsl:text>
     <xsl:value-of select="$name"/>
     <xsl:text>_get_type_name(int idx) {&#xA;</xsl:text>
     <xsl:text>  </xsl:text>
@@ -214,7 +212,7 @@
     </xsl:if>
  
     <xsl:if test="int!='' and */@unique='yes'">
-    <xsl:text>char* </xsl:text>
+    <xsl:text>const char* </xsl:text>
     <xsl:value-of select="$name"/>
     <xsl:text>_get_type_description(int idx) {&#xA;</xsl:text>
     <xsl:text>  </xsl:text>
