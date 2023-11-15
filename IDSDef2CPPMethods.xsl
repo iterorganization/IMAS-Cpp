@@ -756,11 +756,6 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
 
 	idsTimeSize = this->time.extent(0);
 
-	if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS &amp;&amp; (idsTimeSize &lt; 1)) { 
-		  throw IdsNs::ValidationException("the time array must not be empty");
-	}
-
-
 	<xsl:apply-templates select = "field" mode = "VALIDATE_CHILD"/>
 	<xsl:apply-templates select="field[@data_type='struct_array']" mode="VALIDATE_CHILD_1D"/>
 	<xsl:apply-templates select="." mode="VALIDATE_DESCENDANT_1D"/>
@@ -811,7 +806,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
         this-><xsl:value-of select="@name"/>.validate(idsTimeMode, idsTimeSize );
         }
         catch (ValidationException ve) {
-          throw ValidationException("Error with <xsl:value-of select = "@path"/>.\n\r"+ve.get_message());
+          string errorStr("Error with <xsl:value-of select = "@path"/>.\n\r");
+          errorStr += ve.what();
+          throw ValidationException(errorStr);
         }
       </xsl:when>
       <xsl:when test="@data_type='struct_array'">
@@ -823,7 +820,11 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
                 this-><xsl:value-of select = "@name"/>(i).validate(idsTimeMode, idsTimeSize );
 			}
             catch (ValidationException ve) {
-              throw ValidationException("Error with <xsl:value-of select = "@path"/>["+std::to_string(i)+"].\n\r"+ve.get_message());
+              string errorStr("Error with <xsl:value-of select = "@path"/>[");
+              errorStr += std::to_string(i);
+              errorStr += "].\n\r";
+              errorStr += ve.what();
+              throw ValidationException(errorStr);
             }
           }
       </xsl:when>
