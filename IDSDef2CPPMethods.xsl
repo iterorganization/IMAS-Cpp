@@ -268,7 +268,7 @@ return(convert.str());
 
  <xsl:apply-templates select="IDS" mode="CLASS_DEFINITION"/> 
 
- void IdsNs::IDS::list_all_occurrences(int idx, const char *ids_name, const char *node_path, std::vector&lt;string&gt; &amp;node_content_list, std::vector&lt;int&gt; &amp;occurrence_list)
+ int IdsNs::IDS::list_all_occurrences(int idx, const char *ids_name, const char *node_path, std::vector&lt;string&gt; &amp;node_content_list, std::vector&lt;int&gt; &amp;occurrence_list)
 {
 
     int opCtx = -1;
@@ -281,7 +281,7 @@ return(convert.str());
 
     if (status.code &lt; 0) {
       printf("IMAS:list_all_occurrences:Failed. Error calling al_get_occurrences for IDS name %s (idx=%d):\n\r%s", ids_name, idx, status.message);
-      return;
+      return status.code;
     }
 
     if (size&gt;0) {
@@ -303,7 +303,7 @@ return(convert.str());
             status = al_begin_global_action(idx, ids_full_names[i].c_str(), "", READ_OP, &amp;opCtx);
             if (status.code &lt; 0) {
                 printf("IMAS:list_all_occurrences:Failed. Error calling al_begin_global_action %s\n\r",  status.message);
-                return;
+                return status.code;
             }
 
             int retSize[MAXDIM] = {0};
@@ -311,19 +311,19 @@ return(convert.str());
             status = al_read_data(opCtx, node_path, "", (void**)&amp;ptrChar, CHAR_DATA, 1, &amp;retSize[0]);
             if (status.code &lt; 0) {
                 printf("IMAS:list_all_occurrences:Failed. Error calling al_read_data %s\n\r",  status.message);
-                return;
+                return status.code;
             }
 
             if (ptrChar == NULL) {
-                printf("IMAS:list_all_occurrences:Failed. Error with request (check that the requested node exists):%s\n\r", node_path);
-                return;
-            }
+                replies[i] == "";
+            } else {
 			replies[i] = ptrChar;
-
+			}
+			
             status = al_end_action(opCtx);
             if (status.code &lt; 0) {
                 printf("IMAS:imas_list_all_occurrences:Failed. Error calling al_end_action %s\n\r",  status.message);
-                return;
+                return status.code;
             }
 
             if (retSize[0] &gt; n_max)
@@ -337,7 +337,7 @@ return(convert.str());
     }
 
 
-    return;
+    return 0;
 }
 
 

@@ -95,7 +95,7 @@ class LIBRARY_API IDS
     int getTime(char *path, IMASArray&lt;double,1&gt; &amp;time);
     ~IDS();
     friend ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>operator <xsl:text disable-output-escaping = "yes">&lt;&lt;</xsl:text> (ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>os, const IDS <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>obj);
-    static void list_all_occurrences(int idx, const char *ids_name, const char *node_path, std::vector&lt;string&gt; &amp;node_content_list, std::vector&lt;int&gt; &amp;occurrence_list);
+    static int list_all_occurrences(int idx, const char *ids_name, const char *node_path, std::vector&lt;string&gt; &amp;node_content_list, std::vector&lt;int&gt; &amp;occurrence_list);
 
     //#include "IdsDef.h"
  <xsl:apply-templates select = "IDS" mode = "EMPTY_CLASS_DEFINITION"/>
