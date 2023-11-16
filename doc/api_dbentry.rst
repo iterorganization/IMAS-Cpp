@@ -85,3 +85,16 @@ Data entry (``IdsNs::IDS``) API
 
         .. seealso::
             :cpp:expr:`Ids::setPulseCtx()`
+
+    .. cpp:function:: int list_all_occurrences(int idx, const char *ids_name, const char *node_path, std::vector<string> &node_content_list, std::vector<int> &occurrence_list);
+
+        Give all occurrences list of the matching node and given IDS.
+        If node_path is an empty string or null, only occurrence_list is relevant.
+
+        :param idx: Pulse context ID. 
+        :param ids_name: IDS name (char array*)
+        :param node_path: Node path (char array*)
+        :param node_content_list: Vector of the node content (std::string)
+        :param occurrence_list: Vector of the index (int)
+        :returns: Status code: ``0`` on success, ``<0`` on failure
+        :example: .. literalinclude:: code_samples/dbentry_list_all_occurrences
