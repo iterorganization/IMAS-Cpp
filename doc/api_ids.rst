@@ -164,3 +164,14 @@ IDS (``IdsNs::Ids``) API
 
                 isDefined = ids.isDefined(); // true
 
+
+    .. cpp:function:: void validate()
+
+        Validate the cooordinate consistency of the ids.
+
+        The method can throw ValidationException. 
+        Nothing is thrown if the coordinates are valids.
+
+        :example: .. literalinclude:: code_samples/ids_validate
+
+

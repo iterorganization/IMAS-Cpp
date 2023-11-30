@@ -1,2 +1,23 @@
-// IDS Validation is not yet implemented in C++.
-// See https://jira.iter.org/browse/IMAS-4678
+// Include the Access Layer
+#include "ALClasses.h"
+#include <iostream>
+
+
+int main(int argc, char *argv[]) {
+    { // Enter a new scope
+        // Create an empty magnetics IDS
+        IdsNs::IDS::magnetics magnetics;
+        // Fill the IDS ...
+
+        try
+        {
+            magnetics.validate();
+        }
+        catch (IdsNs::ValidationException ve)
+        {
+            std::cout << ve.what() << std::endl;
+        }
+    }
+
+    return 0;
+}
