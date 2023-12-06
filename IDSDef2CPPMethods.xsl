@@ -13,13 +13,13 @@
 <xsl:param name="AL_GIT_DESCRIBE" as="xs:string" required="yes"/>
 
 <xsl:variable name="version_regex" select="'^([0-9]+)\.([0-9]+)\.([0-9]+)(-.*)?$'"/>
-<xsl:variable name="DD_MAJOR" as="xs:int" select="xs:int(replace($DD_GIT_DESCRIBE, $version_regex, '$1'))"/>
-<xsl:variable name="DD_MINOR" as="xs:int" select="xs:int(replace($DD_GIT_DESCRIBE, $version_regex, '$2'))"/>
-<xsl:variable name="DD_PATCH" as="xs:int" select="xs:int(replace($DD_GIT_DESCRIBE, $version_regex, '$3'))"/>
+<xsl:variable name="DD_MAJOR" as="xs:integer" select="xs:integer(replace($DD_GIT_DESCRIBE, $version_regex, '$1'))"/>
+<xsl:variable name="DD_MINOR" as="xs:integer" select="xs:integer(replace($DD_GIT_DESCRIBE, $version_regex, '$2'))"/>
+<xsl:variable name="DD_PATCH" as="xs:integer" select="xs:integer(replace($DD_GIT_DESCRIBE, $version_regex, '$3'))"/>
 
-<xsl:variable name="HLI_MAJOR" as="xs:int" select="xs:int(replace($AL_GIT_DESCRIBE, $version_regex, '$1'))"/>
-<xsl:variable name="HLI_MINOR" as="xs:int" select="xs:int(replace($AL_GIT_DESCRIBE, $version_regex, '$2'))"/>
-<xsl:variable name="HLI_PATCH" as="xs:int" select="xs:int(replace($AL_GIT_DESCRIBE, $version_regex, '$3'))"/>
+<xsl:variable name="HLI_MAJOR" as="xs:integer" select="xs:integer(replace($AL_GIT_DESCRIBE, $version_regex, '$1'))"/>
+<xsl:variable name="HLI_MINOR" as="xs:integer" select="xs:integer(replace($AL_GIT_DESCRIBE, $version_regex, '$2'))"/>
+<xsl:variable name="HLI_PATCH" as="xs:integer" select="xs:integer(replace($AL_GIT_DESCRIBE, $version_regex, '$3'))"/>
 
 <xsl:template match="/IDSs">
 <xsl:result-document href="src/ALMethods.cpp" standalone="yes" method="text">
