@@ -754,7 +754,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
 		  throw IdsNs::ValidationException("ids_properties.homogeneous_time wrong value");
 	}
 
+	<xsl:if test="not(@type='constant')">	
 	idsTimeSize = this->time.extent(0);
+	</xsl:if>
 
 	<xsl:apply-templates select = "field" mode = "VALIDATE_CHILD"/>
 	<xsl:apply-templates select="field[@data_type='struct_array']" mode="VALIDATE_CHILD_1D"/>
