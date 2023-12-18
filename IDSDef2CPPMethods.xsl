@@ -268,6 +268,79 @@ return(convert.str());
 
  <xsl:apply-templates select="IDS" mode="CLASS_DEFINITION"/> 
 
+ int IdsNs::IDS::list_all_occurrences(int idx, const char *ids_name, const char *node_path, std::vector&lt;string&gt; &amp;node_content_list, std::vector&lt;int&gt; &amp;occurrence_list)
+{
+
+    int opCtx = -1;
+    int* al_occurrences_list;
+    int size;
+    al_status_t status = al_get_occurrences(idx, ids_name, &amp;al_occurrences_list, &amp;size);
+
+	node_content_list.resize(0);
+    occurrence_list.resize(0);
+
+    if (status.code &lt; 0) {
+      printf("IMAS:list_all_occurrences:Failed. Error calling al_get_occurrences for IDS name %s (idx=%d):\n\r%s", ids_name, idx, status.message);
+      return status.code;
+    }
+
+    if (size&gt;0) {
+        node_content_list.resize(size);
+        occurrence_list.resize(size);
+    }
+    
+    for (int i = 0; i&lt;size; i++) occurrence_list[i] = al_occurrences_list[i];
+    if (node_path &amp;&amp; strlen(node_path) &gt; 0) {
+        std::vector&lt;string&gt; replies(size);
+        std::vector&lt;string&gt; ids_full_names(size);
+        int n_max = 0;
+        std::string ids_name_str(ids_name);
+
+        for (int i = 0; i&lt;size; i++) {
+            if (al_occurrences_list[i]&gt;0) ids_full_names[i] = ids_name_str+"/"+std::to_string(al_occurrences_list[i]);
+            else ids_full_names[i] = ids_name;
+
+            status = al_begin_global_action(idx, ids_full_names[i].c_str(), "", READ_OP, &amp;opCtx);
+            if (status.code &lt; 0) {
+                printf("IMAS:list_all_occurrences:Failed. Error calling al_begin_global_action %s\n\r",  status.message);
+                return status.code;
+            }
+
+            int retSize[MAXDIM] = {0};
+            char* ptrChar = NULL;
+            status = al_read_data(opCtx, node_path, "", (void**)&amp;ptrChar, CHAR_DATA, 1, &amp;retSize[0]);
+            if (status.code &lt; 0) {
+                printf("IMAS:list_all_occurrences:Failed. Error calling al_read_data %s\n\r",  status.message);
+                return status.code;
+            }
+
+            if (ptrChar == NULL) {
+                replies[i] == "";
+            } else {
+			replies[i] = ptrChar;
+			}
+			
+            status = al_end_action(opCtx);
+            if (status.code &lt; 0) {
+                printf("IMAS:imas_list_all_occurrences:Failed. Error calling al_end_action %s\n\r",  status.message);
+                return status.code;
+            }
+
+            if (retSize[0] &gt; n_max)
+                n_max = retSize[0];
+        }
+
+        for (int i = 0; i &lt; size; i++)  node_content_list[i] = replies[i];
+
+    } else {
+        for (int i = 0; i &lt; size; i++) node_content_list[i] = "";
+    }
+
+
+    return 0;
+}
+
+
 ostream &amp;IdsNs::operator &lt;&lt; (ostream &amp;os, const IDS &amp;obj)
 {
 os &lt;&lt; "TreeName: ";

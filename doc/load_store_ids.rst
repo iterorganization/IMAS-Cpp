@@ -26,3 +26,5 @@
 .. |dbentry_put| replace:: :cpp:func:`IdsNs::Ids::put`
 .. |dbentry_put_slice| replace:: :cpp:func:`IdsNs::Ids::putSlice`
 
+.. |list_all_occurrences| replace:: :cpp:func:`IdsNs::Ids::list_all_occurrences`
+
