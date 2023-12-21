@@ -1,0 +1,48 @@
+ifeq "$(strip $(CC))" "icc"
+CXX=icpc
+CXXFLAGS=-g -O0 -fPIC -shared-intel
+LDFLAGS=-g
+else
+CXX=g++
+CXXFLAGS=-std=c++11 -pthread -g -O0 -Wa,-mbig-obj -D__USE_XOPEN2K8 -fPIC -ftrack-macro-expansion=0
+LDFLAGS=-g -pthread
+endif
+
+INCDIR=-I$(BLITZ_HOME)/include -I$(AL_BUILD)/cppinterface/src -I$(AL_BUILD)/lowlevel
+LIBDIR=-L$(AL_BUILD)/cppinterface/lib -L$(AL_BUILD)/lowlevel -L$(BLITZ_HOME)/lib
+LIBS=$(AL_BUILD)/cppinterface/lib/libal-cpp.lib $(AL_BUILD)/lowlevel/libal.lib
+LIBS+= $(BLITZ_HOME)/lib/libblitz.a
+CFLAGS+= -DWIN32
+CXXFLAGS+= -DWIN32
+
+ifeq ("yes","$(strip $(IMAS_MDSPLUS))")
+LIBDIR+= -L$(MDSPLUS_DIR)/lib
+LIBS+= $(MDSPLUS_DIR)/lib/XTreeShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsObjectsCppShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/TdiShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/TreeShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsIpShr.a
+LIBS+= $(MDSPLUS_DIR)/lib/MdsShr.a
+LIBS+= -lxml2 -lws2_32 -ldl -liphlpapi
+LIBS+= -lboost_filesystem-mt -lboost_system-mt
+endif
+
+ifeq ("yes","$(strip $(IMAS_UDA))")
+ifeq ("yes","$(strip $(IMAS_UDAFAT))")
+LIBDIR+= -L$(UDA_HOME)/lib
+LIBS+= $(UDA_HOME)/lib/libfatuda_cpp.a
+LIBS+= $(UDA_HOME)/lib/libportablexdr.a
+LIBS+= $(PostgresSQL_ROOT)/lib/libpq.a
+LIBS+= -lws2_32 -lssl -lcrypto -lxml2
+else
+LIBDIR+= -L$(UDA_HOME)/lib
+LIBS+= $(UDA_HOME)/lib/libuda_cpp.a
+LIBS+= $(UDA_HOME)/lib/libportablexdr.a
+LIBS+= -lws2_32 -lssl -lcrypto
+endif
+endif
+
+ifeq ("yes","$(strip $(IMAS_HDF5))")
+LIBDIR+= -L$(HDF5_HOME)/lib
+LIBS+= $(HDF5_HOME)/lib/libhdf5.a -ldl -lz -lboost_filesystem-mt -lboost_system-mt
+endif
