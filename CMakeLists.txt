@@ -66,12 +66,11 @@ set( GENERATED_HEADERS "${GENERATED_SRC_DIR}/ALClasses.h" )
 # Generated source files by IDSDef2CPPMethods.xsl
 set( GENERATED_SOURCES "${GENERATED_SRC_DIR}/ALMethods.cpp" )
 foreach( IDS_NAME IN LISTS IDS_NAMES )
-  if( NOT IDS_NAME STREQUAL "")
-    list( APPEND GENERATED_HEADERS "${GENERATED_SRC_DIR}/ids/${IDS_NAME}_IDSBase.h" )
-    list( APPEND GENERATED_SOURCES "${GENERATED_SRC_DIR}/ids/${IDS_NAME}_IDSBase.cpp" )
-  endif()
+  list( APPEND GENERATED_HEADERS "${GENERATED_SRC_DIR}/ids/${IDS_NAME}_IDSBase.h" )
+  list( APPEND GENERATED_SOURCES "${GENERATED_SRC_DIR}/ids/${IDS_NAME}_IDSBase.cpp" )
 endforeach()
 
+find_package( SaxonHE )
 add_custom_command(
   # Use a dummy output file: when listing all actual output files (which are
   # source files of target `al-cpp`), they would be re-created with every build.
