@@ -73,7 +73,7 @@ foreach( TEST IN LISTS TESTS )
   endif()
 
   # Execute the test with plugins
-  if( IMAS_PLUGINS )
+  if( AL_PLUGINS )
     add_test( NAME ${TEST_NAME}-with-plugins COMMAND ${TEST_NAME} )
     set_al_example_properties( ${TEST_NAME}-with-plugins ${DISABLED} ON "${TEST_ENVIRONMENT}" )
   endif()
@@ -86,7 +86,7 @@ endforeach()
 # These plugin tests are dependent on a data entry created by test_magnetics_put
 # However, they also overwrite that data entry, so test_magnetics_get MUST run
 # before it (otherwise it will segfault on missing plugins)
-if( IMAS_PLUGINS )
+if( AL_PLUGINS )
   set_tests_properties(
     example-cpp-test_creation_date_plugin-with-plugins
     example-cpp-test_debug_plugin-with-plugins
