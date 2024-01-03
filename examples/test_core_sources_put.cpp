@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 	    {
 	      ids._core_sources.source(i).profiles_1d(j).ion(k).z_ion = time[k];
 	      ids._core_sources.source(i).profiles_1d(j).ion(k).particles.resize(j);
-	      for (l=0; l<=j; l++)
+	      for (l=0; l<j; l++)
 		ids._core_sources.source(i).profiles_1d(j).ion(k).particles(l) = 2*l+k;
 	      ids._core_sources.source(i).profiles_1d(j).ion(k).state.resize(10);
 	      for (l=0; l<10; l++)

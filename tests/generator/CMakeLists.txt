@@ -11,7 +11,7 @@ endif()
 ################################################################################
 
 # The XSLT expects a lowercase yes
-string( TOLOWER IMAS_MDSPLUS TEST_MDSPLUS )
+string( TOLOWER AL_BACKEND_MDSPLUS TEST_MDSPLUS )
 
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/TestSuite.cpp
@@ -53,7 +53,7 @@ set_tests_properties( cpp-TestSuite PROPERTIES
   FAIL_REGULAR_EXPRESSION "[Ee][Rr][Rr][Oo][Rr]"
 )
 
-if( NOT IMAS_MDSPLUS )
+if( NOT AL_BACKEND_MDSPLUS )
   set_tests_properties( cpp-TestSuite PROPERTIES DISABLED ON )
 else()
   get_target_property( MDSPLUS_MODEL_DIR al-mdsplus-model BINARY_DIR )

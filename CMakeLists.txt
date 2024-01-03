@@ -206,3 +206,7 @@ install( FILES
 if( AL_TESTS )
   add_subdirectory( tests/generator )
 endif()
+
+if( AL_EXAMPLES )
+  add_subdirectory( examples )
+endif()

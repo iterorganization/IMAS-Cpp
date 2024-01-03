@@ -20,13 +20,9 @@ int main(int argc, char *argv[])
 
    IdsNs::IDS *II,*JJ;
    II = new IDS();
-   if(argc != 4) {
-    printf("usage : test_getslice_pf_active num_pulse, time, interp\n");
-    exit(1);
-   }
-   pulse = atoi(argv[1]);
-   time = atof(argv[2]);
-   interp = atoi(argv[3]);
+   pulse = 10;
+   time = 3.5;
+   interp = PREVIOUS_SAMPLE;
 
    IdsNs::IDS ids1(pulse,1,pulse,0);
    ids1.openEnv(userName, "test", "3"); //Open the database
