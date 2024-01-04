@@ -10,9 +10,6 @@ endif()
 # Sources
 ################################################################################
 
-# The XSLT expects a lowercase yes
-string( TOLOWER AL_BACKEND_MDSPLUS TEST_MDSPLUS )
-
 add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/TestSuite.cpp
   # Generate with xsltproc
@@ -21,7 +18,7 @@ add_custom_command(
       --output TestSuite.cpp
       --stringparam test_memory_backend not-implemented
       --stringparam test_ascii_backend not-implemented
-      --stringparam test_mdsplus_backend ${TEST_MDSPLUS}
+      --stringparam test_mdsplus_backend $<IF:$<BOOL:${AL_BACKEND_MDSPLUS}>,yes,no>
       --stringparam test_hdf5_backend not-implemented
       --stringparam test_uda_backend not-implemented
       ${CMAKE_CURRENT_SOURCE_DIR}/TestSuite.xsl
@@ -57,5 +54,6 @@ if( NOT AL_BACKEND_MDSPLUS )
   set_tests_properties( cpp-TestSuite PROPERTIES DISABLED ON )
 else()
   get_target_property( MDSPLUS_MODEL_DIR al-mdsplus-model BINARY_DIR )
-  set_tests_properties( cpp-TestSuite PROPERTIES ENVIRONMENT "ids_path=${MDSPLUS_MODEL_DIR}" )
+  set_tests_properties( cpp-TestSuite PROPERTIES
+    ENVIRONMENT "IMAS_AL_DISABLE_OBSOLESCENT_WARNING=1;IMAS_AL_DISABLE_VALIDATE=1;IMAS_VERSION=${DD_VERSION};ids_path=${MDSPLUS_MODEL_DIR}" )
 endif()
