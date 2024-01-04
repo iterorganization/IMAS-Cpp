@@ -190,9 +190,9 @@ list( FILTER IDS_HEADERS INCLUDE REGEX "src/ids" )
 install( FILES ${IDS_HEADERS} DESTINATION include/ids )
 
 # Generate and install .pc files
-configure_file( al-cpp.pc.in al-cpp.pc @ONLY )
-configure_file( al-cpp-DD_VERSION.pc.in al-cpp-${DD_VERSION}.pc @ONLY )
-configure_file( al-identifiers-cpp.pc.in al-identifiers-cpp.pc @ONLY )
+configure_file( pkgconfig/al-cpp.pc.in al-cpp.pc @ONLY )
+configure_file( pkgconfig/al-cpp-DD_VERSION.pc.in al-cpp-${DD_VERSION}.pc @ONLY )
+configure_file( pkgconfig/al-identifiers-cpp.pc.in al-identifiers-cpp.pc @ONLY )
 install( FILES
     ${CMAKE_CURRENT_BINARY_DIR}/al-cpp.pc
     ${CMAKE_CURRENT_BINARY_DIR}/al-cpp-${DD_VERSION}.pc
