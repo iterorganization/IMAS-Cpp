@@ -881,9 +881,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
         this-><xsl:value-of select="@name"/>.validate(idsTimeMode, idsTimeSize );
         }
         catch (ValidationException ve) {
-          string errorStr("Error with <xsl:value-of select = "@path"/>.\n\r");
-          errorStr += ve.what();
-          throw ValidationException(errorStr);
+          throw ValidationException(ve.what());
         }
       </xsl:when>
       <xsl:when test="@data_type='struct_array'">
@@ -895,11 +893,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
                 this-><xsl:value-of select = "@name"/>(i).validate(idsTimeMode, idsTimeSize );
 			}
             catch (ValidationException ve) {
-              string errorStr("Error with <xsl:value-of select = "@path"/>[");
-              errorStr += std::to_string(i);
-              errorStr += "].\n\r";
-              errorStr += ve.what();
-              throw ValidationException(errorStr);
+              throw ValidationException(ve.what());
             }
           }
       </xsl:when>
@@ -915,7 +909,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
     <xsl:if test="contains(@coordinate1,'/time')">
     if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
         if(arraySize != idsTimeSize) {
-          throw ValidationException("array size of <xsl:value-of select="@path"/> wrong dimension ("+std::to_string(arraySize)+"). Must be the size of root time ("+std::to_string(idsTimeSize)+")");
+		  std::stringstream shapestrss;
+		  shapestrss &lt;&lt; this-><xsl:value-of select="@name"/>.shape();
+          throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+" in dimension 1 ('time') has size "+std::to_string(idsTimeSize)+".");
         }
     }
     <xsl:variable name="coord" select="@coordinate1"/>
@@ -926,7 +922,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
     if (idsTimeMode == IDS_TIME_MODE_HETEROGENEOUS ) {
         for (int itime = 0; itime&lt;arraySize;itime++) {
         if (!(this-><xsl:value-of select="@name"/>(itime).time != EMPTY_DOUBLE)) { 
-          throw ValidationException("Time coordinate of <xsl:value-of select="@name"/> wrong. ids.<xsl:value-of select="@name"/>(itime).time is invalid.");
+          throw ValidationException("Time coordinate of '<xsl:value-of select="@name"/>' ('<xsl:value-of select="@name"/>(itime).time') has empty values..");
         }
         }
       }
@@ -934,7 +930,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
     </xsl:if>
     <xsl:if test="not(contains(@coordinate1,'/time'))">
     if (arraySize != this-><xsl:value-of select="@coordinate1"/>.extent(0)) {
-		throw ValidationException("array size of <xsl:value-of select="@path"/> wrong dimension ("+std::to_string(arraySize)+"). Must be the size of <xsl:value-of select="@coordinate1"/> ("+std::to_string(this-><xsl:value-of select="@coordinate1"/>.extent(0))+")");
+		std::stringstream shapestrss;
+		shapestrss &lt;&lt; this-><xsl:value-of select="@name"/>.shape();
+		throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension 1 ('<xsl:value-of select="@coordinate1"/>') has size"+std::to_string(this-><xsl:value-of select="@coordinate1"/>.extent(0))+".");
     }
     </xsl:if>
 		}
@@ -1562,7 +1560,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
           <xsl:apply-templates select="." mode="check-target-indices"><xsl:with-param name="coord" select="$coord"/><xsl:with-param name="relativepathdoc" select="$root"/></xsl:apply-templates>
           <xsl:apply-templates select="." mode="possible-coordinates"><xsl:with-param name="coord" select="$coord"/><xsl:with-param name="relativepathdoc" select="$root"/><xsl:with-param name="self" select="concat($string,@name)"/></xsl:apply-templates>
           if (i&gt;1) { 
-            throw ValidationException("Coordinate consistency error for <xsl:value-of select="@path"/> (dimension <xsl:value-of select="number($dimension)"/>). Exactly one of the coordinate must be verified. (<xsl:value-of select="$coord"/>)");
+            throw ValidationException("Element '<xsl:value-of select="@path"/>' must have its coordinate in dimension <xsl:value-of select="number($dimension)"/> (any of <xsl:value-of select="$coord"/>) filled.");
           }
           if(check) {
             <xsl:apply-templates select="." mode="check-possible-coordinates">
@@ -1581,18 +1579,21 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
               <xsl:with-param name="self" select="concat($string,@name)"/>
             </xsl:apply-templates>
           if (error) { 
-            throw ValidationException("Wrong dimension <xsl:value-of select="number($dimension)"/> for <xsl:value-of select="@path"/> ("+std::to_string(arraySize)+"). (Must be the size of <xsl:value-of select="$coord"/>)");
+            throw ValidationException("Element '<xsl:value-of select="@path"/>' must have its coordinate in dimension <xsl:value-of select="number($dimension)"/> (any of <xsl:value-of select="$coord"/>) filled.");
           }
       <xsl:if test="@type='dynamic' and contains($coord,'/time')">
         }
         if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
           if(arraySize != idsTimeSize) {
-            throw ValidationException("size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/> ("+std::to_string(arraySize)+"). Must be the size of root time ("+std::to_string(idsTimeSize)+")");
-          }
+			std::stringstream shapestrss;
+			shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
+			throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension 1 ('time') has size"+std::to_string(idsTimeSize)+".");}
         }
         if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT ) {
           if(arraySize != 0) {
-            throw ValidationException("size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/>.");
+			std::stringstream shapestrss;
+			shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
+			throw ValidationException("Element '<xsl:value-of select="@path"/> ' has incorrect shape "+shapestrss.str()+": dimension 1 must have size 0.");
           }
         }
         </xsl:if>
@@ -1604,17 +1605,18 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
       if (arraySize != 0) {
       if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
         if(arraySize != idsTimeSize) {
-          throw ValidationException("size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)+1"/> ("+std::to_string(arraySize)+"). Must be the size of root time ("+std::to_string(idsTimeSize)+")");
+			std::stringstream shapestrss;
+			shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
+			throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> ('time') has size"+std::to_string(idsTimeSize)+".");}
         }
       }
       if (idsTimeMode == IDS_TIME_MODE_HETEROGENEOUS ) {
         for (int itime = 0; itime&lt;arraySize;itime++) {
             if (!(this-><xsl:value-of select="@name"/>(itime).time != EMPTY_DOUBLE)) { 
-              throw ValidationException("Time coordinate of <xsl:value-of select="@name"/> wrong. ids.<xsl:value-of select="@name"/>(itime).time is invalid.");
+              throw ValidationException("Time coordinate of '<xsl:value-of select="@name"/>' (<xsl:value-of select="@name"/>(itime)/time) has empty values.");
             }
           }
         }
-      }
       </xsl:if>
       </xsl:if>
       </xsl:template> 
@@ -1744,6 +1746,15 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
               if (arraySize == this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>)) {
                 error = false;
               } 
+              <xsl:if test="not(contains($coord,'1...'))">
+              else {
+                if (this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>)!=0) {
+                  std::stringstream shapestrss;
+                  shapestrss &lt;&lt; this-><xsl:value-of select="$self"/>.shape();
+                  throw ValidationException("Element '<xsl:value-of select="$self"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> (<xsl:value-of select="$target"/>) has size "+std::to_string(this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>))+".");
+                }
+			        }
+        </xsl:if>
             } 
             </xsl:if>
       <xsl:apply-templates select="." mode="check-possible-coordinates">
@@ -1773,7 +1784,13 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
 			if (this-><xsl:value-of select="$resolved_target"/>.extent(0)) {
 				if (arraySize == this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>)) {
 					error = false;
-				} 
+				} else {
+					if (this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>)!=0) {
+						std::stringstream shapestrss;
+						shapestrss &lt;&lt; this-><xsl:value-of select="$self"/>.shape();
+						throw ValidationException("Element '<xsl:value-of select="$self"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> (<xsl:value-of select="$target"/>) has size "+std::to_string(this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>))+".");
+					}
+				}
 			} 
             </xsl:if>
       </xsl:if>
@@ -1789,7 +1806,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
             <xsl:if test="contains(substring-before($coord,' OR'),'1...')">
             if (error &amp;&amp; arraySize == <xsl:value-of select="substring-after($coord,'1...')"/>) {  
             error = false; 
-            }
+	          }
             </xsl:if>
       <xsl:apply-templates select="." mode="check-specific-coordinates">
         <xsl:with-param name="coord" select="substring-after($coord,' OR')"/>
@@ -1926,7 +1943,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
           arraySize = this-><xsl:value-of select = "@name"/>.extent(<xsl:value-of select="number($dimension)"/>);
           if (arraySize != 0) {
             if (arraySize != <xsl:value-of select = "substring-after($coord,'1...')"/>) {
-              throw ValidationException("size of <xsl:value-of select="@path"/> wrong dimension <xsl:value-of select="number($dimension)"/> ("+std::to_string(arraySize)+"). Must be <xsl:value-of select = "substring-after($coord,'1...')"/>.");
+			  std::stringstream shapestrss;
+			  shapestrss &lt;&lt; this-><xsl:value-of select="@name"/>.shape();
+              throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+": dimension <xsl:value-of select="number($dimension)"/> must have size <xsl:value-of select = "substring-after($coord,'1...')"/>.");
             }
           }
         </xsl:if>
