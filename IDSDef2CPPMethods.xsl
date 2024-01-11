@@ -420,6 +420,7 @@ return os;
 #include "IdsDef.h"
 #include "ALDef.h"
 #include "<xsl:value-of select="@name"/>_IDSBase.h"
+#include &lt;regex&gt;
 
 using namespace IdsNs;
 
@@ -820,6 +821,8 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
 	bool check = true;
 	bool error = true;
 	int i = 0;
+  std::vector&lt;string&gt; indicesStr;
+  std::vector&lt;int&gt; indicesVal;
 
 	if (idsTimeMode != IDS_TIME_MODE_HOMOGENEOUS &amp;&amp;
 		idsTimeMode != IDS_TIME_MODE_HETEROGENEOUS &amp;&amp;
@@ -860,6 +863,8 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
 	bool check = true;
 	bool error = true;
 	int i = 0;
+  std::vector&lt;string&gt; indicesStr;
+  std::vector&lt;int&gt; indicesVal;
 
 	<xsl:apply-templates select = "field" mode = "VALIDATE_CHILD"/>
     <xsl:apply-templates select="." mode="VALIDATE_DESCENDANT_1D"/>
@@ -893,7 +898,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
                 this-><xsl:value-of select = "@name"/>(i).validate(idsTimeMode, idsTimeSize );
 			}
             catch (ValidationException ve) {
-              throw ValidationException(ve.what());
+              std::string errMsg(ve.what());
+              errMsg = std::regex_replace(errMsg, std::regex("<xsl:value-of select = "substring-before(substring-after(@path_doc,concat(@name,'(')),')')"/>"),std::to_string(i) );
+              throw ValidationException(errMsg);
             }
           }
       </xsl:when>
@@ -922,7 +929,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
     if (idsTimeMode == IDS_TIME_MODE_HETEROGENEOUS ) {
         for (int itime = 0; itime&lt;arraySize;itime++) {
         if (!(this-><xsl:value-of select="@name"/>(itime).time != EMPTY_DOUBLE)) { 
-          throw ValidationException("Time coordinate of '<xsl:value-of select="@name"/>' ('<xsl:value-of select="@name"/>(itime).time') has empty values..");
+          throw ValidationException("Time coordinate of '<xsl:value-of select="@name"/>' ('<xsl:value-of select="@name"/>(itime)/time') has empty values..");
         }
         }
       }
@@ -932,7 +939,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
     if (arraySize != this-><xsl:value-of select="@coordinate1"/>.extent(0)) {
 		std::stringstream shapestrss;
 		shapestrss &lt;&lt; this-><xsl:value-of select="@name"/>.shape();
-		throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension 1 ('<xsl:value-of select="@coordinate1"/>') has size"+std::to_string(this-><xsl:value-of select="@coordinate1"/>.extent(0))+".");
+		throw ValidationException("Element '<xsl:value-of select="@path_doc"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension 1 ('<xsl:value-of select="@coordinate1"/>') has size "+std::to_string(this-><xsl:value-of select="@coordinate1"/>.extent(0))+".");
     }
     </xsl:if>
 		}
@@ -1498,7 +1505,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
         <xsl:when test="ancestor::field[@name = substring-before($newpath,'/')]/@data_type='struct_array'">
         <xsl:variable name="act_struct" select="ancestor::field[@name = substring-before($newpath,'/')]/@name" />
         <xsl:variable name="act_index" select="substring-before(substring-after(ancestor::field[@name = substring-before($newpath,'/')]/@path_doc,concat($act_struct,'(')),')')"/>
+        indicesStr.push_back("<xsl:value-of select="$act_index"/>");
         for(int <xsl:value-of select="$act_index"/>=0; <xsl:value-of select="$act_index"/>&lt;this-><xsl:value-of select="$string"/><xsl:value-of select="$act_struct"/>.extent(0); <xsl:value-of select="$act_index"/>++) {
+          indicesVal.push_back(<xsl:value-of select="$act_index"/>);
           <xsl:apply-templates select="." mode="VALIDATE_PATH_SINGLE">
           <xsl:with-param name="newpath" select="substring-after($newpath,'/')"/>
           <xsl:with-param name="root" select="$root"/>
@@ -1506,8 +1515,10 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
           <xsl:with-param name="dimension" select="$dimension"/>
           <xsl:with-param name="coord" select="$coord"/>
           <xsl:with-param name="targetdim" select="$targetdim"/>
-        </xsl:apply-templates>
+          </xsl:apply-templates>
+          indicesVal.pop_back();
           }
+          indicesStr.pop_back();
         </xsl:when>
       </xsl:choose>
       </xsl:if>
@@ -1560,7 +1571,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
           <xsl:apply-templates select="." mode="check-target-indices"><xsl:with-param name="coord" select="$coord"/><xsl:with-param name="relativepathdoc" select="$root"/></xsl:apply-templates>
           <xsl:apply-templates select="." mode="possible-coordinates"><xsl:with-param name="coord" select="$coord"/><xsl:with-param name="relativepathdoc" select="$root"/><xsl:with-param name="self" select="concat($string,@name)"/></xsl:apply-templates>
           if (i&gt;1) { 
-            throw ValidationException("Element '<xsl:value-of select="@path"/>' must have its coordinate in dimension <xsl:value-of select="number($dimension)"/> (any of <xsl:value-of select="$coord"/>) filled.");
+            std::string errMsg("Element '<xsl:value-of select="@path_doc"/>' must have its coordinate in dimension <xsl:value-of select="number($dimension)"/> (any of <xsl:value-of select="$coord"/>) filled.");
+            for(int id=0; id&lt;indicesStr.size();id++) errMsg = std::regex_replace(errMsg, std::regex(indicesStr[id]),std::to_string(indicesVal[id]));
+            throw ValidationException(errMsg);
           }
           if(check) {
             <xsl:apply-templates select="." mode="check-possible-coordinates">
@@ -1579,21 +1592,28 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
               <xsl:with-param name="self" select="concat($string,@name)"/>
             </xsl:apply-templates>
           if (error) { 
-            throw ValidationException("Element '<xsl:value-of select="@path"/>' must have its coordinate in dimension <xsl:value-of select="number($dimension)"/> (any of <xsl:value-of select="$coord"/>) filled.");
+            std::string errMsg("Element '<xsl:value-of select="@path_doc"/>' must have its coordinate in dimension <xsl:value-of select="number($dimension)"/> (any of <xsl:value-of select="$coord"/>) filled.");
+            for(int id=0; id&lt;indicesStr.size();id++) errMsg = std::regex_replace(errMsg, std::regex(indicesStr[id]),std::to_string(indicesVal[id]));
+            throw ValidationException(errMsg);
           }
       <xsl:if test="@type='dynamic' and contains($coord,'/time')">
         }
         if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
           if(arraySize != idsTimeSize) {
-			std::stringstream shapestrss;
-			shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
-			throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension 1 ('time') has size"+std::to_string(idsTimeSize)+".");}
+            std::stringstream shapestrss;
+            shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
+            std::string errMsg("Element '<xsl:value-of select="@path_doc"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension 1 ('time') has size "+std::to_string(idsTimeSize)+".");
+            for(int id=0; id&lt;indicesStr.size();id++) errMsg = std::regex_replace(errMsg, std::regex(indicesStr[id]),std::to_string(indicesVal[id]));
+            throw ValidationException(errMsg);
+          }
         }
         if (idsTimeMode == IDS_TIME_MODE_INDEPENDENT ) {
           if(arraySize != 0) {
-			std::stringstream shapestrss;
-			shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
-			throw ValidationException("Element '<xsl:value-of select="@path"/> ' has incorrect shape "+shapestrss.str()+": dimension 1 must have size 0.");
+			      std::stringstream shapestrss;
+		        shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
+            std::string errMsg("Element '<xsl:value-of select="@path_doc"/> ' has incorrect shape "+shapestrss.str()+": dimension 1 must have size 0.");
+            for(int id=0; id&lt;indicesStr.size();id++) errMsg = std::regex_replace(errMsg, std::regex(indicesStr[id]),std::to_string(indicesVal[id]));
+            throw ValidationException(errMsg);
           }
         }
         </xsl:if>
@@ -1605,15 +1625,20 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
       if (arraySize != 0) {
       if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
         if(arraySize != idsTimeSize) {
-			std::stringstream shapestrss;
-			shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
-			throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> ('time') has size"+std::to_string(idsTimeSize)+".");}
+			      std::stringstream shapestrss;
+			      shapestrss &lt;&lt; this-><xsl:value-of select="$string"/><xsl:value-of select="@name"/>.shape();
+            std::string errMsg("Element '<xsl:value-of select="@path_doc"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> ('time') has size "+std::to_string(idsTimeSize)+".");
+            for(int id=0; id&lt;indicesStr.size();id++) errMsg = std::regex_replace(errMsg, std::regex(indicesStr[id]),std::to_string(indicesVal[id]));
+            throw ValidationException(errMsg);
+            }
         }
       }
       if (idsTimeMode == IDS_TIME_MODE_HETEROGENEOUS ) {
         for (int itime = 0; itime&lt;arraySize;itime++) {
             if (!(this-><xsl:value-of select="@name"/>(itime).time != EMPTY_DOUBLE)) { 
-              throw ValidationException("Time coordinate of '<xsl:value-of select="@name"/>' (<xsl:value-of select="@name"/>(itime)/time) has empty values.");
+              std::string errMsg("Time coordinate of '<xsl:value-of select="@name"/>' (<xsl:value-of select="@name"/>(itime)/time) has empty values.");
+              for(int id=0; id&lt;indicesStr.size();id++) errMsg = std::regex_replace(errMsg, std::regex(indicesStr[id]),std::to_string(indicesVal[id]));
+              throw ValidationException(errMsg);
             }
           }
         }
@@ -1751,7 +1776,9 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
                 if (this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>)!=0) {
                   std::stringstream shapestrss;
                   shapestrss &lt;&lt; this-><xsl:value-of select="$self"/>.shape();
-                  throw ValidationException("Element '<xsl:value-of select="$self"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> (<xsl:value-of select="$target"/>) has size "+std::to_string(this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>))+".");
+                  std::string errMsg("Element '<xsl:value-of select="@path_doc"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> (<xsl:value-of select="substring-before($coord,' OR')"/>) has size "+std::to_string(this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>))+".");
+                  for(int id=0; id&lt;indicesStr.size();id++) errMsg = std::regex_replace(errMsg, std::regex(indicesStr[id]),std::to_string(indicesVal[id]));
+                  throw ValidationException(errMsg);
                 }
 			        }
         </xsl:if>
@@ -1788,8 +1815,10 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
 					if (this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>)!=0) {
 						std::stringstream shapestrss;
 						shapestrss &lt;&lt; this-><xsl:value-of select="$self"/>.shape();
-						throw ValidationException("Element '<xsl:value-of select="$self"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> (<xsl:value-of select="$target"/>) has size "+std::to_string(this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>))+".");
-					}
+					  std::string errMsg("Element '<xsl:value-of select="@path_doc"/>' has incorrect shape "+shapestrss.str()+": its coordinate in dimension <xsl:value-of select="number($dimension)+1"/> (<xsl:value-of select="$coord"/>) has size "+std::to_string(this-><xsl:value-of select="$resolved_target"/>.extent(<xsl:value-of select="number($targetdim)"/>))+".");
+            for(int id=0; id&lt;indicesStr.size();id++) errMsg = std::regex_replace(errMsg, std::regex(indicesStr[id]),std::to_string(indicesVal[id]));
+            throw ValidationException(errMsg);
+          }
 				}
 			} 
             </xsl:if>
@@ -1945,7 +1974,7 @@ void IdsNs::<xsl:value-of select="@name"/>_IDSBase::validate() const {
             if (arraySize != <xsl:value-of select = "substring-after($coord,'1...')"/>) {
 			  std::stringstream shapestrss;
 			  shapestrss &lt;&lt; this-><xsl:value-of select="@name"/>.shape();
-              throw ValidationException("Element '<xsl:value-of select="@path"/>' has incorrect shape "+shapestrss.str()+": dimension <xsl:value-of select="number($dimension)"/> must have size <xsl:value-of select = "substring-after($coord,'1...')"/>.");
+              throw ValidationException("Element '<xsl:value-of select="@path_doc"/>' has incorrect shape "+shapestrss.str()+": dimension <xsl:value-of select="number($dimension)+1"/> must have size <xsl:value-of select = "substring-after($coord,'1...')"/>.");
             }
           }
         </xsl:if>
