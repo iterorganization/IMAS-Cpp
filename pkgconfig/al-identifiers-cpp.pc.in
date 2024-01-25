@@ -1,0 +1,11 @@
+prefix="@CMAKE_INSTALL_PREFIX@"
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: al-identifiers-cpp
+Version: @FULL_VERSION@
+Description: IMAS Access Layer identifiers libraries (cpp)
+URL: https://imas.iter.org/
+Cflags: -I${includedir}/cpp
+Libs: -L${libdir} -lal-identifiers-cpp

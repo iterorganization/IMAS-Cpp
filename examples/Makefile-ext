@@ -1,0 +1,35 @@
+# You should have already installed imas and loaded it (IMAS_PREFIX variable) before running "make -f Makefile-ext check".
+
+include ../../Makefile.common
+
+ifeq (,$(ids_path))
+$(error Please first install IMAS and then module load IMAS to populate environment (ids_path not set in env))
+endif
+
+# SHELL=/bin/sh # Why?
+
+ifeq "$(strip $(CC))" "icc"
+ CXX=icpc
+ CXXFLAGS=-g -O0 -fPIC -pthread -shared-intel
+ LDFLAGS= -g -pthread
+else
+ CXX=g++
+ CXXFLAGS=-g -O0 -D__USE_XOPEN2K8 -fPIC -pthread
+ LDFLAGS= -g -pthread
+endif
+
+# MDSPLUS_DIR set by environment
+MDSPLUS_LIBS = -L$(MDSPLUS_DIR)/lib64 -L$(MDSPLUS_DIR)/lib -lTreeShr -lTdiShr -lMdsShr -lMdsIpShr -lXTreeShr
+CXXFLAGS += `pkg-config al-cpp --cflags`
+LDFLAGS  += `pkg-config al-cpp --libs` 
+
+# IDSDEF is set in environment, but if not, rely on IMAS_PREFIX
+ifeq (,$(strip $(IDSDEF)))
+IDSDEF = $(IMAS_PREFIX)/include/IDSDef.xml
+endif
+
+# Test environment is set already in env, but do write ids to tmp dir
+TMPDIR = tmp
+test_ENV = ids_path="$(abspath $(TMPDIR));$(ids_path)"
+
+include Makefile.tests

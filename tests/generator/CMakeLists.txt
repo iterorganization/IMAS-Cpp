@@ -1,61 +1,59 @@
-project( cppinterface-tests )
-
-include( ListSharedLibDependencies )
-
-
-########################################################################################################################
 # Dependencies
+################################################################################
 
-find_package( Blitz NO_CMAKE_PATH REQUIRED )
-find_package( Blitz REQUIRED )
+# Find LibXslt for the xsltproc program
+find_package( LibXslt )
+if( NOT LIBXSLT_XSLTPROC_EXECUTABLE )
+  message( FATAL_ERROR "Could not find xsltproc" )
+endif()
 
-
-########################################################################################################################
 # Sources
+################################################################################
 
-set( SRC_FILES helper.cpp TestSuite.cpp )
-set( HEADER_FILES helper.h TestSuite.h )
-
-include_directories(
-  ${Blitz_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../src
-  ${CMAKE_SOURCE_DIR}/lowlevel
+add_custom_command(
+  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/TestSuite.cpp
+  # Generate with xsltproc
+  COMMAND
+    ${LIBXSLT_XSLTPROC_EXECUTABLE}
+      --output TestSuite.cpp
+      --stringparam test_memory_backend not-implemented
+      --stringparam test_ascii_backend not-implemented
+      --stringparam test_mdsplus_backend $<IF:$<BOOL:${AL_BACKEND_MDSPLUS}>,yes,no>
+      --stringparam test_hdf5_backend not-implemented
+      --stringparam test_uda_backend not-implemented
+      ${CMAKE_CURRENT_SOURCE_DIR}/TestSuite.xsl
+      ${CMAKE_CURRENT_SOURCE_DIR}/../../../xml/IDSDef.xml
+  DEPENDS TestSuite.xsl ../../../xml/IDSDef.xml
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-
-########################################################################################################################
 # Targets
+################################################################################
 
-set( EXE_FLAG  )
-set( EXE_EXT  )
+# Override CMAKE_BUILD_TYPE for this test to empty:
+# - Don't optimize
+# - Don't add debug symbols
+# The c++ file is so big that the compiler will run out of memory when
+# attempting to optimize / add debug symbols...
+set( CMAKE_BUILD_TYPE "" )
 
-if( BUILD_SHARED_LIBS )
-  set( CPPHLI_LINK ${Blitz_LIBRARIES} lowlevel-shared cppinterface-shared )
+add_executable( cpp-TestSuite 
+  helper.cpp
+  TestSuite.cpp
+)
+target_include_directories( cpp-TestSuite PRIVATE ${CMAKE_CURRENT_SOURCE_DIR} )
+target_link_libraries( cpp-TestSuite al-cpp )
+target_compile_options( cpp-TestSuite PRIVATE -O0 )
+
+add_test( NAME cpp-TestSuite COMMAND cpp-TestSuite )
+set_tests_properties( cpp-TestSuite PROPERTIES
+  FAIL_REGULAR_EXPRESSION "[Ee][Rr][Rr][Oo][Rr]"
+)
+
+if( NOT AL_BACKEND_MDSPLUS )
+  set_tests_properties( cpp-TestSuite PROPERTIES DISABLED ON )
 else()
-  set( CPPHLI_LINK ${Blitz_LIBRARIES} lowlevel-static cppinterface-static )
+  get_target_property( MDSPLUS_MODEL_DIR al-mdsplus-model BINARY_DIR )
+  set_tests_properties( cpp-TestSuite PROPERTIES
+    ENVIRONMENT "IMAS_AL_DISABLE_OBSOLESCENT_WARNING=1;IMAS_AL_DISABLE_VALIDATE=1;IMAS_VERSION=${DD_VERSION};ids_path=${MDSPLUS_MODEL_DIR}" )
 endif()
-
-add_executable( TestSuite ${EXE_FLAG} ${SRC_FILES} )
-target_link_libraries( TestSuite PRIVATE
-  ${CPPHLI_LINK}
-)
-
-if( BUILD_SHARED_LIBS )
-  add_dependencies( TestSuite cppinterface-shared )
-else()
-  add_dependencies( TestSuite cppinterface-static )
-endif()
-
-set_target_properties( TestSuite
-  PROPERTIES
-    OUTPUT_NAME TestSuite${EXE_EXT}
-    COMPILE_FLAGS -DNOIMPLIB
-)
-
-
-########################################################################################################################
-# Install
-
-install( TARGETS TestSuite
-  DESTINATION bin
-)

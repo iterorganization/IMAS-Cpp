@@ -1,0 +1,89 @@
+
+# Makefile.tests : include this file in Makefile or Makefile-ext
+
+TARGETS = 
+
+TARGETS += $(patsubst %.cpp,%,$(wildcard *serialize*.cpp))
+TARGETS += $(patsubst %.cpp,%,$(wildcard *create*.cpp))
+TARGETS += $(patsubst %.cpp,%,$(wildcard *put*.cpp))
+TARGETS += $(patsubst %.cpp,%,$(wildcard *validate*.cpp))
+TARGETS += $(patsubst %.cpp,%,$(wildcard *get*.cpp))
+TARGETS += $(patsubst %.cpp,%,$(wildcard *memory*.cpp))
+TARGETS += $(patsubst %.cpp,%,$(wildcard *is_defined*.cpp))
+TARGETS += test_version
+
+ifneq ("","$(strip $(IMAS_AL_PLUGINS))")
+	ifneq ("$(wildcard $(IMAS_AL_PLUGINS))", "")
+		TARGETS += $(patsubst %.cpp,%,$(wildcard *plugin*.cpp))
+	endif
+endif
+
+WILDCARD_AL_PLUGINS=$(wildcard $(IMAS_AL_PLUGINS))
+$(info $$TARGETS is [${TARGETS}])
+$(info $$IMAS_AL_PLUGINS Directory exists : [${WILDCARD_AL_PLUGINS}])
+$(info $$IMAS_AL_PLUGINS is [${IMAS_AL_PLUGINS}])
+
+all examples: $(TARGETS)
+
+sources sources_install sources_uninstall install uninstall clean-src:
+
+check test: cpp_tests
+
+clean clean-ex:
+	$(RM) *.o *~ $(TARGETS) $(addsuffix .log,$(TARGETS))
+	$(RM) cpp_tests.log
+	$(RM) -r $(TMPDIR)
+
+# Compile
+$(TARGETS): %:%.o
+	$(CXX) $(LDFLAGS) $< -o $@ $(LIBS)
+.SUFFIXES: .cpp
+.cpp.o:
+	$(CXX) $(INCDIR) $(CXXFLAGS) -c $<
+
+# Run tests
+.PHONY: tests
+cpp_tests: $(TARGETS) | $(TMPDIR)
+	@echo "Execute examples with IMAS_AL_ENABLE_PLUGINS=TRUE"
+	$(run-tests-with-plugin)
+	@echo "Execute examples with IMAS_AL_ENABLE_PLUGINS=FALSE"
+	$(run-tests-without-plugin)
+
+# Convenience targets for individual tests, e.g. make test_<program>
+test_%: %
+	@echo "Execute examples with IMAS_AL_ENABLE_PLUGINS=TRUE"
+	$(run-tests-with-plugin)
+	@echo "Execute examples with IMAS_AL_ENABLE_PLUGINS=FALSE"
+	$(run-tests-without-plugin)
+
+$(TMPDIR):;$(mkdir_p) $@
+
+# Canned recipe that runs prerequisites as tests and produces TAP-like output
+define run-tests-with-plugin
+	$(if $(DEBUG),,@)(\
+	echo 1..$(words $^) \# Running $@: $(^F) ;\
+	N=1;for prog in $^ ;do \
+	 ( ( $(if $(DEBUG),set -x;)$(test_with_plugins_ENV) ./$$prog 2>&1 ) | tee ./$$prog.log ) && \
+	 test 0 -eq $$(grep -c -i -E "fault|error[ :]|exception|severe|abort|segmentation|fault|dump|logic_error|failed" ./$$prog.log ) && \
+	 echo ok $$N - $$prog passed. || echo not ok $$N - $$prog failed. ;\
+	 N=$$(($$N+1)) ;\
+	done \
+	) | tee $@.log
+	@(echo Log summary of $@ with plugins:; grep -E "^ok |^not ok " $@.log) >&2
+	@test 0 -eq $$(grep -c '^not ok ' $@.log) || exit 1
+endef
+
+# Canned recipe that runs prerequisites as tests and produces TAP-like output
+define run-tests-without-plugin
+	$(if $(DEBUG),,@)(\
+	echo 1..$(words $(filter-out %_plugin, $(TARGETS))) \# Running $@: $(^F) ;\
+	N=1;for prog in $(filter-out %_plugin, $(TARGETS)) ;do \
+	 ( ( $(if $(DEBUG),set -x;)$(test_without_plugins_ENV) ./$$prog 2>&1 ) | tee ./$$prog.log ) && \
+	 test 0 -eq $$(grep -c -i -E "fault|error[ :]|exception|severe|abort|segmentation|fault|dump|logic_error|failed" ./$$prog.log ) && \
+	 echo ok $$N - $$prog passed. || echo not ok $$N - $$prog failed. ;\
+	 N=$$(($$N+1)) ;\
+	done \
+	) | tee $@.log
+	@(echo Log summary of $@ without plugins:; grep -E "^ok |^not ok " $@.log) >&2
+	@test 0 -eq $$(grep -c '^not ok ' $@.log) || exit 1
+endef

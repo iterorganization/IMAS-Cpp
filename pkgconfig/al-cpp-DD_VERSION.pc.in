@@ -1,0 +1,12 @@
+prefix="@CMAKE_INSTALL_PREFIX@"
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: al-cpp-@DD_VERSION@
+Version: @PROJECT_VERSION@
+Description: @PROJECT_DESCRIPTION@
+URL: @PROJECT_HOMEPAGE_URL@
+Requires: al-lowlevel = @AL_LOWLEVEL_VERSION@ blitz
+Cflags: -I${includedir}
+Libs: -L${libdir} -lal-cpp-@DD_VERSION@ -Wl,--defsym,DD_VER_@DD_SAFE_VERSION@=0 -Wl,-rpath,${libdir}

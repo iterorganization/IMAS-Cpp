@@ -1,0 +1,5 @@
+Name: al-cpp
+Version: @DD_VERSION@-@PROJECT_VERSION@
+Description: @PROJECT_DESCRIPTION@
+URL: @PROJECT_HOMEPAGE_URL@
+Requires: al-cpp-@DD_VERSION@

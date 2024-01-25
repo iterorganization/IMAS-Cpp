@@ -1,121 +1,212 @@
-project( cppinterface )
+# CMake build configuration for the Access Layer C++ HLI
+cmake_minimum_required( VERSION 3.16 )
 
-include( ListSharedLibDependencies )
+# Configuration options for common assets
+################################################################################
+option( AL_DOWNLOAD_DEPENDENCIES "Automatically download common assets from the AL git repository" OFF )
+# set( AL_COMMON_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-common.git" CACHE STRING "Git repository of AL-common")
 
+include(FetchContent)
 
-########################################################################################################################
-# Dependencies
-
-find_package( Blitz NO_CMAKE_PATH REQUIRED )
-find_package( Blitz REQUIRED )
-
-
-########################################################################################################################
-# Sources
-
-set( SRC_FILES src/IdsDef.cpp src/ALMethods.cpp )
-file( GLOB SRC_IDS src/ids/*.cpp )
-
-set( HEADER_FILES src/IdsDef.h src/ALDef.h src/ALClasses.h )
-file( GLOB HEADER_IDS src/ids/*.h )
-
-include_directories(
-  ${Blitz_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}/src
-  ${CMAKE_SOURCE_DIR}/lowlevel
-)
-
-
-########################################################################################################################
-# Targets
-
-add_library( cppinterface-objects OBJECT ${SRC_FILES} ${HEADER_FILES} ${SRC_IDS} ${HEADER_IDS} )
-
-set( CPPHLI_OBJS
-  $<TARGET_OBJECTS:cppinterface-objects>
-)
-
-add_library( cppinterface-static STATIC ${CPPHLI_OBJS} )
-add_dependencies( cppinterface-static lowlevel-static )
-if( BUILD_SHARED_LIBS )
-  add_library( cppinterface-shared SHARED ${CPPHLI_OBJS} )
-  add_dependencies( cppinterface-shared lowlevel-shared )
-endif()
-
-if( BUILD_SHARED_LIBS )
-  set( CPPHLI_LINK ${Blitz_LIBRARIES} lowlevel-shared )
+# Load common assets
+################################################################################
+if( ${AL_DOWNLOAD_DEPENDENCIES} )
+  # Download common assets from the ITER git:
+  message( FATAL_ERROR "Not implemented yet" )
 else()
-  set( CPPHLI_LINK ${Blitz_LIBRARIES} lowlevel-static )
+  # Look in ../al-common for common files
+  FetchContent_Declare(
+    al-common
+    SOURCE_DIR      ${CMAKE_CURRENT_SOURCE_DIR}/../al-common
+  )
+endif()
+FetchContent_MakeAvailable( al-common )
+
+
+# Define project
+################################################################################
+
+# Set VERSION and FULL_VERSION from `git describe`:
+include( ALDetermineVersion )
+project( al-cpp
+  VERSION ${VERSION}
+  DESCRIPTION "C++ High Level Interface of the IMAS Access Layer"
+  HOMEPAGE_URL "https://imas.iter.org/"
+  LANGUAGES C CXX
+)
+if( NOT PROJECT_VERSION_TWEAK EQUAL 0 )
+  message( "Building a development version of the Access Layer C++ HLI" )
 endif()
 
-target_link_libraries( cppinterface-static PRIVATE ${CPPHLI_LINK} )
-if( BUILD_SHARED_LIBS )
-  target_link_libraries( cppinterface-shared PRIVATE ${CPPHLI_LINK} )
-endif()
+# Compiler settings
+include( ALSetCompilerFlags )
+# Common HLI options
+include( ALCommonConfig )
+# Data dictionary
+include( ALBuildDataDictionary )
+# AL lowlevel and plugins
+include( ALLowlevel )
 
 
-########################################################################################################################
-# Set library properties
+# Dependencies
+################################################################################
 
-set_target_properties( cppinterface-static
-  PROPERTIES
-    OUTPUT_NAME libal-cpp
+find_package( PkgConfig )
+# Find Blitz through pkg-config
+pkg_check_modules( blitz REQUIRED IMPORTED_TARGET blitz )
+
+
+# Generate sources
+################################################################################
+
+set( GENERATED_SRC_DIR "${CMAKE_CURRENT_BINARY_DIR}/src" )
+
+# Generated header files by IDSDef2CPPClasses.xsl
+set( GENERATED_HEADERS "${GENERATED_SRC_DIR}/ALClasses.h" )
+# Generated source files by IDSDef2CPPMethods.xsl
+set( GENERATED_SOURCES "${GENERATED_SRC_DIR}/ALMethods.cpp" )
+foreach( IDS_NAME IN LISTS IDS_NAMES )
+  list( APPEND GENERATED_HEADERS "${GENERATED_SRC_DIR}/ids/${IDS_NAME}_IDSBase.h" )
+  list( APPEND GENERATED_SOURCES "${GENERATED_SRC_DIR}/ids/${IDS_NAME}_IDSBase.cpp" )
+endforeach()
+
+find_package( SaxonHE )
+add_custom_command(
+  # Use a dummy output file: when listing all actual output files (which are
+  # source files of target `al-cpp`), they would be re-created with every build.
+  OUTPUT ${GENERATED_SRC_DIR}/dummy.txt
+  # Generate headers with xsltproc
+  COMMAND
+    ${LIBXSLT_XSLTPROC_EXECUTABLE}
+      ${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPClasses.xsl
+      ${IDSDEF}
+  # Generate source files with saxon
+  COMMAND
+    java 
+      -cp ${SaxonHE_CLASSPATH}
+      net.sf.saxon.Transform -t -warnings:fatal
+      "-xsl:${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPMethods.xsl"
+      "-s:${IDSDEF}"
+      DD_GIT_DESCRIBE=${DD_VERSION}
+      AL_GIT_DESCRIBE=${FULL_VERSION}
+  # Create/update our dummy file
+  COMMAND ${CMAKE_COMMAND} -E touch ${GENERATED_SRC_DIR}/dummy.txt
+  DEPENDS IDSDef2CPPClasses.xsl IDSDef2CPPMethods.xsl ${IDSDEF}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+)
+add_custom_target( al-cpp-sources
+  COMMAND ${CMAKE_COMMAND} -E echo ""
+  DEPENDS ${GENERATED_SRC_DIR}/dummy.txt
+  # Actually these are results of the custom_command above, but with this trick
+  # we don't rebuild it always (only when IDSDef.xml or the xslts have changed)
+  BYPRODUCTS ${GENERATED_SOURCES} ${GENERATED_HEADERS}
 )
 
-if( BUILD_SHARED_LIBS )
-  set_target_properties( cppinterface-shared
-    PROPERTIES
-      OUTPUT_NAME libal-cpp
-      VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
-	  IMPORT_SUFFIX ".dll.lib"
+set( SOURCES ${GENERATED_SOURCES} )
+list( APPEND SOURCES 
+  src/IdsDef.cpp
+)
+
+
+# Generate sources (identifiers)
+################################################################################
+
+set( IDENTIFIER_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/identifiers/src/ )
+file( GLOB ID_FILES ${data-dictionary_SOURCE_DIR}/*/*_identifier.xml )
+
+set( IDENTIFIER_SOURCES )
+set( IDENTIFIER_HEADERS )
+foreach( ID_FILE IN LISTS ID_FILES )
+  # cmake_path( GET ID_FILE STEM ID_NAME)
+  string( REGEX REPLACE "(^.*[/\\]|[.]xml$)" "" ID_NAME ${ID_FILE} )
+  set( SOURCE_NAME "${IDENTIFIER_SRC_DIR}/${ID_NAME}.cpp" )
+  set( HEADER_NAME "${IDENTIFIER_SRC_DIR}/${ID_NAME}.h" )
+  add_custom_command(
+    OUTPUT ${SOURCE_NAME} ${HEADER_NAME}
+    COMMAND ${LIBXSLT_XSLTPROC_EXECUTABLE}
+      --stringparam name ${ID_NAME}
+      --stringparam prefix ${IDENTIFIER_SRC_DIR}
+      ${CMAKE_CURRENT_SOURCE_DIR}/identifiers.xsl
+      ${ID_FILE}
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/identifiers.xsl
+    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
-  
-  ExportBinDef( cppinterface-shared ${CMAKE_CURRENT_BINARY_DIR} cppinterface )
-endif()
+  list( APPEND IDENTIFIER_SOURCES ${SOURCE_NAME} )
+  list( APPEND IDENTIFIER_HEADERS ${HEADER_NAME} )
+endforeach()
 
 
-########################################################################################################################
+# Targets
+################################################################################
+
+add_library( al-cpp ${SOURCES} )
+# Ensure sources are generated before building al-cpp:
+add_dependencies( al-cpp al-cpp-sources )
+# Set target output library name to include the DD version
+set_target_properties( al-cpp PROPERTIES LIBRARY_OUTPUT_NAME "al-cpp-${DD_VERSION}" )
+
+target_link_libraries( al-cpp PUBLIC al PkgConfig::blitz )
+# Blitz requires pthread, but doesn't advertize it in it's package config :(
+target_compile_options( al-cpp PUBLIC -pthread )
+target_link_options( al-cpp PUBLIC -pthread )
+
+# Build the CPP interface without optimizations!
+# Optimizing the code takes too long and too much memory...
+# The -O0 option is added on the command line after the default -O option (from
+# CMAKE_BUILD_TYPE) and takes precedence
+target_compile_options( al-cpp PRIVATE -O0 )
+
+target_include_directories( al-cpp PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
+  $<INSTALL_INTERFACE:include>  # <prefix>/include
+)
+
+add_library( al-identifiers-cpp ${IDENTIFIER_SOURCES} )
+target_include_directories( al-identifiers-cpp PUBLIC
+  $<BUILD_INTERFACE:${IDENTIFIER_SRC_DIR}>
+  $<INSTALL_INTERFACE:include>  # <prefix>/include
+)
+
+
 # Install
+################################################################################
 
-install( TARGETS cppinterface-static
-  DESTINATION lib
+install( TARGETS al-cpp al-identifiers-cpp )
+
+# Identifier headers
+install( FILES ${IDENTIFIER_HEADERS} DESTINATION include/cpp )
+
+# Headers installed in include/
+set( BASE_HEADERS ${GENERATED_HEADERS} )
+list( FILTER BASE_HEADERS EXCLUDE REGEX "src/ids" )
+install( FILES ${BASE_HEADERS} DESTINATION include )
+# Install non-generated headers
+install( FILES src/ALDef.h src/IdsDef.h DESTINATION include )
+
+# Headers installed in include/ids
+set( IDS_HEADERS ${GENERATED_HEADERS} )
+list( FILTER IDS_HEADERS INCLUDE REGEX "src/ids" )
+install( FILES ${IDS_HEADERS} DESTINATION include/ids )
+
+# Generate and install .pc files
+configure_file( pkgconfig/al-cpp.pc.in al-cpp.pc @ONLY )
+configure_file( pkgconfig/al-cpp-DD_VERSION.pc.in al-cpp-${DD_VERSION}.pc @ONLY )
+configure_file( pkgconfig/al-identifiers-cpp.pc.in al-identifiers-cpp.pc @ONLY )
+install( FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/al-cpp.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/al-cpp-${DD_VERSION}.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/al-identifiers-cpp.pc
+  DESTINATION lib/pkgconfig
 )
 
-if( BUILD_SHARED_LIBS )
-  install( TARGETS cppinterface-shared
-    RUNTIME DESTINATION bin
-    LIBRARY DESTINATION lib
-    ARCHIVE DESTINATION lib
-  )
-endif()
-
-install( FILES ${HEADER_FILES} 
-  DESTINATION include/cppinterface
-)
-
-install( FILES ${HEADER_IDS} 
-  DESTINATION include/cppinterface/ids
-)
-
-if( BUILD_SHARED_LIBS )
-  # Extract Release target path to get all dependent libraries for installation
-  #get_target_property( MY_BINARY_LOCATION cppinterface::cppinterface-shared IMPORTED_LOCATION_RELEASE )
-  #ListDependencies( ${MY_BINARY_LOCATION} OFF cppinterface-shared_lists )
-  
-  # Install Blitz runtime libraries
-  foreach( BLITZ_DLL ${Blitz_RUNTIME_LIB} )
-    ResolveDependencyPath( "${BLITZ_DLL}" BLITZ_PATH "" )
-    
-    install( FILES ${BLITZ_PATH}
-      DESTINATION bin
-    )
-  endforeach()
-endif()
-
-
-########################################################################################################################
 # Tests
+################################################################################
 
-if( IMAS_TESTS )
+if( AL_TESTS )
   add_subdirectory( tests/generator )
+endif()
+
+if( AL_EXAMPLES )
+  add_subdirectory( examples )
 endif()
