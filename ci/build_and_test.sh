@@ -23,6 +23,8 @@ MODULES=(
     MDSplus-Java/7.96.17-GCCcore-10.2.0-Java-11
     # C++ compilers
     intel/2020b
+    # Blitz
+    Blitz++/1.0.2-GCCcore-10.2.0
 )
 module load "${MODULES[@]}"
 
