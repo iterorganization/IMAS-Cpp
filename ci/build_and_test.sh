@@ -62,7 +62,11 @@ CMAKE_ARGS=(
 cmake -B build "${CMAKE_ARGS[@]}"
 
 # Build
+make -C build -j8 al-cpp al-identifiers-cpp al-plugins
 # Note: building tests consumes too much memory to have -j8
+# cpp-TestSuite is especially large, so compile it without parallelism 
+make -C build cpp-TestSuite
+# Build anything remaining
 make -C build -j6 all
 
 # Test
