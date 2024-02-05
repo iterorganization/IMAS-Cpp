@@ -22,8 +22,8 @@ add_custom_command(
       --stringparam test_hdf5_backend not-implemented
       --stringparam test_uda_backend not-implemented
       ${CMAKE_CURRENT_SOURCE_DIR}/TestSuite.xsl
-      ${CMAKE_CURRENT_SOURCE_DIR}/../../../xml/IDSDef.xml
-  DEPENDS TestSuite.xsl ../../../xml/IDSDef.xml
+      ${IDSDEF}
+  DEPENDS TestSuite.xsl ${IDSDEF}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
 

@@ -4,7 +4,8 @@ cmake_minimum_required( VERSION 3.16 )
 # Configuration options for common assets
 ################################################################################
 option( AL_DOWNLOAD_DEPENDENCIES "Automatically download common assets from the AL git repository" OFF )
-# set( AL_COMMON_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-common.git" CACHE STRING "Git repository of AL-common")
+set( AL_COMMON_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-common.git" CACHE STRING "Git repository of AL-common" )
+set( AL_COMMON_VERSION "c17b18dfd8c65c802c165f0e9403d3ef58902523" CACHE STRING "Git commit/tag/branch of AL-common" )
 
 include(FetchContent)
 
@@ -12,7 +13,11 @@ include(FetchContent)
 ################################################################################
 if( ${AL_DOWNLOAD_DEPENDENCIES} )
   # Download common assets from the ITER git:
-  message( FATAL_ERROR "Not implemented yet" )
+  FetchContent_Declare(
+    al-common
+    GIT_REPOSITORY "${AL_COMMON_GIT_REPOSITORY}"
+    GIT_TAG "${AL_COMMON_VERSION}"
+  )
 else()
   # Look in ../al-common for common files
   FetchContent_Declare(
@@ -111,6 +116,19 @@ list( APPEND SOURCES
 # Generate sources (identifiers)
 ################################################################################
 
+# Note: identifiers.xsl tries to import identifiers.common.xsl
+# Unfortunately, xsl:include doesn't support parameters, so we need to put them together
+# in the build folder:
+file( CREATE_LINK
+  "${al-common_SOURCE_DIR}/identifiers.common.xsl" 
+  "${CMAKE_CURRENT_BINARY_DIR}/identifiers.common.xsl"
+  SYMBOLIC COPY_ON_ERROR
+)
+file( CREATE_LINK
+  "${CMAKE_CURRENT_SOURCE_DIR}/identifiers.xsl" 
+  "${CMAKE_CURRENT_BINARY_DIR}/identifiers.xsl"
+  SYMBOLIC COPY_ON_ERROR
+)
 set( IDENTIFIER_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/identifiers/src/ )
 file( GLOB ID_FILES ${data-dictionary_SOURCE_DIR}/*/*_identifier.xml )
 
@@ -126,9 +144,9 @@ foreach( ID_FILE IN LISTS ID_FILES )
     COMMAND ${LIBXSLT_XSLTPROC_EXECUTABLE}
       --stringparam name ${ID_NAME}
       --stringparam prefix ${IDENTIFIER_SRC_DIR}
-      ${CMAKE_CURRENT_SOURCE_DIR}/identifiers.xsl
+      ${CMAKE_CURRENT_BINARY_DIR}/identifiers.xsl
       ${ID_FILE}
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/identifiers.xsl
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/identifiers.xsl
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
   list( APPEND IDENTIFIER_SOURCES ${SOURCE_NAME} )

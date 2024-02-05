@@ -13,7 +13,7 @@
    xmlns:my="http://localhost.localdomain/localns"
    exclude-result-prefixes="my"
    extension-element-prefixes="yaslt exsl func str">
-   <xsl:include href="../identifiers/identifiers.common.xsl"/>
+   <xsl:include href="./identifiers.common.xsl"/>
 
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
 
