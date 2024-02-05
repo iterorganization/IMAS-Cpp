@@ -67,7 +67,7 @@ make -C build -j8 al-cpp al-identifiers-cpp al-plugins
 # cpp-TestSuite is especially large, so compile it without parallelism 
 make -C build cpp-TestSuite
 # Build anything remaining
-make -C build -j6 all
+make -C build -j4 all
 
 # Test
 export ARGS="--output-on-failure --output-junit ctest.xml"
