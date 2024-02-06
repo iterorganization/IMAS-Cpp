@@ -1,1 +1,4 @@
 _build
+# Symlinks to other AL projects (created by CMake):
+doc_common
+plugins

@@ -5,7 +5,7 @@
 
 .. highlight:: c++
 
-.. include:: ../../doc_common/load_store_ids.rst
+.. include:: ./doc_common/load_store_ids.rst
 
 
 ..

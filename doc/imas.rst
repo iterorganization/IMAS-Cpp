@@ -1,1 +1,1 @@
-.. include:: ../../doc_common/imas.rst
+.. include:: ./doc_common/imas.rst

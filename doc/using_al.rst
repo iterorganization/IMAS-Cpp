@@ -1,4 +1,4 @@
-.. include:: ../../doc_common/using_al.rst
+.. include:: ./doc_common/using_al.rst
 
 Using the Access Layer with your C++ program
 --------------------------------------------

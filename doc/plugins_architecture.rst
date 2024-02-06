@@ -1,1 +1,1 @@
-.. include:: ../../doc_common/plugins_architecture.rst
+.. include:: ./doc_common/plugins_architecture.rst

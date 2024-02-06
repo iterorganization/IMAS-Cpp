@@ -1,4 +1,4 @@
-.. include:: ../../doc_common/plugins.rst
+.. include:: ./doc_common/plugins.rst
 
 
 .. toctree::

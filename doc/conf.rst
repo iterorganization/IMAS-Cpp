@@ -1,1 +1,1 @@
-.. include:: ../../doc_common/conf.rst
+.. include:: ./doc_common/conf.rst

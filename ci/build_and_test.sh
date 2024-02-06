@@ -21,6 +21,8 @@ MODULES=(
     # Required for building MDSplus models
     Saxon-HE/11.4-Java-11
     MDSplus-Java/7.96.17-GCCcore-10.2.0-Java-11
+    # Python for documentation
+    Python/3.8.6-GCCcore-10.2.0
     # C++ compilers
     intel/2020b
     # Blitz
@@ -57,6 +59,8 @@ CMAKE_ARGS=(
     -D AL_EXAMPLES=ON
     -D AL_TESTS=ON
     -D AL_PLUGINS=ON
+    # Build documentation
+    -D AL_HLI_DOCS=ON
 )
 # Note: compilers are set as environment variables in the Bamboo config
 cmake -B build "${CMAKE_ARGS[@]}"
