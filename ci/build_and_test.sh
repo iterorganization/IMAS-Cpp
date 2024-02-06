@@ -73,6 +73,9 @@ make -C build cpp-TestSuite
 # Build anything remaining
 make -C build -j4 all
 
+# Create test database, point USER env variable to the test database
+rm -rf testdb
+export USER="$(pwd)/testdb"
 # Test
 export ARGS="--output-on-failure --output-junit ctest.xml"
 make -C build test
