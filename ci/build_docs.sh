@@ -30,24 +30,15 @@ rm -rf build
 
 # CMake configuration:
 CMAKE_ARGS=(
-    # Disable all backends
-    -D AL_BACKEND_HDF5=OFF
-    -D AL_BACKEND_MDSPLUS=OFF
-    -D AL_BACKEND_UDA=OFF
     # "Download" dependencies from repos checked out by Bamboo in the repos/ folder:
     -D AL_DOWNLOAD_DEPENDENCIES=ON
     -D "AL_COMMON_GIT_REPOSITORY=$(pwd)/../al-common/"
     -D "AL_LOWLEVEL_GIT_REPOSITORY=$(pwd)/../al-lowlevel/"
     -D "AL_PLUGINS_GIT_REPOSITORY=$(pwd)/../al-plugins/"
     -D "DD_GIT_REPOSITORY=$(pwd)/../data-dictionary/"
-    # DD version: can be set with DD_VERSION env variable, otherwise use latest master/3
-    -D DD_VERSION=${DD_VERSION:-master/3}
-    # HLI options
-    -D AL_EXAMPLES=OFF
-    -D AL_TESTS=OFF
-    -D AL_PLUGINS=ON
-    # Build documentation
+    # Build only documentation
     -D AL_HLI_DOCS=ON
+    -D AL_DOCS_ONLY=ON
 )
 # Note: compilers are set as environment variables in the Bamboo config
 cmake -B build "${CMAKE_ARGS[@]}"
