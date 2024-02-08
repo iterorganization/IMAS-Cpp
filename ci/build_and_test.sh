@@ -1,5 +1,5 @@
 #!/bin/bash
-# Bamboo CI script to build and run tests for all lowlevel components
+# Bamboo CI script to build and run tests for the C++ HLI
 #
 # This script expects to be run from the repository root directory
 
