@@ -51,6 +51,13 @@ programming language.
    api_constants
    api_plugin
 
+.. toctree:: 
+    :maxdepth: 2
+    :caption: AL Developer documentation
+
+    building_installing
+    dev_guide
+
 Indices and tables
 ==================
 

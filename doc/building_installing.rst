@@ -1,0 +1,1 @@
+.. include:: ./doc_common/building_installing.rst
