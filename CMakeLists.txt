@@ -3,7 +3,7 @@ cmake_minimum_required( VERSION 3.16 )
 
 # Configuration options for common assets
 ################################################################################
-option( AL_DOWNLOAD_DEPENDENCIES "Automatically download common assets from the AL git repository" OFF )
+option( AL_DOWNLOAD_DEPENDENCIES "Automatically download common assets from the AL git repository" ON )
 set( AL_COMMON_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-common.git" CACHE STRING "Git repository of AL-common" )
 set( AL_COMMON_VERSION "e1d70daac28f2863ba83fec9ea2330c1b6482917" CACHE STRING "Git commit/tag/branch of AL-common" )
 
