@@ -5,7 +5,7 @@ cmake_minimum_required( VERSION 3.16 )
 ################################################################################
 option( AL_DOWNLOAD_DEPENDENCIES "Automatically download common assets from the AL git repository" OFF )
 set( AL_COMMON_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-common.git" CACHE STRING "Git repository of AL-common" )
-set( AL_COMMON_VERSION "4b4a6ecb83366f377a3bf9a0a9132ad3e25d2e56" CACHE STRING "Git commit/tag/branch of AL-common" )
+set( AL_COMMON_VERSION "e1d70daac28f2863ba83fec9ea2330c1b6482917" CACHE STRING "Git commit/tag/branch of AL-common" )
 
 include(FetchContent)
 
@@ -32,6 +32,7 @@ FetchContent_MakeAvailable( al-common )
 ################################################################################
 
 # Set VERSION and FULL_VERSION from `git describe`:
+set( GIT_ARCHIVE_DESCRIBE [[$Format:%(describe)$]] )
 include( ALDetermineVersion )
 project( al-cpp
   VERSION ${VERSION}
@@ -135,11 +136,10 @@ file( CREATE_LINK
   SYMBOLIC COPY_ON_ERROR
 )
 set( IDENTIFIER_SRC_DIR ${CMAKE_CURRENT_BINARY_DIR}/identifiers/src/ )
-file( GLOB ID_FILES ${data-dictionary_SOURCE_DIR}/*/*_identifier.xml )
 
 set( IDENTIFIER_SOURCES )
 set( IDENTIFIER_HEADERS )
-foreach( ID_FILE IN LISTS ID_FILES )
+foreach( ID_FILE IN LISTS DD_IDENTIFIER_FILES )
   # cmake_path( GET ID_FILE STEM ID_NAME)
   string( REGEX REPLACE "(^.*[/\\]|[.]xml$)" "" ID_NAME ${ID_FILE} )
   set( SOURCE_NAME "${IDENTIFIER_SRC_DIR}/${ID_NAME}.cpp" )
