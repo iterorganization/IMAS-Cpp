@@ -146,6 +146,7 @@ foreach( ID_FILE IN LISTS DD_IDENTIFIER_FILES )
   set( HEADER_NAME "${IDENTIFIER_SRC_DIR}/${ID_NAME}.h" )
   add_custom_command(
     OUTPUT ${SOURCE_NAME} ${HEADER_NAME}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${IDENTIFIER_SRC_DIR}
     COMMAND ${LIBXSLT_XSLTPROC_EXECUTABLE}
       --stringparam name ${ID_NAME}
       --stringparam prefix ${IDENTIFIER_SRC_DIR}
