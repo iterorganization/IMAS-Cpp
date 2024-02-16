@@ -2,7 +2,7 @@
 ################################################################################
 
 # Find LibXslt for the xsltproc program
-find_package( LibXslt )
+find_package( LibXslt QUIET )
 if( NOT LIBXSLT_XSLTPROC_EXECUTABLE )
   message( FATAL_ERROR "Could not find xsltproc" )
 endif()
