@@ -1,0 +1,45 @@
+easyblock = 'CMakeMake'
+
+name = 'IMAS-AL-Cpp'
+version = 'develop'
+versionsuffix = '-DD-@DD_VERSION@'
+
+description = 'IMAS Access Layer C++ High Level Interface'
+homepage = 'https://imas.iter.org/'
+
+toolchain = @TOOLCHAIN@
+
+builddependencies = [
+    ('CMake', '3.20.1'),
+    ('IMAS-AL-Common', 'develop', '', SYSTEM),
+    ('Saxon-HE', '11.4', '-Java-11', SYSTEM),
+]
+
+dependencies = [
+    ('IMAS-AL-Lowlevel', 'develop'),
+    ('IMAS-AL-MDSplus-models', 'develop', versionsuffix),
+    ('Blitz++', '1.0.2'),
+]
+
+source_urls = ['.']
+sources = ['al-cpp-dev.tar.gz']
+
+# CMakeMake configuration
+# See: https://docs.easybuild.io/version-specific/generic-easyblocks/#cmakemake
+
+build_type = 'RelWithDebInfo'
+configopts = (
+    # Don't download dependencies
+    '-D AL_DOWNLOAD_DEPENDENCIES=OFF '
+    # Disable tests, examples and plugins
+    '-D AL_TESTS=OFF '
+    '-D AL_EXAMPLES=OFF '
+    '-D AL_PLUGINS=OFF '
+)
+
+sanity_check_paths = {
+    'dirs': ['lib', 'include'],
+    'files': [],
+}
+
+moduleclass = 'tools'
