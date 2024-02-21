@@ -2513,10 +2513,10 @@ See IDSDef2Classes.xsl  -->
                 al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "<xsl:value-of select="$DD_GIT_DESCRIBE"/>", "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer'">
-                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "<xsl:value-of select="$AL_GIT_DESCRIBE"/>", "<xsl:value-of select="@lifecycle_status"/>");
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, getALVersion(), "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:when test="(@data_type='str_type' or @data_type='STR_0D') and @path='ids_properties/version_put/access_layer_language'">
-                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "cpp", "<xsl:value-of select="@lifecycle_status"/>");
+                al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, "cpp-<xsl:value-of select="$AL_GIT_DESCRIBE"/>", "<xsl:value-of select="@lifecycle_status"/>");
             </xsl:when>
             <xsl:otherwise>
                 al_status = IdsNs::Ids::writeData(ctx, idsFullName, fieldPath, timeBasePath, this-><xsl:value-of select="@name"/>, "<xsl:value-of select="@lifecycle_status"/>");
