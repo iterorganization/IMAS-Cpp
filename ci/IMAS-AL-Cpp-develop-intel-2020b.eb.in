@@ -11,13 +11,13 @@ toolchain = {'name': 'intel', 'version': '2020b'}
 
 builddependencies = [
     ('CMake', '3.20.1'),
-    ('IMAS-AL-Common', 'develop', '', SYSTEM),
+    ('IMAS-AL-Common', version, '', SYSTEM),
     ('Saxon-HE', '11.4', '-Java-11', SYSTEM),
 ]
 
 dependencies = [
-    ('IMAS-AL-Lowlevel', 'develop'),
-    ('IMAS-AL-MDSplus-models', 'develop', versionsuffix),
+    ('IMAS-AL-Lowlevel', version),
+    ('IMAS-AL-MDSplus-models', version, versionsuffix),
     ('Blitz++', '1.0.2'),
 ]
 
