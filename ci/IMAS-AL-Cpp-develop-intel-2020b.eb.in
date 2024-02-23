@@ -7,7 +7,7 @@ versionsuffix = '-DD-@DD_VERSION@'
 description = 'IMAS Access Layer C++ High Level Interface'
 homepage = 'https://imas.iter.org/'
 
-toolchain = @TOOLCHAIN@
+toolchain = {'name': 'intel', 'version': '2020b'}
 
 builddependencies = [
     ('CMake', '3.20.1'),
