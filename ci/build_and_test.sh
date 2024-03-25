@@ -61,6 +61,8 @@ CMAKE_ARGS=(
     -D AL_PLUGINS=ON
     # Build documentation
     -D AL_HLI_DOCS=ON
+    # Work around Boost linker issues on 2020b toolchain
+    -D Boost_NO_BOOST_CMAKE=ON
 )
 # Note: compilers are set as environment variables in the Bamboo config
 cmake -B build "${CMAKE_ARGS[@]}"
