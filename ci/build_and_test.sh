@@ -14,7 +14,7 @@ module purge
 MODULES=(
     CMake/3.24.3-GCCcore-10.2.0
     # Required for building the lowlevel and backends
-    Boost/1.74.0-GCCcore-10.2.0
+    Boost/1.74.0-GCC-10.2.0
     HDF5/1.10.7-GCCcore-10.2.0-serial
     MDSplus/7.131.6-GCCcore-10.2.0
     UDA/2.7.5-GCC-10.2.0
@@ -34,6 +34,14 @@ module load "${MODULES[@]}"
 echo "Done loading modules"
 set -x
 
+# Create a local git configuration with our access token
+if [ "x$bamboo_HTTP_AUTH_BEARER_PASSWORD" != "x" ]; then
+    mkdir -p git
+    echo "[http \"https://git.iter.org/\"]
+        extraheader = Authorization: Bearer $bamboo_HTTP_AUTH_BEARER_PASSWORD" > git/config
+    export XDG_CONFIG_HOME=$PWD
+    git config -l
+fi
 
 # Ensure the build directory is clean:
 rm -rf build
@@ -47,12 +55,12 @@ CMAKE_ARGS=(
     -D AL_BACKEND_UDA=ON
     # Build MDSplus models
     -D AL_BUILD_MDSPLUS_MODELS=ON
-    # "Download" dependencies from repos checked out by Bamboo in the repos/ folder:
+    # Download dependencies from HTTPS (using an access token):
     -D AL_DOWNLOAD_DEPENDENCIES=ON
-    -D "AL_COMMON_GIT_REPOSITORY=$(pwd)/repos/al-common/"
-    -D "AL_LOWLEVEL_GIT_REPOSITORY=$(pwd)/repos/al-lowlevel/"
-    -D "AL_PLUGINS_GIT_REPOSITORY=$(pwd)/repos/al-plugins/"
-    -D "DD_GIT_REPOSITORY=$(pwd)/repos/data-dictionary/"
+    -D AL_COMMON_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-common.git
+    -D AL_LOWLEVEL_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-lowlevel.git
+    -D AL_PLUGINS_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-plugins.git
+    -D DD_GIT_REPOSITORY=https://git.iter.org/scm/imas/data-dictionary.git
     # DD version: can be set with DD_VERSION env variable, otherwise use latest master/3
     -D DD_VERSION=${DD_VERSION:-master/3}
     # HLI options
