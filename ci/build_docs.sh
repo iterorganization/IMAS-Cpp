@@ -24,18 +24,26 @@ module load "${MODULES[@]}"
 echo "Done loading modules"
 set -x
 
+# Create a local git configuration with our access token
+if [ "x$bamboo_HTTP_AUTH_BEARER_PASSWORD" != "x" ]; then
+    mkdir -p git
+    echo "[http \"https://git.iter.org/\"]
+        extraheader = Authorization: Bearer $bamboo_HTTP_AUTH_BEARER_PASSWORD" > git/config
+    export XDG_CONFIG_HOME=$PWD
+    git config -l
+fi
 
 # Ensure the build directory is clean:
 rm -rf build
 
 # CMake configuration:
 CMAKE_ARGS=(
-    # "Download" dependencies from repos checked out by Bamboo in the repos/ folder:
+    # Download dependencies from HTTPS (using an access token):
     -D AL_DOWNLOAD_DEPENDENCIES=ON
-    -D "AL_COMMON_GIT_REPOSITORY=$(pwd)/../al-common/"
-    -D "AL_LOWLEVEL_GIT_REPOSITORY=$(pwd)/../al-lowlevel/"
-    -D "AL_PLUGINS_GIT_REPOSITORY=$(pwd)/../al-plugins/"
-    -D "DD_GIT_REPOSITORY=$(pwd)/../data-dictionary/"
+    -D AL_COMMON_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-common.git
+    -D AL_LOWLEVEL_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-lowlevel.git
+    -D AL_PLUGINS_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-plugins.git
+    -D DD_GIT_REPOSITORY=https://git.iter.org/scm/imas/data-dictionary.git
     # Build only documentation
     -D AL_HLI_DOCS=ON
     -D AL_DOCS_ONLY=ON
