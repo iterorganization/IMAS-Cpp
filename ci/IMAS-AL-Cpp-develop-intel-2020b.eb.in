@@ -16,7 +16,7 @@ builddependencies = [
 ]
 
 dependencies = [
-    ('IMAS-AL-Lowlevel', version),
+    ('IMAS-AL-Core', version),
     ('IMAS-AL-MDSplus-models', version, versionsuffix),
     ('Blitz++', '1.0.2'),
 ]
