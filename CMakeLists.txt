@@ -7,6 +7,13 @@ option( AL_DOWNLOAD_DEPENDENCIES "Automatically download common assets from the 
 set( AL_COMMON_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-common.git" CACHE STRING "Git repository of AL-common" )
 set( AL_COMMON_VERSION "main" CACHE STRING "Git commit/tag/branch of AL-common" )
 
+# BEGIN >> al-lowlevel -> al-core rename
+# overrule default versions of repos
+# FIXME: remove before merging!
+set( AL_COMMON_VERSION "refactor/rename-al-core" CACHE STRING "" FORCE )
+set( AL_CORE_VERSION "refactor/rename-al-core" CACHE STRING "" FORCE )
+# << END
+
 include(FetchContent)
 
 # Load common assets
@@ -55,8 +62,8 @@ include( ALSetCompilerFlags )
 include( ALCommonConfig )
 # Data dictionary
 include( ALBuildDataDictionary )
-# AL lowlevel, plugins and documentation
-include( ALLowlevel )
+# AL core, plugins and documentation
+include( ALCore )
 
 # Stop processing when only building documentation
 if( AL_DOCS_ONLY )
