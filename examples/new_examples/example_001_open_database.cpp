@@ -32,7 +32,6 @@ void create_db_entry_legacy()
     // You can access IDSes in here - take a look at sample code dealing with IDSes for details
     
     ids.close();
-
 }
 
 void open_db_entry_uri()
@@ -76,25 +75,25 @@ void open_db_entry_uri()
     // You can access IDSes in here - take a look at sample code dealing with IDSes for details
 
     ids.close();
-
 }
 
 void create_db_entry_uri_with_path()
 {
     IdsNs::IDS ids;
     int status = ids.open("imas:mdsplus?path=./testdb_mdsplus",FORCE_CREATE_PULSE);
-    // Content of ./testdb_mdsplus directory: ['ids_001.characteristics', 'ids_001.datafile', 'ids_001.tree']
+    // ls testdb_mdsplus
+    // -> ids_001.characteristics  ids_001.datafile  ids_001.tree
     // Structure of this directory does not depends on entry content. All IDS data are stored in printed files
     
     status = ids.open("imas:hdf5?path=./testdb_hdf5",FORCE_CREATE_PULSE);
     // ls ./testdb_hdf5 
     // -> master.h5
+    // Structure of this directory depends on entry content. Every IDS with data will be stored in <ids_name>.h5 file
     
     status = ids.open("imas:ascii?path=./testdb_ascii",FORCE_CREATE_PULSE);
     // ls ./testdb_ascii
-    // ->
-
-
+    // -> {empty}
+    // Structure of this directory depends on entry content. Every IDS with data will be stored in <ids_name>.ids file
 }
 
 int main(int argc, char *argv[])
