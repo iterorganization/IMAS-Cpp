@@ -95,11 +95,3 @@ void create_db_entry_uri_with_path()
     // -> {empty}
     // Structure of this directory depends on entry content. Every IDS with data will be stored in <ids_name>.ids file
 }
-
-int main(int argc, char *argv[])
-{
-    create_db_entry_legacy();
-    open_db_entry_uri();
-    create_db_entry_uri_with_path();
-    return 0;
-}
