@@ -9,18 +9,18 @@ void create_db_entry_legacy()
 {
     // This example focuses on creating DBEntry using legacy mode method
 
-    char* userName         = getenv("USER");
-    std::string db_name    = "testdb";
-    int pulse              = 1;
-    int run                = 10;
-    std::string dd_version = "3";
+    std::string userName         = getenv("USER");
+    std::string db_name          = "testdb";
+    int pulse                    = 1;
+    int run                      = 10;
+    std::string dd_major_version = "3";
 
     // create data entry object (using legacy method, deprecated from AL5)
     IdsNs::IDS ids(pulse, run, 0, 0);
     ids.setBackend(HDF5_BACKEND);
     
     // this time we are creating completly new entry
-    ids.createEnv(userName, db_name.c_str(), dd_version.c_str());    
+    ids.createEnv(userName.c_str(), db_name.c_str(), dd_major_version.c_str());    
     // to open existing entry use ids.openEnv(userName, db_name, version)
 
     // You can access IDSes in here - take a look at sample code dealing with IDSes for details
@@ -32,19 +32,19 @@ void open_db_entry_uri()
 {
     // This example focuses on opening DBEntry using URI
 
-    char* userName         = getenv("USER");
-    std::string db_name    = "testdb";
-    int pulse              = 1;
-    int run                = 10;
-    std::string backend    = "hdf5";
-    std::string dd_version = "3";
+    std::string userName         = getenv("USER");
+    std::string db_name          = "testdb";
+    int pulse                    = 1;
+    int run                      = 10;
+    std::string backend          = "hdf5";
+    std::string dd_major_version = "3";
 
     // std::string uri = std::format("imas:{}?user={};pulse={};run={};database={};version={}",backend, userName, pulse, run, db_name, version);
 
     // If you're using a C++ version older than C++20, make sure to use string concatenation instead of std::format.
     
     std::string uri = std::string("imas:")+backend + std::string("?user=") + userName + ";pulse=" + std::to_string(pulse)
-    + ";run=" + std::to_string(run) + ";database=" + db_name + ";version=" + dd_version;
+    + ";run=" + std::to_string(run) + ";database=" + db_name + ";version=" + dd_major_version;
     
 
     IdsNs::IDS ids;
@@ -53,7 +53,7 @@ void open_db_entry_uri()
     //  OPEN_PULSE
     //  CREATE_PULSE
     //  FORCE_CREATE_PULSE
-    
+
     // You can access IDSes in here - take a look at sample code dealing with IDSes for details
 
     ids.close();
