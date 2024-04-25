@@ -8,3 +8,4 @@ gen_cpp_files
 gen_h_files
 *.BAK
 *.d.*
+CMakeUserPresets.json
