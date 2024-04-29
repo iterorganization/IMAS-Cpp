@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
   int pulse = 54;
   int dynamicsize = 10;
   int staticsize = 3;
- 
+  char uri[]="imas:mdsplus?path=./test_db";
   char* userName = getenv("USER");
   if(userName == NULL) 
     {
@@ -17,8 +17,7 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
-   IdsNs::IDS ids(pulse,1,-1,-1);
-   ids.openEnv(userName, "test", "3"); //Open the database
+  ids.open(uri, OPEN_PULSE);
 
   std::cout << "getting full magnetics\n";
   ids._magnetics.get();

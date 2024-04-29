@@ -17,6 +17,7 @@ void execute(char** argv) {
 
     int pulse=54;
     char* userName = NULL;
+    char uri[]="imas:mdsplus?path=./test_db";
 
     userName = getenv("USER");
     if(userName == NULL) 
@@ -25,9 +26,7 @@ void execute(char** argv) {
         exit(1);
     }
 
-    /*   Get Full  */
-    IdsNs::IDS data_entry(pulse,1,-1,-1);
-    data_entry.openEnv(userName, "test", "3");
+    ids.open(uri, OPEN_PULSE);
 	
     std::cout << "Patching the field 'ids_properties/creation_date' of a magnetics IDS for demo purpose." << std::endl;
 
@@ -46,8 +45,7 @@ void execute(char** argv) {
     std::cout << "Reading IDS..." << std::endl;
 
 
-    IdsNs::IDS data_entry2(pulse,1,-1,-1);
-    data_entry2.openEnv(userName, "test", "3");
+    ids2.open(uri, OPEN_PULSE);
     IDS::magnetics ids2 = data_entry2._magnetics;
     ids2.get();
     //printf("ids.ids_properties.plugins.node.size()=%d\n", ids2.ids_properties.plugins.node.size());

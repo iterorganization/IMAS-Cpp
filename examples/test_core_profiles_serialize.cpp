@@ -7,6 +7,7 @@ int main(int argc, char* argv[]) {
   double vect1DDouble_1[10], vect1DDouble_2[12];
   int number = 10;  // number of elements
   char treename[] = "ids";
+  char uri[]="imas:ascii?path=./test_db";
   int pulse = 12, run = 2, refpulse = 0, refrun = 0, i, j, Sz, idx;
 
   char* userName = getenv("USER");
@@ -30,9 +31,7 @@ int main(int argc, char* argv[]) {
                      17.0, 18.0, 19.0, 20.0, 21.0, 22.0};
   for (i = 0; i < 12; i++) vect1DDouble_2[i] = time_2[i] * 2. + 10.;
 
-  IdsNs::IDS ids(pulse, run, refpulse, refrun);
-  ids.setBackend(ASCII_BACKEND);
-  ids.createEnv(userName, "test", "3");
+  ids.open(uri, FORCE_CREATE_PULSE);
 
   //! allocate the ids fields
   // printf("SIZE %d %d \n",sizeof(time_1), sizeof(time_1)/sizeof(time_1[0]));
@@ -86,9 +85,8 @@ int main(int argc, char* argv[]) {
   printf("Done serializing\n");
 
   printf("\nStart deserializing the core_profiles IDS\n");
-  IdsNs::IDS ids2(pulse, run, refpulse, refrun);
-  ids2.setBackend(ASCII_BACKEND);
-  ids2.createEnv(userName, "test", "3");
+
+  ids2.open(uri, FORCE_CREATE_PULSE);
   ids2._core_profiles.deserialize(data);
   printf("Done deserializing\n");
 

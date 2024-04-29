@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     refrun = 0;
   int i,j,k,l;
   int s=2, t=12;
-
+  char uri[]="imas:mdsplus?path=./test_db";
   char *userName = getenv("USER");
   if (userName == NULL)
     {
@@ -28,9 +28,7 @@ int main(int argc, char **argv)
       vect1DDouble[i] = time[i]*10.0;
     }
 
-
-  IdsNs::IDS ids(pulse,run,refpulse,refrun);
-  ids.createEnv(userName, "test", "3");
+  ids.open(uri, FORCE_CREATE_PULSE);
 
   // allocate the ids fields
   ids._core_sources.source.resize(s);

@@ -10,6 +10,7 @@ void execute(char** argv) {
 
     int pulse=54;
     char* userName = NULL;
+    char uri[]="imas:mdsplus?path=./test_db";
 
     userName = getenv("USER");
     if(userName == NULL) 
@@ -18,9 +19,7 @@ void execute(char** argv) {
         exit(1);
     }
 
-    /*   Get Full  */
-    IdsNs::IDS data_entry(pulse,1,-1,-1);
-    data_entry.openEnv(userName, "test", "3"); 
+    ids.open(uri, OPEN_PULSE);
 
     al_status_t status = al_register_plugin("partial_get");
     exitIfError(status);

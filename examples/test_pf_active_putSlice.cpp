@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
   int i, lentime_1, lentime_2;
   double *time_1,*vect1DDouble_1,*time_2,*vect1DDouble_2;
   bool first_slice = true;
-
+  char uri[]="imas:mdsplus?path=./test_db";
     char* userName = getenv("USER");
     if(userName == NULL) 
     {
@@ -39,8 +39,7 @@ int main(int argc, char *argv[])
   puts("");
 
   int pulse=10, icoil;
-  IdsNs::IDS ids(10,1,10,0);
-  ids.createEnv(userName, "test", "3");
+  ids.open(uri, FORCE_CREATE_PULSE);
 
   ids._pf_active.coil.resize(2);
   ids._pf_active.coil(0).name = "COIL 1";

@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     refrun = 0,
     i,j, Sz,idx;
   char treename[]="ids";
+  char uri[]="imas:mdsplus?path=./test_db";
   char* userName = NULL;
 
 
@@ -27,12 +28,9 @@ int main(int argc, char *argv[])
       printf( "PANIC: $USER not found! Exiting...");
       exit(1);
     }
-
     
-
-  IdsNs::IDS ids(pulse,run,refpulse,refrun);
-  ids.openEnv(userName, "test", "3"); //Open the database
-
+  ids.open(uri, OPEN_PULSE);
+  
   time = 4;
   printf("===============================================================================\n");
   printf("get_slice core_profiles IDS pulse:%d, run:%d, refpulse:%d, refrun:%d at time:%g\n", pulse, run, refpulse, refrun,time);

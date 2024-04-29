@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
    char dum[23];
    int interp = 2;
    char* userName = getenv("USER");
+   char uri[]="imas:mdsplus?path=./test_db";
    
    if(userName == NULL) 
    {
@@ -24,8 +25,7 @@ int main(int argc, char *argv[])
    time = 3.5;
    interp = PREVIOUS_SAMPLE;
 
-   IdsNs::IDS ids1(pulse,1,pulse,0);
-   ids1.openEnv(userName, "test", "3"); //Open the database
+   ids.open(uri, OPEN_PULSE);
 
    ids1._pf_active.getSlice(time, interp);
 

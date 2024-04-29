@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     refpulse = 0,
     refrun = 0;
   int i,j,k,l,ni,nj,nk,nl;
-
+  char uri[]="imas:mdsplus?path=./test_db";
   char *userName = getenv("USER");
   if (userName == NULL)
     {
@@ -18,8 +18,7 @@ int main(int argc, char **argv)
       return 1;
     }
   
-  IdsNs::IDS ids(pulse,run,refpulse,refrun);
-  ids.openEnv(userName, "test", "3");
+  ids.open(uri, OPEN_PULSE);
 
   std::cout << "core_sources IDS pulse:" << pulse << " run:" << run << " opened\n";
 

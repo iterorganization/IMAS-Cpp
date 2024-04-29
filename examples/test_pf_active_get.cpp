@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
     int icoil,i,pulse, number=10;
     char dum[23];
     int interp = 2;
+    char uri[]="imas:mdsplus?path=./test_db";
 
     if(argc > 1) pulse=atoi(argv[1]);
     else pulse=12;
@@ -21,9 +22,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-  /*   Get Full  */
-   IdsNs::IDS ids(pulse,1,pulse,0);
-   ids.openEnv(userName, "test", "3"); //Open the database
+   ids.open(uri, OPEN_PULSE);
 
    ids._pf_active.get();
    cout << "pf_active pulse: " << pulse << "\n" << ids._pf_active;

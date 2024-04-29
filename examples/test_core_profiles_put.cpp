@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
   double  vect1DDouble_1[10], vect1DDouble_2[12];
   int number = 10; //number of elements
   char treename[]="ids";
+  char uri[]="imas:mdsplus?path=./test_db";
   int pulse = 12,
     run = 2,
     refpulse = 0,
@@ -38,8 +39,7 @@ int main(int argc, char *argv[])
   for (i=0; i<12;i++)
     vect1DDouble_2[i] = time_2[i]*2.+10.;
 
-  IdsNs::IDS ids(pulse,run,refpulse,refrun);
-  ids.createEnv(userName, "test", "3");
+  ids.open(uri, FORCE_CREATE_PULSE);
 
   //! allocate the ids fields
   //printf("SIZE %d %d \n",sizeof(time_1), sizeof(time_1)/sizeof(time_1[0]));

@@ -16,6 +16,7 @@ int main(int argc, char *argv[])
 
   char longstring[132];
   char treename[]="ids";
+  char uri[]="imas:mdsplus?path=./test_db";
   pulse = 12;
   run = 2;
   refpulse = 0;
@@ -35,11 +36,8 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
-  //    IdsNs::IDS imas_entry(12,1,0,0);
-  /*   Get Full */
-  IdsNs::IDS ids(pulse,run,refpulse,refrun);
-  ids.openEnv(userName, "test", "3"); //Open the database
-
+  ids.open(uri, OPEN_PULSE);
+  
   printf("\nGetting core_profiles IDS pulse:%d, run:%d, refpulse:%d, refrun:%d\n", pulse, run, refpulse, refrun);
   ids._core_profiles.get();
   //   cout << "core_profiles pulse: " << pulse << "\n" << ids._core_profiles;

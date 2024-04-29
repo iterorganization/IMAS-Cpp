@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     refrun = 0,
     i,j, Sz,idx;
   char treename[]="ids";
+  char uri[]="imas:mdsplus?path=./test_db";
   bool first_slice = true;
 
   char* userName = getenv("USER");
@@ -37,8 +38,7 @@ int main(int argc, char *argv[])
   for (i=0; i<12;i++)
     vect1DDouble_2[i] = time_2[i]*2.+10.;
 
-  IdsNs::IDS ids(pulse,run,refpulse,refrun);
-  ids.createEnv(userName, "test", "3");
+  ids.open(uri, FORCE_CREATE_PULSE);
 
   ids._core_profiles.ids_properties.homogeneous_time = 1; //! Mandatory to define this property
   ids._core_profiles.ids_properties.comment = "This is a test ids V3 Put_slice by C++";

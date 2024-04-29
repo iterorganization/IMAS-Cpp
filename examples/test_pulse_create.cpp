@@ -9,7 +9,7 @@ int main(int argc, char **argv)
   int run = 1;     // your choice
   int refpulse = 0; // dummy, not used
   int refrun = 0;  // dummy, not used
-
+  char uri[]="imas:mdsplus?path=./test_db";
   userName = getenv("USER");
   if(userName == NULL) 
     {
@@ -17,9 +17,7 @@ int main(int argc, char **argv)
       exit(1);
     }
   
-  std::cout << "Create pulsefile for pulse = " << pulse << " run = " << run << "\n";
-  IdsNs::IDS ids(12,1,0,0);
-  ids.createEnv(userName, "test", "3");
+  ids.open(uri, FORCE_CREATE_PULSE);
 
   ids.close();
 }

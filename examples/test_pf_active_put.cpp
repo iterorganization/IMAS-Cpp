@@ -9,6 +9,7 @@ int main(int argc, char *argv[])
   double * vect1DDouble_1, time_1, vect1DDouble_2, vect1DDouble_3;
   int number = 10; //number of elements
   char* userName = NULL;
+  char uri[]="imas:mdsplus?path=./test_db";
 
     userName = getenv("USER");
     if(userName == NULL) 
@@ -21,8 +22,7 @@ int main(int argc, char *argv[])
   //and is used when the a new database is created, as in this example.
   //All the AL classes belong to the idsNs namespace
 
-  IdsNs::IDS ids(12,1,12,0);
-  ids.createEnv(userName, "test", "3");
+  ids.open(uri, FORCE_CREATE_PULSE);
 /////////////////ids::pf_active *pf_actives = ids.pf_active();
 
   ids._pf_active.ids_properties.comment = "Test data";
