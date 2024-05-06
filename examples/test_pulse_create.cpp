@@ -16,7 +16,8 @@ int main(int argc, char **argv)
       printf( "PANIC: $USER not found! Exiting...");
       exit(1);
     }
-  
+    
+  IdsNs::IDS ids;
   ids.open(uri, FORCE_CREATE_PULSE);
 
   ids.close();

@@ -39,6 +39,8 @@ int main(int argc, char *argv[])
   puts("");
 
   int pulse=10, icoil;
+  
+  IdsNs::IDS ids;
   ids.open(uri, FORCE_CREATE_PULSE);
 
   ids._pf_active.coil.resize(2);

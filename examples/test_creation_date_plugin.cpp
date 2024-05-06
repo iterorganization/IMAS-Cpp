@@ -25,8 +25,8 @@ void execute(char** argv) {
         printf( "PANIC: $USER not found! Exiting...");
         exit(1);
     }
-
-    ids.open(uri, OPEN_PULSE);
+    IdsNs::IDS data_entry;
+    data_entry.open(uri, OPEN_PULSE);
 	
     std::cout << "Patching the field 'ids_properties/creation_date' of a magnetics IDS for demo purpose." << std::endl;
 
@@ -44,8 +44,9 @@ void execute(char** argv) {
     exitIfError(status);
     std::cout << "Reading IDS..." << std::endl;
 
-
-    ids2.open(uri, OPEN_PULSE);
+    IdsNs::IDS data_entry2;
+    data_entry2.open(uri, OPEN_PULSE);
+    
     IDS::magnetics ids2 = data_entry2._magnetics;
     ids2.get();
     //printf("ids.ids_properties.plugins.node.size()=%d\n", ids2.ids_properties.plugins.node.size());

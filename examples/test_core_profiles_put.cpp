@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
   for (i=0; i<12;i++)
     vect1DDouble_2[i] = time_2[i]*2.+10.;
 
+  IdsNs::IDS ids;
   ids.open(uri, FORCE_CREATE_PULSE);
 
   //! allocate the ids fields

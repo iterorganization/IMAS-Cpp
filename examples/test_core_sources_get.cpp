@@ -17,7 +17,7 @@ int main(int argc, char **argv)
       std::cerr << "PANIC: $USER not found! Exiting...\n";
       return 1;
     }
-  
+  IdsNs::IDS ids;
   ids.open(uri, OPEN_PULSE);
 
   std::cout << "core_sources IDS pulse:" << pulse << " run:" << run << " opened\n";

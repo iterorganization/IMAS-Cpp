@@ -18,8 +18,9 @@ void execute(char** argv) {
       printf( "PANIC: $USER not found! Exiting...");
       exit(1);
   }
-
-  ids.open(uri, FORCE_CREATE_PULSE);
+  
+  IdsNs::IDS data_entry;
+  data_entry.open(uri, FORCE_CREATE_PULSE);
 
   IDS::camera_ir ids = data_entry._camera_ir;
   

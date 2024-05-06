@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
   //The parameters passed to this creator define the pulse and run number. The second pair of arguments defines the reference pulse and run
   //and is used when the a new database is created, as in this example.
   //All the AL classes belong to the idsNs namespace
-
+  IdsNs::IDS ids;
   ids.open(uri, FORCE_CREATE_PULSE);
 /////////////////ids::pf_active *pf_actives = ids.pf_active();
 

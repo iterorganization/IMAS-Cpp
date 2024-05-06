@@ -19,7 +19,8 @@ void execute(char** argv) {
         exit(1);
     }
 
-    ids.open(uri, OPEN_PULSE);
+    IdsNs::IDS data_entry;
+    data_entry.open(uri, OPEN_PULSE);
 
     al_status_t status = al_register_plugin("debug");
     exitIfError(status);

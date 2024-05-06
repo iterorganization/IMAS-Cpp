@@ -36,6 +36,7 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
+  IdsNs::IDS ids;
   ids.open(uri, OPEN_PULSE);
   
   printf("\nGetting core_profiles IDS pulse:%d, run:%d, refpulse:%d, refrun:%d\n", pulse, run, refpulse, refrun);

@@ -25,7 +25,9 @@ int main(int argc, char *argv[])
    time = 3.5;
    interp = PREVIOUS_SAMPLE;
 
-   ids.open(uri, OPEN_PULSE);
+   IdsNs::IDS ids1;
+
+   ids1.open(uri, OPEN_PULSE);
 
    ids1._pf_active.getSlice(time, interp);
 
