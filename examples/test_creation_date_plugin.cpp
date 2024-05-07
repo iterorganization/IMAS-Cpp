@@ -17,7 +17,7 @@ void execute(char** argv) {
 
     int pulse=54;
     char* userName = NULL;
-    char uri[]="imas:mdsplus?path=./test_db";
+    char uri[]="imas:mdsplus?path=./test_db_test_creation_date_plugin";
 
     userName = getenv("USER");
     if(userName == NULL) 

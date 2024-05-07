@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
   double * vect1DDouble_1, time_1, vect1DDouble_2, vect1DDouble_3;
   int number = 10; //number of elements
   char* userName = NULL;
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_pf_active_put";
 
     userName = getenv("USER");
     if(userName == NULL) 

@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
   int pulse = 54;
   int dynamicsize = 10;
   int staticsize = 3;
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_magnetics_put";
   char* userName = getenv("USER");
   if(userName == NULL) 
     {

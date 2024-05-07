@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     refrun = 0,
     i,j, Sz,idx;
   char treename[]="ids";
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles_putSlice";
   bool first_slice = true;
 
   char* userName = getenv("USER");

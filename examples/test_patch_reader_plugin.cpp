@@ -10,7 +10,7 @@ void execute(char** argv) {
 
   int pulse=60;
   char* userName = NULL;
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_patch_reader_plugin";
 
   userName = getenv("USER");
   if(userName == NULL) 

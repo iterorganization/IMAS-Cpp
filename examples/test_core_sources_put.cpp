@@ -11,7 +11,7 @@ int main(int argc, char **argv)
     refrun = 0;
   int i,j,k,l;
   int s=2, t=12;
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_core_sources_put";
   char *userName = getenv("USER");
   if (userName == NULL)
     {

@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
   int i, lentime_1, lentime_2;
   double *time_1,*vect1DDouble_1,*time_2,*vect1DDouble_2;
   bool first_slice = true;
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_pf_active_getSlice";
     char* userName = getenv("USER");
     if(userName == NULL) 
     {

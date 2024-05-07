@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
   double  vect1DDouble_1[10], vect1DDouble_2[12];
   int number = 10; //number of elements
   char treename[]="ids";
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles_put";
   int pulse = 12,
     run = 2,
     refpulse = 0,

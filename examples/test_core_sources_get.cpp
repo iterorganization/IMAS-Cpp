@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     refpulse = 0,
     refrun = 0;
   int i,j,k,l,ni,nj,nk,nl;
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_core_sources_get";
   char *userName = getenv("USER");
   if (userName == NULL)
     {

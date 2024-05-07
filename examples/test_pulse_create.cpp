@@ -9,7 +9,7 @@ int main(int argc, char **argv)
   int run = 1;     // your choice
   int refpulse = 0; // dummy, not used
   int refrun = 0;  // dummy, not used
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_pulse_create";
   userName = getenv("USER");
   if(userName == NULL) 
     {

@@ -8,7 +8,7 @@ int main(int argc, char *argv[])
     int icoil,i,pulse, number=10;
     char dum[23];
     int interp = 2;
-    char uri[]="imas:mdsplus?path=./test_db";
+    char uri[]="imas:mdsplus?path=./test_db_test_pf_active_get";
 
     if(argc > 1) pulse=atoi(argv[1]);
     else pulse=12;

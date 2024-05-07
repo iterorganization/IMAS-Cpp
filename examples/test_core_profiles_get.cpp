@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
   char longstring[132];
   char treename[]="ids";
-  char uri[]="imas:mdsplus?path=./test_db";
+  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles_get";
   pulse = 12;
   run = 2;
   refpulse = 0;

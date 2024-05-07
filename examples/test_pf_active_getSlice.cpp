@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
    char dum[23];
    int interp = 2;
    char* userName = getenv("USER");
-   char uri[]="imas:mdsplus?path=./test_db";
+   char uri[]="imas:mdsplus?path=./test_db_test_pf_active_getSlice";
    
    if(userName == NULL) 
    {
