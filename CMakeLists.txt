@@ -55,8 +55,8 @@ include( ALSetCompilerFlags )
 include( ALCommonConfig )
 # Data dictionary
 include( ALBuildDataDictionary )
-# AL lowlevel, plugins and documentation
-include( ALLowlevel )
+# AL core, plugins and documentation
+include( ALCore )
 
 # Stop processing when only building documentation
 if( AL_DOCS_ONLY )

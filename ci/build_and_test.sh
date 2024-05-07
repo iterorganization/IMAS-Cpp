@@ -13,7 +13,7 @@ module purge
 # Load modules:
 MODULES=(
     CMake/3.24.3-GCCcore-10.2.0
-    # Required for building the lowlevel and backends
+    # Required for building the core and backends
     Boost/1.74.0-GCC-10.2.0
     HDF5/1.10.7-GCCcore-10.2.0-serial
     MDSplus/7.131.6-GCCcore-10.2.0
@@ -58,7 +58,7 @@ CMAKE_ARGS=(
     # Download dependencies from HTTPS (using an access token):
     -D AL_DOWNLOAD_DEPENDENCIES=ON
     -D AL_COMMON_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-common.git
-    -D AL_LOWLEVEL_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-lowlevel.git
+    -D AL_CORE_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-core.git
     -D AL_PLUGINS_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-plugins.git
     -D DD_GIT_REPOSITORY=https://git.iter.org/scm/imas/data-dictionary.git
     # DD version: can be set with DD_VERSION env variable, otherwise use latest master/3
