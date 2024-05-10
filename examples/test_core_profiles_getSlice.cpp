@@ -8,32 +8,15 @@ int main(int argc, char *argv[])
 {
   double  time;
   int interp= 2;
-  int pulse = 12,
-    run = 3,
-    refpulse = 0,
-    refrun = 0,
-    i,j, Sz,idx;
-  char treename[]="ids";
-  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles_getSlice";
-  char* userName = NULL;
+  int i,j, Sz;
+  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles";
 
-
-  if(argc > 1)
-    pulse=atoi(argv[1]);
-
-
-  userName = getenv("USER");
-  if(userName == NULL) 
-    {
-      printf( "PANIC: $USER not found! Exiting...");
-      exit(1);
-    }
   IdsNs::IDS ids;
   ids.open(uri, OPEN_PULSE);
   
   time = 4;
   printf("===============================================================================\n");
-  printf("get_slice core_profiles IDS pulse:%d, run:%d, refpulse:%d, refrun:%d at time:%g\n", pulse, run, refpulse, refrun,time);
+  printf("get_slice core_profiles IDS at time:%g\n",time);
   printf("===============================================================================\n\n");
   ids._core_profiles.getSlice(time, interp);
 

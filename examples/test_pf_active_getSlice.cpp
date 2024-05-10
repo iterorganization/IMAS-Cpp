@@ -5,23 +5,12 @@ using namespace IdsNs;
 int main(int argc, char *argv[])
 {
    float time=10;
-   int icoil,i, pulse, number=1;
-   char dum[23];
+   int icoil,i;
    int interp = 2;
-   char* userName = getenv("USER");
-   char uri[]="imas:mdsplus?path=./test_db_test_pf_active_getSlice";
-   
-   if(userName == NULL) 
-   {
-        printf( "PANIC: $USER not found! Exiting...");
-        exit(1);
-    }
-
-
+   char uri[]="imas:mdsplus?path=./test_db_test_pf_active";
 
    IdsNs::IDS *II,*JJ;
    II = new IDS();
-   pulse = 10;
    time = 3.5;
    interp = PREVIOUS_SAMPLE;
 
@@ -33,8 +22,6 @@ int main(int argc, char *argv[])
 
    printf("coil1,2  name:%s,  %s\n",ids1._pf_active.coil(0).name.c_str(),ids1._pf_active.coil(1).name.c_str());
    cout << "pf_activeSYSTEMS at time " << time << "\n" << ids1._pf_active;
-
-   printf("\n\n======   Pulse %d   ===============\nAt time %g  with interp = %d\n",pulse, time, interp);
 
    for (icoil=0; icoil< ids1._pf_active.coil.extent(0);icoil++) {
      printf("coil(%d).current.data:", icoil);

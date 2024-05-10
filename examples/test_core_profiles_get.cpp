@@ -8,44 +8,20 @@ using namespace IdsNs;
 int main(int argc, char *argv[])
 {
 
-  int interpol, a1,a2, nb, nbion;
+  int nb;
   double time_1[10], vect1DDouble_1[10], time_2[12], vect1DDouble_2[12];
-  int idx, pulse, run, refpulse, refrun, status, i, j, k,dum1;
-  double double_3;
+  int idx, status, i, j, k;
   IDS::core_profiles cp;
-
-  char longstring[132];
-  char treename[]="ids";
-  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles_get";
-  pulse = 12;
-  run = 2;
-  refpulse = 0;
-  refrun =0;
+  
+  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles";
 
   float time=10;
-  int icoil, number=10;
-  char dum[23];
-  int interp = 2;
-
-  char* userName = NULL;
-
-  userName = getenv("USER");
-  if(userName == NULL) 
-    {
-      printf( "PANIC: $USER not found! Exiting...");
-      exit(1);
-    }
 
   IdsNs::IDS ids;
   ids.open(uri, OPEN_PULSE);
   
-  printf("\nGetting core_profiles IDS pulse:%d, run:%d, refpulse:%d, refrun:%d\n", pulse, run, refpulse, refrun);
+  printf("\nGetting core_profiles \n");
   ids._core_profiles.get();
-  //   cout << "core_profiles pulse: " << pulse << "\n" << ids._core_profiles;
-
-  //printf("\n===============================================\n");
-  //printf("\n    Pulse=%d\n",pulse);
-  //printf("\n===============================================\n");
 
   printf("ids_properties= comment:%s,"  " Homogeneous:%d\n",
 	 ids._core_profiles.ids_properties.comment.c_str(),

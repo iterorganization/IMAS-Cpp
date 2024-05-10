@@ -4,10 +4,7 @@ using namespace IdsNs;
 int main(int argc, char *argv[])
 {
     float time = 0.2;
-    int interp = 2;
-    int shot = 54;
     int dynamicsize = 10;
-    int staticsize = 3;
 
     IdsNs::distributions_IDSBase dis;
 

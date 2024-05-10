@@ -7,22 +7,9 @@ using namespace IdsNs;
 int main(int argc, char *argv[])
 {
   double  vect1DDouble_1[10], vect1DDouble_2[12];
-  int number = 10; //number of elements
-  int pulse = 12,
-    run = 3,
-    refpulse = 0,
-    refrun = 0,
-    i,j, Sz,idx;
-  char treename[]="ids";
-  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles_putSlice";
+  int i,j, Sz;
+  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles";
   bool first_slice = true;
-
-  char* userName = getenv("USER");
-  if(userName == NULL) 
-    {
-      printf( "PANIC: $USER not found! Exiting...");
-      exit(1);
-    }
 
   //The parameters passed to this creator define the pulse and run number. The second pair of arguments defines the reference pulse and run
   //and is used when the a new database is created, as in this example.
@@ -44,7 +31,7 @@ int main(int argc, char *argv[])
   ids._core_profiles.ids_properties.homogeneous_time = 1; //! Mandatory to define this property
   ids._core_profiles.ids_properties.comment = "This is a test ids V3 Put_slice by C++";
 
-  printf("put_slice_core_profiles IDS pulse:%d, run:%d, refpulse:%d, refrun:%d\n",pulse,run,refpulse,refrun);
+  printf("put_slice_core_profiles IDS\n");
 
 
   ids._core_profiles.profiles_1d.resize(1);

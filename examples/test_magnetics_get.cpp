@@ -6,16 +6,7 @@ int main(int argc, char *argv[])
 {
   float time = 0.21;
   int interp = 2;
-  int pulse = 54;
-  int dynamicsize = 10;
-  int staticsize = 3;
-  char uri[]="imas:mdsplus?path=./test_db_test_magnetics_get";
-  char* userName = getenv("USER");
-  if(userName == NULL) 
-    {
-      printf( "PANIC: $USER not found! Exiting...");
-      exit(1);
-    }
+  char uri[]="imas:mdsplus?path=./test_db_test_magnetics";
     
   IdsNs::IDS ids;
   ids.open(uri, OPEN_PULSE);

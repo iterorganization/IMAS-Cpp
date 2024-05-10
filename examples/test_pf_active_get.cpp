@@ -5,31 +5,13 @@ using namespace IdsNs;
 int main(int argc, char *argv[])
 {
     float time=10;
-    int icoil,i,pulse, number=10;
-    char dum[23];
-    int interp = 2;
-    char uri[]="imas:mdsplus?path=./test_db_test_pf_active_get";
-
-    if(argc > 1) pulse=atoi(argv[1]);
-    else pulse=12;
-
-    char* userName = NULL;
-
-    userName = getenv("USER");
-    if(userName == NULL) 
-    {
-        printf( "PANIC: $USER not found! Exiting...");
-        exit(1);
-    }
+    int icoil,i;
+    char uri[]="imas:mdsplus?path=./test_db_test_pf_active";
    
    IdsNs::IDS ids;
    ids.open(uri, OPEN_PULSE);
 
    ids._pf_active.get();
-   cout << "pf_active pulse: " << pulse << "\n" << ids._pf_active;
-   printf("\n===============================================\n");
-   printf("\n    Pulse=%d\n",pulse);
-   printf("\n===============================================\n");
 
    printf("ids_properties= comment_of:%s, Homog:%d\n",ids._pf_active.ids_properties.comment.c_str(), ids._pf_active.ids_properties.homogeneous_time );
 

@@ -7,22 +7,8 @@ using namespace IdsNs;
 int main(int argc, char *argv[])
 {
   double  vect1DDouble_1[10], vect1DDouble_2[12];
-  int number = 10; //number of elements
-  char treename[]="ids";
-  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles_put";
-  int pulse = 12,
-    run = 2,
-    refpulse = 0,
-    refrun = 0,
-    i,j, Sz,idx;
-
-  char* userName = getenv("USER");
-  if(userName == NULL) 
-    {
-      printf( "PANIC: $USER not found! Exiting...");
-      exit(1);
-    }
-
+  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles";
+  int i,j, Sz;
 
   //The parameters passed to this creator define the pulse and run number. The second pair of arguments defines the reference pulse and run
   //and is used when the a new database is created, as in this example.
@@ -43,7 +29,6 @@ int main(int argc, char *argv[])
   ids.open(uri, FORCE_CREATE_PULSE);
 
   //! allocate the ids fields
-  //printf("SIZE %d %d \n",sizeof(time_1), sizeof(time_1)/sizeof(time_1[0]));
   Sz= sizeof(time_1)/sizeof(time_1[0]);
   ids._core_profiles.profiles_1d.resize(Sz);
   printf("Completed allocation of %d profiles_1d\n", Sz);
@@ -84,7 +69,7 @@ int main(int argc, char *argv[])
   printf("\nStart Putting the core_profiles IDS\n");
 
   ids._core_profiles.put();
-  printf("core_profiles IDS pulse:%d, run:%d, refpulse:%d, refrun:%d saved\n", pulse, run, refpulse, refrun);
-
+  printf("core_profiles IDS\n");
+  
   ids.close();
 }

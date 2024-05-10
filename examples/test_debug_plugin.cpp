@@ -8,19 +8,10 @@ void exitIfError(al_status_t &status);
 
 void execute(char** argv) {
 
-    int pulse=54;
-    char* userName = NULL;
-    char uri[]="imas:mdsplus?path=./test_db_test_debug_plugin";
-
-    userName = getenv("USER");
-    if(userName == NULL) 
-    {
-        printf( "PANIC: $USER not found! Exiting...");
-        exit(1);
-    }
+    char uri[]="imas:mdsplus?path=./test_db_test_plugin";
 
     IdsNs::IDS data_entry;
-    data_entry.open(uri, OPEN_PULSE);
+    data_entry.open(uri, FORCE_CREATE_PULSE);
 
     al_status_t status = al_register_plugin("debug");
     exitIfError(status);

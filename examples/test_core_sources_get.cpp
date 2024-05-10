@@ -5,22 +5,13 @@ using namespace IdsNs;
 
 int main(int argc, char **argv)
 {
-  int pulse=12,
-    run = 2,
-    refpulse = 0,
-    refrun = 0;
   int i,j,k,l,ni,nj,nk,nl;
-  char uri[]="imas:mdsplus?path=./test_db_test_core_sources_get";
-  char *userName = getenv("USER");
-  if (userName == NULL)
-    {
-      std::cerr << "PANIC: $USER not found! Exiting...\n";
-      return 1;
-    }
+  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles";
+
   IdsNs::IDS ids;
   ids.open(uri, OPEN_PULSE);
 
-  std::cout << "core_sources IDS pulse:" << pulse << " run:" << run << " opened\n";
+  std::cout << "core_sources IDS opened\n";
 
   std::cout << "ids_properties.homogeneous_time = " << ids._core_sources.ids_properties.homogeneous_time << "\n";
   std::cout << "ids_properties.comment = " << ids._core_sources.ids_properties.comment << "\n";

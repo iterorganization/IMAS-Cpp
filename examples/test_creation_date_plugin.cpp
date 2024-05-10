@@ -15,18 +15,10 @@ Next, the function sets the IDS properties, including the time base, and then wr
 
 void execute(char** argv) {
 
-    int pulse=54;
-    char* userName = NULL;
-    char uri[]="imas:mdsplus?path=./test_db_test_creation_date_plugin";
+    char uri[]="imas:mdsplus?path=./test_db_test_plugin";
 
-    userName = getenv("USER");
-    if(userName == NULL) 
-    {
-        printf( "PANIC: $USER not found! Exiting...");
-        exit(1);
-    }
     IdsNs::IDS data_entry;
-    data_entry.open(uri, OPEN_PULSE);
+    data_entry.open(uri, FORCE_CREATE_PULSE);
 	
     std::cout << "Patching the field 'ids_properties/creation_date' of a magnetics IDS for demo purpose." << std::endl;
 

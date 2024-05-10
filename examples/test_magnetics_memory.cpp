@@ -6,20 +6,12 @@ int main(int argc, char *argv[])
 {
   float time = 0.21;
   int interp = 2;
-  int pulse = 54;
   int dynamicsize = 10;
   int staticsize = 3;
   int pulsectx = -1;
   al_status_t al_status;
- 
-  char* userName = getenv("USER");
-  if(userName == NULL) 
-    {
-      printf( "PANIC: $USER not found! Exiting...");
-      exit(1);
-    }
-  char* uri;
-  al_build_uri_from_legacy_parameters(MEMORY_BACKEND, pulse, 3, userName, "test", "3", "", &uri);
+  char uri[]="imas:memory?path=./test_db_test_magnetics";
+
   al_status = al_begin_dataentry_action(uri, FORCE_CREATE_PULSE, &pulsectx);
   if (al_status.code) 
     {
