@@ -123,7 +123,7 @@ int IdsNs::IDS::getIdx()
     return this->getPulseCtx();
 }
 
-int IdsNs::IDS::open(const std::string &uri, int mode)
+int IdsNs::IDS::open(const std::string &amp;uri, int mode)
 {
     int pulseCtx;
     al_status_t al_status;
