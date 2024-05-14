@@ -87,7 +87,7 @@ class LIBRARY_API IDS
     string getTreeName(){return treeName;}
     BACKEND getBackend(){return backend;}
     bool isConnected(){return connected;}
-    int open(const std::string uri, int mode);
+    int open(const std::string &amp;uri, int mode);
     int open(const char *uri, int mode);
     int openEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);
     int createEnv(const char *user, const char *tokamak, const char *version, const char* option = nullptr);

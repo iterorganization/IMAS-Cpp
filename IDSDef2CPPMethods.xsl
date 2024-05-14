@@ -123,7 +123,7 @@ int IdsNs::IDS::getIdx()
     return this->getPulseCtx();
 }
 
-int IdsNs::IDS::open(const std::string uri, int mode)
+int IdsNs::IDS::open(const std::string &uri, int mode)
 {
     int pulseCtx;
     al_status_t al_status;
@@ -152,7 +152,6 @@ int IdsNs::IDS::open(const char *uri, int mode)
     printf("Error opening URI %s\n%s\n", "al_begin_dataentry_action", al_status.message);
     return al_status.code;
     }
-
     this->pulseCtx = pulseCtx;
     this->connected = true;
     this->setPulseCtx(pulseCtx);
