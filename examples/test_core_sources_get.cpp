@@ -6,7 +6,7 @@ using namespace IdsNs;
 int main(int argc, char **argv)
 {
   int i,j,k,l,ni,nj,nk,nl;
-  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles";
+  char uri[]="imas:mdsplus?path=./test_db_test_core_sources";
 
   IdsNs::IDS ids;
   ids.open(uri, OPEN_PULSE);

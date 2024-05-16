@@ -7,7 +7,7 @@ int main(int argc, char **argv)
 {
   int i,j,k,l;
   int s=2, t=12;
-  char uri[]="imas:mdsplus?path=./test_db_test_core_profiles";
+  char uri[]="imas:mdsplus?path=./test_db_test_core_sources";
   
   // Define a first generic vector and its time base
   double* time = new double[t]; 

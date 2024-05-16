@@ -8,7 +8,7 @@ void exitIfError(al_status_t &status);
 
 void execute(char** argv) {
 
-    char uri[]="imas:mdsplus?path=./test_db_test_plugin";
+    char uri[]="imas:mdsplus?path=./test_db_test_partial_gt_plugin";
 
     IdsNs::IDS data_entry;
     data_entry.open(uri, FORCE_CREATE_PULSE);

@@ -15,7 +15,7 @@ Next, the function sets the IDS properties, including the time base, and then wr
 
 void execute(char** argv) {
 
-    char uri[]="imas:mdsplus?path=./test_db_test_plugin";
+    char uri[]="imas:mdsplus?path=./test_db_test_creation_date_plugin";
 
     IdsNs::IDS data_entry;
     data_entry.open(uri, FORCE_CREATE_PULSE);
