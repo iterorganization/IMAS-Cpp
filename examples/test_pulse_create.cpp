@@ -1,10 +1,10 @@
 #include "ALClasses.h"
-
+#include <string.h>
 using namespace IdsNs;
 
 int main(int argc, char **argv)
 {
-  char uri[]="imas:mdsplus?path=./test_db_test_pulse_create";
+  std::string uri = "imas:mdsplus?path=./test_db_test_pulse_create";
 
   IdsNs::IDS ids;
   ids.open(uri, FORCE_CREATE_PULSE);

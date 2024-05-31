@@ -1,14 +1,14 @@
 //Definition of the class structures in file ALClasses.h
 #include "ALClasses.h"
+#include <string>
 
 using namespace IdsNs;
-
 
 int main(int argc, char *argv[])
 {
   double * vect1DDouble_1, time_1, vect1DDouble_2, vect1DDouble_3;
   int number = 10; //number of elements
-  char uri[]="imas:mdsplus?path=./test_db_test_pf_active";
+  std::string uri = "imas:mdsplus?path=./test_db_test_pf_active";
 
   //The parameters passed to this creator define the pulse and run number. The second pair of arguments defines the reference pulse and run
   //and is used when the a new database is created, as in this example.
