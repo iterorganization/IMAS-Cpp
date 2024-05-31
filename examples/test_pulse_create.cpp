@@ -1,5 +1,5 @@
 #include "ALClasses.h"
-#include <string.h>
+#include <string>
 using namespace IdsNs;
 
 int main(int argc, char **argv)
