@@ -1320,22 +1320,10 @@ or @data_type='cpx_1d_type' or @data_type='CPX_1D' or @data_type='STR_1D') and c
           <xsl:value-of select="substring-before($coord,' OR')"/>
         </xsl:if>
         </xsl:variable>
-	<xsl:variable name="is-index-dep">
-	<xsl:if test="$root='/'">
-          <xsl:if test="contains($onecoord,'(itime') and not(contains($onecoord,'(itime)/time'))">
-          <xsl:value-of select="'yes'"/>
-        </xsl:if>
-	</xsl:if>
-	<xsl:if test="not($root='/')">
-	  <xsl:if test="contains(substring-after($onecoord,$root),'(itime') and not(contains($onecoord,'(itime)/time'))">
-          <xsl:value-of select="'yes'"/>
-        </xsl:if>
-        </xsl:if>
-	</xsl:variable>
     <!-- missing IDS coordinate exception--> 
-    <xsl:if test="starts-with($coord,$currpath) and contains($ispresent,'yes')  and not($is-index-dep='yes')">
+    <xsl:if test="starts-with($coord,$currpath) and contains($ispresent,'yes')">
       <xsl:if test="$test='false'">
-    // validation of <xsl:value-of select="@path"/> dimension <xsl:value-of select="number($dimension)"/>
+    // validation of <xsl:value-of select="@path_doc"/> dimension <xsl:value-of select="number($dimension)"/>
         <xsl:variable name="newpath">
           <xsl:if test="not($currpath='')">
             <xsl:value-of select="substring-after(@path,concat(ancestor::field[@path_doc = $currpath]/@path,'/'))"/>
@@ -1922,7 +1910,7 @@ or @data_type='cpx_1d_type' or @data_type='CPX_1D' or @data_type='STR_1D') and c
       <xsl:param name="coord"/>
       <xsl:param name="dimension"/>
         <xsl:if test="not(contains($coord,' OR ')) and contains($coord, '1...') and not(contains($coord, '1...N')) and not(string(number(substring-after($coord,'1...')))='NaN')">
-        // validation of <xsl:value-of select="@path"/> dimension <xsl:value-of select="number($dimension)"/>
+        // validation of <xsl:value-of select="@path_doc"/> dimension <xsl:value-of select="number($dimension)"/>
           arraySize = this-><xsl:value-of select = "@name"/>.extent(<xsl:value-of select="number($dimension)"/>);
           if (arraySize != 0) {
             if (arraySize != <xsl:value-of select = "substring-after($coord,'1...')"/>) {
@@ -1933,7 +1921,7 @@ or @data_type='cpx_1d_type' or @data_type='CPX_1D' or @data_type='STR_1D') and c
           }
         </xsl:if>
         <xsl:if test="$coord='time'">
-        // validation of <xsl:value-of select="@path"/> dimension <xsl:value-of select="number($dimension)"/>
+        // validation of <xsl:value-of select="@path_doc"/> dimension <xsl:value-of select="number($dimension)"/>
         arraySize = this-><xsl:value-of select = "@name"/>.extent(<xsl:value-of select="number($dimension)"/>);
         if (arraySize != 0) {
           if (idsTimeMode == IDS_TIME_MODE_HOMOGENEOUS ) {
