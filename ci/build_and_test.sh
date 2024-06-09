@@ -8,29 +8,77 @@ set -e -o pipefail
 echo "Loading modules..."
 
 # Set up environment such that module files can be loaded
+if test -f /etc/profile.d/modules.sh ;then
+. /etc/profile.d/modules.sh
+else
 . /usr/share/Modules/init/sh
+fi
 module purge
-# Load modules:
+
+# Check for TOOLCHAIN
+TOOLCHAIN=${TOOLCHAIN:-foss-2023b}
+# Load modules that correspond to toolchain
+case "$TOOLCHAIN" in
+  *-2020b)
+echo "... 2020b"
+MODULES=(
+    CMake/3.24.3-GCCcore-10.2.0
+    Boost/1.74.0-GCC-10.2.0  # AL-Core
+    Blitz++/1.0.2-GCCcore-10.2.0
+    Saxon-HE/10.3-Java-11  # DD
+    Python/3.8.6-GCCcore-10.2.0  # for docs
+    libxml2/2.9.10-GCCcore-10.2.0  # AL-Core
+    MDSplus/7.131.6-GCCcore-10.2.0  # backend
+    MDSplus-Java/7.131.6-GCCcore-10.2.0-Java-11  # backend
+    UDA/2.7.5-GCC-10.2.0  # backend
+)
+  ;;&
+  *foss-2020b)
+echo "... foss-2020b"
+MODULES=(${MODULES[@]}
+    HDF5/1.10.7-gompi-2020b  # backend
+)
+  ;;&
+  *intel-2020b)
+echo "... intel-2020b"
+MODULES=(${MODULES[@]}
+    HDF5/1.10.7-iimpi-2020b  # backend
+)
+  ;;
+  *-2023b)
+echo "... 2023b"
 MODULES=(
     CMake/3.27.6-GCCcore-13.2.0
-    # Required for building the lowlevel and backends
-    Boost/1.83.0-GCC-13.2.0
-    HDF5/1.14.3-gompi-2023b
-    MDSplus/7.132.0-GCCcore-13.2.0
-    UDA/2.7.4-GCC-13.2.0
-    # Required for building MDSplus models
-    Saxon-HE/12.4-Java-21
-    # Python for documentation
-    Python/3.11.5-GCCcore-13.2.0
-    # C++ compilers
-    intel/2023b
-    # Blitz
+    Boost/1.83.0-GCC-13.2.0  # AL-Core
     Blitz++/1.0.2-GCCcore-13.2.0
+    Saxon-HE/12.4-Java-21  # DD
+    Python/3.11.5-GCCcore-13.2.0
+    libxml2/2.11.5-GCCcore-13.2.0  # AL-Core
+    MDSplus/7.132.0-GCCcore-13.2.0  # backend
+    UDA/2.7.5-GCC-13.2.0  # backend
+    Python/3.11.5-GCCcore-13.2.0  # for docs
 )
+  ;;&
+  *foss-2023b)
+echo "... foss-2023b"
+MODULES=(${MODULES[@]}
+    HDF5/1.14.3-gompi-2023b  # backend
+)
+  ;;&
+  *intel-2023b)
+echo "... intel-2023b"
+MODULES=(${MODULES[@]}
+    HDF5/1.14.3-iimpi-2023b  # backend
+)
+  ;;
+esac
+echo "${MODULES[@]}" | tr " " "\n"
+
 module load "${MODULES[@]}"
 
 # Debuggging:
-echo "Done loading modules"
+echo "Done loading modules:"
+module list
 set -x
 
 # Create a local git configuration with our access token
