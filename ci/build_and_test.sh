@@ -38,11 +38,19 @@ echo "... foss-2020b"
 MODULES=(${MODULES[@]}
     HDF5/1.10.7-gompi-2020b  # backend
 )
+CMAKE_ARGS=(${CMAKE_ARGS[@]}
+    -DCMAKE_C_COMPILER=${CC:-gcc}
+    -DCMAKE_CXX_COMPILER=${CXX:-g++}
+)
   ;;&
   *intel-2020b)
 echo "... intel-2020b"
 MODULES=(${MODULES[@]}
     HDF5/1.10.7-iimpi-2020b  # backend
+)
+CMAKE_ARGS=(${CMAKE_ARGS[@]}
+    -DCMAKE_C_COMPILER=${CC:-icc}
+    -DCMAKE_CXX_COMPILER=${CXX:-icpc}
 )
   ;;
   *-2023b)
@@ -64,11 +72,19 @@ echo "... foss-2023b"
 MODULES=(${MODULES[@]}
     HDF5/1.14.3-gompi-2023b  # backend
 )
+CMAKE_ARGS=(${CMAKE_ARGS[@]}
+    -DCMAKE_C_COMPILER=${CC:-gcc}
+    -DCMAKE_CXX_COMPILER=${CXX:-g++}
+)
   ;;&
   *intel-2023b)
 echo "... intel-2023b"
 MODULES=(${MODULES[@]}
     HDF5/1.14.3-iimpi-2023b  # backend
+)
+CMAKE_ARGS=(${CMAKE_ARGS[@]}
+    -DCMAKE_C_COMPILER=${CC:-icx}
+    -DCMAKE_CXX_COMPILER=${CXX:-icpx}
 )
   ;;
 esac
@@ -87,14 +103,14 @@ if [ "x$bamboo_HTTP_AUTH_BEARER_PASSWORD" != "x" ]; then
     echo "[http \"https://git.iter.org/\"]
         extraheader = Authorization: Bearer $bamboo_HTTP_AUTH_BEARER_PASSWORD" > git/config
     export XDG_CONFIG_HOME=$PWD
-    git config -l
+    git config -l | cat
 fi
 
 # Ensure the build directory is clean:
 rm -rf build
 
 # CMake configuration:
-CMAKE_ARGS=(
+CMAKE_ARGS=(${CMAKE_ARGS[@]}
     -D "CMAKE_INSTALL_PREFIX=$(pwd)/test-install/"
     # Enable all backends
     -D AL_BACKEND_HDF5=ON
