@@ -12,21 +12,20 @@ echo "Loading modules..."
 module purge
 # Load modules:
 MODULES=(
-    CMake/3.24.3-GCCcore-10.2.0
-    # Required for building the core and backends
-    Boost/1.74.0-GCC-10.2.0
-    HDF5/1.10.7-GCCcore-10.2.0-serial
-    MDSplus/7.131.6-GCCcore-10.2.0
-    UDA/2.7.5-GCC-10.2.0
+    CMake/3.27.6-GCCcore-13.2.0
+    # Required for building the lowlevel and backends
+    Boost/1.83.0-GCC-13.2.0
+    HDF5/1.14.3-gompi-2023b
+    MDSplus/7.132.0-GCCcore-13.2.0
+    UDA/2.7.4-GCC-13.2.0
     # Required for building MDSplus models
-    Saxon-HE/11.4-Java-11
-    MDSplus-Java/7.131.6-GCCcore-10.2.0-Java-11
+    Saxon-HE/12.4-Java-21
     # Python for documentation
-    Python/3.8.6-GCCcore-10.2.0
+    Python/3.11.5-GCCcore-13.2.0
     # C++ compilers
-    intel/2020b
+    intel/2023b
     # Blitz
-    Blitz++/1.0.2-GCCcore-10.2.0
+    Blitz++/1.0.2-GCCcore-13.2.0
 )
 module load "${MODULES[@]}"
 

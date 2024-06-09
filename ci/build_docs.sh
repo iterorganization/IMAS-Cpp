@@ -12,11 +12,11 @@ echo "Loading modules..."
 module purge
 # Load modules:
 MODULES=(
-    CMake/3.24.3-GCCcore-10.2.0
+    CMake/3.27.6-GCCcore-13.2.0
     # Python for documentation
-    Python/3.8.6-GCCcore-10.2.0
+    Python/3.11.5-GCCcore-13.2.0
     # Scipy/numpy
-    SciPy-bundle/2020.11-intel-2020b
+    SciPy-bundle/2023.11-gfbf-2023b
 )
 module load "${MODULES[@]}"
 
