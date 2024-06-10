@@ -98,3 +98,32 @@ Data entry (``IdsNs::IDS``) API
         :param occurrence_list: Vector of the index (int)
         :returns: Status code: ``0`` on success, ``<0`` on failure
         :example: .. literalinclude:: code_samples/dbentry_list_all_occurrences
+
+
+    
+.. cpp:function:: al_status_t al_build_uri_from_legacy_parameters(const int backendID, const int pulse, const int run, const std::string user, const std::string tokamak, const std::string version, const std::string options, std::string& uri)
+    
+    :param backendID: Backend to use
+    :param pulse: Pulse number
+    :param run: Run number
+    :param user: User name
+    :param tokamak: Tokamak name, also known as Database name
+    :param version: Major version of the data dictionary, e.g. ``"3"``
+    :param options: Options to pass to the backend
+    :param uri: String with URI
+    :returns: al_status_t structure containing code and message fields. Code ``0`` on success.
+    :example: .. literalinclude:: code_samples/al_build_uri_from_legacy_parameters_str
+
+.. cpp:function:: al_status_t al_build_uri_from_legacy_parameters(const int backendID, const int pulse, const int run, const char* user, const char* tokamak, const char* version, const char* options, char** uri)
+    
+    :param backendID: Backend to use
+    :param pulse: Pulse number
+    :param run: Run number
+    :param user: User name
+    :param tokamak: Tokamak name, also known as Database name
+    :param version: Major version of the data dictionary, e.g. ``"3"``
+    :param options: Options to pass to the backend
+    :param uri: Char array with URI
+    :returns: al_status_t structure containing code and message fields. Code ``0`` on success.
+    :example: .. literalinclude:: code_samples/al_build_uri_from_legacy_parameters_char
+
