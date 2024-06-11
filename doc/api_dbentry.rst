@@ -103,6 +103,8 @@ Data entry (``IdsNs::IDS``) API
     
 .. cpp:function:: al_status_t al_build_uri_from_legacy_parameters(const int backendID, const int pulse, const int run, const std::string user, const std::string tokamak, const std::string version, const std::string options, std::string& uri)
     
+    Build an URI string using legacy parameters. 
+
     :param backendID: Backend to use
     :param pulse: Pulse number
     :param run: Run number
@@ -116,6 +118,8 @@ Data entry (``IdsNs::IDS``) API
 
 .. cpp:function:: al_status_t al_build_uri_from_legacy_parameters(const int backendID, const int pulse, const int run, const char* user, const char* tokamak, const char* version, const char* options, char** uri)
     
+    Build an URI string using legacy parameters. 
+
     :param backendID: Backend to use
     :param pulse: Pulse number
     :param run: Run number
