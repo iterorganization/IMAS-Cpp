@@ -11,11 +11,11 @@ int main(int argc, char *argv[])
 
   char* uri;
   char* user = "public";
-  char* tokamak = "test";
+  char* database = "test";
   char* version = "3";
   char* options = "";
 
-  al_status = al_build_uri_from_legacy_parameters(MDSPLUS_BACKEND, pulse, run, user, tokamak, version, options, &uri);
+  al_status = al_build_uri_from_legacy_parameters(MDSPLUS_BACKEND, pulse, run, user, database, version, options, &uri);
   std::cout << al_status.code;
 
   return 0; 
