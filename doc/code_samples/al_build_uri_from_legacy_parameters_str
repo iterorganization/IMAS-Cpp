@@ -1,0 +1,22 @@
+#include "ALClasses.h"
+#include <string>
+using namespace IdsNs;
+
+int main(int argc, char *argv[])
+{
+  al_status_t al_status;
+
+  int pulse = 54;
+  int run = 1234;
+
+  std::string uri;
+  std::string user = "public";
+  std::string database = "test";
+  std::string version = "3";
+  std::string options = "";
+
+  al_status = al_build_uri_from_legacy_parameters(MDSPLUS_BACKEND, pulse, run, user, database, version, options, uri);
+  std::cout << al_status.code;
+
+  return 0;
+}

@@ -5,7 +5,7 @@
 int main(int argc, char *argv[]) {
     // Open the database entry
     IdsNs::IDS ids;
-    ids.open("imas:mdsplus?user=public;pulse=131024;run=41;database=ITER?version=3", OPEN_PULSE);
+    ids.open("imas:mdsplus?user=public;pulse=131024;run=41;database=ITER;version=3", OPEN_PULSE);
 
     // Retrieve the time slice just before t=370 of the core_profiles IDS
     ids._core_profiles.getSlice(370, PREVIOUS_SAMPLE);

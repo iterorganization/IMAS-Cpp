@@ -9,7 +9,7 @@ int main(int argc, char *argv[]) {
     std::vector<int> occurrence_list;
     int status;
     // Open the database entry by providing an IMAS URI
-    ids.open("imas:mdsplus?user=public;pulse=131024;run=41;database=ITER?version=3", OPEN_PULSE);
+    ids.open("imas:mdsplus?user=public;pulse=131024;run=41;database=ITER;version=3", OPEN_PULSE);
 
     // get all occurrence of all "ids_properties/comment" of each 'distributions' IDS
     status = IdsNs::IDS::list_all_occurrences(ids.getPulseCtx(), "distributions", "ids_properties/comment", node_content_list, occurrence_list);
