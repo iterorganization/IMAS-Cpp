@@ -1,5 +1,5 @@
 #include "example_001_open_database.cpp"
-#include "example_002_fill_data_in_ids.cpp.cpp"
+#include "example_002_fill_data_in_ids.cpp"
 
 int main(int argc, char *argv[])
 {

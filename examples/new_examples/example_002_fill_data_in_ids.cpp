@@ -47,12 +47,21 @@ void default_values_and_aos_operations()
     edge_profiles_1.grid_ggd.resize(1);
     edge_profiles_1.grid_ggd(0).identifier.name = "First test struct";
 
+
+
     IdsNs::IDS::edge_profiles edge_profiles_2;
     edge_profiles_2.grid_ggd.resize(1);
     edge_profiles_2.grid_ggd(0).identifier.name = "Second test struct";
+    
+    //After calling resize,  data will be deleted.
+    //After calling resizeAndPreserve, the data will be preserved.
+    int size_before_resize = edge_profiles_1.grid_ggd.size();
+    edge_profiles_1.grid_ggd.resizeAndPreserve(edge_profiles_1.grid_ggd.size() + edge_profiles_2.grid_ggd.size());
 
-    edge_profiles_1.grid_ggd.resizeAndPreserve(2);
-    edge_profiles_1.grid_ggd(1) = edge_profiles_2.grid_ggd(0);
+    for(int i=0; i<edge_profiles_2.grid_ggd.size(); i++)
+    {
+        edge_profiles_1.grid_ggd(i+size_before_resize) = edge_profiles_2.grid_ggd(i);
+    }
 
     for(int i=0; i<edge_profiles_1.grid_ggd.size(); i++){
          std::cout<<"edge_profiles/grid_ggd after merge:\n"<<edge_profiles_1.grid_ggd(i).identifier.name<<std::endl;
