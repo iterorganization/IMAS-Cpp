@@ -47,19 +47,16 @@ void default_values_and_aos_operations()
     edge_profiles_1.grid_ggd.resize(1);
     edge_profiles_1.grid_ggd(0).identifier.name = "First test struct";
 
-
-
     IdsNs::IDS::edge_profiles edge_profiles_2;
     edge_profiles_2.grid_ggd.resize(1);
     edge_profiles_2.grid_ggd(0).identifier.name = "Second test struct";
     
-    //After calling resize,  data will be deleted.
-    //After calling resizeAndPreserve, the data will be preserved.
+    // after calling resize,  data will be deleted.
+    // after calling resizeAndPreserve, the data will be preserved.
     int size_before_resize = edge_profiles_1.grid_ggd.size();
     edge_profiles_1.grid_ggd.resizeAndPreserve(edge_profiles_1.grid_ggd.size() + edge_profiles_2.grid_ggd.size());
 
-    for(int i=0; i<edge_profiles_2.grid_ggd.size(); i++)
-    {
+    for(int i=0; i<edge_profiles_2.grid_ggd.size(); i++){
         edge_profiles_1.grid_ggd(i+size_before_resize) = edge_profiles_2.grid_ggd(i);
     }
 
@@ -103,7 +100,7 @@ void copying_and_validating_ids()
         gyrokinetics_local.validate();
     }
     catch (IdsNs::ValidationException ve){
-        std::cout << ve.what() << std::endl;
+        std::cout << "Caught exception (raised intentionally):\n"<<ve.what() << std::endl;
     }
 
     // to fix this
@@ -134,16 +131,16 @@ void copying_and_validating_ids()
         gyrokinetics_local.linear.wavevector(0).eigenmode(0).angle_pol(i) = i;
     }
 
-    // right way to copy IDS
+    // IDS copy can be created by putting it to the memory backend and getting it again
     IdsNs::IDS::gyrokinetics_local gyrokinetics_copy;
     IdsNs::IDS ids;
 
-    // Create memory backend Data Entry and associate the gyrokinetics_local IDSs
+    // create memory backend Data Entry and associate the gyrokinetics_local IDSs
     ids.open("imas:memory?path=/", FORCE_CREATE_PULSE);
     gyrokinetics_local.setPulseCtx(ids.getPulseCtx());
     gyrokinetics_copy.setPulseCtx(ids.getPulseCtx());
 
-    // Copy the IDS through the memory backend
+    // copy the IDS through the memory backend
     gyrokinetics_local.put();
     gyrokinetics_copy.get();
 
