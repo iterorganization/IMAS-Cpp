@@ -32,6 +32,11 @@ void creating_completly_new_ids()
     }
     // IDS will be cleaned up when exiting the scope where it is declared
 
+    // IDSs can be printed using std::cout
+    std::cout << "Pritnting core_profiles:                                 " << std::endl;
+    std::cout << "empty_core_profiles.ids_properties.homogeneous_time: \n" << core_profiles.ids_properties.homogeneous_time << std::endl;
+    std::cout << "empty_core_profiles.time:                            \n" << core_profiles.time  << std::endl;
+    std::cout << "empty_core_profiles.global_quantities.ip:            \n" << core_profiles.global_quantities.ip  << std::endl;
 }
 
 void default_values_and_aos_operations()
