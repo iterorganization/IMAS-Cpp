@@ -96,6 +96,53 @@ IDS (``IdsNs::Ids``) API
         :returns: Status code: ``0`` on success, ``<0`` on failure.
         :example: .. literalinclude:: code_samples/dbentry_getslice
 
+    .. cpp:function:: int getSample(int occurrence, double tmin, double tmax, const std::vector<double> &dtime, int interpolMode)
+        
+        Read a range of time slices from an IDS in this Database Entry.
+
+        This method has three different modes, depending on the provided arguments:
+
+        1.  No interpolation. This method is selected when :param:`dtime` is an empty 
+            vector (dtime.size() == 0) and:param:`interpolMode` is 0.
+
+            This mode returns an IDS object with all constant/static data filled. The
+            dynamic data is retrieved for the provided time range [tmin, tmax].
+
+        2.  Interpolate dynamic data on a uniform time base. This method is selected
+            when :param:`dtime` and :param:`interpolMode` are provided.
+            :param:`dtime` must be a std::vector<double> of size 1.
+
+            This mode will generate an IDS with a homogeneous time vector ``[tmin, tmin
+            + dtime, tmin + 2*dtime, ...`` up to ``tmax``. The returned IDS always has
+            ``ids_properties.homogeneous_time = 1``.
+
+        3.  Interpolate dynamic data on an explicit time base. This method is selected
+            when :param:`dtime` and :param:`interpolMode` are provided.
+            :param:`dtime` must be a std::vector<double> of size larger than 1.
+
+            This mode will generate an IDS with a homogeneous time vector equal to
+            :param:`dtime`. :param:`tmin` and :param:`tmax` are ignored in this mode.
+            The returned IDS always has ``ids_properties.homogeneous_time = 1``.
+
+            :param occurrence: Which occurrence of the IDS to read.
+            :param tmin: Lower bound of the requested time range
+            :param tmax: Upper bound of the requested time range, must be larger than or
+                equal to :param:`tmin`
+            :param dtime: Interval to use when interpolating, must be a std::vector<double>
+                containing an explicit time base to interpolate.
+            :param interpolMode: Interpolation method to use. Available options:
+
+                - :const: CLOSEST_INTERP
+                - :const: PREVIOUS_INTERP
+                - :const: LINEAR_INTERP
+
+            :returns: The loaded IDS.
+
+    .. cpp:function:: int getSample(double tmin, double tmax, const std::vector<double> &dtime, int interpolMode)
+
+        Same as :cpp:func:`int Ids::getSample(int, double, double, std::vector<double>, int)`, but with
+        :code:`occurrence = 0`.
+
     .. cpp:function:: int put(int occurrence=0)
 
         Write the contents of an IDS to the Database Entry.
