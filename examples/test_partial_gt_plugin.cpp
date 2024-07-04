@@ -8,7 +8,8 @@ void exitIfError(al_status_t &status);
 
 void execute(char** argv) {
 
-    char uri[]="imas:mdsplus?path=./test_db_test_partial_gt_plugin";
+    char uri[]="imas:mdsplus?path=./test_db_test_magnetics";
+
     //char uri[] = "imas:hdf5?path=/home/ITER/fleuryl/public/imasdb/west/3/54914/4";
     IdsNs::IDS data_entry;
     data_entry.open(uri, OPEN_PULSE);
