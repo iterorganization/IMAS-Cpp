@@ -42,7 +42,7 @@ void put_entire_ids()
     // fix wrong IDS field size
     equilibrium.vacuum_toroidal_field.b0.resize(3);
     for(int i=0; i<3; i++){
-        equilibrium.vacuum_toroidal_field.b0(i) =i;
+        equilibrium.vacuum_toroidal_field.b0(i) = i;
     }
 
     try{
@@ -93,7 +93,7 @@ void put_slice()
         summary.heating_current_drive.nbi(0).beam_current_fraction.value.resize(3,100);
         for(int i=0;i<3;i++){
             for(int j=0; j<100; j++){
-                summary.heating_current_drive.nbi(0).beam_current_fraction.value(i,j) = 100 * i;
+                summary.heating_current_drive.nbi(0).beam_current_fraction.value(i,j) = 100*i;
             }
         }
 
@@ -159,7 +159,7 @@ void put_into_non_default_occurrence()
     equilibrium.vacuum_toroidal_field.b0.resize(3);
 
     for(int i=0; i<3; i++){
-        equilibrium.vacuum_toroidal_field.b0(i) =10 + 10*i;
+        equilibrium.vacuum_toroidal_field.b0(i) = 10+10*i;
     }
     
     equilibrium.setPulseCtx(ids.getPulseCtx());
@@ -171,7 +171,7 @@ void put_into_non_default_occurrence()
     equilibrium.vacuum_toroidal_field.r0 = 25.5;
     equilibrium.vacuum_toroidal_field.b0.resize(3);
     for(int i=0; i<3; i++){
-    equilibrium.vacuum_toroidal_field.b0(i) =11 + 11*i;
+    equilibrium.vacuum_toroidal_field.b0(i) = 11+11*i;
     }
 
     // put IDS into occurrence 2
