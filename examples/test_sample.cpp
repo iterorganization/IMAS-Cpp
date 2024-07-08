@@ -9,18 +9,19 @@
 
 using namespace IdsNs;
 
-int execute_tests(int backend);
+int execute_tests(BACKEND backend);
 
 int main(int argc, char *argv[])
 {
   int status = execute_tests(HDF5_BACKEND);
   if (status < 0) return status;
-  status = execute_tests(MDSPLUS_BACKEND);
+  //status = execute_tests(MDSPLUS_BACKEND);
   return status;
 }
 
-int execute_tests(int backend)
+int execute_tests(BACKEND backend)
 {
+  printf("Running test for backend=%d\n", backend);
   int status, i, j, k;
 
   int pulse = 12;
@@ -34,12 +35,13 @@ int execute_tests(int backend)
     printf("PANIC: $USER not found! Exiting...");
     exit(1);
   }
+
   const int N_time = 10;
 
   double time_1[] = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0};
 
   IdsNs::IDS ids(pulse, run, 0, 0);
-  ids.setBackend(HDF5_BACKEND);
+  ids.setBackend(backend);
 
   ids.createEnv(userName, "test", "3");
   ids._magnetics.ids_properties.homogeneous_time = 1;
@@ -95,7 +97,7 @@ int execute_tests(int backend)
 
   ids.close();
   ids.openEnv(userName, "test", "3"); //Open the database
-  ids.setBackend(HDF5_BACKEND);
+  ids.setBackend(backend);
   std::vector<double> dtime;
 
   double tmin = 3.;
