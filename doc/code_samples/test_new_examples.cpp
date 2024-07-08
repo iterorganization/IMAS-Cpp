@@ -14,6 +14,10 @@ int main(int argc, char *argv[])
     copying_and_validating_ids();
 
     //example003
+    put_entire_ids();
+    put_slice();
+    put_into_non_default_occurrence();
+    
     //example004
     return 0;
 }
