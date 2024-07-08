@@ -28,6 +28,7 @@ set( TESTS
   test_pf_active_putSlice
   test_pulse_create
   test_version
+  test_sample
 )
 # Report an error when a .cpp source file exists without corresponding test:
 error_on_missing_tests( "cpp" "${TESTS}" )
