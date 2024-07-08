@@ -1,6 +1,7 @@
 #include "example_001_open_database.cpp"
 #include "example_002_fill_data_in_ids.cpp"
 
+#include "example_004_read_data_from_entry.cpp"
 int main(int argc, char *argv[])
 {
     //example001
@@ -15,5 +16,8 @@ int main(int argc, char *argv[])
 
     //example003
     //example004
+    read_entire_ids();
+    read_slice();
+    partial_get();
     return 0;
 }
