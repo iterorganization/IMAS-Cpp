@@ -19,7 +19,7 @@ void read_entire_ids()
     equilibrium.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
     equilibrium.time.resize(3);
     for(int i=0; i<3; i++){
-        equilibrium.time(i) = i;
+        equilibrium.time(i) = i+1;
     }
 
     equilibrium.vacuum_toroidal_field.b0.resize(3);
@@ -42,7 +42,7 @@ void read_entire_ids()
     // etc.
 
     // one may check if IDS was filled with data using <ids>.isDefined() method
-    std::cout<<"is equilibrium defined?:"<< equilibrium.isDefined()<<"\n";
+    std::cout<<"is equilibrium defined?:"<< equilibrium.isDefined()<< std::endl;
 }
 
 void read_slice()
@@ -66,12 +66,12 @@ void read_slice()
     summary.heating_current_drive.nbi(0).beam_current_fraction.value.resize(3,3);
     for(int i=0;i<3;i++){
         for(int j=0; j<3; j++){
-            summary.heating_current_drive.nbi(0).beam_current_fraction.value(i,j) = 100*i;
+            summary.heating_current_drive.nbi(0).beam_current_fraction.value(i,j) = i*j*100;
         }
     }
     summary.time.resize(3);
     for(int i=0;i<3;i++){
-        summary.time(i) = 1+i;
+        summary.time(i) = i+1;
     }
     summary.heating_current_drive.nbi.resize(1);
     
@@ -83,7 +83,7 @@ void read_slice()
     status = ids.open("imas:mdsplus?path=./testdb_mdsplus", OPEN_PULSE);
     // Access Layer API shares 3 different methods of interpolating values from DBEntry
     // PREVIOUS_SAMPLE
-    // CLOSEST_SAMPLE¶
+    // CLOSEST_SAMPLE
     // INTERPOLATION
 
     // this part of code presents PREVIOUS_SAMPLE. It is interpolation method that returns the previous time slice if the requested time does not exactly exist in the original IDS
@@ -93,7 +93,7 @@ void read_slice()
 
     // previous time value for 1.75 is 1.0
     // summary/global_quantities/ip/value and time=1 is 10.0
-    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.0)"<<"\n";
+    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.0)"<< std::endl;
 
     // this part of code presents CLOSEST_SAMPLE. It is interpolation method that returns the closest time slice in the original IDS
     // if requested time is equally spaced between two time slices, slice with higher index will be returned
@@ -102,7 +102,7 @@ void read_slice()
     
     // closest time value to 1.75 is 2.0
     // value for summary/global_quantities/ip/value and time=2 is 11.0
-    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.0)"<<"\n";
+    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.0)"<< std::endl;
 
     // this part of code presents INTERPOLATION. It is interpolation method that returns a linear interpolation between the existing slices before and after the requested time.
     // NOTE: The linear interpolation will be successful only if, between the two time slices of an interpolated dynamic array of structure,
@@ -115,7 +115,7 @@ void read_slice()
     summary = ids._summary;
     
     // interpolated value for summary/global_quantities/ip/value and time=1.75 is 10.75
-    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.75)"<<"\n";
+    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.75)"<< std::endl;
 
 }
 
