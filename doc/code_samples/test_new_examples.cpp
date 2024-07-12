@@ -18,6 +18,6 @@ int main(int argc, char *argv[])
     //example004
     read_entire_ids();
     read_slice();
-    partial_get();
+
     return 0;
 }

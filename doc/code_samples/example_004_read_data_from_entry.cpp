@@ -119,8 +119,3 @@ void read_slice()
 
 }
 
-void partial_get()
-{
-    // The C++ interface does not support partial_get
-    ;
-}
