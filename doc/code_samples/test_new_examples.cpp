@@ -1,5 +1,6 @@
 #include "example_001_open_database.cpp"
 #include "example_002_fill_data_in_ids.cpp"
+#include "example_003_write_data_into_entry.cpp"
 
 int main(int argc, char *argv[])
 {

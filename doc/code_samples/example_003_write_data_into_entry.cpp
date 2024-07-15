@@ -22,35 +22,15 @@ void put_entire_ids()
         equilibrium.time(i) = i;
     }
 
-    // intentional error when entering data. equilibrium/vacuum_toroidal_field/b0 should have the same size as equilibrium/time
-    equilibrium.vacuum_toroidal_field.b0.resize(1);
-    for(int i=0; i<1; i++){
-        equilibrium.vacuum_toroidal_field.b0(i) = i;
-    }
 
     equilibrium.setPulseCtx(ids.getPulseCtx());
     
-    // NOTE: putting ids into entry will trigger validate function.
-    // IDS fields types and dimensions will be checked
-    try{
-        equilibrium.put();
-    }
-    catch (IdsNs::ValidationException ve){
-        std::cout << "Caught exception (raised intentionally):\n"<<ve.what() << std::endl;
-    }
-
-    // fix wrong IDS field size
     equilibrium.vacuum_toroidal_field.b0.resize(3);
     for(int i=0; i<3; i++){
         equilibrium.vacuum_toroidal_field.b0(i) = i;
     }
 
-    try{
-        equilibrium.put();
-    }
-    catch (IdsNs::ValidationException ve){
-        std::cout << "Caught exception (raised intentionally):\n"<<ve.what() << std::endl;
-    }
+    equilibrium.put();
 
     // NOTE: some IDS fields are put automatically by Access Layer. Examples of this type of fields are:
     // - <ids>/ids_properties/version_put/data_dictionary
