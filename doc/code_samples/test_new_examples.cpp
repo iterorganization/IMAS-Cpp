@@ -2,6 +2,7 @@
 #include "example_002_fill_data_in_ids.cpp"
 #include "example_003_write_data_into_entry.cpp"
 
+#include "example_004_read_data_from_entry.cpp"
 int main(int argc, char *argv[])
 {
     //example001
@@ -20,5 +21,8 @@ int main(int argc, char *argv[])
     put_into_non_default_occurrence();
     
     //example004
+    read_entire_ids();
+    read_slice();
+
     return 0;
 }
