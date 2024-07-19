@@ -64,17 +64,13 @@ void put_slice()
         summary.stationary_phase_flag.source = "Name saved by example code iteration: " + std::to_string(i);
         
         // Fill example data
-        summary.stationary_phase_flag.value.resize(10);
-        for(int i=0; i<10; i++){
-            summary.stationary_phase_flag.value(i) = 10*i;
-        }
+        summary.stationary_phase_flag.value.resize(1);
+        summary.stationary_phase_flag.value(i) = 10*i;
 
         // Fill 2D data
-        summary.heating_current_drive.nbi(0).beam_current_fraction.value.resize(3,100);
+        summary.heating_current_drive.nbi(0).beam_current_fraction.value.resize(3,1);
         for(int i=0;i<3;i++){
-            for(int j=0; j<100; j++){
-                summary.heating_current_drive.nbi(0).beam_current_fraction.value(i,j) = 100*i;
-            }
+                summary.heating_current_drive.nbi(0).beam_current_fraction.value(i,0) = 100*i;
         }
 
         // NOTE: it is user's responsibility to organize <ids>/time field in ascending manner
