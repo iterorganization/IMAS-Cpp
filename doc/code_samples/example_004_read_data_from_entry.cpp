@@ -51,7 +51,7 @@ void read_slice()
     // We are storing and reading back an IDS - summary. Data are stored inside MDS+ file.
 
     // NOTE: this block of code uses 'FORCE_CREATE_PULSE' mode in order to create example data
-    IdsNs::IDS ids;
+  IdsNs::IDS ids,ids1;
     int status = ids.open("imas:mdsplus?path=./testdb_mdsplus", FORCE_CREATE_PULSE);
     
     // fill IDS with example data
@@ -73,8 +73,7 @@ void read_slice()
     for(int i=0;i<3;i++){
         summary.time(i) = i+1;
     }
-    summary.heating_current_drive.nbi.resize(1);
-    
+   
     summary.setPulseCtx(ids.getPulseCtx());
     summary.put();
     ids.close();
@@ -89,20 +88,18 @@ void read_slice()
     // this part of code presents PREVIOUS_SAMPLE. It is interpolation method that returns the previous time slice if the requested time does not exactly exist in the original IDS
     // if requested time is outside of time array, first, or last slice will be returned respectively
     ids._summary.getSlice(1.75, PREVIOUS_SAMPLE);
-    summary = ids._summary;
 
     // previous time value for 1.75 is 1.0
     // summary/global_quantities/ip/value and time=1 is 10.0
-    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.0)"<< std::endl;
+    std::cout<< "summary/global_quantities/ip/value slice at time=1.75 in PREVIOUS_SAMPLE mode: " << ids._summary.global_quantities.ip.value(0) << " (Should be 10.0)"<< std::endl;
 
     // this part of code presents CLOSEST_SAMPLE. It is interpolation method that returns the closest time slice in the original IDS
     // if requested time is equally spaced between two time slices, slice with higher index will be returned
     ids._summary.getSlice(1.75, CLOSEST_SAMPLE);
-    summary = ids._summary;
     
     // closest time value to 1.75 is 2.0
     // value for summary/global_quantities/ip/value and time=2 is 11.0
-    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.0)"<< std::endl;
+    std::cout<< "summary/global_quantities/ip/value slice at time=1.75 in CLOSEST_SAMPLE mode: " << ids._summary.global_quantities.ip.value(0) << " (Should be 11.0)"<< std::endl;
 
     // this part of code presents INTERPOLATION. It is interpolation method that returns a linear interpolation between the existing slices before and after the requested time.
     // NOTE: The linear interpolation will be successful only if, between the two time slices of an interpolated dynamic array of structure,
@@ -112,10 +109,11 @@ void read_slice()
 
     // NOTE: If time requested is smaller than <ids>.time[0], first slice will be returned. If requested time exceeds highest time, last slice will be returned.
     ids._summary.getSlice(1.75, INTERPOLATION);
-    summary = ids._summary;
     
     // interpolated value for summary/global_quantities/ip/value and time=1.75 is 10.75
-    std::cout<< "summary/global_quantities/ip/value for time=1: " << summary.global_quantities.ip.value << " (Should be 10.75)"<< std::endl;
+    std::cout<< "summary/global_quantities/ip/value slice at time=1.75 in INTERPOLATION mode: " << ids._summary.global_quantities.ip.value(0) << " (Should be 10.75)"<< std::endl;
 
+    ids.close();
+    
 }
 
