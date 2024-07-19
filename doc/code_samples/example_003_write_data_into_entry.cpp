@@ -65,7 +65,7 @@ void put_slice()
         
         // Fill example data
         summary.stationary_phase_flag.value.resize(1);
-        summary.stationary_phase_flag.value(i) = 10*i;
+        summary.stationary_phase_flag.value(0) = 10*i;
 
         // Fill 2D data
         summary.heating_current_drive.nbi(0).beam_current_fraction.value.resize(3,1);
