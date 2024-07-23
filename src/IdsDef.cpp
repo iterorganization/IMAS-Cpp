@@ -43,7 +43,12 @@ std::string generate_tmp_file()
         const char* IMAS_AL_SERIALIZER_TMP_DIR = std::getenv("IMAS_AL_SERIALIZER_TMP_DIR");
         if(IMAS_AL_SERIALIZER_TMP_DIR != nullptr)
         {
-            fname = std::string(IMAS_AL_SERIALIZER_TMP_DIR) + "al_serialize_";
+            fname = std::string(IMAS_AL_SERIALIZER_TMP_DIR);
+            if(fname.back() != '/')
+            {
+                fname += "/";
+            }
+            fname +="al_serialize_";
         }
         else
         {
