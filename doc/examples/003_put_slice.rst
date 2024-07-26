@@ -31,3 +31,7 @@ This example focuses on putting IDS into entry and passing IDS validation.
         summary.stationary_phase_flag.value:                              
         (0,2)
         [ 11 12 13 ]   
+
+.. seealso::
+
+    API documentation for :cpp:func:`IdsNs::IDS::open`, :cpp:func:`IdsNs::IDS::putSlice`

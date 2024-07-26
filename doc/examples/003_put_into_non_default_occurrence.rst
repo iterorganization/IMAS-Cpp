@@ -30,3 +30,7 @@ This example focuses on putting IDS into another occurrence.
         comment
         0 1 comment
         1 2 comment
+
+.. seealso::
+
+    API documentation for :cpp:func:`IdsNs::IDS::open`, :cpp:func:`IdsNs::IDS::put`, :cpp:func:`IdsNs::IDS::list_all_occurrences`

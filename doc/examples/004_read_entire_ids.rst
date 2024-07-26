@@ -17,3 +17,7 @@ We are storing and reading back an IDS - equilibrium. Data are stored inside MDS
     .. code-block:: bash
         
         is equilibrium defined?:1
+
+.. seealso::
+
+    API documentation for :cpp:func:`IdsNs::IDS::open`, :cpp:func:`IdsNs::IDS::put`, :cpp:func:`IdsNs::IDS::get`

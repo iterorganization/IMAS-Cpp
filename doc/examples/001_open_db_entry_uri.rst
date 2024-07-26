@@ -9,3 +9,7 @@ These example demonstrates how to **Open** *DB entries* using **URI with legacy 
     :end-before:  // This example focuses on creating DBEntry using URI
     :language: cpp
     :dedent: 4
+
+.. seealso::
+
+    API documentation for :cpp:func:`IdsNs::IDS::open`

@@ -24,3 +24,7 @@ This example focuses on putting IDS into entry and passing IDS validation.
         equilibrium.vacuum_toroidal_field.b0:        
         (0,2)
         [ 0 1 2 ]   
+
+.. seealso::
+
+    API documentation for :cpp:func:`IdsNs::IDS::open`, :cpp:func:`IdsNs::IDS::put`

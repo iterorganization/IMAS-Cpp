@@ -25,3 +25,7 @@ This example focuses on handling arrays of structures and default values.
         Default value for "FLOAT"   data  (edge_profiles/vacuum_toroidal_field/vacuum_toroidal_field/r0) : -9e+40
         Default value for "COMPLEX" data                                                                 : (-9e+40,-9e+40)
         Default value for 1+ dimensional data   
+
+.. seealso::
+
+    API documentation for :code:`resizeAndPreserve(n)`

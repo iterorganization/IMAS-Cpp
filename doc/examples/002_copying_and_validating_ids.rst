@@ -35,3 +35,7 @@ This example focuses on creating multi-dimensional arrays, using copmlex type an
         [ (0,0) (0,-1) (0,-2) 
         (-1,0) (-1,-1) (-1,-2) 
         (-2,0) (-2,-1) (-2,-2) ]  
+
+.. seealso::
+
+    API documentation for :cpp:func:`IdsNs::IDS::validate`

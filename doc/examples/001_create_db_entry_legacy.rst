@@ -15,3 +15,7 @@ These example demonstrates how to **create** *DB entries* using legacy parameter
     :end-before:  // This example focuses on opening DBEntry using URI
     :language: cpp
     :dedent: 4
+
+.. seealso::
+
+    API documentation for :cpp:func:`IdsNs::IDS::setBackend`, :cpp:func:`IdsNs::IDS::openEnv` (legacy)
