@@ -44,6 +44,24 @@ programming language.
 
 .. toctree::
    :maxdepth: 3
+   :caption: Examples
+
+   examples/000_how_to_run_examples
+   examples/001_create_db_entry_legacy
+   examples/001_create_db_entry_uri_with_path
+   examples/001_open_db_entry_uri
+   examples/002_creating_completly_new_ids
+   examples/002_default_values_and_aos_operations
+   examples/002_copying_and_validating_ids
+   examples/003_put_entire_ids
+   examples/003_put_slice
+   examples/003_put_into_non_default_occurrence
+   examples/004_read_entire_ids
+   examples/004_read_slice
+   
+
+.. toctree::
+   :maxdepth: 3
    :caption: API documentation
 
    api_dbentry

@@ -4,9 +4,9 @@
 
 using namespace IdsNs;
 
+// This example focuses on putting IDS into entry and passing IDS validation
 void put_entire_ids()
 {
-    // This example focuses on putting IDS into entry and passing IDS validation
     IdsNs::IDS ids;
     int status = ids.open("imas:mdsplus?path=./testdb_mdsplus",FORCE_CREATE_PULSE);
 
@@ -45,9 +45,9 @@ void put_entire_ids()
 
 }
 
+// This example focuses on putting multiple slices of IDS into entry
 void put_slice()
 {
-    // This example focuses on putting multiple slices of IDS into entry
 
     IdsNs::IDS ids;
     int status = ids.open("imas:mdsplus?path=./testdb_mdsplus",FORCE_CREATE_PULSE);
@@ -108,9 +108,9 @@ void put_slice()
 
 }
 
+// This example focuses on putting IDS into another occurrence
 void put_into_non_default_occurrence()
 {
-    // This example focuses on putting IDS into another occurrence
 
     IdsNs::IDS ids;
     int status = ids.open("imas:mdsplus?path=./testdb_mdsplus",FORCE_CREATE_PULSE);

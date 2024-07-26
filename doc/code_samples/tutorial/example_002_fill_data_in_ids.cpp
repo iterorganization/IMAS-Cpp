@@ -4,9 +4,9 @@
 
 using namespace IdsNs;
 
+// This example focuses on creating empty IDS and allocating arrays inside IDS structure
 void creating_completly_new_ids()
 {
-    // This example focuses on creating empty IDS and allocating arrays inside IDS structure
     IdsNs::IDS::core_profiles core_profiles;
 
     core_profiles.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
@@ -39,9 +39,9 @@ void creating_completly_new_ids()
     std::cout << "empty_core_profiles.global_quantities.ip:            \n" << core_profiles.global_quantities.ip  << std::endl;
 }
 
+// This example focuses on handling arrays of structures and default values
 void default_values_and_aos_operations()
 {
-    // This example focuses on handling arrays of structures and default values
 
     IdsNs::IDS::edge_profiles edge_profiles_1;
 
@@ -78,9 +78,9 @@ void default_values_and_aos_operations()
 
 }
 
+// This example focuses on creating multi-dimensional arrays, using copmlex type and copying IDS structures
 void copying_and_validating_ids()
 {
-    // This example focuses on creating multi-dimensional arrays, using copmlex type and copying IDS structures
     
     IdsNs::IDS::gyrokinetics_local gyrokinetics_local;
 

@@ -4,9 +4,9 @@
 
 using namespace IdsNs;
 
+// This example focuses on reading whole IDS from entry.
 void read_entire_ids()
 {
-    // This example focuses on reading whole IDS from entry.
     // We are storing and reading back an IDS - equilibrium. Data are stored inside MDS+ file.
     
     // NOTE: this block of code uses 'FORCE_CREATE_PULSE' mode in order to create example data
@@ -45,9 +45,9 @@ void read_entire_ids()
     std::cout<<"is equilibrium defined?:"<< equilibrium.isDefined()<< std::endl;
 }
 
+// This example focuses on reading IDS slices from entry
 void read_slice()
 {
-    // This example focuses on reading IDS slices from entry
     // We are storing and reading back an IDS - summary. Data are stored inside MDS+ file.
 
     // NOTE: this block of code uses 'FORCE_CREATE_PULSE' mode in order to create example data
