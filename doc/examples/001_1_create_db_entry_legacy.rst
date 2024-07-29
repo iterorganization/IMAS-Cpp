@@ -1,8 +1,8 @@
-========================================================================================================================
-Create DBEntry using legacy mode
-========================================================================================================================
+=========================================================================================================
+Create DBEntry from scratch using *legacy* mode
+=========================================================================================================
 
-These example demonstrates how to **create** *DB entries* using legacy parameters in the IMAS framework.
+This example focuses on creating DBEntry using **legacy** mode method.
 
 .. warning::
 

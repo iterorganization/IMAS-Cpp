@@ -1,8 +1,8 @@
-========================================================================================================================
-Handling Array of Structures and its default values in IDS
-========================================================================================================================
+=========================================================================================================
+Handling AoS & Default Values
+=========================================================================================================
 
-This example focuses on handling arrays of structures and default values.
+This example focuses on handling arrays of structures and default values
 
 .. literalinclude:: ../code_samples/tutorial/example_002_fill_data_in_ids.cpp
     :start-after: // This example focuses on handling arrays of structures and default values

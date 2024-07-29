@@ -1,8 +1,8 @@
-========================================================================================================================
-Creat multi-dimensional array with complex types and copying IDS structures
-========================================================================================================================
+=========================================================================================================
+Create and copy multi-dimensional AoS 
+=========================================================================================================
 
-This example focuses on creating multi-dimensional arrays, using copmlex type and copying IDS structures.
+This example focuses on creating multi=dimensional arrays, using copmlex type and copying IDS structures.
 
 .. literalinclude:: ../code_samples/tutorial/example_002_fill_data_in_ids.cpp
     :start-after:  // This example focuses on creating multi-dimensional arrays, using copmlex type and copying IDS structures

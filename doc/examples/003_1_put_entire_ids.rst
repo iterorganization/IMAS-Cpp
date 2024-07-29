@@ -1,8 +1,8 @@
-========================================================================================================================
-Put entire IDS
-========================================================================================================================
+=========================================================================================================
+Put Entire IDS
+=========================================================================================================
 
-This example focuses on putting IDS into entry and passing IDS validation.
+This example focuses on putting IDS into entry and passing IDS validation
 
 .. literalinclude:: ../code_samples/tutorial/example_003_write_data_into_entry.cpp
     :start-after: // This example focuses on putting IDS into entry and passing IDS validation

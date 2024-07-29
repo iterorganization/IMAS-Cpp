@@ -1,9 +1,8 @@
-========================================================================================================================
-Read entire IDS
-========================================================================================================================
+=========================================================================================================
+Read Entire IDS
+=========================================================================================================
 
 This example focuses on reading whole IDS from entry.
-We are storing and reading back an IDS - equilibrium. Data are stored inside MDS+ file.
 
 .. literalinclude:: ../code_samples/tutorial/example_004_read_data_from_entry.cpp
     :start-after: // This example focuses on reading whole IDS from entry.
