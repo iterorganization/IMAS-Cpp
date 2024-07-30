@@ -17,27 +17,13 @@ void execute(char** argv) {
     al_status_t status = al_register_plugin("partial_get");
     exitIfError(status);
 
-    status = al_setvalue_int_scalar_parameter_plugin("nb_queries", 1, "partial_get");
-
-    exitIfError(status);
-
     std::string request1 = "flux_loop(1:5:2)";
-    std::string request2 = "bpol_probe(0:2)";
-    std::string request3 = "flux_loop/position(:)";
-    //std::string request4 = "flux_loop(1:3:1)";
+    //std::string request2 = "bpol_probe(0:2)";
+    //std::string request3 = "flux_loop/position(:)";
 
     int size1 = request1.length();
-    status = al_setvalue_parameter_plugin("query", CHAR_DATA, 1, &size1, (void *) request1.data(), "partial_get");
+    status = al_setvalue_parameter_plugin("includes", CHAR_DATA, 1, &size1, (void *) request1.data(), "partial_get");
     exitIfError(status);
-    /*int size2 = request2.length();
-    status = al_setvalue_parameter_plugin("query", CHAR_DATA, 1, &size2, (void *) request2.data(), "partial_get");
-    exitIfError(status);
-    int size3 = request3.length();
-    status = al_setvalue_parameter_plugin("query", CHAR_DATA, 1, &size3, (void *) request3.data(), "partial_get");
-    exitIfError(status);
-    int size4 = request4.length();
-    status = al_setvalue_parameter_plugin("query", CHAR_DATA, 1, &size4, (void *) request4.data(), "partial_get");
-    exitIfError(status);*/
   
     status = al_setvalue_int_scalar_parameter_plugin("debug", 0, "partial_get");
     exitIfError(status);
