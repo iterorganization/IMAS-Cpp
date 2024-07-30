@@ -728,23 +728,14 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSample(int iOccurrence, do
 	if(!connected)
 		return -1;
 
-	if (tmax &lt; tmin) {
-    al_status.code = -1;
-    strcpy(al_status.message, "GET_SAMPLE: error, tmax should be greater or equals to tmin");
-    return al_status.code;
-  }
+	if (tmax &lt; tmin) 
+    throw std::runtime_error("GET_SAMPLE: error, tmax should be greater or equals to tmin");
 
-  if ((interp != 0) &amp;&amp; (dtime.size() == 0)) {
-    al_status.code = -1;
-    strcpy(al_status.message, "GET_SAMPLE: error, interpolation mode should be 0 with no resampling (dtime.size() == 0)");
-    return al_status.code;
-  }
+  if ((interp != 0) &amp;&amp; (dtime.size() == 0)) 
+    throw std::runtime_error("GET_SAMPLE: error, interpolation mode should be 0 with no resampling (dtime.size() == 0)");
 
-  if ((interp == 0) &amp;&amp; (dtime.size() &gt;= 1)) {
-    al_status.code = -1;
-    strcpy(al_status.message, "GET_SAMPLE: error, interpolation mode should be specified (non zero) with resampling (dtime.size() &gt;= 1)");
-    return al_status.code;
-  }
+  if ((interp == 0) &amp;&amp; (dtime.size() &gt;= 1))
+    throw std::runtime_error("GET_SAMPLE: error, interpolation mode should be specified (non zero) with resampling (dtime.size() &gt;= 1)");
 
 	if(iOccurrence &gt;= 1)
         idsFullName += "/" + std::to_string(iOccurrence);
@@ -763,7 +754,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSample(int iOccurrence, do
     al_status = al_begin_timerange_action(pulseCtx, idsFullName.c_str(), READ_OP, tmin, tmax, dtime.data(), &amp;dtime_shape, interp, &amp;getOpCtx);
 
 	if(al_status.code &lt; 0) {
-        printf("GET_SAMPLE: error calling al_begin_global_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        printf("GET_SAMPLE: error calling al_begin_timerange_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
 		return al_status.code;
     }
 
