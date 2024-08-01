@@ -128,7 +128,7 @@ void copying_and_validating_ids()
 
     for(int x=0 ;x<3; x++){
         for(int y=0; y<3; y++){
-            gyrokinetics_local.linear.wavevector(0).eigenmode(0).fields.phi_potential_perturbed_norm(x,y) = complex((double)x,(double)y);
+            gyrokinetics_local.linear.wavevector(0).eigenmode(0).fields.phi_potential_perturbed_norm(x,y) = complex<double>((double)x,(double)y);
         }
     }
     gyrokinetics_local.linear.wavevector(0).eigenmode(0).angle_pol.resize(3);
@@ -151,7 +151,7 @@ void copying_and_validating_ids()
 
     for(int x=0 ;x<3; x++){
         for(int y=0; y<3; y++){
-                gyrokinetics_copy.linear.wavevector(0).eigenmode(0).fields.phi_potential_perturbed_norm(x,y) = complex((double)-x,(double)-y);
+                gyrokinetics_copy.linear.wavevector(0).eigenmode(0).fields.phi_potential_perturbed_norm(x,y) = complex<double>((double)-x,(double)-y);
             }
     }
 
