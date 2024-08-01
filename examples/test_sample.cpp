@@ -5,15 +5,13 @@
 #include "ALClasses.h"
 #include <vector>
 
-//al_status_t readDataInt(int ctx, std::string fieldPath, std::string timeBasePath, int &value);
-
 using namespace IdsNs;
 
 int execute_tests(BACKEND backend);
 
 int main(int argc, char *argv[])
 {
-  int status = execute_tests(HDF5_BACKEND);
+  int status = execute_tests(MDSPLUS_BACKEND);
   if (status < 0) return status;
   //status = execute_tests(MDSPLUS_BACKEND);
   return status;
@@ -106,34 +104,26 @@ int execute_tests(BACKEND backend)
   int expected_start_index = 2;
   int expected_stop_index = 5;
 
+  //Testing getSample() on a magnetics IDS with limited time range
   status = ids._magnetics.getSample(0, tmin, tmax, dtime, 0);
 
-  /*for (i = 0; i < ids._magnetics.flux_loop(0).flux.data.size(); i++)
-  {
-    printf("ids._magnetics.flux_loop(0).flux.data %d = %f \n", i, ids._magnetics.flux_loop(0).flux.data(i));
-  }*/
-
-  //printf("ids._magnetics.flux_loop.size = %d\n", ids._magnetics.flux_loop.size());
-  //printf("ids._magnetics.flux_loop(0).flux.data.size = %d\n", ids._magnetics.flux_loop(0).flux.data.size());
-
   if (ids._magnetics.flux_loop(0).flux.data.size() != (tmax - tmin + 1)) {
-    printf("Test 1 has failed \n");
+    printf("Test 1 has failed, unexpected number of dynamic 1D values (from static AOS) in the limited time range.\n");
     return -1;
   }
 
   for (i = expected_start_index; i < expected_stop_index + 1; i++) {
-    //printf("ids._magnetics.flux_loop(0).flux.data %d = %f \n", i - expected_start_index, ids._magnetics.flux_loop(0).flux.data(i - expected_start_index));
-    //printf("magnetics_flux_data[%d] = %f \n", i, magnetics_flux_data[i]);
     if (ids._magnetics.flux_loop(0).flux.data(i - expected_start_index) != magnetics_flux_data[i]) {
-      printf("Test 2 has failed \n");
+      printf("Test 2 has failed, unexpected dynamic 1D values (from static AOS) in the limited time range.\n");
       return -1;
     }
   }
 
+  //Testing getSample() on a core_profiles IDS with limited time range
   status = ids._core_profiles.getSample(0, tmin, tmax, dtime, 0);
 
   if (ids._core_profiles.profiles_1d.size() != (tmax - tmin + 1)) {
-    printf("Test 3 has failed \n");
+    printf("Test 3 has failed, unexpected number of dynamic 1D values (from dynamic AOS) in the limited time range.\n");
     return -1;
   }
 
@@ -141,12 +131,11 @@ int execute_tests(BACKEND backend)
     std::vector<double> &v = core_profiles_rho_tor_norm_data[i];
     for (j = 0; j < N; j++) {
       if (ids._core_profiles.profiles_1d(i - expected_start_index).grid.rho_tor_norm(j) != v[j]) {
-        printf("Test 4 has failed \n");
+        printf("Test 4 has failed, unexpected dynamic 1D values (from dynamic AOS) in the limited time range.\n");
         return -1;
       }
     }
   }
-
 
   //Resampling
   double step = 0.2;
@@ -155,37 +144,36 @@ int execute_tests(BACKEND backend)
   int occurrence = 0;
   dtime.push_back(step);
 
+  //Testing getSample() on a magnetics IDS with limited time range and resampling
   status = ids._magnetics.getSample(occurrence, tmin, tmax, dtime, inerpolation_method);
 
-  //printf("ids._magnetics.flux_loop(0).flux.data.size = %d\n", ids._magnetics.flux_loop(0).flux.data.size());
   if (ids._magnetics.flux_loop(0).flux.data.size() != ( (tmax - tmin)/step) ) {
-      printf("Test 5 has failed \n");
+      printf("Test 5 has failed, unexpected number of dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
       return -1;
   }
 
   for (i = 0; i < (tmax - tmin)/step; i++) {
-    //printf("ids._magnetics.flux_loop(0).flux.data %d = %f \n", i, ids._magnetics.flux_loop(0).flux.data(i));
     if (i < 3) {
       if (ids._magnetics.flux_loop(0).flux.data(i) != first_expected_value) {
-        printf("Test 6 has failed \n");
+        printf("Test 6 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
         return -1;
       }
     }
     else if (i >= 3 && i < 8) {
       if (ids._magnetics.flux_loop(0).flux.data(i) != first_expected_value + 1) {
-        printf("Test 7 has failed \n");
+        printf("Test 7 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
         return -1;
       }
     }
     else if (i >= 8 && i < 13) {
       if (ids._magnetics.flux_loop(0).flux.data(i) != first_expected_value + 2) {
-        printf("Test 8 has failed \n");
+        printf("Test 8 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
         return -1;
       }
     }
     else if (i >= 13 && i < 15) {
       if (ids._magnetics.flux_loop(0).flux.data(i) != first_expected_value + 3) {
-        printf("Test 9 has failed \n");
+        printf("Test 9 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
         return -1;
       }
     }
@@ -194,13 +182,3 @@ int execute_tests(BACKEND backend)
   ids.close();
   return 0;
 }
-
-
-
-
-  // ids._core_profiles.profiles_2d.resize(1);
-  //  for (j = 0; j < n; j++)
-  //   {
-  //   ids._core_profiles.profiles_2d(0).grid.dim1(j) = (double)j + 50.;
-  //   ids._core_profiles.profiles_2d(0).grid.dim2(j) = (double)j + 60.;
-  //   }
