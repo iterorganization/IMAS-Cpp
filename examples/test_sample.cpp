@@ -11,7 +11,7 @@ int execute_tests(BACKEND backend);
 
 int main(int argc, char *argv[])
 {
-  int status = execute_tests(MDSPLUS_BACKEND);
+  int status = execute_tests(HDF5_BACKEND);
   if (status < 0) return status;
   //status = execute_tests(MDSPLUS_BACKEND);
   return status;
