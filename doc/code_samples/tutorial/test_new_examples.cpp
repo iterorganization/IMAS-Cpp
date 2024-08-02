@@ -1,8 +1,11 @@
-#include "example_001_open_database.cpp"
-#include "example_002_fill_data_in_ids.cpp"
-#include "example_003_write_data_into_entry.cpp"
+#include "ALClasses.h"
+#include "example_001_open_database.h"
+#include "example_002_fill_data_in_ids.h"
+#include "example_003_write_data_into_entry.h"
+#include "example_004_read_data_from_entry.h"
 
-#include "example_004_read_data_from_entry.cpp"
+#include <string>
+
 int main(int argc, char *argv[])
 {
     //example001

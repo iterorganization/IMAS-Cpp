@@ -238,4 +238,5 @@ endif()
 
 if( AL_EXAMPLES )
   add_subdirectory( examples )
+  add_subdirectory( doc/code_samples/tutorial )
 endif()

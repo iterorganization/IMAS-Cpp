@@ -1,4 +1,5 @@
 #include "ALClasses.h"
+#include "example_004_read_data_from_entry.h"
 #include <string>
 
 
