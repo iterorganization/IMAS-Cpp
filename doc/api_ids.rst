@@ -18,17 +18,19 @@ IDS (``IdsNs::Ids``) API
 
         Serialize the contents of this IDS into binary data.
 
-        While it is by design allowed to specify various serialization
-        protocols, it currently implements only a serialization through usage of
-        the ASCII backend (simpler but less efficient) which is de-facto the
-        default serializer protocol. The ID of the used serializer protocol is
-        kept in the serialized buffer, such that specifying the protocol is not
-        necessary when deserializing.
+        There are currently two different serialization protocols. The ASCII protocol
+        serializes the data though the ASCII backend. This is a simpler human readable
+        protocol, but it's also less efficient than the (newer) Flexbuffers protocol.
+        The latter is the default and should be preferred.
+
+        The ID of the used serializer protocol is kept in the header of the serialized
+        buffer, such that specifying the protocol is not necessary when deserializing.
 
         :param protocol: Which serialization protocol to use. Available options
             are: 
 
             - :cpp:expr:`ASCII_SERIALIZER_PROTOCOL`
+            - :cpp:expr:`FLEXBUFFERS_SERIALIZER_PROTOCOL`
             - :cpp:expr:`DEFAULT_SERIALIZER_PROTOCOL`
         :returns: Binary representation of this IDS.
         :example:
