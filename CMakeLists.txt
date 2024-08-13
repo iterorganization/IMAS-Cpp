@@ -5,7 +5,7 @@ cmake_minimum_required( VERSION 3.16 )
 ################################################################################
 option( AL_DOWNLOAD_DEPENDENCIES "Automatically download assets from the AL git repository" ON )
 set( AL_CORE_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-core.git" CACHE STRING "Git repository of AL-core" )
-set( AL_CORE_VERSION "feature/IMAS-5318-merge-al-common-into-al-core" CACHE STRING "Git commit/tag/branch of AL-core" )
+set( AL_CORE_VERSION "main" CACHE STRING "Git commit/tag/branch of AL-core" )
 
 include(FetchContent)
 
