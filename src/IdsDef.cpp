@@ -148,7 +148,7 @@ std::string IdsNs::Ids::serialize(int protocol)
     }
 #ifdef FLEXBUFFERS_SERIALIZER_PROTOCOL
     else if (protocol == FLEXBUFFERS_SERIALIZER_PROTOCOL) {
-        al_status = al_begin_dataentry_action("imas:serialize?path=/", CREATE_PULSE, &_pulseCtx);
+        al_status = al_begin_dataentry_action("imas:flexbuffers?path=/", CREATE_PULSE, &_pulseCtx);
         if (al_status.code != 0) {
             printf("SERIALIZE: Error opening Serialize backend\n%s\n", al_status.message);
             return "";
@@ -276,7 +276,7 @@ int IdsNs::Ids::deserialize(std::string &data)
     }
 #ifdef FLEXBUFFERS_SERIALIZER_PROTOCOL
     else if (protocol == FLEXBUFFERS_SERIALIZER_PROTOCOL) {
-        al_status = al_begin_dataentry_action("imas:serialize?path=/", OPEN_PULSE, &_pulseCtx);
+        al_status = al_begin_dataentry_action("imas:flexbuffers?path=/", OPEN_PULSE, &_pulseCtx);
         if (al_status.code != 0) {
             printf("SERIALIZE: Error opening Serialize backend\n%s\n", al_status.message);
             return -1;
