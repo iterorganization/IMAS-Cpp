@@ -124,7 +124,7 @@ CMAKE_ARGS=(${CMAKE_ARGS[@]}
     -D AL_CORE_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-core.git
     -D AL_CORE_VERSION=develop
     -D AL_PLUGINS_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-plugins.git
-    -D AL_PLUGINS_VERSION=IMAS-3885_plugins
+    -D AL_PLUGINS_VERSION=develop
     -D DD_GIT_REPOSITORY=https://git.iter.org/scm/imas/data-dictionary.git
     # DD version: can be set with DD_VERSION env variable, otherwise use latest master/3
     -D DD_VERSION=${DD_VERSION:-master/3}
