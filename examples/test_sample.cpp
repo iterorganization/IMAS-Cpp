@@ -179,6 +179,48 @@ int execute_tests(BACKEND backend)
     }
   }
 
+  dtime.clear();
+  dtime.push_back(0.5);
+  dtime.push_back(1.);
+  dtime.push_back(1.5);
+  dtime.push_back(1.7);
+  dtime.push_back(11);
+
+  status = ids._magnetics.getSample(0, tmin, tmax, dtime, 3);
+  if (ids._magnetics.time.size() != 5) {
+    printf("Test 10 has failed, unexpected number of time basis points using resampling with dtime.size() > 1.\n");
+    return -1;
+  }
+  for (int i = 0; i < ids._magnetics.flux_loop.size(); i++) {
+    //printf("ids._magnetics.flux_loop(%d).flux.data.size()=%d", i, ids._magnetics.flux_loop(i).flux.data.size())
+    if (ids._magnetics.flux_loop(i).flux.data.size() != 5) {
+      printf("Test 11 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+      return -1;
+    }
+    for (int j = 0; j < ids._magnetics.flux_loop(i).flux.data.size(); j++) 
+    {
+      //printf("ids._magnetics.flux_loop(%d).flux.data(%d)=%f\n", i, j, ids._magnetics.flux_loop(i).flux.data(j));
+      if ((j == 0 || j == 1) && ids._magnetics.flux_loop(i).flux.data(j) != 5.0) {
+        printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+        return -1;
+      }
+      if (j == 2 && ids._magnetics.flux_loop(i).flux.data(j) != 5.5) {
+        printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+        return -1;
+      }
+      if (j == 3 && ids._magnetics.flux_loop(i).flux.data(j) != 5.7) {
+        printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+        return -1;
+      }
+      if (j == 4 && ids._magnetics.flux_loop(i).flux.data(j) != 14) {
+        printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+        return -1;
+      }
+    }
+  }
+
+  printf("Time range feature (IMAS-3885) tests successfull from C++ HLI.\n");
+
   ids.close();
   return 0;
 }
