@@ -122,8 +122,13 @@ int execute_tests(BACKEND backend)
   //Testing getSample() on a core_profiles IDS with limited time range
   status = ids._core_profiles.getSample(0, tmin, tmax, dtime, 0);
 
+  if (ids._core_profiles.profiles_1d.size() != ids._core_profiles.time.size()) {
+     printf("Test 3 has failed, dynamis AOS size not having the same size than the time basis vector.\n");
+     return -1;
+  }
+
   if (ids._core_profiles.profiles_1d.size() != (tmax - tmin + 1)) {
-    printf("Test 3 has failed, unexpected number of dynamic 1D values (from dynamic AOS) in the limited time range.\n");
+    printf("Test 3A has failed, unexpected number of dynamic 1D values (from dynamic AOS) in the limited time range.\n");
     return -1;
   }
 
@@ -147,33 +152,40 @@ int execute_tests(BACKEND backend)
   //Testing getSample() on a magnetics IDS with limited time range and resampling
   status = ids._magnetics.getSample(occurrence, tmin, tmax, dtime, inerpolation_method);
 
-  if (ids._magnetics.flux_loop(0).flux.data.size() != ( (tmax - tmin)/step) ) {
-      printf("Test 5 has failed, unexpected number of dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
+  if (ids._magnetics.flux_loop(0).flux.data.size() != ids._magnetics.time.size()) {
+     printf("Test 5 has failed, 1D data not having the same size than the time basis vector.\n");
+     printf("ids._magnetics.flux_loop(0).flux.data.size()=%d\n", ids._magnetics.flux_loop(0).flux.data.size());
+     printf("ids._magnetics.time.size()=%d\n", ids._magnetics.time.size());
+     return -1;
+  }
+
+  if (ids._magnetics.flux_loop(0).flux.data.size() != ( (tmax - tmin)/step + 1 )) {
+      printf("Test 6 has failed, unexpected number of dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
       return -1;
   }
 
-  for (i = 0; i < (tmax - tmin)/step; i++) {
+  for (i = 0; i < (tmax - tmin)/step + 1; i++) {
     if (i < 3) {
       if (ids._magnetics.flux_loop(0).flux.data(i) != first_expected_value) {
-        printf("Test 6 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
+        printf("Test 7 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
         return -1;
       }
     }
     else if (i >= 3 && i < 8) {
       if (ids._magnetics.flux_loop(0).flux.data(i) != first_expected_value + 1) {
-        printf("Test 7 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
+        printf("Test 8 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
         return -1;
       }
     }
     else if (i >= 8 && i < 13) {
       if (ids._magnetics.flux_loop(0).flux.data(i) != first_expected_value + 2) {
-        printf("Test 8 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
+        printf("Test 9 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
         return -1;
       }
     }
-    else if (i >= 13 && i < 15) {
+    else if (i >= 13 && i < 16) {
       if (ids._magnetics.flux_loop(0).flux.data(i) != first_expected_value + 3) {
-        printf("Test 9 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
+        printf("Test 10 has failed, unexpected dynamic 1D values (from static AOS) in a limited time range with resampling.\n");
         return -1;
       }
     }
@@ -188,32 +200,32 @@ int execute_tests(BACKEND backend)
 
   status = ids._magnetics.getSample(0, tmin, tmax, dtime, 3);
   if (ids._magnetics.time.size() != 5) {
-    printf("Test 10 has failed, unexpected number of time basis points using resampling with dtime.size() > 1.\n");
+    printf("Test 11 has failed, unexpected number of time basis points using resampling with dtime.size() > 1.\n");
     return -1;
   }
   for (int i = 0; i < ids._magnetics.flux_loop.size(); i++) {
     //printf("ids._magnetics.flux_loop(%d).flux.data.size()=%d", i, ids._magnetics.flux_loop(i).flux.data.size())
     if (ids._magnetics.flux_loop(i).flux.data.size() != 5) {
-      printf("Test 11 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+      printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
       return -1;
     }
     for (int j = 0; j < ids._magnetics.flux_loop(i).flux.data.size(); j++) 
     {
       //printf("ids._magnetics.flux_loop(%d).flux.data(%d)=%f\n", i, j, ids._magnetics.flux_loop(i).flux.data(j));
       if ((j == 0 || j == 1) && ids._magnetics.flux_loop(i).flux.data(j) != 5.0) {
-        printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+        printf("Test 13 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
         return -1;
       }
       if (j == 2 && ids._magnetics.flux_loop(i).flux.data(j) != 5.5) {
-        printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+        printf("Test 14 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
         return -1;
       }
       if (j == 3 && ids._magnetics.flux_loop(i).flux.data(j) != 5.7) {
-        printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+        printf("Test 15 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
         return -1;
       }
       if (j == 4 && ids._magnetics.flux_loop(i).flux.data(j) != 14) {
-        printf("Test 12 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
+        printf("Test 16 has failed, unexpected number of data points using resampling with dtime.size() > 1.\n");
         return -1;
       }
     }
