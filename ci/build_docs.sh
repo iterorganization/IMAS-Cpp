@@ -8,7 +8,11 @@ set -e -o pipefail
 echo "Loading modules..."
 
 # Set up environment such that module files can be loaded
+if test -f /etc/profile.d/modules.sh ;then
+. /etc/profile.d/modules.sh
+else
 . /usr/share/Modules/init/sh
+fi
 module purge
 # Load modules:
 MODULES=(
