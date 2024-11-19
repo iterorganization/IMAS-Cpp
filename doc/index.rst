@@ -44,6 +44,13 @@ programming language.
 
 .. toctree::
    :maxdepth: 3
+   :caption: Examples
+
+   examples/examples_ToC
+   
+
+.. toctree::
+   :maxdepth: 3
    :caption: API documentation
 
    api_dbentry

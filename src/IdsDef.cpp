@@ -43,7 +43,12 @@ std::string generate_tmp_file()
         const char* IMAS_AL_SERIALIZER_TMP_DIR = std::getenv("IMAS_AL_SERIALIZER_TMP_DIR");
         if(IMAS_AL_SERIALIZER_TMP_DIR != nullptr)
         {
-            fname = std::string(IMAS_AL_SERIALIZER_TMP_DIR) + "al_serialize_";
+            fname = std::string(IMAS_AL_SERIALIZER_TMP_DIR);
+            if(fname.back() != '/')
+            {
+                fname += "/";
+            }
+            fname +="al_serialize_";
         }
         else
         {
@@ -68,10 +73,10 @@ std::string generate_tmp_file()
 
 std::string IdsNs::Ids::serialize(int protocol)
 {
+    al_status_t al_status;
+    int _pulseCtx;
     if( protocol == ASCII_SERIALIZER_PROTOCOL )
     {
-        al_status_t al_status;
-        int _pulseCtx;
         std::string uri = "";
         std::string tmpfile = generate_tmp_file();
         if(tmpfile.empty())
@@ -141,6 +146,46 @@ std::string IdsNs::Ids::serialize(int protocol)
         }
         return data;
     }
+#ifdef FLEXBUFFERS_SERIALIZER_PROTOCOL
+    else if (protocol == FLEXBUFFERS_SERIALIZER_PROTOCOL) {
+        al_status = al_begin_dataentry_action("imas:flexbuffers?path=/", CREATE_PULSE, &_pulseCtx);
+        if (al_status.code != 0) {
+            printf("SERIALIZE: Error opening Serialize backend\n%s\n", al_status.message);
+            return "";
+        }
+
+        // store state and overwrite so we use the Serialize backend in this->put
+        auto _connected_stored = this->connected;
+        auto _pulseCtx_stored = this->pulseCtx;
+        this->pulseCtx = _pulseCtx;
+        this->connected = true;
+        int put_ret = this->put();
+        // restore state
+        this->pulseCtx = _pulseCtx_stored;
+        this->connected = _connected_stored;
+
+        if( put_ret < 0 ) {
+            printf("SERIALIZE: Error putting data");
+            return "";
+        }
+
+        // Read buffer from the backend
+        char *data;
+        int size;
+        al_status = al_read_data(_pulseCtx, "<buffer>", "", reinterpret_cast<void**>(&data), CHAR_DATA, 1, &size);
+        if (al_status.code != 0) {
+            printf("SERIALIZE: Error reading serialized data from the backend\n%s\n", al_status.message);
+            return "";
+        }
+        std::string retdata(data, size);
+        
+        // cleanup
+        al_close_pulse(_pulseCtx, CLOSE_PULSE);
+        al_end_action(_pulseCtx);
+
+        return retdata;
+    }
+#endif // FLEXBUFFERS_SERIALIZER_PROTOCOL
     else
     {
         printf("ERROR: unrecognized serialization protocol");
@@ -150,8 +195,9 @@ std::string IdsNs::Ids::serialize(int protocol)
 
 int IdsNs::Ids::deserialize(std::string &data)
 {
+    al_status_t al_status;
+    int _pulseCtx;
     // first byte of the data contains the protocol
-    std::string uri;
     if( data.size() <= 1 )
     {
         printf("ERROR: not enough data provided");
@@ -160,6 +206,7 @@ int IdsNs::Ids::deserialize(std::string &data)
     int protocol = static_cast<int>(data[0]);
     if( protocol == ASCII_SERIALIZER_PROTOCOL )
     {
+        std::string uri;
         // specify the -fullpath option to the ASCII backend
         std::string tmpfile = generate_tmp_file();
         
@@ -195,8 +242,6 @@ int IdsNs::Ids::deserialize(std::string &data)
              uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
         }
 //	std::string uri = "imas:ascii?path="+std::string(SERIALIZE_TEMPORARY_DIRECTORY)+";filename="+filename;
-        al_status_t al_status;
-        int _pulseCtx;
         // overwrite pulse context, so we can use the logic in get for putting to the ascii backend
         al_status = al_begin_dataentry_action(uri.c_str(), CREATE_PULSE, &_pulseCtx);
 
@@ -229,6 +274,43 @@ int IdsNs::Ids::deserialize(std::string &data)
 
         return 0;
     }
+#ifdef FLEXBUFFERS_SERIALIZER_PROTOCOL
+    else if (protocol == FLEXBUFFERS_SERIALIZER_PROTOCOL) {
+        al_status = al_begin_dataentry_action("imas:flexbuffers?path=/", OPEN_PULSE, &_pulseCtx);
+        if (al_status.code != 0) {
+            printf("SERIALIZE: Error opening Serialize backend\n%s\n", al_status.message);
+            return -1;
+        }
+
+        // Write buffer to the backend
+        int size = data.size();
+        al_status = al_write_data(_pulseCtx, "<buffer>", "", reinterpret_cast<void*>(data.data()), CHAR_DATA, 1, &size);
+        if (al_status.code != 0) {
+            printf("SERIALIZE: Error writing serialized data to the Serialize backend\n%s\n", al_status.message);
+            return -1;
+        }
+
+        // store state and overwrite so we use the Serialize backend in this->get
+        auto _connected_stored = this->connected;
+        auto _pulseCtx_stored = this->pulseCtx;
+        this->pulseCtx = _pulseCtx;
+        this->connected = true;
+        int get_ret = this->get();
+        // restore state
+        this->pulseCtx = _pulseCtx_stored;
+        this->connected = _connected_stored;
+
+        // cleanup
+        al_status = al_close_pulse(_pulseCtx, CLOSE_PULSE);
+        al_status = al_end_action(_pulseCtx);
+
+        if( get_ret < 0 ) {
+            printf("DESERIALIZE: Error getting data");
+            return -1;
+        }
+        return 0;
+    }
+#endif // FLEXBUFFERS_SERIALIZER_PROTOCOL
     else
     {
         printf("ERROR: unrecognized serialization protocol");

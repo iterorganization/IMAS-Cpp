@@ -1,13 +1,14 @@
 #include "ALClasses.h"
+#include "example_001_open_database.h"
 #include <string>
 // If using C++ earlier than C++20, comment out the following include
 // #include <format>
 using namespace IdsNs;
 
 
+// This example focuses on creating DBEntry using legacy mode method
 void create_db_entry_legacy()
 {
-    // This example focuses on creating DBEntry using legacy mode method
 
     std::string userName         = getenv("USER");
     std::string db_name          = "testdb";
@@ -28,9 +29,9 @@ void create_db_entry_legacy()
     ids.close();
 }
 
+// This example focuses on opening DBEntry using URI
 void open_db_entry_uri()
 {
-    // This example focuses on opening DBEntry using URI
 
     std::string userName         = getenv("USER");
     std::string db_name          = "testdb";
@@ -59,6 +60,7 @@ void open_db_entry_uri()
     ids.close();
 }
 
+// This example focuses on creating DBEntry using URI
 void create_db_entry_uri_with_path()
 {
     IdsNs::IDS ids;

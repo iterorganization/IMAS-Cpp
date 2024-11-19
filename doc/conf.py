@@ -86,6 +86,7 @@ html_theme_options = {
         "toc.sticky",
         # "content.tabs.link",
         "announce.dismiss",
+        "globaltoc_collapse",
     ],
     # "toc_title_is_page_title": True,
     # "globaltoc_collapse": True,
@@ -122,3 +123,11 @@ object_description_options = [
 
 html_static_path = ["./doc_common/static"]
 
+sphinx_immaterial_generate_extra_admonitions = True
+sphinx_immaterial_custom_admonitions = [
+    {
+        "name": "output",
+        "color": (247, 98, 245),
+        "icon": "fontawesome/solid/terminal",
+    },
+]

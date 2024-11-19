@@ -332,7 +332,7 @@ return(convert.str());
             }
 
             if (ptrChar == NULL) {
-                replies[i] == "";
+                replies[i] = "";
             } else {
 			replies[i] = ptrChar;
 			}

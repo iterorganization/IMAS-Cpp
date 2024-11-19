@@ -8,7 +8,11 @@ set -e -o pipefail
 echo "Loading modules..."
 
 # Set up environment such that module files can be loaded
+if test -f /etc/profile.d/modules.sh ;then
+. /etc/profile.d/modules.sh
+else
 . /usr/share/Modules/init/sh
+fi
 module purge
 # Load modules:
 MODULES=(
@@ -40,7 +44,6 @@ rm -rf build
 CMAKE_ARGS=(
     # Download dependencies from HTTPS (using an access token):
     -D AL_DOWNLOAD_DEPENDENCIES=ON
-    -D AL_COMMON_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-common.git
     -D AL_CORE_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-core.git
     -D AL_PLUGINS_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-plugins.git
     -D DD_GIT_REPOSITORY=https://git.iter.org/scm/imas/data-dictionary.git

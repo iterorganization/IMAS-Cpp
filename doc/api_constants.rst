@@ -50,6 +50,12 @@ Serializer protocols
 
     Identifier for the ASCII serialization protocol.
 
+.. c:macro:: FLEXBUFFERS_SERIALIZER_PROTOCOL
+
+    Identifier for the Flexbuffers serialization protocol. This protocol is more
+    performant and results in a smaller buffer size than the
+    :cpp:expr:`ASCII_SERIALIZER_PROTOCOL`.
+
 .. c:macro:: DEFAULT_SERIALIZER_PROTOCOL
 
     Identifier for the default serialization protocol.
