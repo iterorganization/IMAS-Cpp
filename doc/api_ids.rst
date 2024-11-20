@@ -130,19 +130,19 @@ IDS (``IdsNs::Ids``) API
             may have an impact on the other dynamic values. 
             The returned IDS always has ``ids_properties.homogeneous_time = 1``.
 
-            :param occurrence: Which occurrence of the IDS to read.
-            :param tmin: Lower bound of the requested time range
-            :param tmax: Upper bound of the requested time range, must be larger than or
-                equal to :param:`tmin`
-            :param dtime: Interval to use when interpolating, must be a std::vector<double>
-                containing an explicit time base to interpolate.
-            :param interpolMode: Interpolation method to use. Available options:
+        :param occurrence: Which occurrence of the IDS to read.
+        :param tmin: Lower bound of the requested time range
+        :param tmax: Upper bound of the requested time range, must be larger than or
+            equal to :param:`tmin`
+        :param dtime: Interval to use when interpolating, must be a std::vector<double>
+            containing an explicit time base to interpolate.
+        :param interpolMode: Interpolation method to use. Available options:
 
-                - :const: CLOSEST_INTERP
-                - :const: PREVIOUS_INTERP
-                - :const: LINEAR_INTERP
+            - :const: CLOSEST_INTERP
+            - :const: PREVIOUS_INTERP
+            - :const: LINEAR_INTERP
 
-            :returns: The loaded IDS.
+        :returns: The loaded IDS.
 
     .. cpp:function:: int getSample(double tmin, double tmax, const std::vector<double> &dtime, int interpolMode)
 
