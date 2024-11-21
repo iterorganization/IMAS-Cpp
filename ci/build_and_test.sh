@@ -125,6 +125,8 @@ CMAKE_ARGS=(${CMAKE_ARGS[@]}
     -D DD_GIT_REPOSITORY=https://git.iter.org/scm/imas/data-dictionary.git
     # DD version: can be set with DD_VERSION env variable, otherwise use latest main
     -D DD_VERSION=${DD_VERSION:-main}
+    # AL Core version: can be set with AL_CORE_VERSION env variable, otherwise use latest main
+    -D AL_CORE_VERSION=${AL_CORE_VERSION:-main}
     # HLI options
     -D AL_EXAMPLES=ON
     -D AL_TESTS=ON
