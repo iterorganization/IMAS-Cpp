@@ -153,6 +153,7 @@
         <xsl:text>";&#xA;      break;&#xA;</xsl:text>
       </xsl:for-each>
       <xsl:text>  }&#xA;</xsl:text>
+      <xsl:text>  return "unknown";&#xA;</xsl:text>
       <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
 
@@ -172,6 +173,7 @@
         <xsl:text>";&#xA;      break;&#xA;</xsl:text>
       </xsl:for-each>
       <xsl:text>  }&#xA;</xsl:text>
+      <xsl:text>  return "Unknown";&#xA;</xsl:text>
       <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
  
