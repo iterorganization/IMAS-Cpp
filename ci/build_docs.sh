@@ -43,13 +43,13 @@ rm -rf build
 # CMake configuration:
 CMAKE_ARGS=(
     # Download dependencies from HTTPS (using an access token):
-    -D AL_DOWNLOAD_DEPENDENCIES=ON
-    -D AL_CORE_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-core.git
-    -D AL_PLUGINS_GIT_REPOSITORY=https://git.iter.org/scm/imas/al-plugins.git
-    -D DD_GIT_REPOSITORY=https://git.iter.org/scm/imas/data-dictionary.git
+    -D AL_DOWNLOAD_DEPENDENCIES=${AL_DOWNLOAD_DEPENDENCIES:-ON}
+    -D AL_CORE_GIT_REPOSITORY=${AL_CORE_GIT_REPOSITORY:-https://git.iter.org/scm/imas/al-core.git}
+    -D AL_PLUGINS_GIT_REPOSITORY=${AL_PLUGINS_GIT_REPOSITORY:-https://git.iter.org/scm/imas/al-plugins.git}
+    -D DD_GIT_REPOSITORY=${DD_GIT_REPOSITORY:-https://git.iter.org/scm/imas/data-dictionary.git}
     # Build only documentation
-    -D AL_HLI_DOCS=ON
-    -D AL_DOCS_ONLY=ON
+    -D AL_HLI_DOCS=${AL_HLI_DOCS:-ON}
+    -D AL_DOCS_ONLY=${AL_DOCS_ONLY:-ON}
 )
 # Note: compilers are set as environment variables in the Bamboo config
 cmake -B build "${CMAKE_ARGS[@]}"
