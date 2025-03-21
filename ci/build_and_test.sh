@@ -122,7 +122,7 @@ CMAKE_ARGS=(${CMAKE_ARGS[@]}
   -D AL_DOWNLOAD_DEPENDENCIES=${AL_DOWNLOAD_DEPENDENCIES:-ON}
   -D AL_CORE_GIT_REPOSITORY=${AL_CORE_GIT_REPOSITORY:-https://git.iter.org/scm/imas/al-core.git}
   -D AL_PLUGINS_GIT_REPOSITORY=${AL_PLUGINS_GIT_REPOSITORY:-https://git.iter.org/scm/imas/al-plugins.git}
-  -D DD_GIT_REPOSITORY=${DD_GIT_REPOSITORY:-https://git.iter.org/scm/imas/data-dictionary.git}
+  -D DD_GIT_REPOSITORY=${DD_GIT_REPOSITORY:-https://github.com/iterorganization/IMAS-Data-Dictionary.git}
   # DD version: can be set with DD_VERSION env variable, otherwise use latest main
   -D DD_VERSION=${DD_VERSION:-main}
   # AL Core version: can be set with AL_CORE_VERSION env variable, otherwise use latest main
