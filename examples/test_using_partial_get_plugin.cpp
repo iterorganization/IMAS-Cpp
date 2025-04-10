@@ -21,30 +21,16 @@ int main(int argc, char** argv){
 
   IDS::core_profiles ids = data_entry._core_profiles;
 
-  std::string includes_request = "ids_properties;profiles(1:5:1)";
-  std::string excludes_request = "";
+  //One example without excludes
+  ids.partialGet("ids_properties;profiles_1d(1:5:1)", ""); // ids.partialGet(const std::string& includes, const std::string& excludes)
 
-  al_status_t status = al_register_plugin(PARTIAL_GET);
-  exitIfError(status);
-  int size = includes_request.length();
-  status = al_setvalue_parameter_plugin("includes", CHAR_DATA, 1, &size, (void *) includes_request.data(), PARTIAL_GET);
-  exitIfError(status);
-
-  size = excludes_request.length();
-  status = al_setvalue_parameter_plugin("excludes", CHAR_DATA, 1, &size, (void *) excludes_request.data(), PARTIAL_GET);
-  exitIfError(status);
-
-   //Use for debugging purposes only
-  status = al_setvalue_int_scalar_parameter_plugin("debug", 1, PARTIAL_GET);
-  exitIfError(status);
-  status = al_setvalue_int_scalar_parameter_plugin("debug_read_requests_only", 1, PARTIAL_GET);
-  exitIfError(status);
-
-  status = al_bind_plugin("core_profiles:0/*", PARTIAL_GET);
-  ids.get(0);
-  status = al_unregister_plugin(PARTIAL_GET);
-  exitIfError(status);
-  
+  printf("ids_properties.homogeneous_time = %d\n", ids.ids_properties.homogeneous_time);
+  printf("In this example, shape of the profiles_1d AOS is unchanged, for example,\n");
+  printf("we expect 10 elements in profiles_1d, found = %d\n", ids.profiles_1d.size());
+  printf("However, only attributes of the first 5 elements of profiles_1d are filled, for example the time values are: \n", ids.profiles_1d.size());
+  for (int i = 0; i < ids.profiles_1d.size(); i++) {
+    printf("profiles_1d.time[%d] = %f\n", i, ids.profiles_1d(i).time);
+  }
   data_entry.close();
 }
 
