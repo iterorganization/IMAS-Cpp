@@ -467,6 +467,9 @@ void execute(char** argv) {
       assertion[i + 7] = std::abs(ids.profiles_1d(i+5).time + 9e40) < epsilon;
   }
 
+  successfull *= checkAssertions(++test_index, request, assertion, 12); 
+  printf("Partial plugin test %d completed with %d assertions.\n", test_index, 12);
+
   //TEST17
   request = "profiles_1d(::2)";
   runTest(data_entry, ids, request, "");
@@ -576,6 +579,53 @@ void exitIfError(al_status_t &status) {
   }
 }
 
+void display_data(IDS::core_profiles &ids) {
+  printf("ids_properties= comment:%s,"  " Homogeneous:%d\n",
+	 ids.ids_properties.comment.c_str(),
+	 ids.ids_properties.homogeneous_time );
+
+  int nb = ids.profiles_1d.extent(0);
+  printf("profiles_1d.time:");
+  for (int j=0; j< nb; j++)
+    printf(" %g",ids.profiles_1d(j).time);
+  puts("");
+
+  nb = ids.time.extent(0);
+  printf("Main IDS time:");
+  for (int j=0; j< nb; j++)
+    printf(" %g",ids.time(j));
+  puts("");
+
+  nb = ids.global_quantities.ip.extent(0);
+  printf("Ip:");
+  for (int j=0; j< nb;j++)
+    printf(" %g",ids.global_quantities.ip(j));
+  puts("");
+
+  for (int i=0; i< ids.profiles_1d.size(); i++){
+    printf("\ntime_slice i=%g\n",ids.profiles_1d(i).time);
+    printf("rho= ");
+    for(int j=0; j< ids.profiles_1d(i).grid.rho_tor_norm.size(); j++)
+      printf(" %g", ids.profiles_1d(i).grid.rho_tor_norm(j));
+    puts("");
+
+    printf("List of ion masses at time i=%d = ", i);
+    for(int j=0; j<ids.profiles_1d(i).ion.extent(0);j++)
+      printf(" %g",ids.profiles_1d(i).ion(j).z_ion);
+    puts("");
+
+    for(int j=0; j < ids.profiles_1d(i).ion.size(); j++){
+      printf("Ni for ion j=%d at time i=%d:", j, i);
+      for(int k=0; k<ids.profiles_1d(i).ion(j).density.extent(0); k++)
+	printf(" %g",ids.profiles_1d(i).ion(j).density(k));
+      puts("");
+      printf( "List of charge states for ion j=%d at time i=%d: (%d)", j, i, ids.profiles_1d(i).ion(j).state.extent(0));
+      for(int k=0; k<ids.profiles_1d(i).ion(j).state.extent(0); k++)
+	printf( " %g",ids.profiles_1d(i).ion(j).state(k).z_min);
+      puts("");
+    }
+  }
+}
 void save_data(const char* uri) {
   IdsNs::IDS data_entry;
   data_entry.open(uri, OPEN_PULSE);
