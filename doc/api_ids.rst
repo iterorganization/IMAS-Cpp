@@ -197,7 +197,32 @@ IDS (``IdsNs::Ids``) API
         :returns: Status code: ``0`` on success, ``<0`` on failure.
         :example: .. literalinclude:: code_samples/dbentry_put_slice
 
+    .. cpp:function:: int partialGet(int occurrence, const std::string &includes, const std::string &excludes, bool debug=false)
 
+        Read the partial contents of an IDS into memory.
+
+        This method fetches partially the IDS according to "includes" and "excludes" queries.
+
+        Returned data have paths included in a set of paths defined by the "includes" 
+        queries minus the paths explicitly removed by the "excludes" queries. 
+        A IDS field is returned only if its path matches at least one
+        include query and does not match any exclude query.
+
+        Empty fields within the IDS in the Data Entry are returned with the
+        default values indicated in :ref:`Default values`.
+
+        Technical info: :doc:`./partial_get_plugin`.
+
+        :param occurrence: Which occurrence of the IDS to read.
+        :returns: Status code: ``0`` on success, ``<0`` on failure.
+        :example: .. literalinclude:: code_samples/dbentry_partial_get
+
+    .. cpp:function:: int partialGet(const std::string &includes, const std::string &excludes, bool debug=false)
+
+        Same as :cpp:func:`int Ids::partialGet(int, std::string, std::string)`, but with
+        :code:`occurrence = 0`.
+
+        Technical info: :doc:`./partial_get_plugin`.
 
     .. cpp:function:: bool isDefined()
 

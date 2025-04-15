@@ -1,0 +1,20 @@
+// Include the Access Layer
+#include "ALClasses.h"
+#include <iostream>
+
+int main(int argc, char *argv[]) {
+
+    // Create a new data entry
+    IdsNs::IDS data_entry;
+    
+    // Open the database entry by providing an IMAS URI
+    data_entry.open("imas:mdsplus?user=public;pulse=131024;run=41;database=ITER;version=3", OPEN_PULSE);
+
+    // Define include and exclude queries
+   std::string includes = "ids_properties;profiles_1d(1:5:2)/ion(1:4:2)";
+   std::string excludes = "";
+
+   data_entry._core_profiles.partialGet(includes, excludes);
+
+   return 0;
+}
