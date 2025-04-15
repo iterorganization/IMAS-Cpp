@@ -43,7 +43,7 @@ void exitIfError(al_status_t &status) {
 
 void save_data(const char* uri) {
   IdsNs::IDS data_entry;
-  data_entry.open(uri, OPEN_PULSE);
+  data_entry.open(uri, FORCE_CREATE_PULSE);
   IDS::core_profiles ids = data_entry._core_profiles;
   double  vect1DDouble_1[10], vect1DDouble_2[12];
   int number = 10; //number of elements

@@ -13,7 +13,6 @@ void save_data(const char* uri);
 void execute(char** argv);
 void exitIfError(al_status_t &status);
 void display_data(IDS::core_profiles &ids);
-void runTest(IdsNs::IDS &data_entry, IDS::core_profiles &ids, const std::string &includes_request, const std::string &excludes_request);
 int checkAssertions(int test_number, const std::string &request, bool (&assertion)[ASSERTIONS_MAX], int count);
 
 
@@ -32,8 +31,7 @@ void execute(char** argv) {
 
   std::string request = "ids_properties";
 
-
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
 
   
   //TEST1
@@ -45,7 +43,7 @@ void execute(char** argv) {
 
   //TEST2
   request = "profiles_1d(:)";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
   for (int i = 0; i < 10; i++)
@@ -60,7 +58,7 @@ void execute(char** argv) {
 
   //TEST3
   request = "profiles_1d(1:5:1)";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -78,7 +76,7 @@ void execute(char** argv) {
 
   //TEST4
   request = "profiles_1d(1:5:1)";
-  runTest(data_entry, ids, request, "profiles_1d(2)");
+  ids.partialGet(request, "profiles_1d(2)");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
   for (int i = 0; i < 10; i++)
@@ -98,7 +96,7 @@ void execute(char** argv) {
 
   //TEST5
   request = "profiles_1d(:)";
-  runTest(data_entry, ids, request, "profiles_1d(2)");
+  ids.partialGet(request, "profiles_1d(2)");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
   for (int i = 0; i < 10; i++)
@@ -115,7 +113,7 @@ void execute(char** argv) {
 
   //TEST6
   request = "ids_properties;profiles_1d(1:5:2)";
-  runTest(data_entry, ids, request, "profiles_1d(2)");
+  ids.partialGet(request, "profiles_1d(2)");
   assertion[0] = ids.ids_properties.comment.length() != 0;
   assertion[1] = ids.profiles_1d.size() == 10;
   for (int i = 0; i < 10; i++)
@@ -135,7 +133,7 @@ void execute(char** argv) {
 
   //TEST7
   request = "profiles_1d(1:5:2)/ion(3)";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -189,7 +187,7 @@ void execute(char** argv) {
 
   //TEST8
   request = "profiles_1d(1:5:2)/ion(3);profiles_1d(1:5:2)/ion(1)";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -243,7 +241,7 @@ void execute(char** argv) {
 
   //TEST9
   request = "profiles_1d(1:5:2)/ion(3);profiles_1d(1:5:2)/time";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -302,7 +300,7 @@ void execute(char** argv) {
 
    //TEST10
   request = "ids_properties;profiles_1d(1:5:1)/ion(1:4:2);profiles_1d(:)/time";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() != 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -323,8 +321,7 @@ void execute(char** argv) {
 
   //TEST11
   request = "ids_properties;profiles_1d(1:5:1)/ion(1:4:2);profiles_1d(:)/time";
-  runTest(data_entry, ids, request, "profiles_1d(2:3:1);profiles_1d(5)/ion(1)");
-
+  ids.partialGet(request, "profiles_1d(2:3:1);profiles_1d(5)/ion(1)");
   assertion[0] = ids.ids_properties.comment.length() != 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -352,8 +349,7 @@ void execute(char** argv) {
   printf("Partial plugin test %d completed with %d assertions.\n", test_index, 17);
 
   request = "";
-  runTest(data_entry, ids, request, "");
-
+  ids.partialGet(request, "");
   //TEST12
   assertion[0] = ids.ids_properties.comment.length() != 0;
   assertion[1] = ids.profiles_1d.size() == 10;
@@ -370,7 +366,7 @@ void execute(char** argv) {
   
   //TEST13
   request = "profiles_1d(1:5:2)/ion(:);profiles_1d(1:5:2)/time";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -419,10 +415,11 @@ void execute(char** argv) {
   successfull *= checkAssertions(++test_index, request, assertion, 27); 
   printf("Partial plugin test %d completed with %d assertions.\n", test_index, 27);
 
-  request = "profiles_1d(:)";
-  runTest(data_entry, ids, request, "profiles_1d(:)");
-
   //TEST14
+
+  request = "profiles_1d(:)";
+  ids.partialGet(request, "profiles_1d(:)");
+
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 0;
 
@@ -431,7 +428,7 @@ void execute(char** argv) {
 
     //TEST15
   request = "profiles_1d(1:5)";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -450,7 +447,7 @@ void execute(char** argv) {
 
   //TEST16
   request = "profiles_1d(1:5)";
-  runTest(data_entry, ids, request, "profiles_1d(1:2)");
+  ids.partialGet(request, "profiles_1d(1:2)");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -472,7 +469,7 @@ void execute(char** argv) {
 
   //TEST17
   request = "profiles_1d(::2)";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -490,7 +487,7 @@ void execute(char** argv) {
 
   //TEST18
   request = "profiles_1d(:3)";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -508,7 +505,7 @@ void execute(char** argv) {
 
   //TEST19
   request = "profiles_1d(4:)";
-  runTest(data_entry, ids, request, "");
+  ids.partialGet(request, "");
   assertion[0] = ids.ids_properties.comment.length() == 0;
   assertion[1] = ids.profiles_1d.size() == 10;
 
@@ -546,29 +543,6 @@ int checkAssertions(int test_number, const std::string &request, bool (&assertio
     }
   }
   return successfull;
-}
-
-void runTest(IdsNs::IDS &data_entry, IDS::core_profiles &ids, const std::string &includes_request, const std::string &excludes_request) {
-  al_status_t status = al_register_plugin(PARTIAL_GET);
-  exitIfError(status);
-  int size = includes_request.length();
-  status = al_setvalue_parameter_plugin("includes", CHAR_DATA, 1, &size, (void *) includes_request.data(), PARTIAL_GET);
-  exitIfError(status);
-
-  size = excludes_request.length();
-  status = al_setvalue_parameter_plugin("excludes", CHAR_DATA, 1, &size, (void *) excludes_request.data(), PARTIAL_GET);
-  exitIfError(status);
-
-   //Use for debugging purposes only
-  status = al_setvalue_int_scalar_parameter_plugin("debug", 1, PARTIAL_GET);
-  exitIfError(status);
-  status = al_setvalue_int_scalar_parameter_plugin("debug_read_requests_only", 1, PARTIAL_GET);
-  exitIfError(status);
-
-  status = al_bind_plugin("core_profiles:0/*", PARTIAL_GET);
-  ids.get(0);
-  status = al_unregister_plugin(PARTIAL_GET);
-  exitIfError(status);
 }
 
 
@@ -628,7 +602,7 @@ void display_data(IDS::core_profiles &ids) {
 }
 void save_data(const char* uri) {
   IdsNs::IDS data_entry;
-  data_entry.open(uri, OPEN_PULSE);
+  data_entry.open(uri, FORCE_CREATE_PULSE);
   IDS::core_profiles ids = data_entry._core_profiles;
   double  vect1DDouble_1[10], vect1DDouble_2[12];
   int number = 10; //number of elements
