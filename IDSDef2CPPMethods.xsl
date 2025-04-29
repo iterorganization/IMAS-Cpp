@@ -789,11 +789,17 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::partialGet(int iOccurrence, c
 
         const char* PARTIAL_GET = "partial_get";
 
-        al_status_t al_status = al_register_plugin(PARTIAL_GET);
-        if(al_status.code &lt; 0) {
-            printf("PARTIAL_GET: error calling al_register_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
-                return al_status.code;
+        bool is_registered;
+        al_is_plugin_registered(PARTIAL_GET, &amp;is_registered);
+        al_status_t al_status;
+        if (!is_registered) {
+            al_status = al_register_plugin(PARTIAL_GET);
+            if(al_status.code &lt; 0) {
+              printf("PARTIAL_GET: error calling al_register_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                  return al_status.code;
+            }
         }
+        
         int size = includes.length();
         al_status = al_setvalue_parameter_plugin("includes", CHAR_DATA, 1, &amp;size, (void *) includes.data(), PARTIAL_GET);
         if(al_status.code &lt; 0) {
