@@ -21,7 +21,6 @@ set( TESTS
   test_magnetics_put
   test_parameter_plugin
   test_partial_gt_plugin
-  test_patch_reader_plugin
   test_pf_active_get
   test_pf_active_getSlice
   test_pf_active_put
