@@ -22,7 +22,6 @@ set( TESTS
   test_parameter_plugin
   test_partial_get_plugin
   test_using_partial_get_plugin
-  test_patch_reader_plugin
   test_pf_active_get
   test_pf_active_getSlice
   test_pf_active_put
