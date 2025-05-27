@@ -828,7 +828,10 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::partialGet(int iOccurrence, c
           }
         }
 
-        al_status = al_bind_plugin("core_profiles:0/*", PARTIAL_GET);
+        std::string nodes = std::string(idsName) + ":" + std::to_string(iOccurrence) + "/*";
+        al_status = al_bind_plugin(nodes.c_str(), PARTIAL_GET);
+
+
         if(al_status.code &lt; 0) {
             printf("PARTIAL_GET: error calling al_bind_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return al_status.code;
