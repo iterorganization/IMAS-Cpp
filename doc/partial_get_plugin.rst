@@ -11,7 +11,19 @@ For a comprehensive understanding of the AL5 plugin mechanism, refer to the offi
 
 Environment Setup
 -----------------
-To build and configure the C++ High Level Interface, please refer to :doc:`index`.
+
+To use this plugin, a High Level Interface is required, please refer to :
+
+   - `C++ High Level Interface
+     <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/cpp/latest.html>`_
+   - `Python High Level Interface
+     <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/python/latest.html>`_
+   - `Fortran High Level Interface
+     <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/fortran/latest.html>`_
+   - `Java High Level Interface
+     <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/java/latest.html>`_
+   - `MATLAB High Level Interface
+     <https://sharepoint.iter.org/departments/POP/CM/IMDesign/Code%20Documentation/ACCESS-LAYER-doc/matlab/latest.html>`_
 
 Some important points regarding configuration and compilation for using plugins are recalled below.
 
