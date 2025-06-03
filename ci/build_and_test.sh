@@ -4,7 +4,7 @@
 # This script expects to be run from the repository root directory
 
 # Debuggging:
-# set -e -o pipefail
+set -e -o pipefail
 echo "Loading modules..."
 
 # Set up environment such that module files can be loaded
