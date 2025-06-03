@@ -104,15 +104,15 @@ IDS (``IdsNs::Ids``) API
 
         This method has three different modes, depending on the provided arguments:
 
-        1.  No interpolation. This method is selected when :param:`dtime` is an empty 
-            vector (dtime.size() == 0) and:param:`interpolMode` is 0.
+        1.  No interpolation. This method is selected when `dtime` is an empty 
+            vector (dtime.size() == 0) and `interpolMode` is 0.
 
             This mode returns an IDS object with all constant/static data filled. The
             dynamic data is retrieved for the provided time range [tmin, tmax].
 
         2.  Interpolate dynamic data on a uniform time base. This method is selected
-            when :param:`dtime` and :param:`interpolMode` are provided.
-            :param:`dtime` must be a std::vector<double> of size 1.
+            when `dtime` and `interpolMode` are provided.
+            `dtime` must be a std::vector<double> of size 1.
 
             This mode will generate an IDS with a homogeneous time vector ``[tmin, tmin
             + dtime, tmin + 2*dtime, ...`` up to ``tmax``. The chosen interpolation
@@ -121,11 +121,11 @@ IDS (``IdsNs::Ids``) API
             ``ids_properties.homogeneous_time = 1``.
 
         3.  Interpolate dynamic data on an explicit time base. This method is selected
-            when :param:`dtime` and :param:`interpolMode` are provided.
-            :param:`dtime` must be a std::vector<double> of size larger than 1.
+            when `dtime` and `interpolMode` are provided.
+            `dtime` must be a std::vector<double> of size larger than 1.
 
             This mode will generate an IDS with a homogeneous time vector equal to
-            :param:`dtime`. :param:`tmin` and :param:`tmax` are ignored in this mode.
+            `dtime`. `tmin` and `tmax` are ignored in this mode.
             The chosen interpolation method will have no effect on the time vector, but
             may have an impact on the other dynamic values. 
             The returned IDS always has ``ids_properties.homogeneous_time = 1``.
@@ -133,7 +133,7 @@ IDS (``IdsNs::Ids``) API
         :param occurrence: Which occurrence of the IDS to read.
         :param tmin: Lower bound of the requested time range
         :param tmax: Upper bound of the requested time range, must be larger than or
-            equal to :param:`tmin`
+            equal to `tmin`
         :param dtime: Interval to use when interpolating, must be a std::vector<double>
             containing an explicit time base to interpolate.
         :param interpolMode: Interpolation method to use. Available options:

@@ -71,6 +71,7 @@ A boolean ``debug`` argument allows to debug queries. The debug messages are wri
 
     **Plugin Registration and Configuration** 
     .. code-block:: c++
+
         al_status_t status = al_register_plugin(PARTIAL_GET); // Register the plugin
 
         std::string includes = "ids_properties;profiles_1d(1:5:2)/ion(1:4:2)"; // Define include and exclude queries
@@ -84,7 +85,7 @@ A boolean ``debug`` argument allows to debug queries. The debug messages are wri
 
         status = al_setvalue_parameter_plugin("excludes", CHAR_DATA, 1, &size, (void*)excludes.data(), PARTIAL_GET); // Pass excludes queries to the plugin
 
-        status = al_bind_plugin("core_profiles:0/*", PARTIAL_GET);  // Bind the plugin to the 'core_profiles' IDS, occurrence 0, all nodes
+        status = al_bind_plugin("core_profiles:0/\*", PARTIAL_GET);  // Bind the plugin to the 'core_profiles' IDS, occurrence 0, all nodes
 
     * **Registration**: ``al_register_plugin(PARTIAL_GET)`` registers the plugin with the AL5 framework.
     * **Query Configuration**: ``includes`` and ``excludes`` queries are passed as parameters using ``al_setvalue_parameter_plugin``. These define which data to retrieve or exclude.
@@ -92,6 +93,7 @@ A boolean ``debug`` argument allows to debug queries. The debug messages are wri
 
     **Data Retrieval**
     .. code-block:: c++
+
         cp.get();    // calls get() operation to retrieve partial data based on the plugin's queries
 
         status = al_unregister_plugin(PARTIAL_GET); //unregisters the plugin
@@ -118,38 +120,54 @@ Queries for ``includes`` and ``excludes`` follow a specific syntax based on the 
 Syntax Rules
 ~~~~~~~~~~~~
 1. **Array of Structures (AOS) Queries**:
-   - **Format**: ``aos_name(mi:ma:k)``
-     - ``mi``: Minimum index (≥ 1).
-     - ``ma``: Maximum index (≥ 1).
-     - ``k``: Increment (≥ 0).
-     - Selects indices ``mi, mi+k, mi+2*k, ..., mi+n*k`` where ``mi+n*k ≤ ma``.
 
-   - **Example**: ``profiles_1d(1:3:1)`` → Selects indices ``{1, 2, 3}``.
-   - **All Elements**: ``aos_name(:)`` (e.g., ``profiles_1d(:)``).
-   - **Nested AOS**: Use ``/`` to separate levels (e.g., ``profiles_1d(1:5:2)/ion(1:4:2)``).
+   - **Format**: `aos_name(mi:ma:k)`
+     - `mi`: Minimum index (≥ 1).
+     - `ma`: Maximum index (≥ 1).
+     - `k`: Increment (≥ 0).
+     - Selects indices `mi, mi+k, mi+2*k, ..., mi+n*k` where `mi+n*k ≤ ma`.
+
+   - **Example**: `profiles_1d(1:3:1)` → Selects indices `{1, 2, 3}`.
+
+   - **All Elements**: `aos_name(:)` (e.g., `profiles_1d(:)`).
+
+   - **Nested AOS**: Use `/` to separate levels  
+     (e.g., `profiles_1d(1:5:2)/ion(1:4:2)`).
+
    - **Effect**:
-     - In ``includes``: Returns all data under ``aos_name(i)/`` for each selected index ``i``.
-     - In ``excludes``: Excludes all data under ``aos_name(i)/`` for each selected index ``i``.
+     - In `includes`: Returns all data under `aos_name(i)/` for each selected index `i`.
+     - In `excludes`: Excludes all data under `aos_name(i)/` for each selected index `i`.
+
 
 2. **Structure Queries**:
-   - **Format**: ``structure_name`` or ``parent_structure/structure_name``.
-   - **Example**: ``ids_properties`` or ``profiles_1d(:)/grid``.
+
+   - **Format**: `structure_name` or `parent_structure/structure_name`.
+
+   - **Example**: `ids_properties` or `profiles_1d(:)/grid`.
+
    - **Effect**:
-     - In ``includes``: Returns all data under ``structure_name/``.
-     - In ``excludes``: Excludes all data under ``structure_name/``.
+     - In `includes`: Returns all data under `structure_name/`.
+     - In `excludes`: Excludes all data under `structure_name/`.
 
 3. **Field Queries**:
-   - **Format**: ``field_name`` or ``parent_structure/field_name``.
-   - **Example**: ``time`` or ``profiles_1d(:)/time``.
+
+   - **Format**: `field_name` or `parent_structure/field_name`.
+
+   - **Example**: `time` or `profiles_1d(:)/time`.
+
    - **Effect**:
-     - In ``includes``: Returns only the field data from ``field_name``.
-     - In ``excludes``: Excludes only the field data from ``field_name``.
+     - In `includes`: Returns only the field data from `field_name`.
+     - In `excludes`: Excludes only the field data from `field_name`.
 
 4. **Notes**:
+
    - Indices follow Fortran convention (start at 1).
-   - The plugin does not validate paths against the DD but requires correct AOS syntax (e.g., indices must be specified).
-   - ``excludes`` must be a subset of ``includes``.
-   - If ``includes`` is empty, all data are returned by default (except data excluded by ``excludes`` queries).
+   - The plugin does not validate paths against the DD but requires correct AOS syntax  
+     (e.g., indices must be specified).
+   - `excludes` must be a subset of `includes`.
+   - If `includes` is empty, all data are returned by default  
+     (except data excluded by `excludes` queries).
+
 
 Examples for ``core_profiles`` IDS
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -203,8 +221,8 @@ Technical Notes
    query. This concept is used to determine whether a specific path
    or AOS is included in the managed set of paths.
 
-Troubleshooting
----------------
+Troubleshooting Plugin
+----------------------
 - **Plugin Not Loading**: Verify ``IMAS_AL_PLUGINS`` points to the correct directory and that ``partial_get_plugin.so`` exists.
 - **No Data Returned**: Check query syntax. Enable ``debug`` mode to check if the field is excluded by the plugin.
 

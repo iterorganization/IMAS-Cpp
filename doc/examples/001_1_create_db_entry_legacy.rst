@@ -14,7 +14,7 @@ This example focuses on creating DBEntry using **legacy** mode method.
 
     It is recommended to use the **URI** approach instead.
 
-.. literalinclude:: ../code_samples/tutorial/example_001_open_database.cpp
+.. literalinclude::../code_samples/tutorial/example_001_open_database.cpp
     :start-after: // This example focuses on creating DBEntry using legacy mode method
     :end-before:  // This example focuses on opening DBEntry using URI
     :language: cpp
