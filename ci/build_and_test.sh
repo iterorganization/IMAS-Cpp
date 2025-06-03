@@ -4,7 +4,7 @@
 # This script expects to be run from the repository root directory
 
 # Debuggging:
-set -e -o pipefail
+# set -e -o pipefail
 echo "Loading modules..."
 
 # Set up environment such that module files can be loaded
@@ -122,6 +122,8 @@ CMAKE_ARGS=(${CMAKE_ARGS[@]}
   -D AL_DOWNLOAD_DEPENDENCIES=${AL_DOWNLOAD_DEPENDENCIES:-ON}
   -D AL_CORE_GIT_REPOSITORY=${AL_CORE_GIT_REPOSITORY:-https://git.iter.org/scm/imas/al-core.git}
   -D AL_PLUGINS_GIT_REPOSITORY=${AL_PLUGINS_GIT_REPOSITORY:-https://git.iter.org/scm/imas/al-plugins.git}
+  # AL_PLUGINS version: can be set with AL_PLUGINS_VERSION env variable, otherwise use latest main
+  -D AL_PLUGINS_VERSION=${AL_PLUGINS_VERSION:-main}
   -D DD_GIT_REPOSITORY=${DD_GIT_REPOSITORY:-https://github.com/iterorganization/IMAS-Data-Dictionary.git}
   # DD version: can be set with DD_VERSION env variable, otherwise use latest main
   -D DD_VERSION=${DD_VERSION:-main}
