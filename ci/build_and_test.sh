@@ -4,7 +4,7 @@
 # This script expects to be run from the repository root directory
 
 # Debuggging:
-set -e -o pipefail
+# set -e -o pipefail
 echo "Loading modules..."
 
 # Set up environment such that module files can be loaded
@@ -63,7 +63,7 @@ MODULES=(
     Python/3.11.5-GCCcore-13.2.0
     libxml2/2.11.5-GCCcore-13.2.0  # AL-Core
     MDSplus/7.132.0-GCCcore-13.2.0  # backend
-    UDA/2.7.5-GCC-13.2.0  # backend
+    UDA/2.8.1-GCC-13.2.0  # backend
     Python/3.11.5-GCCcore-13.2.0  # for docs
 )
   ;;&
