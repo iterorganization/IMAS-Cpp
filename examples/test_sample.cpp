@@ -154,8 +154,8 @@ int execute_tests(BACKEND backend)
 
   if (ids._magnetics.flux_loop(0).flux.data.size() != ids._magnetics.time.size()) {
      printf("Test 5 has failed, 1D data not having the same size than the time basis vector.\n");
-     printf("ids._magnetics.flux_loop(0).flux.data.size()=%d\n", ids._magnetics.flux_loop(0).flux.data.size());
-     printf("ids._magnetics.time.size()=%d\n", ids._magnetics.time.size());
+     printf("ids._magnetics.flux_loop(0).flux.data.size()=%d\n", (int) ids._magnetics.flux_loop(0).flux.data.size());
+     printf("ids._magnetics.time.size()=%d\n", (int) ids._magnetics.time.size());
      return -1;
   }
 

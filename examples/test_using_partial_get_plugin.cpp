@@ -26,8 +26,8 @@ int main(int argc, char** argv){
 
   printf("ids_properties.homogeneous_time = %d\n", ids.ids_properties.homogeneous_time);
   printf("In this example, shape of the profiles_1d AOS is unchanged, for example,\n");
-  printf("we expect 10 elements in profiles_1d, found = %d\n", ids.profiles_1d.size());
-  printf("However, only attributes of the first 5 elements of profiles_1d are filled, for example the time values are: \n", ids.profiles_1d.size());
+  printf("we expect 10 elements in profiles_1d, found = %d\n", (int) ids.profiles_1d.size());
+  printf("However, only attributes of the first 5 elements of profiles_1d are filled, for example the time values are: \n");
   for (int i = 0; i < ids.profiles_1d.size(); i++) {
     printf("profiles_1d.time[%d] = %f\n", i, ids.profiles_1d(i).time);
   }
