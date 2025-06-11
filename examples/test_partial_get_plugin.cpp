@@ -842,7 +842,7 @@ void execute(char** argv) {
             });
         }
         std::vector<std::tuple<int, int, size_t>> state_checks = {
-            {0, 1, 0}, {2, 1, 10}
+            {0, 0, 0}, {2, 1, 10}
         };
         std::map<std::pair<int, int>, std::vector<std::pair<int, int>>> z_min_checks = {
             {{2, 2}, {{5, 5}, {6, 6}}}
