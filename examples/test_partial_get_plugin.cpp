@@ -12,7 +12,11 @@ using namespace IdsNs;
 void save_data(const char* uri);
 void display_data(IDS::core_profiles &ids);
 void exitIfError(al_status_t &status);
-
+#ifdef _WIN32
+#define DEV_NULL "nul"
+#else
+#define DEV_NULL "/dev/null"
+#endif
 // Structure to hold assertion results
 struct Assertion {
     bool passed;
@@ -858,6 +862,10 @@ void execute(char** argv) {
 
     // TEST 30: Check profiles_1d() (expecting ALPluginException)
     {
+        fflush(stdout);
+        FILE* old_stdout = stdout;
+        FILE* null_out = freopen(DEV_NULL, "w", stdout);
+
         std::vector<Assertion> assertions;
         bool exception_caught = false;
         
@@ -868,6 +876,12 @@ void execute(char** argv) {
             exception_caught ? "ALPluginException caught as expected for profiles_1d()" 
                              : "Expected ALPluginException not thrown for profiles_1d()"
         });
+
+        fflush(stdout);
+        if (null_out) {
+            freopen("/dev/tty", "w", stdout);  // or just use old_stdout with dup/dup2
+        }
+
         all_tests_passed &= runTest(++test_index, "profiles_1d()", "", ids, assertions);
     }
 
@@ -876,6 +890,10 @@ void execute(char** argv) {
         std::vector<Assertion> assertions;
         bool exception_caught = false;
         
+        fflush(stdout);
+        FILE* old_stdout = stdout;
+        FILE* null_out = freopen(DEV_NULL, "w", stdout);
+
         int status = ids.partialGet("profiles_1d("")", "");
         exception_caught = (status < 0);
         assertions.push_back({
@@ -883,6 +901,10 @@ void execute(char** argv) {
             exception_caught ? "ALPluginException caught as expected for profiles_1d()" 
                              : "Expected ALPluginException not thrown for profiles_1d()"
         });
+        fflush(stdout);
+        if (null_out) {
+            freopen("/dev/tty", "w", stdout);  // or just use old_stdout with dup/dup2
+        }
         all_tests_passed &= runTest(++test_index, "profiles_1d("")", "", ids, assertions);
     }
 
@@ -891,6 +913,10 @@ void execute(char** argv) {
         std::vector<Assertion> assertions;
         bool exception_caught = false;
         
+        fflush(stdout);
+        FILE* old_stdout = stdout;
+        FILE* null_out = freopen(DEV_NULL, "w", stdout);
+
         int status = ids.partialGet("profiles_1d(-1)", "");
         exception_caught = (status < 0);
         assertions.push_back({
@@ -898,6 +924,11 @@ void execute(char** argv) {
             exception_caught ? "ALPluginException caught as expected for profiles_1d()" 
                              : "Expected ALPluginException not thrown for profiles_1d()"
         });
+
+        fflush(stdout);
+        if (null_out) {
+            freopen("/dev/tty", "w", stdout);  // or just use old_stdout with dup/dup2
+        }
         all_tests_passed &= runTest(++test_index, "profiles_1d(-1)", "", ids, assertions);
     }
 
