@@ -795,7 +795,7 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::partialGet(int iOccurrence, c
         if (!is_registered) {
             al_status = al_register_plugin(PARTIAL_GET);
             if(al_status.code &lt; 0) {
-              printf("PARTIAL_GET: error calling al_register_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+              printf("PARTIAL_GET: an issue occurs calling al_register_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                   return al_status.code;
             }
         }
@@ -803,14 +803,14 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::partialGet(int iOccurrence, c
         int size = includes.length();
         al_status = al_setvalue_parameter_plugin("includes", CHAR_DATA, 1, &amp;size, (void *) includes.data(), PARTIAL_GET);
         if(al_status.code &lt; 0) {
-            printf("PARTIAL_GET: error calling al_setvalue_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+            printf("PARTIAL_GET: an issue occurs calling al_setvalue_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return al_status.code;
         }
 
         size = excludes.length();
         al_status = al_setvalue_parameter_plugin("excludes", CHAR_DATA, 1, &amp;size, (void *) excludes.data(), PARTIAL_GET);
         if(al_status.code &lt; 0) {
-            printf("PARTIAL_GET: error calling al_setvalue_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+            printf("PARTIAL_GET: an issue occurs calling al_setvalue_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return al_status.code;
         }
 
@@ -818,12 +818,12 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::partialGet(int iOccurrence, c
         if (debug) {
           al_status = al_setvalue_int_scalar_parameter_plugin("debug", 1, PARTIAL_GET);
           if(al_status.code &lt; 0) {
-            printf("PARTIAL_GET: error calling al_setvalue_int_scalar_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+            printf("PARTIAL_GET: an issue occurs calling al_setvalue_int_scalar_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return al_status.code;
           }
           al_status = al_setvalue_int_scalar_parameter_plugin("debug_read_requests_only", 1, PARTIAL_GET);
           if(al_status.code &lt; 0) {
-            printf("PARTIAL_GET: error calling al_setvalue_int_scalar_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+            printf("PARTIAL_GET: an issue occurs calling al_setvalue_int_scalar_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return al_status.code;
           }
         }
@@ -833,18 +833,18 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::partialGet(int iOccurrence, c
 
 
         if(al_status.code &lt; 0) {
-            printf("PARTIAL_GET: error calling al_bind_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+            printf("PARTIAL_GET: an issue occurs calling al_bind_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return al_status.code;
           }
 
         int status = get(iOccurrence);
         if(status &lt; 0) {
-            printf("PARTIAL_GET: error calling get() for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+            printf("PARTIAL_GET: an issue occurs calling get() for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return status;
           }
         al_status = al_unregister_plugin(PARTIAL_GET);
         if(al_status.code &lt; 0) {
-            printf("PARTIAL_GET: error calling al_unregister_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+            printf("PARTIAL_GET: an issue occurs calling al_unregister_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
                 return al_status.code;
           }
 	
