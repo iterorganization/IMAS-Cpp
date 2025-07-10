@@ -20,14 +20,15 @@ set( TESTS
   test_magnetics_memory
   test_magnetics_put
   test_parameter_plugin
-  test_partial_gt_plugin
-  test_patch_reader_plugin
+  test_partial_get_plugin
+  test_using_partial_get_plugin
   test_pf_active_get
   test_pf_active_getSlice
   test_pf_active_put
   test_pf_active_putSlice
   test_pulse_create
   test_version
+  test_sample
 )
 # Report an error when a .cpp source file exists without corresponding test:
 error_on_missing_tests( "cpp" "${TESTS}" )

@@ -703,6 +703,154 @@ int IdsNs::<xsl:value-of select="@name"/>_IDSBase::putSlice(int iOccurrence)
 	return 0;
 }
 
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSample(double tmin, double tmax, const std::vector&lt;double&gt; &amp;dtime, int interp)
+{
+        return this->getSample(0, tmin, tmax, dtime, interp);
+
+}
+
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::getSample(int iOccurrence, double tmin, double tmax, const std::vector&lt;double&gt; &amp;dtime, int interp)
+{
+        int status = 0;
+        al_status_t al_status;
+        char *str;
+        const char *idsName = "<xsl:value-of select="@name"/>";
+        std::string idsFullName = std::string(idsName);
+        int pulseCtx = this->pulseCtx;
+        int getOpCtx = -1;
+        int ctx = -1;
+        int aosCtx = -1;
+        std::string fieldPath;
+        std::string timeBasePath;
+        int idsTimeMode = IDS_TIME_MODE_UNKNOWN;
+        int arraySize;
+
+	if(!connected)
+		return -1;
+
+	if (tmax &lt; tmin) 
+    throw std::runtime_error("GET_SAMPLE: error, tmax should be greater or equals to tmin");
+
+  if ((interp != 0) &amp;&amp; (dtime.size() == 0)) 
+    throw std::runtime_error("GET_SAMPLE: error, interpolation mode should be 0 with no resampling (dtime.size() == 0)");
+
+  if ((interp == 0) &amp;&amp; (dtime.size() &gt;= 1))
+    throw std::runtime_error("GET_SAMPLE: error, interpolation mode should be specified (non zero) with resampling (dtime.size() &gt;= 1)");
+
+	if(iOccurrence &gt;= 1)
+        idsFullName += "/" + std::to_string(iOccurrence);
+
+    al_status = IdsNs::Ids::readIdsTimeMode(pulseCtx, idsFullName.c_str(), idsTimeMode );
+    if(al_status.code &lt; 0) {
+        printf("GET_SAMPLE: error reading homogeneous time for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+        return al_status.code;
+    }
+
+    //reset the ids content
+    clear();
+
+	// Open get context
+    const int dtime_shape = dtime.size();
+    al_status = al_begin_timerange_action(pulseCtx, idsFullName.c_str(), READ_OP, tmin, tmax, dtime.data(), &amp;dtime_shape, interp, &amp;getOpCtx);
+
+	if(al_status.code &lt; 0) {
+        printf("GET_SAMPLE: error calling al_begin_timerange_action for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+		return al_status.code;
+    }
+
+	ctx = getOpCtx;
+        al_status = al_bind_readback_plugins(ctx); //binding readback plugins just before the get() operation
+        if(al_status.code &lt; 0) {
+            printf("GET_SAMPLE: error calling al_bind_readback_plugins for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        }
+ 	<xsl:apply-templates select="field" mode="GET_SINGLE"/>
+	al_status = al_unbind_readback_plugins(ctx); //unbinding readback plugins just after the get() operation
+        if(al_status.code &lt; 0) {
+            printf("GET_SAMPLE: error calling al_unbind_readback_plugins for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        } 
+	al_end_action(ctx);
+	
+	return 0;
+}
+
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::partialGet(const std::string &amp;includes, 
+        const std::string &amp;excludes, bool debug)
+{
+   return this->partialGet(0, includes, excludes, debug);
+}
+
+int IdsNs::<xsl:value-of select="@name"/>_IDSBase::partialGet(int iOccurrence, const std::string &amp;includes, 
+        const std::string &amp;excludes, bool debug)
+{
+        const char *idsName = "<xsl:value-of select="@name"/>";
+        std::string idsFullName = std::string(idsName);
+
+        const char* PARTIAL_GET = "partial_get";
+
+        bool is_registered;
+        al_is_plugin_registered(PARTIAL_GET, &amp;is_registered);
+        al_status_t al_status;
+        if (!is_registered) {
+            al_status = al_register_plugin(PARTIAL_GET);
+            if(al_status.code &lt; 0) {
+              printf("PARTIAL_GET: an issue occurs calling al_register_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                  return al_status.code;
+            }
+        }
+        
+        int size = includes.length();
+        al_status = al_setvalue_parameter_plugin("includes", CHAR_DATA, 1, &amp;size, (void *) includes.data(), PARTIAL_GET);
+        if(al_status.code &lt; 0) {
+            printf("PARTIAL_GET: an issue occurs calling al_setvalue_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        }
+
+        size = excludes.length();
+        al_status = al_setvalue_parameter_plugin("excludes", CHAR_DATA, 1, &amp;size, (void *) excludes.data(), PARTIAL_GET);
+        if(al_status.code &lt; 0) {
+            printf("PARTIAL_GET: an issue occurs calling al_setvalue_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+        }
+
+        //Use for debugging purposes only
+        if (debug) {
+          al_status = al_setvalue_int_scalar_parameter_plugin("debug", 1, PARTIAL_GET);
+          if(al_status.code &lt; 0) {
+            printf("PARTIAL_GET: an issue occurs calling al_setvalue_int_scalar_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+          }
+          al_status = al_setvalue_int_scalar_parameter_plugin("debug_read_requests_only", 1, PARTIAL_GET);
+          if(al_status.code &lt; 0) {
+            printf("PARTIAL_GET: an issue occurs calling al_setvalue_int_scalar_parameter_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+          }
+        }
+
+        std::string nodes = std::string(idsName) + ":" + std::to_string(iOccurrence) + "/*";
+        al_status = al_bind_plugin(nodes.c_str(), PARTIAL_GET);
+
+
+        if(al_status.code &lt; 0) {
+            printf("PARTIAL_GET: an issue occurs calling al_bind_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+          }
+
+        int status = get(iOccurrence);
+        if(status &lt; 0) {
+            printf("PARTIAL_GET: an issue occurs calling get() for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return status;
+          }
+        al_status = al_unregister_plugin(PARTIAL_GET);
+        if(al_status.code &lt; 0) {
+            printf("PARTIAL_GET: an issue occurs calling al_unregister_plugin for %s IDS: %s\n", idsFullName.c_str(), al_status.message);
+                return al_status.code;
+          }
+	
+	return 0;
+}
+
 
 
 int IdsNs::<xsl:value-of select="@name"/>_IDSBase::deleteAll(int iOccurrence)

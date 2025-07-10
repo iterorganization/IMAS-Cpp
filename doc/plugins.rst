@@ -7,3 +7,4 @@
 
     plugins_architecture
     plugins_examples
+    partial_get_plugin

@@ -178,6 +178,10 @@ class LIBRARY_API <xsl:value-of select="@name"/>_IDSBase : public Ids
       <xsl:value-of select="@name"/>_IDSBase();
     int get() override;
     int get(int idx) override;
+    int getSample(double tmin, double tmax, const std::vector&lt;double&gt; &amp;dtime, int interp) override;
+    int getSample(int idx, double tmin, double tmax, const std::vector&lt;double&gt; &amp;dtime, int interp) override;
+    int partialGet(const std::string &amp;includes, const std::string &amp;excludes, bool debug=false) override;
+    int partialGet(int idx, const std::string &amp;includes, const std::string &amp;excludes, bool debug=false) override;
     int put() override;
     int put(int idx) override;
     int getSlice(double inTime, char interpolMode) override;

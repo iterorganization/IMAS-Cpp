@@ -38,6 +38,10 @@ class Ids
         // virtual functions defined in subclasses
         virtual int get() = 0;
         virtual int get(int idx) = 0;
+        virtual int getSample(double tmin, double tmax, const std::vector<double> &dtime, int interp) = 0;
+        virtual int getSample(int idx, double tmin, double tmax, const std::vector<double> &dtime, int interp) = 0;
+        virtual int partialGet(const std::string &includes, const std::string &excludes, bool debug=false) = 0;
+        virtual int partialGet(int idx, const std::string &includes, const std::string &excludes, bool debug=false) = 0;
         virtual int put() = 0;
         virtual int put(int idx) = 0;
         virtual int getSlice(double inTime, char interpolMode) = 0;

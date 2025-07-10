@@ -98,6 +98,57 @@ IDS (``IdsNs::Ids``) API
         :returns: Status code: ``0`` on success, ``<0`` on failure.
         :example: .. literalinclude:: code_samples/dbentry_getslice
 
+    .. cpp:function:: int getSample(int occurrence, double tmin, double tmax, const std::vector<double> &dtime, int interpolMode)
+        
+        Read a range of time slices from an IDS in this Database Entry.
+
+        This method has three different modes, depending on the provided arguments:
+
+        1.  No interpolation. This method is selected when `dtime` is an empty 
+            vector (dtime.size() == 0) and `interpolMode` is 0.
+
+            This mode returns an IDS object with all constant/static data filled. The
+            dynamic data is retrieved for the provided time range [tmin, tmax].
+
+        2.  Interpolate dynamic data on a uniform time base. This method is selected
+            when `dtime` and `interpolMode` are provided.
+            `dtime` must be a std::vector<double> of size 1.
+
+            This mode will generate an IDS with a homogeneous time vector ``[tmin, tmin
+            + dtime, tmin + 2*dtime, ...`` up to ``tmax``. The chosen interpolation
+            method will have no effect on the time vector, but may have an impact on the
+            other dynamic values. The returned IDS always has
+            ``ids_properties.homogeneous_time = 1``.
+
+        3.  Interpolate dynamic data on an explicit time base. This method is selected
+            when `dtime` and `interpolMode` are provided.
+            `dtime` must be a std::vector<double> of size larger than 1.
+
+            This mode will generate an IDS with a homogeneous time vector equal to
+            `dtime`. `tmin` and `tmax` are ignored in this mode.
+            The chosen interpolation method will have no effect on the time vector, but
+            may have an impact on the other dynamic values. 
+            The returned IDS always has ``ids_properties.homogeneous_time = 1``.
+
+        :param occurrence: Which occurrence of the IDS to read.
+        :param tmin: Lower bound of the requested time range
+        :param tmax: Upper bound of the requested time range, must be larger than or
+            equal to `tmin`
+        :param dtime: Interval to use when interpolating, must be a std::vector<double>
+            containing an explicit time base to interpolate.
+        :param interpolMode: Interpolation method to use. Available options:
+
+            - :const: CLOSEST_INTERP
+            - :const: PREVIOUS_INTERP
+            - :const: LINEAR_INTERP
+
+        :returns: The loaded IDS.
+
+    .. cpp:function:: int getSample(double tmin, double tmax, const std::vector<double> &dtime, int interpolMode)
+
+        Same as :cpp:func:`int Ids::getSample(int, double, double, std::vector<double>, int)`, but with
+        :code:`occurrence = 0`.
+
     .. cpp:function:: int put(int occurrence=0)
 
         Write the contents of an IDS to the Database Entry.
@@ -146,7 +197,32 @@ IDS (``IdsNs::Ids``) API
         :returns: Status code: ``0`` on success, ``<0`` on failure.
         :example: .. literalinclude:: code_samples/dbentry_put_slice
 
+    .. cpp:function:: int partialGet(int occurrence, const std::string &includes, const std::string &excludes, bool debug=false)
 
+        Read the partial contents of an IDS into memory.
+
+        This method fetches partially the IDS according to "includes" and "excludes" queries.
+
+        Returned data have paths included in a set of paths defined by the "includes" 
+        queries minus the paths explicitly removed by the "excludes" queries. 
+        A IDS field is returned only if its path matches at least one
+        include query and does not match any exclude query.
+
+        Empty fields within the IDS in the Data Entry are returned with the
+        default values indicated in :ref:`Default values`.
+
+        Technical info: :doc:`./partial_get_plugin`.
+
+        :param occurrence: Which occurrence of the IDS to read.
+        :returns: Status code: ``0`` on success, ``<0`` on failure.
+        :example: .. literalinclude:: code_samples/dbentry_partial_get
+
+    .. cpp:function:: int partialGet(const std::string &includes, const std::string &excludes, bool debug=false)
+
+        Same as :cpp:func:`int Ids::partialGet(int, std::string, std::string)`, but with
+        :code:`occurrence = 0`.
+
+        Technical info: :doc:`./partial_get_plugin`.
 
     .. cpp:function:: bool isDefined()
 

@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
 
   printf("ids_properties.homogeneous: %d\n",ids._core_profiles.ids_properties.homogeneous_time);
   printf("ids_properties.comment:     %s\n",ids._core_profiles.ids_properties.comment.c_str());
-  printf("size of profiles_1d:        %d\n",ids._core_profiles.profiles_1d.size());
+  printf("size of profiles_1d:        %d\n",(int) ids._core_profiles.profiles_1d.size());
 
   printf("profiles_1d.time:");
   for(i=0; i< ids._core_profiles.profiles_1d.extent(0); i++)
