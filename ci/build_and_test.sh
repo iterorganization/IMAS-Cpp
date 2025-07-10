@@ -95,7 +95,7 @@ module load "${MODULES[@]}"
 # Debuggging:
 echo "Done loading modules:"
 module list
-
+set -x
 
 # Create a local git configuration with our access token
 if [ "x$bamboo_HTTP_AUTH_BEARER_PASSWORD" != "x" ]; then
