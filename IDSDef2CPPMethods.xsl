@@ -1796,8 +1796,23 @@ or @data_type='cpx_1d_type' or @data_type='CPX_1D' or @data_type='STR_1D') and c
         <xsl:with-param name="string-resolved" select="''"/>
       </xsl:apply-templates>
       </xsl:variable>
+      <xsl:variable name="resolved_target_parent">
+        <xsl:value-of select="substring-before($resolved_target, '(itime)')"/>
+      </xsl:variable>
       <xsl:if test="not(contains($coord,'1...'))">
-			if (this-><xsl:value-of select="$resolved_target"/>.extent(0) != 0) i = i + 1;
+        <xsl:choose>
+        <xsl:when test="string-length($resolved_target_parent) = 0">
+          if (this-><xsl:value-of select="$resolved_target"/>.extent(0) != 0) i = i + 1;
+        </xsl:when>
+        <xsl:otherwise>
+          if (this-><xsl:value-of select="$resolved_target_parent"/>.extent(0) != 0) {
+            if (this-><xsl:value-of select="$resolved_target"/>.extent(0) != 0) i = i + 1;
+          }
+          else {
+            error = false;
+          }
+        </xsl:otherwise>
+        </xsl:choose>
       </xsl:if>
           if (i!=1) { 
             check = false;
