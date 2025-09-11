@@ -17,7 +17,7 @@
 
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
 
-<!-- GET VALID FORTRAN IDENTIFIER -->
+<!-- GET VALID CPP IDENTIFIER -->
 <xsl:template name="get-valid-cpp-identifier">
   <xsl:param name="name"/>
   <xsl:choose>
