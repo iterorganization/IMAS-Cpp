@@ -17,6 +17,19 @@
 
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
 
+<!-- GET VALID FORTRAN IDENTIFIER -->
+<xsl:template name="get-valid-cpp-identifier">
+  <xsl:param name="name"/>
+  <xsl:choose>
+    <xsl:when test="contains('0123456789', substring($name,1,1))">
+      <xsl:text>_</xsl:text><xsl:value-of select="$name"/>
+    </xsl:when>
+    <xsl:otherwise>
+      <xsl:value-of select="$name"/>
+    </xsl:otherwise>
+  </xsl:choose>
+</xsl:template>
+
 <!-- MAIN, FILE GENERATION -->
 <xsl:template match="/constants">
 
@@ -127,7 +140,7 @@
       <xsl:text>  int type_index=-999999999;&#xA;</xsl:text>
       <xsl:for-each select="int[@name]">
         <xsl:text>  if(strcmp(name, "</xsl:text>
-        <xsl:value-of select="@name"/>    
+        <xsl:value-of select="@name"/>  
         <xsl:text>") == 0) {&#xA;</xsl:text>
         <xsl:text>    return </xsl:text>
         <xsl:value-of select="."/>    
@@ -149,7 +162,9 @@
         <xsl:value-of select="."/>    
         <xsl:text>):&#xA;</xsl:text>
         <xsl:text>      return "</xsl:text>
-        <xsl:value-of select="@name"/>    
+        <xsl:call-template name="get-valid-cpp-identifier">
+          <xsl:with-param name="name" select="@name"/>
+        </xsl:call-template> 
         <xsl:text>";&#xA;      break;&#xA;</xsl:text>
       </xsl:for-each>
       <xsl:text>  }&#xA;</xsl:text>
@@ -237,7 +252,9 @@
 
 <xsl:template match="int|float" mode="C">
   <xsl:text>#define </xsl:text>
-  <xsl:value-of select="@name"/>
+  <xsl:call-template name="get-valid-cpp-identifier">
+    <xsl:with-param name="name" select="@name"/>
+  </xsl:call-template> 
   <xsl:text>&#009;&#009; </xsl:text>
   <xsl:value-of select="."/>
   <xsl:value-of select="my:desc('//')"/>
@@ -245,7 +262,9 @@
 
 <xsl:template match="string" mode="C">
   <xsl:text>#define </xsl:text>
-  <xsl:value-of select="@name"/>
+  <xsl:call-template name="get-valid-cpp-identifier">
+    <xsl:with-param name="name" select="@name"/>
+  </xsl:call-template> 
   <xsl:text>&#009;&#009; "</xsl:text>
   <xsl:value-of select="."/><xsl:text>"</xsl:text>
   <xsl:value-of select="my:desc('//')"/>
