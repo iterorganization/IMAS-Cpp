@@ -59,7 +59,7 @@ add_custom_target( example-cpp-all )
 foreach( TEST IN LISTS TESTS )
   set( TEST_NAME "example-cpp-${TEST}")
   add_executable( ${TEST_NAME} ${TEST}.cpp )
-  target_link_libraries( ${TEST_NAME} al-cpp )
+  target_link_libraries( ${TEST_NAME} al-cpp al-identifiers-cpp)
   add_dependencies( example-cpp-all ${TEST_NAME} )
 
   # Disable some tests if no persistent backends available

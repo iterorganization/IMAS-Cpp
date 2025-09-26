@@ -25,6 +25,7 @@
     <xsl:text>&#xA;</xsl:text>
     <xsl:if test="//constants[@create_mapping_function]">
       <xsl:text>#include &lt;string&gt;&#xA;</xsl:text>
+      <xsl:text>#include &lt;stdexcept&gt;&#xA;</xsl:text>
       <xsl:text>&#xA;</xsl:text>
       <xsl:text>class </xsl:text><xsl:value-of select="$name"/><xsl:text> {&#xA;</xsl:text>
       <xsl:text>public:&#xA;</xsl:text>
@@ -40,15 +41,14 @@
       <xsl:text>        int temp_index;&#xA;</xsl:text>
       <xsl:text>        std::string temp_description;&#xA;</xsl:text>
       <xsl:text>        &#xA;</xsl:text>
-      <xsl:text>        if (get_type_data_by_name(name, temp_index, temp_description)) {&#xA;</xsl:text>
+      <xsl:text>        try {&#xA;</xsl:text>
+      <xsl:text>            get_type_data_by_name(name, temp_index, temp_description);&#xA;</xsl:text>
       <xsl:text>            obj.index = temp_index;&#xA;</xsl:text>
       <xsl:text>            obj.name = get_name(temp_index);&#xA;</xsl:text>
       <xsl:text>            obj.description = temp_description;&#xA;</xsl:text>
-      <xsl:text>        } else {&#xA;</xsl:text>
-      <xsl:text>            // Set default values for unknown identifier&#xA;</xsl:text>
-      <xsl:text>            obj.index = -999999999;&#xA;</xsl:text>
-      <xsl:text>            obj.name = name;&#xA;</xsl:text>
-      <xsl:text>            obj.description = "unknown";&#xA;</xsl:text>
+      <xsl:text>        } catch (const std::invalid_argument&amp; e) {&#xA;</xsl:text>
+      <xsl:text>            // Re-throw with more context&#xA;</xsl:text>
+      <xsl:text>            throw std::invalid_argument("Failed to set identifier: " + std::string(e.what()));&#xA;</xsl:text>
       <xsl:text>        }&#xA;</xsl:text>
       <xsl:text>    }&#xA;</xsl:text>
       <xsl:text>    &#xA;</xsl:text>
@@ -64,15 +64,14 @@
       <xsl:text>            int temp_index;&#xA;</xsl:text>
       <xsl:text>            std::string temp_description;&#xA;</xsl:text>
       <xsl:text>            &#xA;</xsl:text>
-      <xsl:text>            if (get_type_data_by_name(names[i], temp_index, temp_description)) {&#xA;</xsl:text>
+      <xsl:text>            try {&#xA;</xsl:text>
+      <xsl:text>                get_type_data_by_name(names[i], temp_index, temp_description);&#xA;</xsl:text>
       <xsl:text>                obj.indices(i) = temp_index;&#xA;</xsl:text>
       <xsl:text>                obj.names(i) = get_name(temp_index);&#xA;</xsl:text>
       <xsl:text>                obj.descriptions(i) = temp_description;&#xA;</xsl:text>
-      <xsl:text>            } else {&#xA;</xsl:text>
-      <xsl:text>                // Set default values for unknown identifier&#xA;</xsl:text>
-      <xsl:text>                obj.indices(i) = -999999999;&#xA;</xsl:text>
-      <xsl:text>                obj.names(i) = names[i];&#xA;</xsl:text>
-      <xsl:text>                obj.descriptions(i) = "unknown";&#xA;</xsl:text>
+      <xsl:text>            } catch (const std::invalid_argument&amp; e) {&#xA;</xsl:text>
+      <xsl:text>                // Re-throw with array index context&#xA;</xsl:text>
+      <xsl:text>                throw std::invalid_argument("Failed to set identifier at index " + std::to_string(i) + ": " + std::string(e.what()));&#xA;</xsl:text>
       <xsl:text>            }&#xA;</xsl:text>
       <xsl:text>        }&#xA;</xsl:text>
       <xsl:text>    }&#xA;</xsl:text>
@@ -165,10 +164,8 @@
           <xsl:text>    }&#xA;</xsl:text>
         </xsl:if>
       </xsl:for-each>
-      <xsl:text>    // Unknown identifier - set default values&#xA;</xsl:text>
-      <xsl:text>    index = -999999999;&#xA;</xsl:text>
-      <xsl:text>    description = "unknown";&#xA;</xsl:text>
-      <xsl:text>    return false;&#xA;</xsl:text>
+      <xsl:text>    // Unknown identifier - throw exception&#xA;</xsl:text>
+      <xsl:text>    throw std::invalid_argument("Unknown identifier: '" + name + "'");&#xA;</xsl:text>
       <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
 </xsl:template>
