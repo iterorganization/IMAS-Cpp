@@ -1,17 +1,54 @@
-// Include the Access Layer
 #include "ALClasses.h"
-// And the required identifiers header(s)
-#include "core_source_identifier.h"
+#include "distribution_source_identifier.h"
+#include "poloidal_plane_coordinates_identifier.h"
 #include <iostream>
 
-int main(int argc, char *argv[]) {
-    IdsNs::IDS::core_sources core_sources;
-    core_sources.source.resize(1);
-    core_sources.source(0).identifier.index = nbi;
-    core_sources.source(0).identifier.name =
-        core_source_identifier_get_type_name(nbi);
-    core_sources.source(0).identifier.description =
-        core_source_identifier_get_type_description(nbi);
+using namespace IdsNs;
 
+int main(int argc, char *argv[])
+{
+    IdsNs::IDS ids;
+
+    // Configure equilibrium IDS
+    ids._equilibrium.ids_properties.homogeneous_time = 1;
+    ids._equilibrium.ids_properties.comment = "Test equilibrium IDS";
+    
+    // Setup equilibrium time slice and profiles
+    ids._equilibrium.time_slice.resize(1);
+    ids._equilibrium.time_slice(0).profiles_2d.resize(1);
+    
+    // Set grid type identifier for equilibrium profiles
+    poloidal_plane_coordinates_identifier::set_identifier(
+        ids._equilibrium.time_slice(0).profiles_2d(0).grid_type, 
+        "rectangular"
+    );
+
+    // Output equilibrium grid type information
+    std::cout << "Equilibrium Grid Type:" << std::endl;
+    std::cout << "  Name: " << ids._equilibrium.time_slice(0).profiles_2d(0).grid_type.name << std::endl;
+    std::cout << "  Index: " << ids._equilibrium.time_slice(0).profiles_2d(0).grid_type.index << std::endl;
+    std::cout << "  Description: " << ids._equilibrium.time_slice(0).profiles_2d(0).grid_type.description << std::endl;
+    std::cout << std::endl;
+
+    // Configure distribution sources IDS
+    ids._distribution_sources.ids_properties.homogeneous_time = 1;
+    ids._distribution_sources.ids_properties.comment = "Test distribution sources IDS";
+    
+    // Setup distribution sources structure
+    ids._distribution_sources.source.resize(1);
+    ids._distribution_sources.source(0).process.resize(1);
+
+    // Set distribution source type identifier
+    distribution_source_identifier::set_identifier(
+        ids._distribution_sources.source(0).process(0).type, 
+        "NBI"
+    );
+    
+    // Output distribution source type information
+    std::cout << "Distribution Source Type:" << std::endl;
+    std::cout << "  Name: " << ids._distribution_sources.source(0).process(0).type.name << std::endl;
+    std::cout << "  Index: " << ids._distribution_sources.source(0).process(0).type.index << std::endl;
+    std::cout << "  Description: " << ids._distribution_sources.source(0).process(0).type.description << std::endl;
+    
     return 0;
 }

@@ -4,11 +4,16 @@
 #include "coordinate_identifier.h"
 #include <iostream>
 
-int main(int argc, char *argv[]) {
-    // Print index and description of phi
-    // Note: phi is a macro defined in coordinate_identifier.h
-    std::cout << phi << std::endl;
-    std::cout << coordinate_identifier_get_type_description(phi) << std::endl;
+int main(int argc, char *argv[]) 
+{
+    // Get coordinate identifier information for "phi"
+    int idx = coordinate_identifier::get_index("phi");
+    
+    // Display coordinate identifier details
+    std::cout << "Coordinate Identifier Information for 'phi':" << std::endl;
+    std::cout << "  Index: " << idx << std::endl;
+    std::cout << "  Data type: " << coordinate_identifier::get_name(idx) << std::endl;
+    std::cout << "  Description: " << coordinate_identifier::get_description(idx) << std::endl;
 
     return 0;
 }

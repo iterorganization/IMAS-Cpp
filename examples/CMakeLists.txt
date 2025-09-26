@@ -16,6 +16,7 @@ set( TESTS
   test_debug_plugin
   test_distributions_validate
   test_ids_is_defined
+  test_identifiers
   test_magnetics_get
   test_magnetics_memory
   test_magnetics_put

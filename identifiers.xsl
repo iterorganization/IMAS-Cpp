@@ -1,39 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?modxslt-stylesheet type="text/xsl" media="fuffa, screen and $GET[stylesheet]" href="./%24GET%5Bstylesheet%5D" alternate="no" title="Translation using provided stylesheet" charset="ISO-8859-1" ?>
-<?modxslt-stylesheet type="text/xsl" media="screen" alternate="no" title="Show raw source of the XML file" charset="ISO-8859-1" ?>
-
 <xsl:stylesheet 
-   xmlns:yaslt="http://www.mod-xslt2.com/ns/1.0"
    xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
-   xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-   xmlns:fn="http://www.w3.org/2005/02/xpath-functions"
    xmlns:exsl="http://exslt.org/common"
-   xmlns:str="http://exslt.org/strings"
-   xmlns:func="http://exslt.org/functions"
    xmlns:my="http://localhost.localdomain/localns"
    exclude-result-prefixes="my"
-   extension-element-prefixes="yaslt exsl func str">
+   extension-element-prefixes="exsl">
    <xsl:include href="./identifiers.common.xsl"/>
 
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
 
-<!-- GET VALID CPP IDENTIFIER -->
-<xsl:template name="get-valid-cpp-identifier">
-  <xsl:param name="name"/>
-  <xsl:choose>
-    <xsl:when test="contains('0123456789', substring($name,1,1))">
-      <xsl:text>_</xsl:text><xsl:value-of select="$name"/>
-    </xsl:when>
-    <xsl:otherwise>
-      <xsl:value-of select="$name"/>
-    </xsl:otherwise>
-  </xsl:choose>
-</xsl:template>
-
 <!-- MAIN, FILE GENERATION -->
 <xsl:template match="/constants">
 
-  <!-- C FILE -->
+  <!-- C++ Header FILE -->
   <exsl:document href="{$prefix}{$name}.h" method="text">
     <xsl:text>#ifndef H_</xsl:text>
     <xsl:value-of select="my:upall($name)"/>
@@ -42,204 +21,157 @@
     <xsl:apply-templates select="header" mode="C"/>
     <xsl:text>&#xA;&#xA;</xsl:text>
     <xsl:apply-templates select="include[@name='C']"/><xsl:text>&#xA;&#xA;</xsl:text>
-    <xsl:apply-templates select="*[name()!='header' and name()!='include']" mode="C"/>
+    
     <xsl:text>&#xA;</xsl:text>
     <xsl:if test="//constants[@create_mapping_function]">
-      <xsl:text>typedef struct imas_</xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text> {&#xA;</xsl:text>
-      <xsl:text>  int type_index;&#xA;</xsl:text>
-      <xsl:text>  const char* type_name;&#xA;</xsl:text>
-      <xsl:text>  const char* type_description;&#xA;</xsl:text>
-      <xsl:text>#if defined(__cplusplus)&#xA;</xsl:text>
-      <xsl:text>  imas_</xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>  get_all(int idx);&#xA;</xsl:text>
-      <xsl:text>  int get_type_index(const char* name);&#xA;</xsl:text>
-      <xsl:text>  const char* get_type_name(int idx);&#xA;</xsl:text>
-      <xsl:text>  const char* get_type_description(int idx);&#xA;</xsl:text>
-      <xsl:text>#endif //defined(__cplusplus);&#xA;</xsl:text>
-      <xsl:text>}&#xA;</xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>;&#xA;&#xA;</xsl:text>
-
-      <xsl:text>#if defined(__cplusplus)&#xA;</xsl:text>
-      <xsl:text>extern "C" {&#xA;</xsl:text>
-      <xsl:text>#endif //defined(__cplusplus)&#xA;</xsl:text>
-
-      <xsl:value-of select="$name"/>
-      <xsl:text> </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>_get_all(int idx);&#xA;</xsl:text>
-      <xsl:text>int </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>_get_type_index(const char* name);&#xA;</xsl:text>
-      <xsl:text>const char* </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>_get_type_name(int idx);&#xA;</xsl:text>
-      <xsl:text>const char* </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>_get_type_description(int idx);&#xA;</xsl:text>
-
-      <xsl:text>#if defined(__cplusplus)&#xA;</xsl:text>
-      <xsl:text>}&#xA;</xsl:text>
-      <xsl:text>#endif //defined(__cplusplus)&#xA;</xsl:text>
+      <xsl:text>#include &lt;string&gt;&#xA;</xsl:text>
+      <xsl:text>&#xA;</xsl:text>
+      <xsl:text>class </xsl:text><xsl:value-of select="$name"/><xsl:text> {&#xA;</xsl:text>
+      <xsl:text>public:&#xA;</xsl:text>
+      <xsl:text>    static int get_index(const std::string&amp; name);&#xA;</xsl:text>
+      <xsl:text>    static std::string get_description(int idx);&#xA;</xsl:text>
+      <xsl:text>    static std::string get_name(int idx);&#xA;</xsl:text>
+      <xsl:text>    &#xA;</xsl:text>
+      <xsl:text>    static bool get_type_data_by_name(const std::string&amp; name, int&amp; index, std::string&amp; description);&#xA;</xsl:text>
+      <xsl:text>    &#xA;</xsl:text>
+      <xsl:text>    // Setter for an object&#xA;</xsl:text>
+      <xsl:text>    template&lt;typename T&gt;&#xA;</xsl:text>
+      <xsl:text>    static void set_identifier(T&amp; obj, const std::string&amp; name) {&#xA;</xsl:text>
+      <xsl:text>        int temp_index;&#xA;</xsl:text>
+      <xsl:text>        std::string temp_description;&#xA;</xsl:text>
+      <xsl:text>        &#xA;</xsl:text>
+      <xsl:text>        if (get_type_data_by_name(name, temp_index, temp_description)) {&#xA;</xsl:text>
+      <xsl:text>            obj.index = temp_index;&#xA;</xsl:text>
+      <xsl:text>            obj.name = get_name(temp_index);&#xA;</xsl:text>
+      <xsl:text>            obj.description = temp_description;&#xA;</xsl:text>
+      <xsl:text>        } else {&#xA;</xsl:text>
+      <xsl:text>            // Set default values for unknown identifier&#xA;</xsl:text>
+      <xsl:text>            obj.index = -999999999;&#xA;</xsl:text>
+      <xsl:text>            obj.name = name;&#xA;</xsl:text>
+      <xsl:text>            obj.description = "unknown";&#xA;</xsl:text>
+      <xsl:text>        }&#xA;</xsl:text>
+      <xsl:text>    }&#xA;</xsl:text>
+      <xsl:text>    &#xA;</xsl:text>
+      <xsl:text>    // Setter for an array &#xA;</xsl:text>
+      <xsl:text>    template&lt;typename T, size_t N&gt;&#xA;</xsl:text>
+      <xsl:text>    static void set_identifier(T&amp; obj, const std::string (&amp;names)[N]) {&#xA;</xsl:text>
+      <xsl:text>        // Resize object array to match name array size&#xA;</xsl:text>
+      <xsl:text>        obj.indices.resize(N);&#xA;</xsl:text>
+      <xsl:text>        obj.names.resize(N);&#xA;</xsl:text>
+      <xsl:text>        obj.descriptions.resize(N);&#xA;</xsl:text>
+      <xsl:text>        &#xA;</xsl:text>
+      <xsl:text>        for (size_t i = 0; i &lt; N; ++i) {&#xA;</xsl:text>
+      <xsl:text>            int temp_index;&#xA;</xsl:text>
+      <xsl:text>            std::string temp_description;&#xA;</xsl:text>
+      <xsl:text>            &#xA;</xsl:text>
+      <xsl:text>            if (get_type_data_by_name(names[i], temp_index, temp_description)) {&#xA;</xsl:text>
+      <xsl:text>                obj.indices(i) = temp_index;&#xA;</xsl:text>
+      <xsl:text>                obj.names(i) = get_name(temp_index);&#xA;</xsl:text>
+      <xsl:text>                obj.descriptions(i) = temp_description;&#xA;</xsl:text>
+      <xsl:text>            } else {&#xA;</xsl:text>
+      <xsl:text>                // Set default values for unknown identifier&#xA;</xsl:text>
+      <xsl:text>                obj.indices(i) = -999999999;&#xA;</xsl:text>
+      <xsl:text>                obj.names(i) = names[i];&#xA;</xsl:text>
+      <xsl:text>                obj.descriptions(i) = "unknown";&#xA;</xsl:text>
+      <xsl:text>            }&#xA;</xsl:text>
+      <xsl:text>        }&#xA;</xsl:text>
+      <xsl:text>    }&#xA;</xsl:text>
+      <xsl:text>};&#xA;</xsl:text>
+      <xsl:text>&#xA;</xsl:text>
     </xsl:if>
-     <xsl:text>#endif</xsl:text>
+    <xsl:text>#endif</xsl:text>
   </exsl:document>
   
   <exsl:document href="{$prefix}{$name}.cpp" method="text">
-    <xsl:text>#include &#60;</xsl:text>
+    <xsl:text>#include "</xsl:text>
     <xsl:value-of select="$name"/>
-    <xsl:text>.h&#62;&#xA;</xsl:text>
+    <xsl:text>.h"&#xA;</xsl:text>
     <xsl:if test="//constants[@create_mapping_function]">
-      <xsl:call-template name="translations_C"/>
+      <xsl:call-template name="class_implementation"/>
     </xsl:if>
   </exsl:document>
-   <!-- DOCBOOK FILE -->
-  <exsl:document href="{$prefix}{$name}.xml" method="text">
-    <xsl:call-template name="docbook"/>
-  </exsl:document>
 </xsl:template>
-  
-<!-- Translations between VALUE, NAME and DESCRIPTION -->
-<xsl:template name="translations_C">
-    <xsl:text>#include &#60;string.h&#62;&#xA;</xsl:text>
+<!-- Simple class implementation -->
+<xsl:template name="class_implementation">
     <xsl:text>&#xA;</xsl:text>
-    <xsl:text>#if defined(__cplusplus)&#xA;</xsl:text>
+    <xsl:text>// Implementation of </xsl:text><xsl:value-of select="$name"/><xsl:text> class&#xA;</xsl:text>
+    <xsl:text>&#xA;</xsl:text>
 
-    <!-- Translation from VALUE to NAME DESCRIPTION and VALUE -->
-    <xsl:if test="int!='' and */@unique='yes'">
-      <xsl:text>// Function returning the NAME DESCRIPTION and VALUE of the type with index IDX.&#xA;</xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text> </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>::get_all(int idx) {&#xA;</xsl:text>
-      <xsl:text>  </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text> type_struct;&#xA;</xsl:text>
-      <xsl:text>  type_struct.type_name = </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>_get_type_name(idx);&#xA;</xsl:text>
-      <xsl:text>  type_struct.type_description = </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>_get_type_description(idx);&#xA;</xsl:text>
-      <xsl:text>  type_struct.type_index = </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>_get_type_index(type_struct.type_name);&#xA;</xsl:text>
-      <xsl:text>  return type_struct;&#xA;</xsl:text>
-      <xsl:text>}&#xA;&#xA;</xsl:text>
-    </xsl:if>
-
-    <!-- Translation from NAME to VALUE -->
+    <!-- get_index method -->
     <xsl:if test="int!='' and */@name!=''">
-      <xsl:text>// Function returning the VALUE of the type with name NAME.&#xA;</xsl:text>
-      <xsl:text>int </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>::get_type_index(const char* name) {&#xA;</xsl:text>
-      <xsl:text>  int type_index=-999999999;&#xA;</xsl:text>
-      <xsl:for-each select="int[@name]">
-        <xsl:text>  if(strcmp(name, "</xsl:text>
-        <xsl:value-of select="@name"/>  
-        <xsl:text>") == 0) {&#xA;</xsl:text>
-        <xsl:text>    return </xsl:text>
-        <xsl:value-of select="."/>    
-        <xsl:text>;&#xA;  }&#xA;</xsl:text>
+      <xsl:text>int </xsl:text><xsl:value-of select="$name"/><xsl:text>::get_index(const std::string&amp; name) {&#xA;</xsl:text>
+      <xsl:for-each select="//constants/int[@name]">
+        <xsl:text>    if (name == "</xsl:text><xsl:value-of select="@name"/><xsl:text>") {&#xA;</xsl:text>
+        <xsl:text>        return </xsl:text><xsl:value-of select="."/><xsl:text>;&#xA;</xsl:text>
+        <xsl:text>    }&#xA;</xsl:text>
+        <xsl:if test="@alias">
+          <xsl:text>    if (name == "</xsl:text><xsl:value-of select="@alias"/><xsl:text>") {&#xA;</xsl:text>
+          <xsl:text>        return </xsl:text><xsl:value-of select="."/><xsl:text>;&#xA;</xsl:text>
+          <xsl:text>    }&#xA;</xsl:text>
+        </xsl:if>
       </xsl:for-each>
-      <xsl:text>  return type_index;&#xA;</xsl:text>
+      <xsl:text>    return -999999999; // Unknown identifier&#xA;</xsl:text>
       <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
 
-    <!-- Translation from VALUE to NAME -->
-    <xsl:if test="int!='' and */@unique='yes'">
-      <xsl:text>// Function returning the NAME of the type with index IDX.&#xA;</xsl:text>
-      <xsl:text>const char* </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>::get_type_name(int idx) {&#xA;</xsl:text>
-      <xsl:text>  switch(idx) {&#xA;</xsl:text>
-      <xsl:for-each select="int[@name]">
-        <xsl:text>    case (</xsl:text>
+    <!-- get_description method -->
+    <xsl:if test="int!=''">
+      <xsl:text>std::string </xsl:text><xsl:value-of select="$name"/><xsl:text>::get_description(int idx) {&#xA;</xsl:text>
+      <xsl:text>    switch(idx) {&#xA;</xsl:text>
+      <xsl:for-each select="//constants/int[@name]">
+        <xsl:text>        case </xsl:text>
         <xsl:value-of select="."/>    
-        <xsl:text>):&#xA;</xsl:text>
-        <xsl:text>      return "</xsl:text>
-        <xsl:call-template name="get-valid-cpp-identifier">
-          <xsl:with-param name="name" select="@name"/>
-        </xsl:call-template> 
-        <xsl:text>";&#xA;      break;&#xA;</xsl:text>
-      </xsl:for-each>
-      <xsl:text>  }&#xA;</xsl:text>
-      <xsl:text>  return "unknown";&#xA;</xsl:text>
-      <xsl:text>}&#xA;&#xA;</xsl:text>
-    </xsl:if>
-
-    <!-- Translation from VALUE to DESCRIPTION -->
-    <xsl:if test="int!='' and */@unique='yes'">
-      <xsl:text>// Function returning the DESCRIPTION of the type with index IDX.&#xA;</xsl:text>
-      <xsl:text>const char* </xsl:text>
-      <xsl:value-of select="$name"/>
-      <xsl:text>::get_type_description(int idx) {&#xA;</xsl:text>
-      <xsl:text>  switch(idx) {&#xA;</xsl:text>
-      <xsl:for-each select="*[@unique]">
-        <xsl:text>    case (</xsl:text>
-        <xsl:value-of select="."/>    
-        <xsl:text>):&#xA;</xsl:text>
-        <xsl:text>      return "</xsl:text>
+        <xsl:text>:&#xA;</xsl:text>
+        <xsl:text>            return "</xsl:text>
         <xsl:value-of select="@description"/>    
-        <xsl:text>";&#xA;      break;&#xA;</xsl:text>
+        <xsl:text>";&#xA;</xsl:text>
       </xsl:for-each>
-      <xsl:text>  }&#xA;</xsl:text>
-      <xsl:text>  return "Unknown";&#xA;</xsl:text>
+      <xsl:text>    }&#xA;</xsl:text>
+      <xsl:text>    return "unknown";&#xA;</xsl:text>
       <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
- 
-    <xsl:text>#endif //defined(__cplusplus)&#xA;</xsl:text>
- 
-    <xsl:if test="int!='' and */@unique='yes'">
-    <xsl:value-of select="$name"/>
-    <xsl:text> </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text>_get_all(int idx) {&#xA;</xsl:text>
-    <xsl:text>  </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text>  type_struct;&#xA;</xsl:text>
-    <xsl:text>  return type_struct.get_all(idx);&#xA;</xsl:text>
-    <xsl:text>};&#xA;</xsl:text>
+
+    <!-- get_name method -->
+    <xsl:if test="int!=''">
+      <xsl:text>std::string </xsl:text><xsl:value-of select="$name"/><xsl:text>::get_name(int idx) {&#xA;</xsl:text>
+      <xsl:text>    switch(idx) {&#xA;</xsl:text>
+      <xsl:for-each select="//constants/int[@name]">
+        <xsl:text>        case </xsl:text>
+        <xsl:value-of select="."/>    
+        <xsl:text>:&#xA;</xsl:text>
+        <xsl:text>            return "</xsl:text>
+        <xsl:value-of select="@name"/>    
+        <xsl:text>";&#xA;</xsl:text>
+      </xsl:for-each>
+      <xsl:text>    }&#xA;</xsl:text>
+      <xsl:text>    return "unknown";&#xA;</xsl:text>
+      <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
- 
+
+    <!-- get_type_data_by_name method -->
     <xsl:if test="int!='' and */@name!=''">
-    <xsl:text>int </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text>_get_type_index(const char* name) {&#xA;</xsl:text>
-    <xsl:text>  </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text>  type_struct;&#xA;</xsl:text>
-    <xsl:text>  return type_struct.get_type_index(name);&#xA;</xsl:text>
-    <xsl:text>};&#xA;</xsl:text>
-    </xsl:if>
- 
-    <xsl:if test="int!='' and */@unique='yes'">
-    <xsl:text>const char* </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text>_get_type_name(int idx) {&#xA;</xsl:text>
-    <xsl:text>  </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text>  type_struct;&#xA;</xsl:text>
-    <xsl:text>  return type_struct.get_type_name(idx);&#xA;</xsl:text>
-    <xsl:text>};&#xA;</xsl:text>
-    </xsl:if>
- 
-    <xsl:if test="int!='' and */@unique='yes'">
-    <xsl:text>const char* </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text>_get_type_description(int idx) {&#xA;</xsl:text>
-    <xsl:text>  </xsl:text>
-    <xsl:value-of select="$name"/>
-    <xsl:text>  type_struct;&#xA;</xsl:text>
-    <xsl:text>  return type_struct.get_type_description(idx);&#xA;</xsl:text>
-    <xsl:text>};&#xA;</xsl:text>
+      <xsl:text>bool </xsl:text><xsl:value-of select="$name"/><xsl:text>::get_type_data_by_name(const std::string&amp; name, int&amp; index, std::string&amp; description) {&#xA;</xsl:text>
+      <xsl:for-each select="//constants/int[@name]">
+        <xsl:text>    if (name == "</xsl:text><xsl:value-of select="@name"/><xsl:text>") {&#xA;</xsl:text>
+        <xsl:text>        index = </xsl:text><xsl:value-of select="."/><xsl:text>;&#xA;</xsl:text>
+        <xsl:text>        description = "</xsl:text><xsl:value-of select="@description"/><xsl:text>";&#xA;</xsl:text>
+        <xsl:text>        return true;&#xA;</xsl:text>
+        <xsl:text>    }&#xA;</xsl:text>
+        <xsl:if test="@alias">
+          <xsl:text>    if (name == "</xsl:text><xsl:value-of select="@alias"/><xsl:text>") {&#xA;</xsl:text>
+          <xsl:text>        index = </xsl:text><xsl:value-of select="."/><xsl:text>;&#xA;</xsl:text>
+          <xsl:text>        description = "</xsl:text><xsl:value-of select="@description"/><xsl:text>";&#xA;</xsl:text>
+          <xsl:text>        return true;&#xA;</xsl:text>
+          <xsl:text>    }&#xA;</xsl:text>
+        </xsl:if>
+      </xsl:for-each>
+      <xsl:text>    // Unknown identifier - set default values&#xA;</xsl:text>
+      <xsl:text>    index = -999999999;&#xA;</xsl:text>
+      <xsl:text>    description = "unknown";&#xA;</xsl:text>
+      <xsl:text>    return false;&#xA;</xsl:text>
+      <xsl:text>}&#xA;&#xA;</xsl:text>
     </xsl:if>
 </xsl:template>
-
 <!-- C TEMPLATES -->
 
 <xsl:template match="header" mode="C">
@@ -248,26 +180,6 @@
     <xsl:with-param name="replace" select="'&#xA;'"/>
     <xsl:with-param name="with" select="'&#xA;// '"/>
   </xsl:call-template>
-</xsl:template>
-
-<xsl:template match="int|float" mode="C">
-  <xsl:text>#define </xsl:text>
-  <xsl:call-template name="get-valid-cpp-identifier">
-    <xsl:with-param name="name" select="@name"/>
-  </xsl:call-template> 
-  <xsl:text>&#009;&#009; </xsl:text>
-  <xsl:value-of select="."/>
-  <xsl:value-of select="my:desc('//')"/>
-</xsl:template>
-
-<xsl:template match="string" mode="C">
-  <xsl:text>#define </xsl:text>
-  <xsl:call-template name="get-valid-cpp-identifier">
-    <xsl:with-param name="name" select="@name"/>
-  </xsl:call-template> 
-  <xsl:text>&#009;&#009; "</xsl:text>
-  <xsl:value-of select="."/><xsl:text>"</xsl:text>
-  <xsl:value-of select="my:desc('//')"/>
 </xsl:template>
 
 <xsl:template match="comment" mode="C">

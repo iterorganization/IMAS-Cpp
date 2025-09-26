@@ -1,18 +1,32 @@
-// Include the Access Layer
 #include "ALClasses.h"
-// And the required identifiers header(s)
-#include "poloidal_plane_coordinates_identifier.h"
+#include "materials_identifier.h"
 #include <iostream>
 
-int main(int argc, char *argv[]) {
-    IdsNs::IDS::equilibrium equilibrium;
-    equilibrium.time_slice.resize(1);
-    equilibrium.time_slice(0).profiles_2d.resize(1);
-    equilibrium.time_slice(0).profiles_2d(0).grid_type.index = rectangular;
-    equilibrium.time_slice(0).profiles_2d(0).grid_type.name =
-        poloidal_plane_coordinates_identifier_get_type_name(rectangular);
-    equilibrium.time_slice(0).profiles_2d(0).grid_type.description =
-        poloidal_plane_coordinates_identifier_get_type_description(rectangular);
+using namespace IdsNs;
+
+int main(int argc, char *argv[])
+{
+    IdsNs::IDS ids;
+    std::string names[5] = {"W", "C", 'Be', 'Cu', 'SS'};
+    
+    ids._wall.description_ggd.resize(1);
+    ids._wall.description_ggd(0).material.resize(1);
+    ids._wall.description_ggd(0).material(0).grid_subset.resize(1) ;
+
+    materials_identifier::set_identifier(
+        ids._wall.description_ggd(0).material(0).grid_subset(0).identifiers, names
+    );
+
+    // Output material information
+    std::cout << "Number of materials: " << ids._wall.description_ggd(0).material(0).grid_subset(0).identifiers.indices.size() << std::endl;
+    for (int i = 0; i < ids._wall.description_ggd(0).material(0).grid_subset(0).identifiers.indices.size(); i++) {
+        std::cout << "Material " << (i + 1) << ":" << std::endl;
+        std::cout << "  Index: " << ids._wall.description_ggd(0).material(0).grid_subset(0).identifiers.indices(i) << std::endl;
+        std::cout << "  Name: \"" << ids._wall.description_ggd(0).material(0).grid_subset(0).identifiers.names(i) << "\"" << std::endl;
+        std::cout << "  Description: \"" << ids._wall.description_ggd(0).material(0).grid_subset(0).identifiers.descriptions(i) << "\"" << std::endl;
+    }
+    std::cout << std::endl;
 
     return 0;
 }
+
