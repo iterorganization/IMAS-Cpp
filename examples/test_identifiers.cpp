@@ -52,15 +52,18 @@ void test_get_type_data_by_name() {
     std::cout << "\nTesting get_type_data_by_name..." << std::endl;
     
     int index;
+    std::string originalname;
     std::string description;
     
     // Test with known identifier
     try {
-        coordinate_identifier::get_type_data_by_name("x", index, description);
+        bool result = coordinate_identifier::get_type_data_by_name("x", index, originalname, description);
+        assert(result == true);
         assert(index == 1);
+        assert(originalname == "x");
         assert(description == "First cartesian coordinate in the horizontal plane");
         std::cout << "get_type_data_by_name('x') -> index=" << index 
-                  << ", description='" << description << "'" << std::endl;
+                  << ", originalname='" << originalname << "', description='" << description << "'" << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Unknown indentifier passed" << e.what() << std::endl;
         assert(false);
@@ -68,11 +71,13 @@ void test_get_type_data_by_name() {
     
     // Test with another known identifier
     try {
-        coordinate_identifier::get_type_data_by_name("velocity_parallel", index, description);
+        bool result = coordinate_identifier::get_type_data_by_name("velocity_parallel", index, originalname, description);
+        assert(result == true);
         assert(index == 105);
+        assert(originalname == "velocity_parallel");
         assert(description == "Velocity component parallel to the magnetic field");
         std::cout << "get_type_data_by_name('velocity_parallel') -> index=" << index 
-                  << ", description='" << description << "'" << std::endl;
+                  << ", originalname='" << originalname << "', description='" << description << "'" << std::endl;
     } catch (const std::exception& e) {
         std::cerr << "Unexpected wrong idenfiers for known identifier 'velocity_parallel': " << e.what() << std::endl;
         assert(false);
@@ -80,7 +85,7 @@ void test_get_type_data_by_name() {
     
     // Test with unknown identifier 
     try {
-        coordinate_identifier::get_type_data_by_name("unknown_coord", index, description);
+        bool result = coordinate_identifier::get_type_data_by_name("unknown_coord", index, originalname, description);
         std::cerr << "Expected issue  unknown identifier 'unknown_coord'" << std::endl;
         assert(false); // Should not reach here
     } catch (const std::invalid_argument& e) {
@@ -200,9 +205,12 @@ void test_comprehensive_identifiers() {
             
             // Test get_type_data_by_name
             int index;
+            std::string originalname;
             std::string description;
-            coordinate_identifier::get_type_data_by_name(name, index, description);
+            bool result = coordinate_identifier::get_type_data_by_name(name, index, originalname, description);
+            assert(result == true);
             assert(index == expected_index);
+            assert(originalname == name);
             
             // Test set_identifier
             TestIdentifier data;

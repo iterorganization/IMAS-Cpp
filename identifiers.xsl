@@ -33,18 +33,19 @@
       <xsl:text>    static std::string get_description(int idx);&#xA;</xsl:text>
       <xsl:text>    static std::string get_name(int idx);&#xA;</xsl:text>
       <xsl:text>    &#xA;</xsl:text>
-      <xsl:text>    static bool get_type_data_by_name(const std::string&amp; name, int&amp; index, std::string&amp; description);&#xA;</xsl:text>
+      <xsl:text>    static bool get_type_data_by_name(const std::string&amp; name, int&amp; index, std::string&amp; originalname,std::string&amp; description);&#xA;</xsl:text>
       <xsl:text>    &#xA;</xsl:text>
       <xsl:text>    // Setter for an object&#xA;</xsl:text>
       <xsl:text>    template&lt;typename T&gt;&#xA;</xsl:text>
       <xsl:text>    static void set_identifier(T&amp; obj, const std::string&amp; name) {&#xA;</xsl:text>
       <xsl:text>        int temp_index;&#xA;</xsl:text>
+      <xsl:text>        std::string temp_name;&#xA;</xsl:text>
       <xsl:text>        std::string temp_description;&#xA;</xsl:text>
       <xsl:text>        &#xA;</xsl:text>
       <xsl:text>        try {&#xA;</xsl:text>
-      <xsl:text>            get_type_data_by_name(name, temp_index, temp_description);&#xA;</xsl:text>
+      <xsl:text>            get_type_data_by_name(name, temp_index, temp_name, temp_description);&#xA;</xsl:text>
       <xsl:text>            obj.index = temp_index;&#xA;</xsl:text>
-      <xsl:text>            obj.name = get_name(temp_index);&#xA;</xsl:text>
+      <xsl:text>            obj.name = temp_name;&#xA;</xsl:text>
       <xsl:text>            obj.description = temp_description;&#xA;</xsl:text>
       <xsl:text>        } catch (const std::invalid_argument&amp; e) {&#xA;</xsl:text>
       <xsl:text>            // Re-throw with more context&#xA;</xsl:text>
@@ -62,12 +63,13 @@
       <xsl:text>        &#xA;</xsl:text>
       <xsl:text>        for (size_t i = 0; i &lt; N; ++i) {&#xA;</xsl:text>
       <xsl:text>            int temp_index;&#xA;</xsl:text>
+      <xsl:text>            std::string temp_name;&#xA;</xsl:text>
       <xsl:text>            std::string temp_description;&#xA;</xsl:text>
       <xsl:text>            &#xA;</xsl:text>
       <xsl:text>            try {&#xA;</xsl:text>
-      <xsl:text>                get_type_data_by_name(names[i], temp_index, temp_description);&#xA;</xsl:text>
+      <xsl:text>                get_type_data_by_name(names[i], temp_index, temp_name, temp_description);&#xA;</xsl:text>
       <xsl:text>                obj.indices(i) = temp_index;&#xA;</xsl:text>
-      <xsl:text>                obj.names(i) = get_name(temp_index);&#xA;</xsl:text>
+      <xsl:text>                obj.names(i) = temp_name;&#xA;</xsl:text>
       <xsl:text>                obj.descriptions(i) = temp_description;&#xA;</xsl:text>
       <xsl:text>            } catch (const std::invalid_argument&amp; e) {&#xA;</xsl:text>
       <xsl:text>                // Re-throw with array index context&#xA;</xsl:text>
@@ -149,16 +151,18 @@
 
     <!-- get_type_data_by_name method -->
     <xsl:if test="int!='' and */@name!=''">
-      <xsl:text>bool </xsl:text><xsl:value-of select="$name"/><xsl:text>::get_type_data_by_name(const std::string&amp; name, int&amp; index, std::string&amp; description) {&#xA;</xsl:text>
+      <xsl:text>bool </xsl:text><xsl:value-of select="$name"/><xsl:text>::get_type_data_by_name(const std::string&amp; name, int&amp; index, std::string&amp; originalname, std::string&amp; description) {&#xA;</xsl:text>
       <xsl:for-each select="//constants/int[@name]">
         <xsl:text>    if (name == "</xsl:text><xsl:value-of select="@name"/><xsl:text>") {&#xA;</xsl:text>
         <xsl:text>        index = </xsl:text><xsl:value-of select="."/><xsl:text>;&#xA;</xsl:text>
+        <xsl:text>        originalname = "</xsl:text><xsl:value-of select="@name"/><xsl:text>";&#xA;</xsl:text>
         <xsl:text>        description = "</xsl:text><xsl:value-of select="@description"/><xsl:text>";&#xA;</xsl:text>
         <xsl:text>        return true;&#xA;</xsl:text>
         <xsl:text>    }&#xA;</xsl:text>
         <xsl:if test="@alias">
           <xsl:text>    if (name == "</xsl:text><xsl:value-of select="@alias"/><xsl:text>") {&#xA;</xsl:text>
           <xsl:text>        index = </xsl:text><xsl:value-of select="."/><xsl:text>;&#xA;</xsl:text>
+          <xsl:text>        originalname = "</xsl:text><xsl:value-of select="@name"/><xsl:text>";&#xA;</xsl:text>
           <xsl:text>        description = "</xsl:text><xsl:value-of select="@description"/><xsl:text>";&#xA;</xsl:text>
           <xsl:text>        return true;&#xA;</xsl:text>
           <xsl:text>    }&#xA;</xsl:text>
