@@ -7,7 +7,7 @@ using namespace IdsNs;
 int main(int argc, char *argv[])
 {
     IdsNs::IDS ids;
-    std::string names[5] = {"W", "C", 'Be', 'Cu', 'SS'};
+    std::string names[5] = {"W", "C", "Be", "Cu", "SS"};
     
     ids._wall.description_ggd.resize(1);
     ids._wall.description_ggd(0).material.resize(1);
