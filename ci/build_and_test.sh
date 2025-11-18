@@ -60,7 +60,7 @@ MODULES=(
     Blitz++/1.0.2-GCCcore-13.2.0
     Saxon-HE/12.4-Java-21  # DD
     libxml2/2.11.5-GCCcore-13.2.0  # AL-Core
-    MDSplus/7.132.0-GCCcore-13.2.0  # backend
+    MDSplus/7.153.3-GCCcore-13.2.0  # backend
     Python/3.11.5-GCCcore-13.2.0  # for docs
 )
   ;;&
