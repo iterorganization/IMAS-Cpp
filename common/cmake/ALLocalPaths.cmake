@@ -1,4 +1,4 @@
-# Local paths for IMAS-MATLAB
+# Local paths for IMAS-Cpp
 # This file defines local paths to eliminate AL_COMMON_PATH dependency
 
 # Directory containing CMake modules

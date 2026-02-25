@@ -1,27 +1,27 @@
-Getting Started with IMAS-MATLAB
-=================================
+Getting Started with IMAS C++ HLI
+==================================
 
-Welcome! This 5-minute guide will get you up and running with the IMAS-MATLAB.
+Welcome! This 5-minute guide will get you up and running with the IMAS C++ High Level Interface.
 
-**What is IMAS-MATLAB?**
+**What is IMAS C++ HLI?**
 
-IMAS-MATLAB is the IMAS data access library (formerly known as the Access Layer) for Matlab users/developers. 
+The IMAS C++ HLI is the IMAS data access library for C++ users/developers. 
 
 
-Load the IMAS-MATLAB Module
--------------------------------
+Load the IMAS C++ Module
+-------------------------
 
 On the ITER SDCC (supercomputing cluster), make the Access Layer available:
 
 .. code-block:: bash
 
-    module load IMAS-MATLAB
+    module load IMAS-Cpp
 
 To see available versions:
 
 .. code-block:: bash
 
-    module avail IMAS-MATLAB
+    module avail IMAS-Cpp
 
 If you have a local installation, source the environment file instead:
 
@@ -30,21 +30,29 @@ If you have a local installation, source the environment file instead:
     source <install_dir>/bin/al_env.sh
 
 
-Open MATLAB and Connect to Data
--------------------------------------------
+Create a C++ Program and Connect to Data
+-----------------------------------------
 
-Start MATLAB and open a database entry using an IMAS URI. A URI tells the Access Layer 
+Create a C++ program and open a database entry using an IMAS URI. A URI tells the Access Layer 
 where your data is stored and in what format.
 
-.. code-block:: matlab
+.. code-block:: cpp
 
-    % Open a database entry
-    uri = 'imas:hdf5?path=/path/to/data';
-    ctx = imas_open(uri, 40);  
-    
-    if ctx < 0
-        error('Unable to open database');
-    end
+    #include "ALClasses.h"
+    #include <iostream>
+
+    int main() {
+        // Open a database entry
+        const char* uri = "imas:hdf5?path=/path/to/data";
+        IdsNs::IDS entry(uri);
+        
+        if (entry.getError() != 0) {
+            std::cerr << "Unable to open database" << std::endl;
+            return 1;
+        }
+        
+        return 0;
+    }
 
 **What's an IMAS URI?**
 
@@ -58,94 +66,118 @@ For example:
 Learn more: :ref:`Data entry URIs`
 
 
-Load and Display Dat
-------------------------
+Load and Display Data
+---------------------
 
 Fetch an IDS from your database entry:
 
-.. code-block:: matlab
+.. code-block:: cpp
 
-    % Load the magnetics IDS (occurrence 0)
-    magnetics = ids_get(ctx, 'magnetics');
+    // Load the magnetics IDS (occurrence 0)
+    std::unique_ptr<IdsNs::magnetics> magnetics_ids = entry.magnetics.get(0);
     
-    % Explore the data
-    disp(magnetics.ids_properties);      % Metadata
-    disp(magnetics.time);                 % Time points
-    disp(magnetics.flux_loop{1}.flux.data); % Access nested data
+    if (entry.getError() != 0) {
+        std::cerr << "Unable to read magnetics" << std::endl;
+        return 1;
+    }
+    
+    // Explore the data
+    std::cout << "IDS comment: " << magnetics_ids->ids_properties.comment << std::endl;
+    std::cout << "Time points: " << magnetics_ids->time.size() << std::endl;
+    
+    // Access nested data
+    if (!magnetics_ids->flux_loop.empty()) {
+        std::cout << "First flux loop data points: " 
+                  << magnetics_ids->flux_loop[0].flux.data.size() << std::endl;
+    }
 
 
 Modify and Store Data
-------------------------
+---------------------
 
 You can create new data, modify existing data, and store it back:
 
-.. code-block:: matlab
+.. code-block:: cpp
 
-    % Create a new IDS or modify existing one
-    equilibrium = ids_init('equilibrium');
-    equilibrium.time = [0, 1, 2, 3];
-    equilibrium.q_profile.value.data = [1, 2, 3, 4];
+    // Create a new IDS or modify existing one
+    IdsNs::equilibrium eq_ids;
+    eq_ids.time.resize(4);
+    eq_ids.time = {0.0, 1.0, 2.0, 3.0};
     
-    % Store it to the database
-    ids_put(ctx, 'equilibrium', equilibrium);
+    eq_ids.time_slice.resize(4);
+    for (int i = 0; i < 4; i++) {
+        eq_ids.time_slice[i].profiles_1d.q.resize(4);
+        eq_ids.time_slice[i].profiles_1d.q = {1.0, 2.0, 3.0, 4.0};
+    }
+    
+    // Store it to the database
+    entry.equilibrium.put(0, &eq_ids);
+    
+    if (entry.getError() != 0) {
+        std::cerr << "Unable to write equilibrium" << std::endl;
+        return 1;
+    }
 
 
 Clean Up
------------
+--------
 
-Always close the database entry when you're done:
+The database entry is automatically closed when the DBEntry object goes out of scope, 
+but you can explicitly close it if needed:
 
-.. code-block:: matlab
+.. code-block:: cpp
 
-    imas_close(ctx);
+    // Cleanup happens automatically when 'entry' goes out of scope
+    // No explicit close needed in C++
 
 
-Key Functions Reference
------------------------
+Key Classes and Methods Reference
+----------------------------------
 
-+====================================+=============================================+
-| Function                           | Purpose                                     |
-+====================================+=============================================+
-| ``imas_open(uri, version)``        | Open a database entry at the given URI      |
-+------------------------------------+---------------------------------------------+
-| ``imas_close(ctx)``                | Close the database entry                    |
-+------------------------------------+---------------------------------------------+
-| ``ids_get(ctx, ids_name)``         | Load an entire IDS                          |
-+------------------------------------+---------------------------------------------+
-| ``ids_put(ctx, ids_name, ids_obj)``| Store an IDS to disk                        |
-+------------------------------------+---------------------------------------------+
-| ``ids_init(ids_name)``             | Create and initialize a new IDS             |
-+------------------------------------+---------------------------------------------+
-| ``ids_get_slice(ctx, ids_name, time)`` | Load a specific time slice              |
-+====================================+=============================================+
++-----------------------------------------------------------+--------------------------------------------+
+| Class/Method                                              | Purpose                                    |
++===========================================================+============================================+
+| ``IdsNs::IDS(uri)``                                       | Open a database entry at the given URI     |
++-----------------------------------------------------------+--------------------------------------------+
+| ``entry.<ids_name>.get(occurrence)``                      | Load an entire IDS                         |
++-----------------------------------------------------------+--------------------------------------------+
+| ``entry.<ids_name>.put(occurrence, ids*)``                | Store an IDS to disk                       |
++-----------------------------------------------------------+--------------------------------------------+
+| ``entry.<ids_name>.getSlice(occurrence, time, interp)``   | Load a specific time slice                 |
++-----------------------------------------------------------+--------------------------------------------+
+| ``entry.<ids_name>.putSlice(occurrence, ids*)``           | Store a time slice                         |
++-----------------------------------------------------------+--------------------------------------------+
+| ``entry.getError()``                                      | Get the last error code                    |
++-----------------------------------------------------------+--------------------------------------------+
 
 
 Common Use Cases
 ----------------
 
-**Load data and extract a single time slice:**
+**Load data and extract a specific time slice:**
 
-.. code-block:: matlab
+.. code-block:: cpp
 
-    % Use CLOSEST interpolation
-    data = ids_get_slice(ctx, 'equilibrium', 2.5, 'CLOSEST');
-
-
-**Check if data exists:**
-
-.. code-block:: matlab
-
-    if ids_isdefined(magnetics.flux_loop{1}.flux)
-        disp('Flux data is defined');
-    end
+    // Use CLOSEST interpolation (interp_mode = 1)
+    std::unique_ptr<IdsNs::equilibrium> eq_data = entry.equilibrium.getSlice(0, 2.5, 1);
 
 
-**Access MATLAB examples:**
+**Check if data is defined:**
 
-The repository contains several example scripts in the ``examples/`` directory:
-- ``test_get.m``  Load and display data
-- ``test_put.m``  Store new data
-- ``test_get_sample_magnetics.m``  Practical magnetics data example
+.. code-block:: cpp
+
+    if (magnetics_ids && !magnetics_ids->flux_loop.empty() 
+        && magnetics_ids->flux_loop[0].flux.data.size() > 0) {
+        std::cout << "Flux data is defined" << std::endl;
+    }
+
+
+**Access C++ examples:**
+
+The repository contains several example programs in the ``examples/`` directory:
+- ``test_core_profiles_get.cpp``  Load and display data
+- ``test_core_profiles_put.cpp``  Store new data
+- ``test_magnetics_get.cpp``  Practical magnetics data example
 
 
 Next Steps
@@ -154,8 +186,7 @@ Next Steps
 - **Read more about IDSs**: :doc:`Use Interface Data Structures <identifiers>`
 - **Learn advanced loading/storing**: :doc:`Loading and storing IMAS data <load_store_ids>`
 - **Understand data storage**: :ref:`Data entry URIs`
-- **Check the full API documentation**: See your installed IMATLAB help or visit the 
-  `IMAS-MATLAB <https://imas-matlab.readthedocs.io>`__
+- **Check the full API documentation**: See the `IMAS C++ HLI documentation <https://imas-cpp.readthedocs.io>`__
 
 
 Common Issues
@@ -166,8 +197,8 @@ Common Issues
 
 **IDS not found:**
 - Verify the data entry contains this IDS
-- Use ``ids_isdefined()`` to check existence first
+- Check the return value of ``get()`` methods and ``entry.getError()``
 
 **Need help?**
 - Check the :doc:`Using the Access Layer <using_al>` guide
-- Consult the `IMAS-MATLAB <https://imas-matlab.readthedocs.io/>`__
+- Consult the `IMAS C++ HLI documentation <https://imas-cpp.readthedocs.io/>`__
