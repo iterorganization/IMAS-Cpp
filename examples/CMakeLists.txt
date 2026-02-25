@@ -41,7 +41,8 @@ set( TEST_ENVIRONMENT "" )
 if( AL_BACKEND_MDSPLUS )
   # Use MDSPLUS backend for testing
   get_target_property( MDSPLUS_MODEL_DIR al-mdsplus-model BINARY_DIR )
-  set( TEST_ENVIRONMENT "IMAS_AL_DEFAULT_BACKEND=12;ids_path=${MDSPLUS_MODEL_DIR}" )
+  # Note: added ids_path for backward compatibility with IMAS-Core<5.6
+  set( TEST_ENVIRONMENT "IMAS_AL_DEFAULT_BACKEND=12;ids_path=${MDSPLUS_MODEL_DIR};MDSPLUS_MODELS_PATH=${MDSPLUS_MODEL_DIR}" )
   message( "Using MDSPLUS backend for C++ examples" )
 elseif( AL_BACKEND_HDF5 )
   # If MDSPLUS is not available and HDF5 is, use that for testing
