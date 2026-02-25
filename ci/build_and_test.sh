@@ -25,7 +25,6 @@ MODULES=(
     CMake/3.24.3-GCCcore-10.2.0
     Boost/1.74.0-GCC-10.2.0  # AL-Core
     Blitz++/1.0.2-GCCcore-10.2.0
-    Saxon-HE/10.3-Java-11  # DD
     Python/3.8.6-GCCcore-10.2.0  # for docs
     libxml2/2.9.10-GCCcore-10.2.0  # AL-Core
     MDSplus/7.131.6-GCCcore-10.2.0  # backend
@@ -58,7 +57,6 @@ echo "... 2023b"
 MODULES=(
     CMake/3.27.6-GCCcore-13.2.0
     Blitz++/1.0.2-GCCcore-13.2.0
-    Saxon-HE/12.4-Java-21  # DD
     libxml2/2.11.5-GCCcore-13.2.0  # AL-Core
     MDSplus/7.153.3-GCCcore-13.2.0  # backend
     Python/3.11.5-GCCcore-13.2.0  # for docs

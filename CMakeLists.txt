@@ -3,8 +3,11 @@ cmake_minimum_required( VERSION 3.16 )
 
 # Configuration options for common assets
 ################################################################################
+include(${CMAKE_CURRENT_SOURCE_DIR}/common/cmake/ALLocalPaths.cmake)
+
+
 option( AL_DOWNLOAD_DEPENDENCIES "Automatically download assets from the AL git repository" ON )
-set( AL_CORE_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-core.git" CACHE STRING "Git repository of AL-core" )
+set( AL_CORE_GIT_REPOSITORY "https://github.com/iterorganization/IMAS-Core.git" CACHE STRING "Git repository of AL-core" )
 set( AL_CORE_VERSION "main" CACHE STRING "Git commit/tag/branch of AL-core" )
 
 include(FetchContent)
@@ -22,16 +25,15 @@ else()
       GIT_REPOSITORY "${AL_CORE_GIT_REPOSITORY}"
       GIT_TAG "${AL_CORE_VERSION}"
     )
-  else()
+    FetchContent_MakeAvailable( al-core )
+  elseif ( ${AL_DEVELOPMENT_LAYOUT} )
     FetchContent_Declare(
       al-core
       SOURCE_DIR      "${CMAKE_CURRENT_SOURCE_DIR}/../al-core"
     )
+    FetchContent_MakeAvailable( al-core )
   endif()
-  FetchContent_MakeAvailable( al-core )
-  set( AL_COMMON_PATH "${al-core_SOURCE_DIR}/common" )
 endif()
-add_subdirectory( ${AL_COMMON_PATH} _common )
 
 
 # Define project
@@ -67,7 +69,7 @@ endif()
 
 # Dependencies
 ################################################################################
-
+find_package( Python3 REQUIRED COMPONENTS Interpreter )
 find_package( PkgConfig )
 # Find Blitz through pkg-config
 pkg_check_modules( blitz REQUIRED IMPORTED_TARGET blitz )
@@ -87,23 +89,24 @@ foreach( IDS_NAME IN LISTS IDS_NAMES )
   list( APPEND GENERATED_SOURCES "${GENERATED_SRC_DIR}/ids/${IDS_NAME}_IDSBase.cpp" )
 endforeach()
 
-find_package( SaxonHE )
 add_custom_command(
   # Use a dummy output file: when listing all actual output files (which are
   # source files of target `al-cpp`), they would be re-created with every build.
   OUTPUT ${GENERATED_SRC_DIR}/dummy.txt
   # Generate headers with xsltproc
   COMMAND
-    ${LIBXSLT_XSLTPROC_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPClasses.xsl
-      ${IDSDEF}
-  # Generate source files with saxon
+    ${_VENV_PYTHON} "${AL_LOCAL_XSLTPROC_SCRIPT}"
+      -xsl ${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPClasses.xsl
+      -s ${IDSDEF}
+      -o ${GENERATED_SRC_DIR}/ALClasses.h
+      DD_GIT_DESCRIBE=${DD_VERSION}
+      AL_GIT_DESCRIBE=${FULL_VERSION}
+  # Generate source files with xsltproc
   COMMAND
-    java 
-      -cp ${SaxonHE_CLASSPATH}
-      net.sf.saxon.Transform -t -warnings:fatal
-      "-xsl:${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPMethods.xsl"
-      "-s:${IDSDEF}"
+    ${_VENV_PYTHON} "${AL_LOCAL_XSLTPROC_SCRIPT}"
+      -xsl ${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPMethods.xsl
+      -s ${IDSDEF}
+      -o ${GENERATED_SRC_DIR}/ALMethods.cpp
       DD_GIT_DESCRIBE=${DD_VERSION}
       AL_GIT_DESCRIBE=${FULL_VERSION}
   # Create/update our dummy file
@@ -132,7 +135,7 @@ list( APPEND SOURCES
 # Unfortunately, xsl:include doesn't support parameters, so we need to put them together
 # in the build folder:
 file( CREATE_LINK
-  "${al-common_SOURCE_DIR}/identifiers.common.xsl" 
+  "${CMAKE_CURRENT_SOURCE_DIR}/common/identifiers.common.xsl" 
   "${CMAKE_CURRENT_BINARY_DIR}/identifiers.common.xsl"
   SYMBOLIC COPY_ON_ERROR
 )
