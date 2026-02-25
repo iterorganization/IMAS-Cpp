@@ -32,9 +32,9 @@ MODULES=(
   *foss-2023b)
 echo "... foss-2023b"
 MODULES=(${MODULES[@]}
-    HDF5/1.14.3-gompi-2023b  # backend
+    HDF5/1.14.4.3-gompi-2023b  # backend
     Boost/1.83.0-GCC-13.2.0  # AL-Core
-    UDA/2.9.1-GCC-13.2.0  # backend
+    UDA/2.9.3-GCC-13.2.0  # backend
 )
 CMAKE_ARGS=(${CMAKE_ARGS[@]}
     -DCMAKE_C_COMPILER=${CC:-gcc}
@@ -44,9 +44,9 @@ CMAKE_ARGS=(${CMAKE_ARGS[@]}
   *intel-2023b)
 echo "... intel-2023b"
 MODULES=(${MODULES[@]}
-    HDF5/1.14.3-iimpi-2023b  # backend
+    HDF5/1.14.4.3-iimpi-2023b  # backend
     Boost/1.83.0-intel-compilers-2023.2.1  # AL-Core
-    UDA/2.9.1-intel-compilers-2023.2.1  # backend
+    UDA/2.9.3-intel-compilers-2023.2.1  # backend
 )
 CMAKE_ARGS=(${CMAKE_ARGS[@]}
     -DCMAKE_C_COMPILER=${CC:-icx}
