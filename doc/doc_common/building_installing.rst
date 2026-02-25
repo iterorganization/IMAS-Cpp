@@ -4,7 +4,7 @@ Building and installing the IMAS C++ HLI
 This page describes how to build and install the IMAS C++ High Level Interface.
 
 Documentation for developers wishing to contribute to the IMAS C++ HLI can be found in
-the :ref:`Development guide`. Please refer to that guide if you wish to set
+the :doc:`dev_guide`. Please refer to that guide if you wish to set
 up a development environment.
 
 For more information about related components, see:

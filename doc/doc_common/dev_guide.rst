@@ -1,11 +1,11 @@
-IMAS-MATLAB development guide
-=============================
+IMAS C++ HLI development guide
+===============================
 
 
 Repositories
 ------------
 
-The IMAS-MATLAB consists of a number of dependencies which are developed in separate
+The IMAS C++ HLI consists of a number of dependencies which are developed in separate
 repositories:
 
 -   `imas-core <https://github.com/iterorganization/IMAS-Core>`__: the
@@ -19,8 +19,8 @@ repositories:
     Layer plugins.
 -   Traditional (code-generated) High Level Interfaces
 
-    -   `IMAS-MATLAB <https://github.com/iterorganization/IMAS-MATLAB/browse>`__:
-        MATLAB HLI
+    -   `IMAS-Cpp <https://github.com/iterorganization/IMAS-Cpp>`__:
+        C++ HLI
 
 
 The documentation on this page covers everything except the Non-generated HLIs, those
