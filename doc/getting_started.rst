@@ -43,10 +43,10 @@ where your data is stored and in what format.
 
     int main() {
         // Open a database entry
-        const char* uri = "imas:hdf5?path=/path/to/data";
-        IdsNs::IDS entry(uri);
+        IdsNs::IDS ids;
+        int status = ids.open("imas:hdf5?path=/path/to/data", OPEN_PULSE);
         
-        if (entry.getError() != 0) {
+        if (status != 0) {
             std::cerr << "Unable to open database" << std::endl;
             return 1;
         }
@@ -74,21 +74,16 @@ Fetch an IDS from your database entry:
 .. code-block:: cpp
 
     // Load the magnetics IDS (occurrence 0)
-    std::unique_ptr<IdsNs::magnetics> magnetics_ids = entry.magnetics.get(0);
-    
-    if (entry.getError() != 0) {
-        std::cerr << "Unable to read magnetics" << std::endl;
-        return 1;
-    }
+    ids._magnetics.get();
     
     // Explore the data
-    std::cout << "IDS comment: " << magnetics_ids->ids_properties.comment << std::endl;
-    std::cout << "Time points: " << magnetics_ids->time.size() << std::endl;
+    std::cout << "IDS comment: " << ids._magnetics.ids_properties.comment << std::endl;
+    std::cout << "Time points: " << ids._magnetics.time.extent(0) << std::endl;
     
     // Access nested data
-    if (!magnetics_ids->flux_loop.empty()) {
+    if (ids._magnetics.flux_loop.extent(0) > 0) {
         std::cout << "First flux loop data points: " 
-                  << magnetics_ids->flux_loop[0].flux.data.size() << std::endl;
+                  << ids._magnetics.flux_loop(0).flux.data.extent(0) << std::endl;
     }
 
 
@@ -99,22 +94,21 @@ You can create new data, modify existing data, and store it back:
 
 .. code-block:: cpp
 
-    // Create a new IDS or modify existing one
-    IdsNs::equilibrium eq_ids;
-    eq_ids.time.resize(4);
-    eq_ids.time = {0.0, 1.0, 2.0, 3.0};
+    // Set mandatory properties
+    ids._core_profiles.ids_properties.homogeneous_time = IDS_TIME_MODE_HOMOGENEOUS;
+    ids._core_profiles.ids_properties.comment = "Test data from C++";
     
-    eq_ids.time_slice.resize(4);
-    for (int i = 0; i < 4; i++) {
-        eq_ids.time_slice[i].profiles_1d.q.resize(4);
-        eq_ids.time_slice[i].profiles_1d.q = {1.0, 2.0, 3.0, 4.0};
-    }
+    // Allocate and fill time array
+    ids._core_profiles.time.resize(3);
+    ids._core_profiles.time(0) = 0.0;
+    ids._core_profiles.time(1) = 1.0;
+    ids._core_profiles.time(2) = 2.0;
     
-    // Store it to the database
-    entry.equilibrium.put(0, &eq_ids);
+    // Store it to the database (occurrence 0)
+    int status = ids._core_profiles.put();
     
-    if (entry.getError() != 0) {
-        std::cerr << "Unable to write equilibrium" << std::endl;
+    if (status != 0) {
+        std::cerr << "Unable to write core_profiles" << std::endl;
         return 1;
     }
 
@@ -122,13 +116,11 @@ You can create new data, modify existing data, and store it back:
 Clean Up
 --------
 
-The database entry is automatically closed when the DBEntry object goes out of scope, 
-but you can explicitly close it if needed:
+Always close the database entry when you're done:
 
 .. code-block:: cpp
 
-    // Cleanup happens automatically when 'entry' goes out of scope
-    // No explicit close needed in C++
+    ids.close();
 
 
 Key Classes and Methods Reference
@@ -137,17 +129,23 @@ Key Classes and Methods Reference
 +-----------------------------------------------------------+--------------------------------------------+
 | Class/Method                                              | Purpose                                    |
 +===========================================================+============================================+
-| ``IdsNs::IDS(uri)``                                       | Open a database entry at the given URI     |
+| ``IdsNs::IDS ids;``                                       | Create IDS database entry object           |
 +-----------------------------------------------------------+--------------------------------------------+
-| ``entry.<ids_name>.get(occurrence)``                      | Load an entire IDS                         |
+| ``ids.open(uri, mode)``                                   | Open database entry (returns status)       |
 +-----------------------------------------------------------+--------------------------------------------+
-| ``entry.<ids_name>.put(occurrence, ids*)``                | Store an IDS to disk                       |
+| ``ids._<ids_name>.get()``                                 | Load entire IDS (occurrence 0)             |
 +-----------------------------------------------------------+--------------------------------------------+
-| ``entry.<ids_name>.getSlice(occurrence, time, interp)``   | Load a specific time slice                 |
+| ``ids._<ids_name>.get(occurrence)``                       | Load entire IDS at occurrence              |
 +-----------------------------------------------------------+--------------------------------------------+
-| ``entry.<ids_name>.putSlice(occurrence, ids*)``           | Store a time slice                         |
+| ``ids._<ids_name>.put()``                                 | Store IDS to disk (occurrence 0)           |
 +-----------------------------------------------------------+--------------------------------------------+
-| ``entry.getError()``                                      | Get the last error code                    |
+| ``ids._<ids_name>.put(occurrence)``                       | Store IDS at occurrence                    |
++-----------------------------------------------------------+--------------------------------------------+
+| ``ids._<ids_name>.getSlice(time, interp)``                | Load time slice (occurrence 0)             |
++-----------------------------------------------------------+--------------------------------------------+
+| ``ids._<ids_name>.putSlice()``                            | Append time slice to disk                  |
++-----------------------------------------------------------+--------------------------------------------+
+| ``ids.close()``                                           | Close the database entry                   |
 +-----------------------------------------------------------+--------------------------------------------+
 
 
@@ -159,15 +157,19 @@ Common Use Cases
 .. code-block:: cpp
 
     // Use CLOSEST interpolation (interp_mode = 1)
-    std::unique_ptr<IdsNs::equilibrium> eq_data = entry.equilibrium.getSlice(0, 2.5, 1);
+    ids._equilibrium.getSlice(2.5, 1);
+    
+    // Access the interpolated data
+    std::cout << "R0 at t=2.5: " << ids._equilibrium.vacuum_toroidal_field.r0 << std::endl;
 
 
 **Check if data is defined:**
 
 .. code-block:: cpp
 
-    if (magnetics_ids && !magnetics_ids->flux_loop.empty() 
-        && magnetics_ids->flux_loop[0].flux.data.size() > 0) {
+    if (ids._magnetics.isDefined() 
+        && ids._magnetics.flux_loop.extent(0) > 0
+        && ids._magnetics.flux_loop(0).flux.data.extent(0) > 0) {
         std::cout << "Flux data is defined" << std::endl;
     }
 
@@ -197,7 +199,8 @@ Common Issues
 
 **IDS not found:**
 - Verify the data entry contains this IDS
-- Check the return value of ``get()`` methods and ``entry.getError()``
+- Check the return value of ``get()`` and ``put()`` methods (0 = success, <0 = failure)
+- Use ``isDefined()`` to check if an IDS contains data
 
 **Need help?**
 - Check the :doc:`Using the Access Layer <using_al>` guide
