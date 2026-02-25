@@ -22,7 +22,7 @@
 <xsl:variable name="HLI_PATCH" as="xs:integer" select="xs:integer(replace($AL_GIT_DESCRIBE, $version_regex, '$3'))"/>
 
 <xsl:template match="/IDSs">
-<xsl:result-document href="src/ALMethods.cpp" standalone="yes" method="text">
+<xsl:result-document href="ALMethods.cpp" standalone="yes" method="text">
 
 #include "ALClasses.h"
 
@@ -433,7 +433,7 @@ return os;
 <!--=================================================-->
 
 <xsl:template match="IDS" mode="CLASS_DEFINITION">
-<xsl:result-document href="src/ids/{@name}_IDSBase.cpp" standalone="yes" method="text">
+<xsl:result-document href="ids/{@name}_IDSBase.cpp" standalone="yes" method="text">
 #include "IdsDef.h"
 #include "ALDef.h"
 #include "<xsl:value-of select="@name"/>_IDSBase.h"

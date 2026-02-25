@@ -40,14 +40,13 @@ primary_domain = "cpp"
 
 # todo_include_todos = True
 
-templates_path = ["./doc_common/templates"]
 # Note: exclude doc_common and plugins folders (which are symlinked by the CMake build)
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "doc_common", "plugins"]
 
 # -- RST snippets to include in every page -----------------------------------
 rst_epilog = """\
 .. |DD| replace:: `Data Dictionary`_
-.. _`Data Dictionary`: https://sharepoint.iter.org/departments/POP/CM/IMDesign/Data%20Model/CI/Latest.html
+.. _`Data Dictionary`: https://imas-data-dictionary.readthedocs.io/en/latest/
 """
 
 
@@ -66,10 +65,10 @@ intersphinx_mapping = {
 
 html_theme = "sphinx_immaterial"
 html_theme_options = {
-    "repo_url": "https://git.iter.org/projects/IMAS/repos/access-layer",
+    "repo_url": "https://github.com/iterorganization/IMAS-Cpp.git",
     "repo_name": "Access Layer",
     "icon": {
-        "repo": "fontawesome/brands/bitbucket",
+        "repo": "fontawesome/brands/github",
     },
     "features": [
         # "navigation.expand",

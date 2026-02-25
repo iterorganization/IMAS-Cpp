@@ -2,14 +2,14 @@
 <?modxslt-stylesheet type="text/xsl" media="fuffa, screen and $GET[stylesheet]" href="./%24GET%5Bstylesheet%5D" alternate="no" title="Translation using provided stylesheet" charset="ISO-8859-1" ?>
 <?modxslt-stylesheet type="text/xsl" media="screen" alternate="no" title="Show raw source of the XML file" charset="ISO-8859-1" ?>
 
-<xsl:stylesheet xmlns:yaslt="http://www.mod-xslt2.com/ns/1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-  xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:exsl="http://exslt.org/common" version="1.0" extension-element-prefixes="yaslt exsl"
+<xsl:stylesheet xmlns:yaslt="http://www.mod-xslt2.com/ns/2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0" extension-element-prefixes="yaslt"
   xmlns:fn="http://www.w3.org/2005/02/xpath-functions">
 
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
 
  <xsl:template match = "/IDSs">
- <exsl:document href="src/ALClasses.h" standalone="yes" method="text">
+ <xsl:result-document href="ALClasses.h" standalone="yes" method="text">
 
 
 #ifndef _AL_CLASSES
@@ -112,7 +112,7 @@ class LIBRARY_API IDS
 #endif
 
 #endif // _AL_CLASSES
-</exsl:document>
+</xsl:result-document>
 </xsl:template>
 
 
@@ -150,7 +150,7 @@ class LIBRARY_API IDS
 <!--=================================================-->
 
 <xsl:template match = "IDS" mode = "CLASS_DEFINITION">
-<exsl:document href="ids/{@name}_IDSBase.h" standalone="yes" method="text">
+<xsl:result-document href="ids/{@name}_IDSBase.h" standalone="yes" method="text">
 #ifndef _IDS_BASE_<xsl:value-of select="@name"/>
 #define _IDS_BASE_<xsl:value-of select="@name"/>
 
@@ -205,7 +205,7 @@ LIBRARY_API ostream <xsl:text disable-output-escaping = "yes">&amp;</xsl:text>op
 
 #endif // _IDS_BASE_<xsl:value-of select="@name"/>
 <xsl:text>&#10;</xsl:text>
-   </exsl:document>
+   </xsl:result-document>
   </xsl:template>
 
 
