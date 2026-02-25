@@ -18,13 +18,15 @@ For more information about related components, see:
 Prerequisites
 -------------
 
-To build the IMAS-MATLAB you need:
+To build the IMAS C++ HLI you need:
 
 -   Git
 -   A C++11 compiler (tested with GCC and Intel compilers)
 -   CMake (3.16 or newer)
 -   Boost C++ libraries (1.66 or newer)
 -   PkgConfig
+-   Python 3.11 or newer (for XSLT processing with saxonche)
+-   Saxon-HE (for XSLT 2.0 transformations)
 
 The following dependencies are only required for some of the components:
 
@@ -37,13 +39,7 @@ The following dependencies are only required for some of the components:
 
 ..  [#uda_install] When installing UDA, make sure you have 
     `Cap'n'Proto <https://github.com/capnproto/capnproto>`__ installed in your system
-    and add its support by adding the CMake switch `-DENABLE_CAPNP=ON` when configuring UDA. 
-
-
--   MATLAB High Level Interface
-
-    -   **MATLAB High Level Interface**: A working MATLAB installation (tested with
-        version 2023b)
+    and add its support by adding the CMake switch `-DENABLE_CAPNP=ON` when configuring UDA.
 
 
 
@@ -63,8 +59,7 @@ Standard environments:
                 Boost/1.83.0-iimpi-2023b HDF5/1.14.3-iimpi-2023b \
                 MDSplus/7.132.0-GCCcore-13.2.0 \
                 UDA/2.8.1-iimpi-2023b Blitz++/1.0.2-GCCcore-13.2.0 \
-                MATLAB/2023b-r5-GCCcore-13.2.0 SciPy-bundle/2023.11-intel-2023b \
-                scikit-build-core/0.9.3-GCCcore-13.2.0
+                SciPy-bundle/2023.11-intel-2023b
 
     .. md-tab-item:: SDCC ``foss-2023b``
 
@@ -77,23 +72,7 @@ Standard environments:
                 Boost/1.83.0-GCC-13.2.0 HDF5/1.14.3-gompi-2023b \
                 MDSplus/7.132.0-GCCcore-13.2.0 \
                 UDA/2.8.1-GCC-13.2.0 Blitz++/1.0.2-GCCcore-13.2.0 \
-                MATLAB/2023b-r5-GCCcore-13.2.0 SciPy-bundle/2023.11-gfbf-2023b \
-                build/1.0.3-foss-2023b scikit-build-core/0.9.3-GCCcore-13.2.0
-
-        .. admonition:: The MATLAB/2023b-r5 installation is lightly tweaked
-
-            The installation at ITER uses `EB PR#20508 
-            <https://github.com/easybuilders/easybuild-easyconfigs/pull/20508>`__
-            and its tweak resolves `IMAS-5162 <https://jira.iter.org/browse/IMAS-5162>`__ 
-            by removing ``libstdc++.so.6`` from the MATLAB installation. It also adds 
-            ``extern/bin/glnxa64`` to ``LD_LIBRARY_PATH`` to address the
-            ``MatlabEngine not found`` issue.
-
-        .. caution::
-
-            When using the HDF5 backend within MATLAB, depending on the HDF5 library being used
-            you may need to add ``LD_PRELOAD=<hdf5_install_dir>/lib/libhdf5_hl.so`` when starting
-            MATLAB.
+                SciPy-bundle/2023.11-gfbf-2023b
 
     .. md-tab-item:: Ubuntu 22.04
 
@@ -113,25 +92,23 @@ Standard environments:
             <https://mdsplus.org/>`__ for installation instructions.
         -   UDA: see their `GitHub repository <https://github.com/ukaea/UDA>`__ for more
             details.
-        -   MATLAB, which is not freely available.
 
 
-Building and installing a single High Level Interface
+Building and installing the C++ High Level Interface
 -----------------------------------------------------
 
-This section explains how to install a Matlab High Level Interface. Please make sure you
+This section explains how to install the C++ High Level Interface. Please make sure you
 have the :ref:`build prerequisites` installed.
 
 
 Clone the repository
 ````````````````````
 
-First you need to clone the repository of the High Level Interface you want to build:
+First you need to clone the repository:
 
 .. code-block:: bash
 
-    # For the MATLAB HLI use:
-    git clone git@github.com:iterorganization/IMAS-MATLAB.git
+    git clone git@github.com:iterorganization/IMAS-Cpp.git
 
 
 Configuration
@@ -143,15 +120,15 @@ overview of configuration options.
 
 .. code-block:: bash
 
-    cd al-matlab  # al-fortran, al-java, al-cpp or al-python
+    cd IMAS-Cpp
     cmake -B build -D CMAKE_INSTALL_PREFIX=$HOME/al-install -D OPTION1=VALUE1 -D OPTION2=VALUE2 [...]
 
 .. note:: 
 
-    CMake will automatically fetch dependencies from other IMAS-MATLAB GIT repositories
+    CMake will automatically fetch dependencies from other IMAS GIT repositories
     for you. You may need to provide credentials to clone the following repositories:
 
-    -   `imas-core (git@github.com:iterorganization/IMAS-Core.git)
+    -   `al-core (git@github.com:iterorganization/IMAS-Core.git)
         <https://github.com/iterorganization/IMAS-Core>`__
     -   `al-plugins (https://github.com/iterorganization/al-plugins.git)
         <https://github.com/iterorganization/al-plugins>`__
@@ -204,33 +181,6 @@ Configuration options
 '''''''''''''''''''''
 
 For a complete list of available configuration options, please see the `IMAS Core Configuration Options <https://imas-core.readthedocs.io/en/latest/user_guide/installation.html#configuration-options>`__.
-
-
-MATLAB-specific configuration options
-'''''''''''''''''''''''''''''''''''''
-
-The following options are specific to the MATLAB High Level Interface:
-
-- ``AL_CREATE_TOOLBOX``: Automatically create MATLAB toolbox package (``.mltbx``) during installation
-  
-  - **Default:** ``OFF``
-  - **Type:** Boolean
-  - **Description:** If set to ``ON``, the MATLAB toolbox package will be created automatically when you run 
-    ``cmake --install``. This requires MATLAB to be installed and available in your PATH. If disabled, you can 
-    create the toolbox manually at any time using the ``matlab-toolbox`` build target.
-  
-  - **Usage Examples:**
-  
-    - Enable during configuration::
-    
-        cmake -B build -DAL_CREATE_TOOLBOX=ON ...
-        cmake --install build
-    
-    - Create toolbox after installation (default)::
-    
-        cmake -B build ...
-        cmake --install build
-        cmake --build build --target matlab-toolbox
 
 
 Build the High Level Interface
@@ -286,7 +236,7 @@ Use the High Level Interface
 ````````````````````````````
 
 After installing the HLI, you need to ensure that your code can find the installed
-IMAS-MATLAB. To help you with this, a file ``al_env.sh`` is installed. You can
+IMAS C++ HLI. To help you with this, a file ``al_env.sh`` is installed. You can
 ``source`` this file to set all required environment variables:
 
 .. code-block:: bash
@@ -307,8 +257,8 @@ Layer installation available for you.
     it manually with the DD version you've build the HLI with, for example: ``export
     IMAS_VERSION=3.41.0``.
 
-Once you have set the required environment variables, you may continue :ref:`Using the
-IMAS-MATLAB`.
+Once you have set the required environment variables, you can start using the C++ HLI.
+See :doc:`getting_started` for a quick introduction.
 
 
 Troubleshooting

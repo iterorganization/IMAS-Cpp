@@ -3,16 +3,10 @@
 <?modxslt-stylesheet type="text/xsl" media="screen" alternate="no" title="Show raw source of the XML file" charset="ISO-8859-1" ?>
 
 <xsl:stylesheet 
-   xmlns:yaslt="http://www.mod-xslt2.com/ns/1.0"
-   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
+   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-   xmlns:fn="http://www.w3.org/2005/02/xpath-functions"
-   xmlns:exsl="http://exslt.org/common"
-   xmlns:str="http://exslt.org/strings"
-   xmlns:func="http://exslt.org/functions"
    xmlns:my="http://localhost.localdomain/localns"
-   exclude-result-prefixes="my"
-   extension-element-prefixes="yaslt exsl func str">
+   exclude-result-prefixes="my xs">
 
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
 
@@ -20,47 +14,38 @@
 <xsl:template match="/constants">
 
   <!-- DOCBOOK FILE -->
-  <exsl:document href="{$prefix}{$name}.xml" method="text">
+  <xsl:result-document href="{$prefix}{$name}.xml" method="text">
     <xsl:call-template name="docbook"/>
-  </exsl:document>
+  </xsl:result-document>
 
 </xsl:template>
 
 <!-- GENERIC FUNCTION TO HANDLE DESCRIPTION/UNIT -->
-<func:function name="my:desc">
-  <xsl:param name="symbol"/>
-  <func:result>
-    <xsl:if test="@description!='' or @units!=''">
-      <xsl:text>  </xsl:text>
-      <xsl:value-of select="$symbol"/>
-      <xsl:text> </xsl:text>
-    </xsl:if>
-    <xsl:value-of select="@description"/>
-    <xsl:if test="@units!=''"> [<xsl:value-of select="@units"/>]</xsl:if>
-    <xsl:text>&#xA;</xsl:text>
-  </func:result>
-</func:function>
+<xsl:function name="my:desc" as="xs:string">
+  <xsl:param name="symbol" as="xs:string"/>
+  <xsl:param name="node"/>
+  <xsl:sequence select="concat(
+    if ($node/@description!='' or $node/@units!='') then concat('  ', $symbol, ' ') else '',
+    $node/@description,
+    if ($node/@units!='') then concat(' [', $node/@units, ']') else '',
+    '&#xA;'
+  )"/>
+</xsl:function>
 
 
 <!-- GENERIC FUNCTION TO UPPER CASE FIRST CHARACTER OF A STRING -->
-<func:function name="my:upfirst">
-  <xsl:param name="word"/>
-  <func:result>
-    <xsl:variable name="firstchar">
-      <xsl:value-of select="translate(substring($word,1,1),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
-    </xsl:variable>
-    <xsl:value-of select="concat($firstchar,substring($word,2))"/>
-  </func:result>
-</func:function>
+<xsl:function name="my:upfirst" as="xs:string">
+  <xsl:param name="word" as="xs:string"/>
+  <xsl:variable name="firstchar" select="translate(substring($word,1,1),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+  <xsl:sequence select="concat($firstchar,substring($word,2))"/>
+</xsl:function>
 
 
 <!-- GENERIC FUNCTION TO UPPER CASE ALL CHARACTERS OF A STRING -->
-<func:function name="my:upall">
-  <xsl:param name="word"/>
-  <func:result>
-    <xsl:value-of select="translate($word,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
-  </func:result>
-</func:function>
+<xsl:function name="my:upall" as="xs:string">
+  <xsl:param name="word" as="xs:string"/>
+  <xsl:sequence select="translate($word,'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ')"/>
+</xsl:function>
 
 
 <!-- GENERIC TEMPLATE TO HANDLE MULTIPLE LINES COMMENTS -->
@@ -113,7 +98,7 @@
 <xsl:template name="alias">
   <xsl:param name="text"/>
   <xsl:param name="symb"/>
-  <xsl:for-each select="str:tokenize($text,' ')">
+  <xsl:for-each select="tokenize($text,' ')">
     <xsl:choose>
       <xsl:when test="contains(.,'.')">
         <xsl:value-of select="."/>

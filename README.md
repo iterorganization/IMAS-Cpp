@@ -20,4 +20,4 @@ Copyright 2019-2026 ITER Organization, Copyright 2019-2021 EPFL.
 
 ## Acknowledgements
 
-Bootstrapped from the UAL's matlabinterface.
+Bootstrapped from the UAL's cppinterface.
