@@ -191,17 +191,3 @@ Next Steps
 - **Check the full API documentation**: See the `IMAS C++ HLI documentation <https://imas-cpp.readthedocs.io>`__
 
 
-Common Issues
--------------
-
-**"Unable to open pulse" error:**
-- Check that your URI is correct and the data path exists
-
-**IDS not found:**
-- Verify the data entry contains this IDS
-- Check the return value of ``get()`` and ``put()`` methods (0 = success, <0 = failure)
-- Use ``isDefined()`` to check if an IDS contains data
-
-**Need help?**
-- Check the :doc:`Using the Access Layer <using_al>` guide
-- Consult the `IMAS C++ HLI documentation <https://imas-cpp.readthedocs.io/>`__
