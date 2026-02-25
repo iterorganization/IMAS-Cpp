@@ -1,22 +1,16 @@
-Building and installing the IMAS-MATLAB
-========================================
+Building and installing the IMAS C++ HLI
+=========================================
 
-This page describes how to build and install the IMAS-MATLAB.
+This page describes how to build and install the IMAS C++ High Level Interface.
 
-Documentation for developers wishing to contribute to the IMAS-MATLAB can be found in
-the :ref:`IMAS-MATLAB development guide`. Please refer to that guide if you wish to set
+Documentation for developers wishing to contribute to the IMAS C++ HLI can be found in
+the :ref:`Development guide`. Please refer to that guide if you wish to set
 up a development environment.
 
 For more information about related components, see:
 
 -   `IMAS Core Documentation <https://imas-core.readthedocs.io/en/latest/>`__
 -   `IMAS Data Dictionary Documentation <https://imas-data-dictionary.readthedocs.io/en/latest/>`__
-
-
-.. note::
-
-    For Windows-specific installation instructions, please refer to the
-    :doc:`MATLAB on Windows <matlab_on_windows>` guide.
 
 
 .. _`build prerequisites`:
