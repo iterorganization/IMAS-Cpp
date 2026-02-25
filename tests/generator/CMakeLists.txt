@@ -45,6 +45,7 @@ if( NOT AL_BACKEND_MDSPLUS )
   set_tests_properties( cpp-TestSuite PROPERTIES DISABLED ON )
 else()
   get_target_property( MDSPLUS_MODEL_DIR al-mdsplus-model BINARY_DIR )
+  # Note: added ids_path for backward compatibility with IMAS-Core<5.6
   set_tests_properties( cpp-TestSuite PROPERTIES
-    ENVIRONMENT "IMAS_AL_DISABLE_OBSOLESCENT_WARNING=1;IMAS_AL_DISABLE_VALIDATE=1;IMAS_VERSION=${DD_VERSION};ids_path=${MDSPLUS_MODEL_DIR}" )
+    ENVIRONMENT "IMAS_AL_DISABLE_OBSOLESCENT_WARNING=1;IMAS_AL_DISABLE_VALIDATE=1;IMAS_VERSION=${DD_VERSION};ids_path=${MDSPLUS_MODEL_DIR};MDSPLUS_MODELS_PATH=${MDSPLUS_MODEL_DIR}" )
 endif()
