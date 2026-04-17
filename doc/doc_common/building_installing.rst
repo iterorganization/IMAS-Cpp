@@ -221,6 +221,16 @@ the corresponding test programs as follows:
     # Directly invoke ctest
     ctest --test-dir build
 
+.. note::
+
+    The `ids_path` environment variable used to locate MDSplus models has been renamed to
+    `MDSPLUS_MODELS_PATH` in IMAS-Core 5.6.0 and later. Set it as follows:
+
+    .. code-block:: bash
+
+        export MDSPLUS_MODELS_PATH=/path/to/your/mdsplus/models
+
+
 This executes ``ctest`` to run all test and example programs. Note that this may take a
 long time to complete.
 
