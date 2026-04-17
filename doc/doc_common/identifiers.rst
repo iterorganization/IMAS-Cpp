@@ -21,14 +21,14 @@ Using the identifiers library
 
 |identifiers_link_instructions|
 
-Below examples illustrates how to use the identifiers in your Matlab programs.
+Below examples illustrates how to use the identifiers in your Cpp programs.
 
 .. literalinclude:: code_samples/identifier_example1
-    :caption: Matlab example 1: obtain identifier information of coordinate identifier ``phi``
+    :caption: Cpp example 1: obtain identifier information of coordinate identifier ``phi``
 
 .. literalinclude:: code_samples/identifier_example2
-    :caption: Matlab example 2: Use the identifier library to fill the ``NBI`` label in the ``core_sources`` IDS
+    :caption: Cpp example 2: Use the identifier library to fill the ``NBI`` label in the ``core_sources`` IDS
 
 .. literalinclude:: code_samples/identifier_example3
-    :caption: Matlab example 3: Use the identifier library to fill the type of coordinate system used in the ``equilibrium`` IDS
+    :caption: Cpp example 3: Use the identifier library to fill the type of coordinate system used in the ``equilibrium`` IDS
 

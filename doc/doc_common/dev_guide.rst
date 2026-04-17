@@ -41,7 +41,7 @@ folder is not important).
     al-dev/                 # Feel free to name this folder however you want
     ├── al-core/
     ├── al-plugins/         # Optional
-    ├── al-matlab/          
+    ├── al-cpp/          
     └── data-dictionary/
 
 Then, when you configure a project for building (see :ref:`Configuration`), set the
@@ -59,7 +59,7 @@ This setup allows you to develop in multiple repositories in parallel.
 Dependency management
 ---------------------
 
-With all IMAS-MATLAB dependencies spread over different repositories, managing
+With all IMAS-Cpp dependencies spread over different repositories, managing
 dependencies is more complex than before. Below diagram expresses the dependencies
 between the different repositories:
 
@@ -84,7 +84,7 @@ specifies which branch to use from each repository:
     ``al-core``.
 -   Inside the ``al-core`` repository, the commits to use for the
     ``al-plugins`` and ``data-dictionary`` are set in `ALCommonConfig.cmake
-    <https://github.com/iterorganization/IMAS-MATLAB/blob/develop/common/cmake/ALCommonConfig.cmake>`__.
+    <https://github.com/iterorganization/IMAS-Cpp/blob/develop/common/cmake/ALCommonConfig.cmake>`__.
 
     The default versions used are ``main`` for ``al-plugins``, and ``main`` for
     ``data-dictionary``.
@@ -119,35 +119,35 @@ Documentation of the HLI is inside the ``doc`` folder of the repository. This fo
 contains the configuration (``conf.py``), and documentation pages (``*.rst``).
 Documentation that is common to all High Level Interfaces (such as this developer guide)
 is in the `common/doc_common folder in the al-core repository
-<https://github.com/iterorganization/IMAS-MATLAB/blob/develop/common/doc_common>`__.
+<https://github.com/iterorganization/IMAS-Cpp/blob/develop/common/doc_common>`__.
 
 
 Building the documentation
 ''''''''''''''''''''''''''
 
 Use the option ``-D AL_HLI_DOCS`` to enable building documentation. This will create a
-target ``al-<hli>-docs``, e.g. ``al-matlab-docs`` that will only build the
+target ``al-<hli>-docs``, e.g. ``al-cpp-docs`` that will only build the
 documentation. You could also use ``-D AL_DOCS_ONLY`` to only build the documentation,
 and nothing else.
 
 .. code-block:: console
     :caption: Example: building the documentation for the Python HLI
 
-    al-dev$ cd al-matlab
-    al-matlab$ # Configure cmake to only create the documentation:
-    al-matlab$ cmake -B build -D AL_HLI_DOCS -D AL_DOCS_ONLY
+    al-dev$ cd al-cpp
+    al-cpp$ # Configure cmake to only create the documentation:
+    al-cpp$ cmake -B build -D AL_HLI_DOCS -D AL_DOCS_ONLY
     [...]
-    al-matlab$ make -C build al-matlab-docs
+    al-cpp$ make -C build al-cpp-docs
     [...]
 
 
 GitHub Actions CI/CD pipeline
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In addition to the ITER CI systems, the IMAS-MATLAB repository uses `GitHub Actions
+In addition to the ITER CI systems, the IMAS-Cpp repository uses `GitHub Actions
 <https://github.com/features/actions>`__ for automated building and testing. The
 workflow is defined in `.github/workflows/build-and-test.yml
-<https://github.com/iterorganization/IMAS-MATLAB/blob/main/.github/workflows/build-and-test.yml>`__.
+<https://github.com/iterorganization/IMAS-Cpp/blob/main/.github/workflows/build-and-test.yml>`__.
 
 This workflow:
 
@@ -155,12 +155,11 @@ This workflow:
     on all pull requests to ``main`` and ``develop``, on release tags (``v*``), and can be triggered 
     manually via ``workflow_dispatch``.
 
--   **Platforms**: Currently tests on Ubuntu 24.04 with GCC 14 compiler and MATLAB R2023b.
+-   **Platforms**: Currently tests on Ubuntu 24.04 with GCC 14 compiler
 
 -   **Build steps**:
     
     1. Sets up Python 3.11 environment
-    2. Installs MATLAB using GitHub's official MATLAB action
     3. Installs system dependencies (build-essential, cmake, pkg-config, etc.)
     4. Caches Boost and pip packages for faster builds
     5. Builds and optionally installs external dependencies (UDA, HDF5, etc.)
@@ -175,4 +174,4 @@ This workflow:
     that all tests pass. Build logs are available in the GitHub Actions tab of the repository.
 
 You can monitor the status of builds and tests in the 
-`Actions <https://github.com/iterorganization/IMAS-MATLAB/actions>`__ tab of the GitHub repository.
+`Actions <https://github.com/iterorganization/IMAS-Cpp/actions>`__ tab of the GitHub repository.
