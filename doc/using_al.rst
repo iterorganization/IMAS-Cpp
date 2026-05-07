@@ -19,11 +19,17 @@ follows:
 
 .. code-block:: bash
 
-    g++ imas_hello_world.cpp `pkg-config --libs --cflags al-cpp` -pthread -o imas_hello_world
+    g++ imas_hello_world.cpp `pkg-config --libs --cflags imas-cpp` -pthread -o imas_hello_world
 
 We use ``pkg-config`` to output the required libraries and compiler flags to use
 the C++ Access Layer. Feel free to use a different compiler than gcc, and/or add
 additional compilation flags to your liking.
+
+.. note::
+
+    ``al-*`` package names     (e.g., ``al-cpp``, ``al-identifiers-cpp``) are also available 
+    as symlinks and work identically to their ``imas-*`` counterparts.
+
 
 When the compilation is successful, a program ``imas_hello_world``
 was compiled for you. When you execute it, the result is:
