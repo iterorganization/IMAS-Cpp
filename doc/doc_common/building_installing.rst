@@ -271,48 +271,6 @@ Once you have set the required environment variables, you can start using the C+
 See :doc:`getting_started` for a quick introduction.
 
 
-Using pkg-config
-''''''''''''''''
-
-The IMAS C++ HLI provides ``pkg-config`` files to simplify compilation and linking.
-After sourcing ``al_env.sh``, you can query the library information:
-
-.. code-block:: bash
-
-    # Get compiler flags for the main library:
-    pkg-config --cflags imas-cpp
-
-    # Get linker flags for the main library:
-    pkg-config --libs imas-cpp
-
-    # Combine both in compilation (example with g++):
-    g++ -c mycode.cpp $(pkg-config --cflags imas-cpp)
-    g++ -o myapp mycode.o $(pkg-config --libs imas-cpp)
-
-**Available packages:**
-
-- ``imas-cpp`` – Main C++ HLI library (depends on version-specific package)
-- ``imas-cpp-<DD_VERSION>`` – Version-specific library (e.g., ``imas-cpp-3.41.0``)
-- ``imas-identifiers-cpp`` – Identifiers library
-
-**CMakeLists.txt example:**
-
-.. code-block:: cmake
-
-    find_package(PkgConfig REQUIRED)
-    pkg_check_modules(IMAS REQUIRED imas-cpp)
-    
-    add_executable(myapp mycode.cpp)
-    target_link_libraries(myapp ${IMAS_LIBRARIES})
-    target_include_directories(myapp PUBLIC ${IMAS_INCLUDE_DIRS})
-
-.. note::
-
-    For backward compatibility with existing projects, the old ``al-*`` package names
-    (e.g., ``al-cpp``, ``al-identifiers-cpp``) are also available as symlinks and work
-    identically to their ``imas-*`` counterparts.
-
-
 Troubleshooting
 ```````````````
 
