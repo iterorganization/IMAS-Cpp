@@ -223,23 +223,23 @@ list( FILTER IDS_HEADERS INCLUDE REGEX "src/ids" )
 install( FILES ${IDS_HEADERS} DESTINATION include/ids )
 
 # Generate and install .pc files
-configure_file( pkgconfig/imas-cpp.pc.in imas-cpp.pc @ONLY )
-configure_file( pkgconfig/imas-cpp-DD_VERSION.pc.in imas-cpp-${DD_VERSION}.pc @ONLY )
-configure_file( pkgconfig/imas-identifiers-cpp.pc.in imas-identifiers-cpp.pc @ONLY )
+configure_file( pkgconfig/al-cpp.pc.in al-cpp.pc @ONLY )
+configure_file( pkgconfig/al-cpp-DD_VERSION.pc.in al-cpp-${DD_VERSION}.pc @ONLY )
+configure_file( pkgconfig/al-identifiers-cpp.pc.in al-identifiers-cpp.pc @ONLY )
 install( FILES
-    ${CMAKE_CURRENT_BINARY_DIR}/imas-cpp.pc
-    ${CMAKE_CURRENT_BINARY_DIR}/imas-cpp-${DD_VERSION}.pc
-    ${CMAKE_CURRENT_BINARY_DIR}/imas-identifiers-cpp.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/al-cpp.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/al-cpp-${DD_VERSION}.pc
+    ${CMAKE_CURRENT_BINARY_DIR}/al-identifiers-cpp.pc
   DESTINATION lib/pkgconfig
 )
 
-# Create backward compatibility symlinks (al-* -> imas-*)
+# Create backward compatibility symlinks (imas-* -> al-*)
 install( CODE "
-  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink imas-cpp.pc al-cpp.pc
+  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink al-cpp.pc imas-cpp.pc
     WORKING_DIRECTORY \${CMAKE_INSTALL_PREFIX}/lib/pkgconfig )
-  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink imas-cpp-${DD_VERSION}.pc al-cpp-${DD_VERSION}.pc
+  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink al-cpp-${DD_VERSION}.pc imas-cpp-${DD_VERSION}.pc
     WORKING_DIRECTORY \${CMAKE_INSTALL_PREFIX}/lib/pkgconfig )
-  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink imas-identifiers-cpp.pc al-identifiers-cpp.pc
+  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink al-identifiers-cpp.pc imas-identifiers-cpp.pc
     WORKING_DIRECTORY \${CMAKE_INSTALL_PREFIX}/lib/pkgconfig )
 " )
 
