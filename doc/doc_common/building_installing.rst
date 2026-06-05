@@ -130,9 +130,9 @@ overview of configuration options.
 
     -   `al-core (git@github.com:iterorganization/IMAS-Core.git)
         <https://github.com/iterorganization/IMAS-Core>`__
-    -   `al-plugins (https://github.com/iterorganization/al-plugins.git)
-        <https://github.com/iterorganization/al-plugins>`__
-    -   `imas-data-dictionary (git@github.com:iterorganization/IMAS-Data-Dictionary.git)
+    -   `al-plugins (https://github.com/iterorganization/IMAS-Core-plugins.git)
+        <https://github.com/iterorganization/IMAS-Core-plugins>`__
+    -   `data-dictionary (git@github.com:iterorganization/IMAS-Data-Dictionary.git)
         <https://github.com/iterorganization/IMAS-Data-Dictionary>`__
 
     If you need to change the git repositories, for example to point to a mirror of the
@@ -145,7 +145,7 @@ overview of configuration options.
 
         cmake -B build \
             -D AL_CORE_GIT_REPOSITORY=git@github.com:iterorganization/IMAS-Core.git \
-            -D AL_PLUGINS_GIT_REPOSITORY=git@github.com:iterorganization/al-plugins.git \
+            -D AL_PLUGINS_GIT_REPOSITORY=git@github.com:iterorganization/IMAS-Core-plugins.git \
             -D DD_GIT_REPOSITORY=git@github.com:iterorganization/IMAS-Data-Dictionary.git
 
     If you use CMake 3.21 or newer, you can also use the ``https`` preset:

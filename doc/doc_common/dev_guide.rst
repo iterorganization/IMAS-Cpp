@@ -11,7 +11,7 @@ repositories:
 -   `imas-core <https://github.com/iterorganization/IMAS-Core>`__: the
     IMAS core repository, MDSplus model generator and Python lowlevel
     bindings.
--   `data-dictionary
+-   `IMAS-Data-Dictionary
     <https://github.com/iterorganization/IMAS-Data-Dictionary>`__: the IMAS Data
     Dictionary definitions, used for generating MDSplus models and the traditional High
     Level Interfaces.
@@ -44,10 +44,17 @@ folder is not important).
     ├── al-cpp/          
     └── data-dictionary/
 
-Then, when you configure a project for building (see :ref:`Configuration`), set the
-option ``-D AL_DOWNLOAD_DEPENDENCIES=OFF``. Instead of fetching requirements from the
-ITER git, CMake will now use the repositories as they are checked out in your
-development folders.
+Then, when you configure a project for building (see :ref:`Configuration`), you can consider following 
+variables.
+``-D AL_DOWNLOAD_DEPENDENCIES=ON`` lets CMake fetch required IMAS-Core/IMAS-Data-Dictionary repositories
+automatically. ``-D AL_DOWNLOAD_DEPENDENCIES=OFF `` means dependencies must already be available locally 
+or provided by the build environment. ``-D AL_DEVELOPMENT_LAYOUT=ON `` tells CMake to use sibling 
+checkout folders, like ../IMAS-Core, for active development. If ``-D AL_DEVELOPMENT_LAYOUT=ON ``, the
+project automatically turns ``-D AL_DOWNLOAD_DEPENDENCIES`` OFF.
+
+    When both ``AL_DEVELOPMENT_LAYOUT=OFF`` and ``AL_DOWNLOAD_DEPENDENCIES=OFF`` are
+    used, CMake expects dependencies such as ``al-core`` to be available as installed
+    packages through ``pkg-config``.
 
     With this setup, it is your responsibility to update the repositories to their
     latest versions (if needed). The ``<component>_VERSION`` configuration options are
@@ -67,7 +74,7 @@ between the different repositories:
     :name: repository-dependencies
 
     flowchart
-        core[al-core] -->|"MDSplus<br>models"| dd[data-dictionary]
+        core[imas-core] -->|"MDSplus<br>models"| dd[data-dictionary]
         plugins[al-plugins] --> core
         hli["al-{hli}"] --> core
         hli --> dd
@@ -117,8 +124,7 @@ The documentation is generated with Sphinx. For more information on Sphinx, see 
 
 Documentation of the HLI is inside the ``doc`` folder of the repository. This folder
 contains the configuration (``conf.py``), and documentation pages (``*.rst``).
-Documentation that is common to all High Level Interfaces (such as this developer guide)
-is in the `common/doc_common folder in the al-core repository
+Documentation such as this developer guide is in the `common/doc_common folder
 <https://github.com/iterorganization/IMAS-Cpp/blob/develop/common/doc_common>`__.
 
 
@@ -133,11 +139,11 @@ and nothing else.
 .. code-block:: console
     :caption: Example: building the documentation for the Python HLI
 
-    al-dev$ cd al-cpp
-    al-cpp$ # Configure cmake to only create the documentation:
-    al-cpp$ cmake -B build -D AL_HLI_DOCS -D AL_DOCS_ONLY
+    al-dev$ cd IMAS-Cpp
+    IMAS-Cpp$ # Configure cmake to only create the documentation:
+    IMAS-Cpp$ cmake -B build -D AL_HLI_DOCS -D AL_DOCS_ONLY
     [...]
-    al-cpp$ make -C build al-cpp-docs
+    IMAS-Cpp$ make -C build al-cpp-docs
     [...]
 
 
@@ -160,12 +166,12 @@ This workflow:
 -   **Build steps**:
     
     1. Sets up Python 3.11 environment
-    3. Installs system dependencies (build-essential, cmake, pkg-config, etc.)
-    4. Caches Boost and pip packages for faster builds
-    5. Builds and optionally installs external dependencies (UDA, HDF5, etc.)
-    6. Configures the project with CMake
-    7. Compiles the code
-    8. Runs tests if enabled
+    2. Installs system dependencies (build-essential, cmake, pkg-config, etc.)
+    3. Caches Boost and pip packages for faster builds
+    4. Builds and optionally installs external dependencies (UDA, HDF5, etc.)
+    5. Configures the project with CMake
+    6. Compiles the code
+    7. Runs tests if enabled
 
 -   **Backends tested**: Currently enables the HDF5 backend while MDSplus and UDA 
     backends are disabled to simplify testing.

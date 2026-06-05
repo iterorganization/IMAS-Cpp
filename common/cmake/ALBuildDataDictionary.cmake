@@ -171,7 +171,7 @@ else()
       if( NOT( AL_PARENT_FOLDER ) )
         set( AL_PARENT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/.. )
       endif()
-      set( data-dictionary_SOURCE_DIR ${AL_PARENT_FOLDER}/data-dictionary )
+      set( data-dictionary_SOURCE_DIR ${AL_PARENT_FOLDER}/IMAS-Data-Dictionary )
       if( NOT IS_DIRECTORY ${data-dictionary_SOURCE_DIR} )
         message( FATAL_ERROR
           "${data-dictionary_SOURCE_DIR} does not exist. Please clone the "
@@ -195,11 +195,11 @@ else()
       if( NOT( AL_PARENT_FOLDER ) )
         set( AL_PARENT_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/.. )
       endif()
-      set( DD_SOURCE_DIRECTORY ${AL_PARENT_FOLDER}/data-dictionary )
+      set( DD_SOURCE_DIRECTORY ${AL_PARENT_FOLDER}/IMAS-Data-Dictionary )
       if( NOT IS_DIRECTORY ${DD_SOURCE_DIRECTORY} )
         message( FATAL_ERROR
           "${DD_SOURCE_DIRECTORY} does not exist. Please clone the "
-          "data-dictionary repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
+          "IMAS-Data-Dictionary repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
         )
       endif()
 

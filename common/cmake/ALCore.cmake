@@ -42,18 +42,13 @@ if(WIN32)
       message( FATAL_ERROR "Failed to checkout ${AL_CORE_VERSION}: ${_GIT_CHECKOUT_ERROR}" )
     endif()
   else()
-    # Look in ../al-core
-    set( al-core_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../al-core )
+    # Look in ../IMAS-Core
+    set( al-core_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../IMAS-Core )
     if( NOT IS_DIRECTORY ${al-core_SOURCE_DIR} )
-      # Repository used to be called "al-lowlevel", check this directory as well for
-      # backwards compatibility:
-      set( al-core_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../al-lowlevel )
-      if( NOT IS_DIRECTORY ${al-core_SOURCE_DIR} )
-        message( FATAL_ERROR
-          "${al-core_SOURCE_DIR} does not exist. Please clone the "
-          "al-core repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
-        )
-      endif()
+      message( FATAL_ERROR
+        "${al-core_SOURCE_DIR} does not exist. Please clone the "
+        "IMAS-Core repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
+      )
     endif()
   endif()
 else()
@@ -67,18 +62,13 @@ else()
       GIT_TAG         ${AL_CORE_VERSION}
     )
   else()
-    # Look in ../al-core
-    set( AL_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../al-core )
+    # Look in ../IMAS-Core
+    set( AL_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../IMAS-Core )
     if( NOT IS_DIRECTORY ${AL_SOURCE_DIRECTORY} )
-      # Repository used to be called "al-lowlevel", check this directory as well for
-      # backwards compatibility:
-      set( AL_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../al-lowlevel )
-      if( NOT IS_DIRECTORY ${AL_SOURCE_DIRECTORY} )
-        message( FATAL_ERROR
-          "${AL_SOURCE_DIRECTORY} does not exist. Please clone the "
-          "al-core repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
-        )
-      endif()
+      message( FATAL_ERROR
+        "${AL_SOURCE_DIRECTORY} does not exist. Please clone the "
+        "IMAS-Core repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
+      )
     endif()
 
     FetchContent_Declare(
@@ -145,12 +135,12 @@ if( ${AL_PLUGINS} )
         message( FATAL_ERROR "Failed to checkout ${AL_PLUGINS_VERSION}: ${_GIT_CHECKOUT_ERROR}" )
       endif()
     else()
-      # Look in ../plugins
-      set( al-plugins_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../al-plugins )
+      # Look in ../IMAS-Core-Plugins
+      set( al-plugins_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../IMAS-Core-Plugins )
       if( NOT IS_DIRECTORY ${al-plugins_SOURCE_DIR} )
         message( FATAL_ERROR
           "${al-plugins_SOURCE_DIR} does not exist. Please clone the "
-          "al-plugins repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
+          "IMAS-Core-Plugins repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
         )
       endif()
     endif()
@@ -165,11 +155,11 @@ if( ${AL_PLUGINS} )
       )
     else()
       # Look in ../plugins
-      set( PLUGINS_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../al-plugins )
+      set( PLUGINS_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../IMAS-Core-Plugins )
       if( NOT IS_DIRECTORY ${PLUGINS_SOURCE_DIRECTORY} )
         message( FATAL_ERROR
           "${PLUGINS_SOURCE_DIRECTORY} does not exist. Please clone the "
-          "al-plugins repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
+          "IMAS-Core-Plugins repository or set AL_DOWNLOAD_DEPENDENCIES=ON."
         )
       endif()
 

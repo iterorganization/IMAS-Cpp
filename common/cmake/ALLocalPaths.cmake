@@ -1,5 +1,4 @@
 # Local paths for IMAS-Cpp
-# This file defines local paths to eliminate AL_COMMON_PATH dependency
 
 # Directory containing CMake modules
 set(AL_LOCAL_CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/common/cmake)

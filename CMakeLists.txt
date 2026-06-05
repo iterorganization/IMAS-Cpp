@@ -5,34 +5,32 @@ cmake_minimum_required( VERSION 3.16 )
 ################################################################################
 include(${CMAKE_CURRENT_SOURCE_DIR}/common/cmake/ALLocalPaths.cmake)
 
-
 option( AL_DOWNLOAD_DEPENDENCIES "Automatically download assets from the AL git repository" ON )
+option( AL_DEVELOPMENT_LAYOUT "Use development repositories from sibling directory" OFF )
+if( AL_DEVELOPMENT_LAYOUT AND AL_DOWNLOAD_DEPENDENCIES )
+    message( STATUS "AL_DEVELOPMENT_LAYOUT=ON: setting AL_DOWNLOAD_DEPENDENCIES=OFF" )
+    set( AL_DOWNLOAD_DEPENDENCIES OFF CACHE BOOL "Automatically download assets from the AL git
+    repository" FORCE )
+endif()
 set( AL_CORE_GIT_REPOSITORY "https://github.com/iterorganization/IMAS-Core.git" CACHE STRING "Git repository of AL-core" )
 set( AL_CORE_VERSION "main" CACHE STRING "Git commit/tag/branch of AL-core" )
 
 include(FetchContent)
 
-# Load common assets
-################################################################################
-if( DEFINED ENV{AL_COMMON_PATH} )
-  # Take common assets from the path in this environment variable instead of al-core
-  set( AL_COMMON_PATH $ENV{AL_COMMON_PATH} )
-else()
-  if( ${AL_DOWNLOAD_DEPENDENCIES} )
-    # Download common assets from the ITER git:
-    FetchContent_Declare(
-      al-core
-      GIT_REPOSITORY "${AL_CORE_GIT_REPOSITORY}"
-      GIT_TAG "${AL_CORE_VERSION}"
-    )
-    FetchContent_MakeAvailable( al-core )
-  elseif ( ${AL_DEVELOPMENT_LAYOUT} )
-    FetchContent_Declare(
-      al-core
-      SOURCE_DIR      "${CMAKE_CURRENT_SOURCE_DIR}/../al-core"
-    )
-    FetchContent_MakeAvailable( al-core )
-  endif()
+if( ${AL_DOWNLOAD_DEPENDENCIES} )
+  # Download common assets from the ITER git:
+  FetchContent_Declare(
+    al-core
+    GIT_REPOSITORY "${AL_CORE_GIT_REPOSITORY}"
+    GIT_TAG "${AL_CORE_VERSION}"
+  )
+  FetchContent_MakeAvailable( al-core )
+elseif ( ${AL_DEVELOPMENT_LAYOUT} )
+  FetchContent_Declare(
+    al-core
+    SOURCE_DIR      "${CMAKE_CURRENT_SOURCE_DIR}/../IMAS-Core"
+  )
+  FetchContent_MakeAvailable( al-core )
 endif()
 
 
