@@ -27,8 +27,10 @@ additional compilation flags to your liking.
 
 .. note::
 
-    ``al-*`` package names     (e.g., ``al-cpp``, ``al-identifiers-cpp``) are also available 
-    as symlinks and work identically to their ``imas-*`` counterparts.
+    Compilation and linking flags for the IMAS-Cpp library can simply be obtained with the following pkg-config names:
+
+    - ``imas-cpp`` (or ``al-cpp`` for compatibility with versions < 5.6) for the data access library (definition of IDS objects, I/O functions, etc...)
+    - ``imas-identifiers-cpp`` (or ``al-identifiers-cpp``) for the :doc:identifiers library <identifiers>
 
 
 When the compilation is successful, a program ``imas_hello_world``
