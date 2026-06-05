@@ -1,9 +1,9 @@
-Building and installing the IMAS C++ HLI
-=========================================
+Building and installing the IMAS Cpp
+====================================
 
-This page describes how to build and install the IMAS C++ High Level Interface.
+This page describes how to build and install the IMAS Cpp.
 
-Documentation for developers wishing to contribute to the IMAS C++ HLI can be found in
+Documentation for developers wishing to contribute to the IMAS-Cpp can be found in
 the :doc:`dev_guide`. Please refer to that guide if you wish to set
 up a development environment.
 
@@ -18,30 +18,20 @@ For more information about related components, see:
 Prerequisites
 -------------
 
-To build the IMAS C++ HLI you need:
-
 -   Git
--   A C++11 compiler (tested with GCC and Intel compilers)
 -   CMake (3.16 or newer)
--   Boost C++ libraries (1.66 or newer)
+-   Python
 -   PkgConfig
--   Python 3.11 or newer (for XSLT processing with saxonche)
--   Saxon-HE (for XSLT 2.0 transformations)
-
-The following dependencies are only required for some of the components:
-
--   Backends
-
-    -   **HDF5 backend**: HDF5 C/C++ libraries (1.8.12 or newer)
-    -   **MDSplus backend**: MDSplus libraries (7.84.8 or newer)
-    -   **UDA backend**: `UDA <https://github.com/ukaea/UDA/>`__ libraries
-	(2.7.5 or newer) [#uda_install]_
-
-..  [#uda_install] When installing UDA, make sure you have 
-    `Cap'n'Proto <https://github.com/capnproto/capnproto>`__ installed in your system
-    and add its support by adding the CMake switch `-DENABLE_CAPNP=ON` when configuring UDA.
 
 
+To build the IMAS-Core together with IMAS-Fortran refer to 
+IMAS-Core's requirements `IMAS Core Installation <https://imas-core.readthedocs.io/en/latest/user_guide/installation.html#imas-core>`__
+
+
+To build the IMAS Cpp you need:
+
+-   A C++11 compiler (tested with GCC and Intel compilers)
+-   Boost C++ libraries (1.66 or newer)
 
 
 Standard environments:
@@ -55,11 +45,13 @@ Standard environments:
 
         .. code-block:: bash
 
-            module load intel-compilers/2023.2.1 CMake/3.27.6-GCCcore-13.2.0 Saxon-HE/12.4-Java-21 \
+            module load intel-compilers/2023.2.1 CMake/3.27.6-GCCcore-13.2.0 \
                 Boost/1.83.0-iimpi-2023b HDF5/1.14.3-iimpi-2023b \
                 MDSplus/7.132.0-GCCcore-13.2.0 \
                 UDA/2.8.1-iimpi-2023b Blitz++/1.0.2-GCCcore-13.2.0 \
-                SciPy-bundle/2023.11-intel-2023b
+		        Python/3.11.9-GCCcore-13.2.0 \
+                SciPy-bundle/2023.11-intel-2023b \
+                scikit-build-core/0.9.3-GCCcore-13.2.0
 
     .. md-tab-item:: SDCC ``foss-2023b``
 
@@ -68,7 +60,7 @@ Standard environments:
 
         .. code-block:: bash
 
-            module load CMake/3.27.6-GCCcore-13.2.0 Saxon-HE/12.4-Java-21 \
+            module load CMake/3.27.6-GCCcore-13.2.0 \
                 Boost/1.83.0-GCC-13.2.0 HDF5/1.14.3-gompi-2023b \
                 MDSplus/7.132.0-GCCcore-13.2.0 \
                 UDA/2.8.1-GCC-13.2.0 Blitz++/1.0.2-GCCcore-13.2.0 \
@@ -80,8 +72,8 @@ Standard environments:
 
         .. code-block:: bash
 
-            apt install git build-essential cmake libsaxonhe-java libboost-all-dev \
-                pkg-config libhdf5-dev xsltproc libblitz0-dev gfortran \
+            apt install git build-essential cmake libboost-all-dev \
+                pkg-config libhdf5-dev libblitz0-dev \
                 default-jdk-headless python3-dev python3-venv python3-pip
 
         The following dependencies are not available from the package repository,
@@ -94,7 +86,7 @@ Standard environments:
             details.
 
 
-Building and installing the C++ High Level Interface
+Building and installing IMAS-Cpp
 -----------------------------------------------------
 
 This section explains how to install the C++ High Level Interface. Please make sure you
@@ -121,7 +113,7 @@ overview of configuration options.
 .. code-block:: bash
 
     cd IMAS-Cpp
-    cmake -B build -D CMAKE_INSTALL_PREFIX=$HOME/al-install -D OPTION1=VALUE1 -D OPTION2=VALUE2 [...]
+    cmake -B build -D CMAKE_INSTALL_PREFIX=$HOME/test-install -D OPTION1=VALUE1 -D OPTION2=VALUE2 [...]
 
 .. note:: 
 
@@ -145,7 +137,7 @@ overview of configuration options.
 
         cmake -B build \
             -D AL_CORE_GIT_REPOSITORY=git@github.com:iterorganization/IMAS-Core.git \
-            -D AL_PLUGINS_GIT_REPOSITORY=git@github.com:iterorganization/IMAS-Core-plugins.git \
+            -D AL_PLUGINS_GIT_REPOSITORY=git@github.com:iterorganization/IMAS-Core-Plugins.git \
             -D DD_GIT_REPOSITORY=git@github.com:iterorganization/IMAS-Data-Dictionary.git
 
     If you use CMake 3.21 or newer, you can also use the ``https`` preset:
@@ -208,7 +200,7 @@ cause the build to fail. This is especially the case with the C++ High Level Int
     details.
 
 
-Optional: Test the High Level Interface
+Optional: Test IMAS-Cpp
 ```````````````````````````````````````
 
 If you set either of the options ``AL_EXAMPLES`` or ``AL_TESTS`` to ``ON``, you can run
@@ -230,23 +222,22 @@ the corresponding test programs as follows:
 
         export MDSPLUS_MODELS_PATH=/path/to/your/mdsplus/models
 
-
 This executes ``ctest`` to run all test and example programs. Note that this may take a
 long time to complete.
 
 
-Install the High Level Interface
+Install IMAS-Cpp
 ````````````````````````````````
 
 Run ``make install`` to install the high level interface in the folder that you chose in
 the configuration step above.
 
 
-Use the High Level Interface
+Use IMAS-Cpp
 ````````````````````````````
 
 After installing the HLI, you need to ensure that your code can find the installed
-IMAS C++ HLI. To help you with this, a file ``al_env.sh`` is installed. You can
+IMAS Cpp. To help you with this, a file ``al_env.sh`` is installed. You can
 ``source`` this file to set all required environment variables:
 
 .. code-block:: bash
@@ -275,6 +266,5 @@ Troubleshooting
 ```````````````
 
 **Problem:** ``Target Boost::log already has an imported location``
-    This problem is known to occur with the ``2020b`` toolchain on SDCC. Add the CMake
-    configuration option ``-D Boost_NO_BOOST_CMAKE=ON`` to work around the problem.
+    Add the CMake configuration option ``-D Boost_NO_BOOST_CMAKE=ON`` to work around the problem.
 

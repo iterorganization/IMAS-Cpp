@@ -1,7 +1,7 @@
-Using the IMAS C++ HLI
+Using the IMAS Cpp
 ======================
 
-Making the IMAS C++ HLI available for use
+Making the IMAS Cpp available for use
 ------------------------------------------
 
 When you're working with a local installation, you can source the installed environment file:

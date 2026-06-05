@@ -1,11 +1,11 @@
-IMAS C++ HLI development guide
+IMAS Cpp development guide
 ===============================
 
 
 Repositories
 ------------
 
-The IMAS C++ HLI consists of a number of dependencies which are developed in separate
+The IMAS-Cpp consists of a number of dependencies which are developed in separate
 repositories:
 
 -   `imas-core <https://github.com/iterorganization/IMAS-Core>`__: the
@@ -38,19 +38,17 @@ folder is not important).
 
 .. code-block:: text
 
-    al-dev/                 # Feel free to name this folder however you want
-    ├── al-core/
-    ├── al-plugins/         # Optional
-    ├── al-cpp/          
-    └── data-dictionary/
+    imas-dev/                 # Feel free to name this folder however you want
+    ├── IMAS-Core/            # IMAS-Core
+    ├── IMAS-Core-Plugins/         # IMAS-Core-Plugins Optional
+    ├── IMAS-Cpp/         # IMAS-Cpp 
+    └── IMAS-Data-Dictionary/
 
-Then, when you configure a project for building (see :ref:`Configuration`), you can consider following 
-variables.
-``-D AL_DOWNLOAD_DEPENDENCIES=ON`` lets CMake fetch required IMAS-Core/IMAS-Data-Dictionary repositories
-automatically. ``-D AL_DOWNLOAD_DEPENDENCIES=OFF `` means dependencies must already be available locally 
-or provided by the build environment. ``-D AL_DEVELOPMENT_LAYOUT=ON `` tells CMake to use sibling 
-checkout folders, like ../IMAS-Core, for active development. If ``-D AL_DEVELOPMENT_LAYOUT=ON ``, the
-project automatically turns ``-D AL_DOWNLOAD_DEPENDENCIES`` OFF.
+Then, when you configure a project for building (see the Configuration section in the
+building and installation documentation), set the option
+``-D AL_DEVELOPMENT_LAYOUT=ON``. Instead of fetching requirements from the GitHub repositories,
+CMake will now use the repositories as they are checked out in your development
+folders. This option automatically disables ``AL_DOWNLOAD_DEPENDENCIES``.
 
     When both ``AL_DEVELOPMENT_LAYOUT=OFF`` and ``AL_DOWNLOAD_DEPENDENCIES=OFF`` are
     used, CMake expects dependencies such as ``al-core`` to be available as installed
@@ -139,7 +137,7 @@ and nothing else.
 .. code-block:: console
     :caption: Example: building the documentation for the Python HLI
 
-    al-dev$ cd IMAS-Cpp
+    imas-dev$ cd IMAS-Cpp
     IMAS-Cpp$ # Configure cmake to only create the documentation:
     IMAS-Cpp$ cmake -B build -D AL_HLI_DOCS -D AL_DOCS_ONLY
     [...]
