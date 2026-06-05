@@ -188,6 +188,7 @@ Next Steps
 - **Read more about IDSs**: :doc:`Use Interface Data Structures <use_ids>`
 - **Learn advanced loading/storing**: :doc:`Loading and storing IMAS data <load_store_ids>`
 - **Understand data storage**: :ref:`Data entry URIs`
+- **Learn about identifiers**:  :doc:`The identifiers library <identifiers>`
 - **Check the full API documentation**: See the `IMAS C++ HLI documentation <https://imas-cpp.readthedocs.io>`__
 
 
