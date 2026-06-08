@@ -14,13 +14,23 @@ project = "C++ Access Layer"
 copyright = f"{datetime.datetime.now().year}, ITER Organization"
 author = "ITER Organization"
 
-version = subprocess.check_output(["git", "describe"]).decode().strip()
-last_tag = subprocess.check_output(["git", "describe", "--abbrev=0"]).decode().strip()
-is_develop = version != last_tag
-
-html_context = {
-    "is_develop": is_develop
-}
+# Try to get version from git
+try:
+    full_version = subprocess.check_output(["git", "describe"], stderr=subprocess.DEVNULL).decode().strip()
+    last_tag = subprocess.check_output(["git", "describe", "--abbrev=0"], stderr=subprocess.DEVNULL).decode().strip()
+    is_develop = full_version != last_tag
+    # Use full version for both version and release when in development
+    if is_develop:
+        release = full_version  # Show full version like "5.5.2-12-g63bb0415"
+        version = full_version
+    else:
+        release = last_tag  # Show just the tag like "5.5.2"
+        version = last_tag
+except (subprocess.CalledProcessError, FileNotFoundError):
+    version = "dev"
+    release = "dev"
+    last_tag = "dev"
+    is_develop = True
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -40,14 +50,13 @@ primary_domain = "cpp"
 
 # todo_include_todos = True
 
-templates_path = ["./doc_common/templates"]
 # Note: exclude doc_common and plugins folders (which are symlinked by the CMake build)
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store", "doc_common", "plugins"]
 
 # -- RST snippets to include in every page -----------------------------------
 rst_epilog = """\
 .. |DD| replace:: `Data Dictionary`_
-.. _`Data Dictionary`: https://sharepoint.iter.org/departments/POP/CM/IMDesign/Data%20Model/CI/Latest.html
+.. _`Data Dictionary`: https://imas-data-dictionary.readthedocs.io/en/latest/
 """
 
 
@@ -66,10 +75,10 @@ intersphinx_mapping = {
 
 html_theme = "sphinx_immaterial"
 html_theme_options = {
-    "repo_url": "https://git.iter.org/projects/IMAS/repos/access-layer",
+    "repo_url": "https://github.com/iterorganization/IMAS-Cpp.git",
     "repo_name": "Access Layer",
     "icon": {
-        "repo": "fontawesome/brands/bitbucket",
+        "repo": "fontawesome/brands/github",
     },
     "features": [
         # "navigation.expand",

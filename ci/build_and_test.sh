@@ -19,46 +19,11 @@ module purge
 TOOLCHAIN=${TOOLCHAIN:-foss-2023b}
 # Load modules that correspond to toolchain
 case "$TOOLCHAIN" in
-  *-2020b)
-echo "... 2020b"
-MODULES=(
-    CMake/3.24.3-GCCcore-10.2.0
-    Boost/1.74.0-GCC-10.2.0  # AL-Core
-    Blitz++/1.0.2-GCCcore-10.2.0
-    Saxon-HE/10.3-Java-11  # DD
-    Python/3.8.6-GCCcore-10.2.0  # for docs
-    libxml2/2.9.10-GCCcore-10.2.0  # AL-Core
-    MDSplus/7.131.6-GCCcore-10.2.0  # backend
-    MDSplus-Java/7.131.6-GCCcore-10.2.0-Java-11  # backend
-    UDA/2.7.5-GCC-10.2.0  # backend
-)
-  ;;&
-  *foss-2020b)
-echo "... foss-2020b"
-MODULES=(${MODULES[@]}
-    HDF5/1.10.7-gompi-2020b  # backend
-)
-CMAKE_ARGS=(${CMAKE_ARGS[@]}
-    -DCMAKE_C_COMPILER=${CC:-gcc}
-    -DCMAKE_CXX_COMPILER=${CXX:-g++}
-)
-  ;;&
-  *intel-2020b)
-echo "... intel-2020b"
-MODULES=(${MODULES[@]}
-    HDF5/1.10.7-iimpi-2020b  # backend
-)
-CMAKE_ARGS=(${CMAKE_ARGS[@]}
-    -DCMAKE_C_COMPILER=${CC:-icc}
-    -DCMAKE_CXX_COMPILER=${CXX:-icpc}
-)
-  ;;
   *-2023b)
 echo "... 2023b"
 MODULES=(
     CMake/3.27.6-GCCcore-13.2.0
     Blitz++/1.0.2-GCCcore-13.2.0
-    Saxon-HE/12.4-Java-21  # DD
     libxml2/2.11.5-GCCcore-13.2.0  # AL-Core
     MDSplus/7.153.3-GCCcore-13.2.0  # backend
     Python/3.11.5-GCCcore-13.2.0  # for docs
@@ -69,7 +34,7 @@ echo "... foss-2023b"
 MODULES=(${MODULES[@]}
     HDF5/1.14.3-gompi-2023b  # backend
     Boost/1.83.0-GCC-13.2.0  # AL-Core
-    UDA/2.9.1-GCC-13.2.0  # backend
+    UDA/2.9.3-GCC-13.2.0  # backend
 )
 CMAKE_ARGS=(${CMAKE_ARGS[@]}
     -DCMAKE_C_COMPILER=${CC:-gcc}
@@ -81,7 +46,7 @@ echo "... intel-2023b"
 MODULES=(${MODULES[@]}
     HDF5/1.14.3-iimpi-2023b  # backend
     Boost/1.83.0-intel-compilers-2023.2.1  # AL-Core
-    UDA/2.9.1-intel-compilers-2023.2.1  # backend
+    UDA/2.9.3-intel-compilers-2023.2.1  # backend
 )
 CMAKE_ARGS=(${CMAKE_ARGS[@]}
     -DCMAKE_C_COMPILER=${CC:-icx}
@@ -98,15 +63,6 @@ echo "Done loading modules:"
 module list
 set -x
 
-# Create a local git configuration with our access token
-if [ "x$bamboo_HTTP_AUTH_BEARER_PASSWORD" != "x" ]; then
-    mkdir -p git
-    echo "[http \"https://git.iter.org/\"]
-        extraheader = Authorization: Bearer $bamboo_HTTP_AUTH_BEARER_PASSWORD" > git/config
-    export XDG_CONFIG_HOME=$PWD
-    git config -l | cat
-fi
-
 # Ensure the build directory is clean:
 rm -rf build
 
@@ -121,10 +77,10 @@ CMAKE_ARGS=(${CMAKE_ARGS[@]}
   -D AL_BUILD_MDSPLUS_MODELS=${AL_BUILD_MDSPLUS_MODELS:-ON}
   # Download dependencies from HTTPS (using an access token):
   -D AL_DOWNLOAD_DEPENDENCIES=${AL_DOWNLOAD_DEPENDENCIES:-ON}
-  -D AL_CORE_GIT_REPOSITORY=${AL_CORE_GIT_REPOSITORY:-https://git.iter.org/scm/imas/al-core.git}
-  -D AL_PLUGINS_GIT_REPOSITORY=${AL_PLUGINS_GIT_REPOSITORY:-https://git.iter.org/scm/imas/al-plugins.git}
-  # AL_PLUGINS version: can be set with AL_PLUGINS_VERSION env variable, otherwise use latest main
-  -D AL_PLUGINS_VERSION=${AL_PLUGINS_VERSION:-main}
+  -D AL_CORE_GIT_REPOSITORY=${AL_CORE_GIT_REPOSITORY:-https://github.com/iterorganization/IMAS-Core.git}
+  -D AL_PLUGINS_GIT_REPOSITORY=${AL_PLUGINS_GIT_REPOSITORY:-https://github.com/iterorganization/IMAS-Core-Plugins.git}
+  # AL_PLUGINS version: can be set with AL_PLUGINS_VERSION env variable, otherwise use latest develop
+  -D AL_PLUGINS_VERSION=${AL_PLUGINS_VERSION:-develop}
   -D DD_GIT_REPOSITORY=${DD_GIT_REPOSITORY:-https://github.com/iterorganization/IMAS-Data-Dictionary.git}
   # DD version: can be set with DD_VERSION env variable, otherwise use latest main
   -D DD_VERSION=${DD_VERSION:-main}

@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet 
-   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
-   xmlns:exsl="http://exslt.org/common"
+   xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="2.0"
+   xmlns:xs="http://www.w3.org/2001/XMLSchema"
    xmlns:my="http://localhost.localdomain/localns"
-   exclude-result-prefixes="my"
-   extension-element-prefixes="exsl">
+   exclude-result-prefixes="my">
    <xsl:include href="./identifiers.common.xsl"/>
 
 <xsl:output method="text" version="1.0" encoding="UTF-8" indent="yes"/>
+
+<!-- Global parameters -->
+<xsl:param name="name" as="xs:string" required="yes"/>
+<xsl:param name="prefix" as="xs:string" required="yes"/>
 
 <!-- MAIN, FILE GENERATION -->
 <xsl:template match="/constants">
 
   <!-- C++ Header FILE -->
-  <exsl:document href="{$prefix}{$name}.h" method="text">
+  <xsl:result-document href="{$prefix}{$name}.h" method="text">
     <xsl:text>#ifndef H_</xsl:text>
     <xsl:value-of select="my:upall($name)"/>
     <xsl:text>&#xA;#define H_</xsl:text>
@@ -81,16 +84,16 @@
       <xsl:text>&#xA;</xsl:text>
     </xsl:if>
     <xsl:text>#endif</xsl:text>
-  </exsl:document>
-  
-  <exsl:document href="{$prefix}{$name}.cpp" method="text">
+  </xsl:result-document>
+
+  <xsl:result-document href="{$prefix}{$name}.cpp" method="text">
     <xsl:text>#include "</xsl:text>
     <xsl:value-of select="$name"/>
     <xsl:text>.h"&#xA;</xsl:text>
     <xsl:if test="//constants[@create_mapping_function]">
       <xsl:call-template name="class_implementation"/>
     </xsl:if>
-  </exsl:document>
+  </xsl:result-document>
 </xsl:template>
 <!-- Simple class implementation -->
 <xsl:template name="class_implementation">

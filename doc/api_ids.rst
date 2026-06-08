@@ -211,8 +211,6 @@ IDS (``IdsNs::Ids``) API
         Empty fields within the IDS in the Data Entry are returned with the
         default values indicated in :ref:`Default values`.
 
-        Technical info: :doc:`./partial_get_plugin`.
-
         :param occurrence: Which occurrence of the IDS to read.
         :returns: Status code: ``0`` on success, ``<0`` on failure.
         :example: .. literalinclude:: code_samples/dbentry_partial_get
@@ -221,8 +219,6 @@ IDS (``IdsNs::Ids``) API
 
         Same as :cpp:func:`int Ids::partialGet(int, std::string, std::string)`, but with
         :code:`occurrence = 0`.
-
-        Technical info: :doc:`./partial_get_plugin`.
 
     .. cpp:function:: bool isDefined()
 

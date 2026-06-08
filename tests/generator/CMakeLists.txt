@@ -1,12 +1,3 @@
-# Dependencies
-################################################################################
-
-# Find LibXslt for the xsltproc program
-find_package( LibXslt QUIET )
-if( NOT LIBXSLT_XSLTPROC_EXECUTABLE )
-  message( FATAL_ERROR "Could not find xsltproc" )
-endif()
-
 # Sources
 ################################################################################
 
@@ -14,15 +5,15 @@ add_custom_command(
   OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/TestSuite.cpp
   # Generate with xsltproc
   COMMAND
-    ${LIBXSLT_XSLTPROC_EXECUTABLE}
-      --output TestSuite.cpp
-      --stringparam test_memory_backend not-implemented
-      --stringparam test_ascii_backend not-implemented
-      --stringparam test_mdsplus_backend $<IF:$<BOOL:${AL_BACKEND_MDSPLUS}>,yes,no>
-      --stringparam test_hdf5_backend not-implemented
-      --stringparam test_uda_backend not-implemented
-      ${CMAKE_CURRENT_SOURCE_DIR}/TestSuite.xsl
-      ${IDSDEF}
+    ${_VENV_PYTHON} "${AL_LOCAL_XSLTPROC_SCRIPT}"
+      -xsl ${CMAKE_CURRENT_SOURCE_DIR}/TestSuite.xsl
+      -s ${IDSDEF}
+      -o TestSuite.cpp
+      test_memory_backend=not-implemented
+      test_ascii_backend=not-implemented
+      test_mdsplus_backend=$<IF:$<BOOL:${AL_BACKEND_MDSPLUS}>,yes,no>
+      test_hdf5_backend=not-implemented
+      test_uda_backend=not-implemented
   DEPENDS TestSuite.xsl ${IDSDEF}
   WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 )
@@ -53,7 +44,16 @@ set_tests_properties( cpp-TestSuite PROPERTIES
 if( NOT AL_BACKEND_MDSPLUS )
   set_tests_properties( cpp-TestSuite PROPERTIES DISABLED ON )
 else()
-  get_target_property( MDSPLUS_MODEL_DIR al-mdsplus-model BINARY_DIR )
+  if( TARGET al-mdsplus-model )
+    get_target_property( MDSPLUS_MODEL_DIR al-mdsplus-model BINARY_DIR )
+  else()
+    if( DEFINED ENV{MDSPLUS_MODELS_PATH} )
+      set( MDSPLUS_MODEL_DIR "$ENV{MDSPLUS_MODELS_PATH}" )
+    else()
+      set( MDSPLUS_MODEL_DIR "$ENV{ids_path}" )
+    endif()
+  endif()
+  # Note: added ids_path for backward compatibility with IMAS-Core<5.6
   set_tests_properties( cpp-TestSuite PROPERTIES
-    ENVIRONMENT "IMAS_AL_DISABLE_OBSOLESCENT_WARNING=1;IMAS_AL_DISABLE_VALIDATE=1;IMAS_VERSION=${DD_VERSION};ids_path=${MDSPLUS_MODEL_DIR}" )
+    ENVIRONMENT "IMAS_AL_DISABLE_OBSOLESCENT_WARNING=1;IMAS_AL_DISABLE_VALIDATE=1;IMAS_VERSION=${DD_VERSION};ids_path=${MDSPLUS_MODEL_DIR};MDSPLUS_MODELS_PATH=${MDSPLUS_MODEL_DIR}" )
 endif()

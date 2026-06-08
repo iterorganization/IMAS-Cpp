@@ -3,35 +3,35 @@ cmake_minimum_required( VERSION 3.16 )
 
 # Configuration options for common assets
 ################################################################################
+include(${CMAKE_CURRENT_SOURCE_DIR}/common/cmake/ALLocalPaths.cmake)
+
 option( AL_DOWNLOAD_DEPENDENCIES "Automatically download assets from the AL git repository" ON )
-set( AL_CORE_GIT_REPOSITORY "ssh://git@git.iter.org/imas/al-core.git" CACHE STRING "Git repository of AL-core" )
+option( AL_DEVELOPMENT_LAYOUT "Use development repositories from sibling directory" OFF )
+if( AL_DEVELOPMENT_LAYOUT AND AL_DOWNLOAD_DEPENDENCIES )
+    message( STATUS "AL_DEVELOPMENT_LAYOUT=ON: setting AL_DOWNLOAD_DEPENDENCIES=OFF" )
+    set( AL_DOWNLOAD_DEPENDENCIES OFF CACHE BOOL "Automatically download assets from the AL git
+    repository" FORCE )
+endif()
+set( AL_CORE_GIT_REPOSITORY "https://github.com/iterorganization/IMAS-Core.git" CACHE STRING "Git repository of AL-core" )
 set( AL_CORE_VERSION "main" CACHE STRING "Git commit/tag/branch of AL-core" )
 
 include(FetchContent)
 
-# Load common assets
-################################################################################
-if( DEFINED ENV{AL_COMMON_PATH} )
-  # Take common assets from the path in this environment variable instead of al-core
-  set( AL_COMMON_PATH $ENV{AL_COMMON_PATH} )
-else()
-  if( ${AL_DOWNLOAD_DEPENDENCIES} )
-    # Download common assets from the ITER git:
-    FetchContent_Declare(
-      al-core
-      GIT_REPOSITORY "${AL_CORE_GIT_REPOSITORY}"
-      GIT_TAG "${AL_CORE_VERSION}"
-    )
-  else()
-    FetchContent_Declare(
-      al-core
-      SOURCE_DIR      "${CMAKE_CURRENT_SOURCE_DIR}/../al-core"
-    )
-  endif()
+if( ${AL_DOWNLOAD_DEPENDENCIES} )
+  # Download common assets from the ITER git:
+  FetchContent_Declare(
+    al-core
+    GIT_REPOSITORY "${AL_CORE_GIT_REPOSITORY}"
+    GIT_TAG "${AL_CORE_VERSION}"
+  )
   FetchContent_MakeAvailable( al-core )
-  set( AL_COMMON_PATH "${al-core_SOURCE_DIR}/common" )
+elseif ( ${AL_DEVELOPMENT_LAYOUT} )
+  FetchContent_Declare(
+    al-core
+    SOURCE_DIR      "${CMAKE_CURRENT_SOURCE_DIR}/../IMAS-Core"
+  )
+  FetchContent_MakeAvailable( al-core )
 endif()
-add_subdirectory( ${AL_COMMON_PATH} _common )
 
 
 # Define project
@@ -67,7 +67,7 @@ endif()
 
 # Dependencies
 ################################################################################
-
+find_package( Python3 REQUIRED COMPONENTS Interpreter )
 find_package( PkgConfig )
 # Find Blitz through pkg-config
 pkg_check_modules( blitz REQUIRED IMPORTED_TARGET blitz )
@@ -87,23 +87,24 @@ foreach( IDS_NAME IN LISTS IDS_NAMES )
   list( APPEND GENERATED_SOURCES "${GENERATED_SRC_DIR}/ids/${IDS_NAME}_IDSBase.cpp" )
 endforeach()
 
-find_package( SaxonHE )
 add_custom_command(
   # Use a dummy output file: when listing all actual output files (which are
   # source files of target `al-cpp`), they would be re-created with every build.
   OUTPUT ${GENERATED_SRC_DIR}/dummy.txt
   # Generate headers with xsltproc
   COMMAND
-    ${LIBXSLT_XSLTPROC_EXECUTABLE}
-      ${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPClasses.xsl
-      ${IDSDEF}
-  # Generate source files with saxon
+    ${_VENV_PYTHON} "${AL_LOCAL_XSLTPROC_SCRIPT}"
+      -xsl ${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPClasses.xsl
+      -s ${IDSDEF}
+      -o ${GENERATED_SRC_DIR}/ALClasses.h
+      DD_GIT_DESCRIBE=${DD_VERSION}
+      AL_GIT_DESCRIBE=${FULL_VERSION}
+  # Generate source files with xsltproc
   COMMAND
-    java 
-      -cp ${SaxonHE_CLASSPATH}
-      net.sf.saxon.Transform -t -warnings:fatal
-      "-xsl:${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPMethods.xsl"
-      "-s:${IDSDEF}"
+    ${_VENV_PYTHON} "${AL_LOCAL_XSLTPROC_SCRIPT}"
+      -xsl ${CMAKE_CURRENT_SOURCE_DIR}/IDSDef2CPPMethods.xsl
+      -s ${IDSDEF}
+      -o ${GENERATED_SRC_DIR}/ALMethods.cpp
       DD_GIT_DESCRIBE=${DD_VERSION}
       AL_GIT_DESCRIBE=${FULL_VERSION}
   # Create/update our dummy file
@@ -132,7 +133,7 @@ list( APPEND SOURCES
 # Unfortunately, xsl:include doesn't support parameters, so we need to put them together
 # in the build folder:
 file( CREATE_LINK
-  "${al-common_SOURCE_DIR}/identifiers.common.xsl" 
+  "${CMAKE_CURRENT_SOURCE_DIR}/common/identifiers.common.xsl" 
   "${CMAKE_CURRENT_BINARY_DIR}/identifiers.common.xsl"
   SYMBOLIC COPY_ON_ERROR
 )
@@ -153,11 +154,11 @@ foreach( ID_FILE IN LISTS DD_IDENTIFIER_FILES )
   add_custom_command(
     OUTPUT ${SOURCE_NAME} ${HEADER_NAME}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${IDENTIFIER_SRC_DIR}
-    COMMAND ${LIBXSLT_XSLTPROC_EXECUTABLE}
-      --stringparam name ${ID_NAME}
-      --stringparam prefix ${IDENTIFIER_SRC_DIR}
-      ${CMAKE_CURRENT_BINARY_DIR}/identifiers.xsl
-      ${ID_FILE}
+    COMMAND ${_VENV_PYTHON} "${AL_LOCAL_XSLTPROC_SCRIPT}"
+      -xsl ${CMAKE_CURRENT_BINARY_DIR}/identifiers.xsl
+      -s ${ID_FILE}
+      name=${ID_NAME}
+      prefix=${IDENTIFIER_SRC_DIR}
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/identifiers.xsl
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
   )
@@ -229,6 +230,16 @@ install( FILES
     ${CMAKE_CURRENT_BINARY_DIR}/al-identifiers-cpp.pc
   DESTINATION lib/pkgconfig
 )
+
+# Create backward compatibility symlinks (imas-* -> al-*)
+install( CODE "
+  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink al-cpp.pc imas-cpp.pc
+    WORKING_DIRECTORY \${CMAKE_INSTALL_PREFIX}/lib/pkgconfig )
+  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink al-cpp-${DD_VERSION}.pc imas-cpp-${DD_VERSION}.pc
+    WORKING_DIRECTORY \${CMAKE_INSTALL_PREFIX}/lib/pkgconfig )
+  execute_process( COMMAND \${CMAKE_COMMAND} -E create_symlink al-identifiers-cpp.pc imas-identifiers-cpp.pc
+    WORKING_DIRECTORY \${CMAKE_INSTALL_PREFIX}/lib/pkgconfig )
+" )
 
 # Tests
 ################################################################################
