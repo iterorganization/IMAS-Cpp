@@ -221,6 +221,14 @@ list( FILTER IDS_HEADERS INCLUDE REGEX "src/ids" )
 install( FILES ${IDS_HEADERS} DESTINATION include/ids )
 
 # Generate and install .pc files
+# Stamp the DD version into consuming binaries via a linker-defined symbol.
+# --defsym is specific to GNU-compatible linkers: Apple's ld64 and MSVC's
+# link.exe reject it, so only emit the flag where it is supported.
+if( APPLE OR WIN32 )
+  set( DD_PC_VERSION_SYMBOL_FLAG "" )
+else()
+  set( DD_PC_VERSION_SYMBOL_FLAG " -Wl,--defsym,DD_VER_${DD_SAFE_VERSION}=0" )
+endif()
 configure_file( pkgconfig/al-cpp.pc.in al-cpp.pc @ONLY )
 configure_file( pkgconfig/al-cpp-DD_VERSION.pc.in al-cpp-${DD_VERSION}.pc @ONLY )
 configure_file( pkgconfig/al-identifiers-cpp.pc.in al-identifiers-cpp.pc @ONLY )
