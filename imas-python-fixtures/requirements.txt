@@ -1,0 +1,6 @@
+imas-python
+numpy
+# h5py is not used by this generator. tests/shim/derive_stamp_variant.py and
+# verify_stamp_variants.py share this venv and need it to edit and inspect a
+# copied pulse's stamp dataset.
+h5py

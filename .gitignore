@@ -1,4 +1,5 @@
-build/
+build*/
+install*/
 lib/
 src/ALClasses.h
 src/ALMethods.cpp
@@ -9,3 +10,8 @@ gen_h_files
 *.BAK
 *.d.*
 CMakeUserPresets.json
+/graphify-out
+/.idea
+/.claude
+/imas-python-fixtures/.venv/
+/imas-python-fixtures/__pycache__/

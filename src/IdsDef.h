@@ -4,6 +4,7 @@
 
 
 #include "ALDef.h"
+#include <vector>
 using namespace blitz;
 
 #define NON_TIMED    0
@@ -22,6 +23,29 @@ class ValidationException : public std::runtime_error {
 public:
     ValidationException(const std::string& message) : std::runtime_error(message) {}
 };
+
+// One field a multiversion shim refused to serve, and the generated traversal
+// tolerated instead of aborting. See CONTEXT.md: "skipped path".
+struct SkippedPath {
+    enum class Operation { Read, Write, Delete };
+
+    Operation   operation;
+    std::string path;      // relative to the enclosing context
+    std::string message;   // shim's message; carries the full DD path
+    int         code;
+};
+
+// The status band a multiversion shim reserves for a refusal. Disjoint from
+// IMAS-Core's own negative codes (UNKNOWN_ERR..LOWLEVEL_ERR, -1..-4). See
+// CONTEXT.md: "refusal band".
+static const int AL_REFUSAL_BAND_MAX = -1000;
+static const int AL_REFUSAL_BAND_MIN = -1099;
+
+// Positive, so neither can collide with any status the C ABI can return, and
+// distinct from each other so a caller doing both a read and a write can tell
+// which half was incomplete. See CONTEXT.md: "partial read", "partial put".
+static const int PARTIAL_READ = 1;
+static const int PARTIAL_PUT  = 2;
 
 
 class Ids
@@ -53,12 +77,22 @@ class Ids
         virtual void clear() = 0;
         virtual bool isDefined() = 0;
 
-        
+
         void setPulseCtx(int pulseCtx){this->pulseCtx = pulseCtx; connected = true;}
+
+        // Paths a multiversion shim refused during the operation that just ran,
+        // tolerated rather than aborted on. Empty when nothing was skipped.
+        const std::vector<SkippedPath>& getSkippedPaths() const { return skippedPaths; }
+        size_t getSkippedPathCount() const { return skippedPaths.size(); }
 
     protected:
         int pulseCtx;
         bool connected;
+        std::vector<SkippedPath> skippedPaths;
+
+        // Cleared at the start of each root operation, so the record describes
+        // that operation rather than accumulating across calls.
+        void resetSkippedPaths() { skippedPaths.clear(); }
 
         static al_status_t readIdsTimeMode( int pulseCtx, const char *idsFullName, int& outIdsTimeMode );
 
@@ -68,6 +102,15 @@ class Ids
 
         static bool isError(al_status_t al_status, const char *file, const unsigned long line, const char *func);
         static al_status_t okStatus();
+
+        // The refusal-tolerance chokepoint: decides whether a non-zero status at
+        // one field must abort the operation, tolerating only the refusal band.
+        // Takes the record by reference, rather than acting on `this`, because
+        // generated nested structure classes do not derive from Ids but route
+        // their root IDS object's record through this chokepoint.
+        static bool mustAbort(al_status_t al_status, SkippedPath::Operation operation,
+                               const std::string &fieldPath, std::vector<SkippedPath> &skippedPaths,
+                               const char *file, const unsigned long line, const char *func);
 
         /************************************************************************************************************************************************/
         /*********************************                      COMPLEX NUMBERS CONVERSION                           ************************************/

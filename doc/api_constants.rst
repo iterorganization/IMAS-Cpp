@@ -133,6 +133,30 @@ Data entry open/create modes
     opens it at the same time.
 
 
+Status codes
+------------
+
+.. cpp:var:: static const int PARTIAL_READ = 1
+
+    Status code returned by a read (:cpp:expr:`IdsNs::Ids::get`,
+    :cpp:expr:`IdsNs::Ids::getSlice`, :cpp:expr:`IdsNs::Ids::getSample`,
+    :cpp:expr:`IdsNs::Ids::partialGet`) when the operation completes
+    after at least one tolerated refusal. The read succeeded and the IDS
+    is usable; the skipped paths are recorded, see
+    :cpp:expr:`IdsNs::Ids::getSkippedPaths`.
+
+.. cpp:var:: static const int PARTIAL_PUT = 2
+
+    Status code returned by a write (:cpp:expr:`IdsNs::Ids::put`,
+    :cpp:expr:`IdsNs::Ids::putSlice`, :cpp:expr:`IdsNs::Ids::deleteAll`)
+    when the operation completes after at least one tolerated refusal,
+    which may be a refused write or a refused delete. Refused writes are
+    best effort and are not rolled back.
+
+Both constants are positive, so neither collides with any negative status
+code the low-level component can return.
+
+
 Version constants
 -----------------
 

@@ -60,6 +60,10 @@ else()
   message( "Skipping tests that require persistent storage" )
 endif()
 
+# In shim mode the examples reach IMAS-Core through the loader, which needs to
+# be told where Core is and which DD version this HLI speaks.
+list( APPEND TEST_ENVIRONMENT ${AL_CPP_SHIM_TEST_ENVIRONMENT} )
+
 # Targets
 ################################################################################
 

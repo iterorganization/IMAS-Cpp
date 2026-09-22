@@ -71,7 +71,7 @@ char* getTokamak()
 
 void checkStatus(int status)
 {
-	if(finalStatus == 0 && status < 0)
+	if(finalStatus == 0 && status != 0)
 		finalStatus = EXIT_FAILURE;
 	
 }

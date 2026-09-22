@@ -408,7 +408,7 @@ void IdsNs::Ids::warningWritingObsolescentNode(const std::string &idsName, const
 
 
 bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned long line, const char *func)
-{  
+{
             // no error
             if (al_status.code > -1)
                 return false;
@@ -416,6 +416,30 @@ bool IdsNs::Ids::isError(al_status_t al_status, const char *file, const unsigned
             // critical error that should be propagated to higher levels
             printf("ERROR while calling '%s', %s:%d\n%s\n", func, file, line, al_status.message);
             return true;
+}
+
+bool IdsNs::Ids::mustAbort(al_status_t al_status, SkippedPath::Operation operation,
+                            const std::string &fieldPath, std::vector<SkippedPath> &skippedPaths,
+                            const char *file, const unsigned long line, const char *func)
+{
+    if (al_status.code >= AL_REFUSAL_BAND_MIN && al_status.code <= AL_REFUSAL_BAND_MAX)
+    {
+        skippedPaths.push_back(SkippedPath{operation, fieldPath, std::string(al_status.message), al_status.code});
+
+        const char *label = "REFUSED READ: ";
+        if (operation == SkippedPath::Operation::Write)
+            label = "REFUSED WRITE: ";
+        else if (operation == SkippedPath::Operation::Delete)
+            label = "REFUSED DELETE: ";
+
+        printf("%s%s\n", label, fieldPath.c_str());
+        return false;
+    }
+
+    // Not a refusal: either success, or a status that must stay intolerant
+    // (IMAS-Core's own codes, or a malformed-stamp/version-latch refusal
+    // outside a per-field site). The existing helper decides and reports.
+    return isError(al_status, file, line, func);
 }
 
         void IdsNs::Ids::setArray(IMASArray<int,1>&array,int *arrayPtr, int dim1)

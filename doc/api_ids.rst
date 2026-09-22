@@ -14,6 +14,17 @@ IDS (``IdsNs::Ids``) API
     Abstract base class for all IDS classes. All methods defined here are
     available on all concrete IDS objects.
 
+    .. note::
+        **Changed public return contract.** The database operations of this
+        class (:cpp:func:`get`, :cpp:func:`getSlice`, :cpp:func:`getSample`,
+        :cpp:func:`put`, :cpp:func:`putSlice`, :cpp:func:`deleteAll`,
+        :cpp:func:`partialGet`) now
+        return a three-way status code: ``0`` success; ``>0`` completed
+        with refused paths; ``<0`` failure. A positive status is returned
+        when the operation completes after at least one tolerated refusal
+        of a multiversion shim; the skipped paths are recorded, see
+        :cpp:func:`getSkippedPaths`.
+
     .. cpp:function:: std::string serialize(int protocol=DEFAULT_SERIALIZER_PROTOCOL)
 
         Serialize the contents of this IDS into binary data.
@@ -75,7 +86,11 @@ IDS (``IdsNs::Ids``) API
         default values indicated in :ref:`Default values`.
 
         :param occurrence: Which occurrence of the IDS to read.
-        :returns: Status code: ``0`` on success, ``<0`` on failure.
+        :returns: Status code: ``0`` success; ``>0``
+            (:cpp:expr:`PARTIAL_READ`) completed with refused paths;
+            ``<0`` failure. The positive status is returned when the
+            read completes after at least one tolerated refusal; the
+            skipped paths are recorded, see :cpp:func:`getSkippedPaths`.
         :example: .. literalinclude:: code_samples/dbentry_get
 
     .. cpp:function:: int getSlice(double inTime, char interpolMode)
@@ -95,7 +110,11 @@ IDS (``IdsNs::Ids``) API
         :param inTime: Requested time slice.
         :param interpolMode: Interpolation method to use, see :ref:`Load a
             single \`time slice\` of an IDS`.
-        :returns: Status code: ``0`` on success, ``<0`` on failure.
+        :returns: Status code: ``0`` success; ``>0``
+            (:cpp:expr:`PARTIAL_READ`) completed with refused paths;
+            ``<0`` failure. The positive status is returned when the
+            read completes after at least one tolerated refusal; the
+            skipped paths are recorded, see :cpp:func:`getSkippedPaths`.
         :example: .. literalinclude:: code_samples/dbentry_getslice
 
     .. cpp:function:: int getSample(int occurrence, double tmin, double tmax, const std::vector<double> &dtime, int interpolMode)
@@ -142,7 +161,11 @@ IDS (``IdsNs::Ids``) API
             - :const: PREVIOUS_INTERP
             - :const: LINEAR_INTERP
 
-        :returns: The loaded IDS.
+        :returns: Status code: ``0`` success; ``>0``
+            (:cpp:expr:`PARTIAL_READ`) completed with refused paths;
+            ``<0`` failure. The positive status is returned when the
+            read completes after at least one tolerated refusal; the
+            skipped paths are recorded, see :cpp:func:`getSkippedPaths`.
 
     .. cpp:function:: int getSample(double tmin, double tmax, const std::vector<double> &dtime, int interpolMode)
 
@@ -164,8 +187,18 @@ IDS (``IdsNs::Ids``) API
             The put method deletes any previously existing data within the
             target IDS occurrence in the Database Entry.
 
+        .. caution::
+            Refused writes are best effort. When the operation returns
+            :cpp:expr:`PARTIAL_PUT`, the refused fields were not written,
+            and no rollback of the data that was written is performed.
+
         :param occurrence: Which occurrence of the IDS to write to.
-        :returns: Status code: ``0`` on success, ``<0`` on failure.
+        :returns: Status code: ``0`` success; ``>0``
+            (:cpp:expr:`PARTIAL_PUT`) completed with refused paths;
+            ``<0`` failure. The positive status is returned when the
+            write completes after at least one tolerated refusal, which
+            may be a refused write or a refused delete; the skipped
+            paths are recorded, see :cpp:func:`getSkippedPaths`.
         :example: .. literalinclude:: code_samples/dbentry_put
 
     .. cpp:function:: int putSlice(int occurrence=0)
@@ -193,9 +226,44 @@ IDS (``IdsNs::Ids``) API
         the size of the time dimension of the node remains consistent with the
         size of its timebase.
 
+        .. caution::
+            Refused writes are best effort. When the operation returns
+            :cpp:expr:`PARTIAL_PUT`, the refused fields were not written,
+            and no rollback is performed: data already written, including
+            any array-of-structures resize, remains on disk.
+
         :param occurrence: Which occurrence of the IDS to write to.
-        :returns: Status code: ``0`` on success, ``<0`` on failure.
+        :returns: Status code: ``0`` success; ``>0``
+            (:cpp:expr:`PARTIAL_PUT`) completed with refused paths;
+            ``<0`` failure. The positive status is returned when the
+            write completes after at least one tolerated refusal, which
+            may be a refused write or a refused delete; the skipped
+            paths are recorded, see :cpp:func:`getSkippedPaths`.
         :example: .. literalinclude:: code_samples/dbentry_put_slice
+
+    .. cpp:function:: int deleteAll(int occurrence)
+
+        Delete the entire contents of an IDS occurrence from the Database
+        Entry.
+
+        .. caution::
+            Refused deletes are best effort. When the operation returns
+            :cpp:expr:`PARTIAL_PUT`, the refused fields were not deleted,
+            and no rollback of the data already deleted is performed.
+
+        :param occurrence: Which occurrence of the IDS to delete.
+        :returns: Status code: ``0`` success; ``>0``
+            (:cpp:expr:`PARTIAL_PUT`) completed with refused paths;
+            ``<0`` failure. The positive status is returned when the
+            delete completes after at least one tolerated refusal; the
+            skipped paths are recorded, see :cpp:func:`getSkippedPaths`.
+
+    .. cpp:function:: int deleteAll()
+
+        Delete the entire contents of occurrence ``0`` of this IDS from the
+        Database Entry. Equivalent to :cpp:expr:`deleteAll(0)`.
+
+        :returns: As for :cpp:func:`deleteAll(int occurrence)`.
 
     .. cpp:function:: int partialGet(int occurrence, const std::string &includes, const std::string &excludes, bool debug=false)
 
@@ -212,13 +280,47 @@ IDS (``IdsNs::Ids``) API
         default values indicated in :ref:`Default values`.
 
         :param occurrence: Which occurrence of the IDS to read.
-        :returns: Status code: ``0`` on success, ``<0`` on failure.
+        :returns: Status code: ``0`` success; ``>0``
+            (:cpp:expr:`PARTIAL_READ`) completed with refused paths;
+            ``<0`` failure. The positive status is returned when the
+            read completes after at least one tolerated refusal; the
+            skipped paths are recorded, see :cpp:func:`getSkippedPaths`.
         :example: .. literalinclude:: code_samples/dbentry_partial_get
 
     .. cpp:function:: int partialGet(const std::string &includes, const std::string &excludes, bool debug=false)
 
         Same as :cpp:func:`int Ids::partialGet(int, std::string, std::string)`, but with
         :code:`occurrence = 0`.
+
+    .. cpp:function:: const std::vector< SkippedPath >& getSkippedPaths() const
+
+        Return the skipped paths recorded by the root operation that just
+        completed on this IDS.
+
+        A skipped path is one field the traversal left unset because of a
+        tolerated refusal: a multiversion shim declined to serve the field
+        with a status in the refusal band, and the traversal carried on
+        past it instead of failing the whole operation.
+
+        The record is reset at the start of each root operation
+        (:cpp:func:`get`, :cpp:func:`getSlice`, :cpp:func:`getSample`,
+        :cpp:func:`put`, :cpp:func:`putSlice`, :cpp:func:`deleteAll`), and
+        :cpp:func:`partialGet` resets it before configuring its filtering
+        plugin, and the :cpp:func:`get` it delegates to also clears it before
+        traversal. It therefore never exposes skipped paths from an earlier
+        operation, including when plugin setup fails. It is empty when the
+        operation completed without any tolerated refusal.
+
+        Refused writes and deletes are best effort: a
+        :cpp:expr:`PARTIAL_PUT` means the refused fields were not written,
+        and no rollback of the data that was written is performed.
+
+        :returns: The skipped paths recorded by the last root operation.
+
+    .. cpp:function:: size_t getSkippedPathCount() const
+
+        Return the number of skipped paths recorded by the root operation
+        that just completed on this IDS. See :cpp:func:`getSkippedPaths`.
 
     .. cpp:function:: bool isDefined()
 
@@ -248,4 +350,49 @@ IDS (``IdsNs::Ids``) API
 
         :example: .. literalinclude:: code_samples/ids_validate
 
+
+.. cpp:struct:: SkippedPath
+
+    One field the traversal left unset because of a tolerated refusal,
+    recorded with the path, the status code and the refusal message.
+
+    .. cpp:enum:: Operation
+
+        The kind of operation the field was being served for when the
+        refusal was recorded.
+
+        .. cpp:enumerator:: Read
+
+            The field was being read.
+
+        .. cpp:enumerator:: Write
+
+            The field was being written.
+
+        .. cpp:enumerator:: Delete
+
+            The field was being deleted.
+
+    .. cpp:var:: Operation operation
+
+        The operation the skipped field was being served for.
+
+    .. cpp:var:: std::string path
+
+        The path of the skipped field, relative to the enclosing
+        traversal context. It is intentionally relative: the complete,
+        unambiguous Data Dictionary path of the field is preserved in
+        :cpp:var:`SkippedPath::message`.
+
+    .. cpp:var:: std::string message
+
+        The refusal message returned by the shim. Because
+        :cpp:var:`SkippedPath::path` is intentionally relative to the
+        enclosing traversal context, the message preserves the
+        unambiguous full Data Dictionary path of the skipped field.
+
+    .. cpp:var:: int code
+
+        The status code returned by the shim for the refusal, within the
+        refusal band (``-1000..-1099``).
 

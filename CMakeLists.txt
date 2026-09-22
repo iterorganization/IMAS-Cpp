@@ -7,13 +7,62 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/common/cmake/ALLocalPaths.cmake)
 
 option( AL_DOWNLOAD_DEPENDENCIES "Automatically download assets from the AL git repository" ON )
 option( AL_DEVELOPMENT_LAYOUT "Use development repositories from sibling directory" OFF )
+option( AL_USE_MULTIVERSION_SHIM "Route C++ Access Layer calls through IMAS-Multiversion-DD-Loader" OFF )
 if( AL_DEVELOPMENT_LAYOUT AND AL_DOWNLOAD_DEPENDENCIES )
     message( STATUS "AL_DEVELOPMENT_LAYOUT=ON: setting AL_DOWNLOAD_DEPENDENCIES=OFF" )
     set( AL_DOWNLOAD_DEPENDENCIES OFF CACHE BOOL "Automatically download assets from the AL git
     repository" FORCE )
 endif()
-set( AL_CORE_GIT_REPOSITORY "https://github.com/iterorganization/IMAS-Core.git" CACHE STRING "Git repository of AL-core" )
-set( AL_CORE_VERSION "main" CACHE STRING "Git commit/tag/branch of AL-core" )
+set( AL_CORE_GIT_REPOSITORY_DEFAULT "https://github.com/iterorganization/IMAS-Core.git" )
+set( AL_CORE_VERSION_DEFAULT "main" )
+set( AL_CORE_GIT_REPOSITORY "${AL_CORE_GIT_REPOSITORY_DEFAULT}" CACHE STRING "Git repository of AL-core" )
+set( AL_CORE_VERSION "${AL_CORE_VERSION_DEFAULT}" CACHE STRING "Git commit/tag/branch of AL-core" )
+
+if( AL_USE_MULTIVERSION_SHIM AND AL_DOWNLOAD_DEPENDENCIES )
+  # Pin IMAS-Core to a revision carrying the path-aware HDF5 delete fix, by
+  # commit rather than by branch. Without it, the first delete a full put
+  # issues destroys the whole occurrence instead of the targeted candidate,
+  # no conversion is armed afterwards, and a later shim conformance scenario
+  # (tests/shim, see docs/SHIM_SUITE_CONVENTION.md F6.4) is red for a reason
+  # in neither this repository nor the shim.
+  #
+  # The fix (IMAS-Core #63, merged into a fork as #64:
+  # fix/63-hdf5-delete-data-path) has not been merged into
+  # iterorganization/IMAS-Core, so this pin necessarily points at that fork
+  # rather than upstream until it is. IMAS-Multiversion-DD-Loader pins the
+  # same commit (its IMAS_CORE_REF) for the same reason.
+  #
+  # Return to upstream (AL_CORE_GIT_REPOSITORY's default) once the fix lands
+  # there, by removing this block rather than editing the values below.
+  #
+  # The pin applies only while both variables still hold either their defaults
+  # (a first configure) or the pinned values themselves (a re-configure of a
+  # tree this block already pinned). A user who passed
+  # -D AL_CORE_GIT_REPOSITORY or -D AL_CORE_VERSION named the Core they want
+  # built against; overriding that with FORCE would silently build something
+  # other than what they asked for.
+  set( AL_CORE_SHIM_PIN_REPOSITORY "https://github.com/yohannmarguier/IMAS-Core.git" )
+  set( AL_CORE_SHIM_PIN_VERSION "dae4abdd9428bd28f47063f8f575bdc8abd915f2" )
+
+  if( ( "${AL_CORE_GIT_REPOSITORY}" STREQUAL "${AL_CORE_GIT_REPOSITORY_DEFAULT}"
+        OR "${AL_CORE_GIT_REPOSITORY}" STREQUAL "${AL_CORE_SHIM_PIN_REPOSITORY}" )
+      AND ( "${AL_CORE_VERSION}" STREQUAL "${AL_CORE_VERSION_DEFAULT}"
+            OR "${AL_CORE_VERSION}" STREQUAL "${AL_CORE_SHIM_PIN_VERSION}" ) )
+    message( STATUS
+      "AL_USE_MULTIVERSION_SHIM=ON: pinning AL-core to the path-aware HDF5 "
+      "delete fix (${AL_CORE_SHIM_PIN_VERSION})" )
+    set( AL_CORE_GIT_REPOSITORY "${AL_CORE_SHIM_PIN_REPOSITORY}" CACHE STRING
+      "Git repository of AL-core" FORCE )
+    set( AL_CORE_VERSION "${AL_CORE_SHIM_PIN_VERSION}" CACHE STRING
+      "Git commit/tag/branch of AL-core" FORCE )
+  else()
+    message( STATUS
+      "AL_USE_MULTIVERSION_SHIM=ON: keeping the requested AL-core "
+      "(${AL_CORE_GIT_REPOSITORY}@${AL_CORE_VERSION}) instead of the "
+      "path-aware HDF5 delete fix pin. Without that fix, the tests/shim "
+      "full-put scenario (F6.4) is expected to be red." )
+  endif()
+endif()
 
 include(FetchContent)
 
@@ -176,7 +225,8 @@ add_dependencies( al-cpp al-cpp-sources )
 # Set target output library name to include the DD version
 set_target_properties( al-cpp PROPERTIES LIBRARY_OUTPUT_NAME "al-cpp-${DD_VERSION}" )
 
-target_link_libraries( al-cpp PUBLIC al PkgConfig::blitz )
+include( ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ALCppCoreLinkage.cmake )
+target_link_libraries( al-cpp PUBLIC ${AL_CPP_CORE_TARGET} PkgConfig::blitz )
 # Blitz requires pthread, but doesn't advertize it in it's package config :(
 target_compile_options( al-cpp PUBLIC -pthread )
 target_link_options( al-cpp PUBLIC -pthread )
@@ -246,6 +296,9 @@ install( CODE "
 
 if( AL_TESTS )
   add_subdirectory( tests/generator )
+  if( AL_USE_MULTIVERSION_SHIM )
+    add_subdirectory( tests/shim )
+  endif()
 endif()
 
 if( AL_EXAMPLES )
