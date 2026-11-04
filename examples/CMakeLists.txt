@@ -20,6 +20,11 @@ set( TESTS
   test_magnetics_get
   test_magnetics_memory
   test_magnetics_put
+  test_open_a
+  test_open_r
+  test_open_rp
+  test_open_w
+  test_open_x
   test_parameter_plugin
   test_partial_get_plugin
   test_using_partial_get_plugin
