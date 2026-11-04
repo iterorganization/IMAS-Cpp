@@ -2,6 +2,8 @@
 #include <iostream>
 #include <cstdio>
 #include <string>
+#include <unistd.h>
+#include <fcntl.h>
 
 using namespace IdsNs;
 
@@ -22,6 +24,25 @@ bool is_backend_available(const std::string& backend_name) {
     catch (...) {
         return false;
     }
+}
+
+static int g_saved_out, g_saved_err;
+
+void suppress_output() {
+    std::cout.flush(); std::cerr.flush();
+    g_saved_out = dup(STDOUT_FILENO);
+    g_saved_err = dup(STDERR_FILENO);
+    int devnull = open("/dev/null", O_WRONLY);
+    dup2(devnull, STDOUT_FILENO);
+    dup2(devnull, STDERR_FILENO);
+    close(devnull);
+}
+
+void restore_output() {
+    std::cout.flush(); std::cerr.flush();
+    dup2(g_saved_out, STDOUT_FILENO);
+    dup2(g_saved_err, STDERR_FILENO);
+    close(g_saved_out); close(g_saved_err);
 }
 
 int test_open_rp_backend(const std::string& backend_name, const std::string& db_path) {
@@ -174,8 +195,7 @@ int test_open_rp_backend(const std::string& backend_name, const std::string& db_
 
         // Redirect stdout/stderr to suppress error output from IMAS-Core
         // The library prints "Error opening URI..." before throwing exception
-        std::freopen("/dev/null", "w", stdout);
-        std::freopen("/dev/null", "w", stderr);
+        suppress_output();
 
         try
         {
@@ -197,8 +217,7 @@ int test_open_rp_backend(const std::string& backend_name, const std::string& db_
         }
 
         // Restore stdout/stderr
-        std::freopen("/dev/tty", "w", stdout);
-        std::freopen("/dev/tty", "w", stderr);
+        restore_output();
 
         if (rejected)
         {
@@ -246,6 +265,9 @@ int main(int argc, char *argv[])
     {
         std::cout << "--- HDF5 backend not available, skipping ---" << std::endl;
     }
+
+    // Test ASCII backend
+    total_status |= test_open_rp_backend("ascii", "./test_db_ascii_test_open_rp_ascii");
 
     if (total_status == 0)
         std::cout << "=== OPEN_RP test PASSED (all available backends) ===" << std::endl;

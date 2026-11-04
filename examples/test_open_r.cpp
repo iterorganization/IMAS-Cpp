@@ -136,6 +136,9 @@ int main(int argc, char *argv[])
         std::cout << "--- HDF5 backend not available, skipping ---" << std::endl;
     }
 
+    // Test ASCII backend
+    total_status |= test_open_r_backend("ascii", "./test_db_ascii_test_open_r_ascii");
+
     if (total_status == 0)
         std::cout << "=== OPEN_R test PASSED (all available backends) ===" << std::endl;
     else
